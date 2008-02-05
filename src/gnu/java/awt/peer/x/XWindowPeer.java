@@ -41,8 +41,6 @@ package gnu.java.awt.peer.x;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
@@ -60,8 +58,6 @@ import gnu.x11.Atom;
 import gnu.x11.Window;
 import gnu.x11.event.Event;
 
-import gnu.java.awt.font.OpenTypeFontPeer;
-import gnu.java.awt.peer.ClasspathFontPeer;
 import gnu.java.awt.peer.swing.SwingWindowPeer;
 
 public class XWindowPeer
@@ -285,17 +281,6 @@ public class XWindowPeer
   }
 
   /**
-   * Returns the font metrics for the specified font.
-   *
-   * @return the font metrics for the specified font
-   */
-  public FontMetrics getFontMetrics(Font font)
-  {
-    ClasspathFontPeer fontPeer = (ClasspathFontPeer) font.getPeer();
-    return fontPeer.getFontMetrics(font);
-  }
-
-  /**
    * Unregisters the window in the event pump when it is closed.
    */
   protected void finalize()
@@ -303,4 +288,5 @@ public class XWindowPeer
     XGraphicsDevice dev = XToolkit.getDefaultDevice();
     dev.getEventPump().unregisterWindow(xwindow);
   }
+
 }
