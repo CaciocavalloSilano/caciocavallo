@@ -39,7 +39,9 @@ exception statement from your version. */
 package gnu.java.awt.peer.x;
 
 import java.awt.Dialog;
+import java.awt.Window;
 import java.awt.peer.DialogPeer;
+import java.util.List;
 
 public class XDialogPeer
   extends XWindowPeer
@@ -57,5 +59,10 @@ public class XDialogPeer
 
   public void setTitle(String title)
   {
+  }
+
+  public void blockWindows(List<Window> windows)
+  {
+    // TODO: Implement this properly.
   }
 }
