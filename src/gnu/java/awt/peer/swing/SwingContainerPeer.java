@@ -37,8 +37,6 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.swing;
 
-import gnu.classpath.SystemProperties;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
@@ -267,7 +265,7 @@ public class SwingContainerPeer
   private boolean isDoubleBuffering()
   {
     Object prop =
-      SystemProperties.getProperty("gnu.awt.swing.doublebuffering", "false");
+      System.getProperty("gnu.awt.swing.doublebuffering", "false");
     return prop.equals("true");
   }
 
