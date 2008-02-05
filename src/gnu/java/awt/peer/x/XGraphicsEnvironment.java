@@ -38,7 +38,6 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
-import gnu.java.awt.font.OpenTypeFontPeer;
 import gnu.java.awt.java2d.RasterGraphics;
 import gnu.x11.Display;
 
@@ -54,6 +53,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.TreeMap;
+
+import sun.font.FontManager;
 
 /**
  * Represents the X environment for AWT.
@@ -193,11 +195,10 @@ public class XGraphicsEnvironment
     return getAvailableFontFamilyNames(Locale.getDefault());
   }
 
-  public String[] getAvailableFontFamilyNames(Locale l)
+  public String[] getAvailableFontFamilyNames(Locale requestedLocale)
   {
-    // TODO: This doesn't work when we are using X fonts.
-    // Fix this.
-    return OpenTypeFontPeer.getAvailableFontFamilyNames(l);
+    // TODO: Implement this properly.
+    throw new UnsupportedOperationException("Not yet implemented");
   }
 
 }
