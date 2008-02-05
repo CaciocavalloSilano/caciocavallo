@@ -70,6 +70,9 @@ import java.awt.peer.LightweightPeer;
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 
+import sun.font.FontDesignMetrics;
+import sun.java2d.pipe.Region;
+
 /**
  * The base class for Swing based component peers. This provides the basic
  * functionality needed for Swing based component peers. Many methods are
@@ -295,9 +298,7 @@ public class SwingComponentPeer
    */
   public FontMetrics getFontMetrics(Font f)
   {
-    Component parent = awtComponent.getParent();
-    ComponentPeer parentPeer = parent.getPeer();
-    return parentPeer.getFontMetrics(f);
+    return FontDesignMetrics.getMetrics(f);
   }
 
   /**
@@ -1131,6 +1132,11 @@ public class SwingComponentPeer
                               long time, sun.awt.CausedFocusEvent.Cause cause)
   {
     return true;
+  }
+
+  public void applyShape(Region shape)
+  {
+    // TODO Implement this properly.
   }
 
 }
