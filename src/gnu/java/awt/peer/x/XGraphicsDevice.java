@@ -37,7 +37,6 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
-import gnu.classpath.SystemProperties;
 import gnu.x11.Display;
 
 import java.awt.GraphicsConfiguration;
@@ -122,7 +121,7 @@ public class XGraphicsDevice
         // Try to connect via unix domain sockets when host == localhost.
         if ((displayName.hostname.equals("localhost")
              || displayName.hostname.equals(""))
-          && SystemProperties.getProperty("gnu.xawt.no_local_sockets") == null)
+          && System.getProperty("gnu.xawt.no_local_sockets") == null)
           {
             Socket socket = createLocalSocket();
             if (socket != null)
