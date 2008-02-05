@@ -47,6 +47,7 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.peer.ButtonPeer;
 import java.awt.peer.CanvasPeer;
 import java.awt.peer.LabelPeer;
@@ -56,8 +57,6 @@ import java.awt.peer.MenuPeer;
 import java.awt.peer.PanelPeer;
 import java.awt.peer.TextFieldPeer;
 
-import gnu.java.awt.ClasspathToolkit;
-
 /**
  * A base implementation for {@link java.awt.Toolkit} that provides the
  * Swing based widgets. Concrete implementations still must provide the
@@ -65,7 +64,7 @@ import gnu.java.awt.ClasspathToolkit;
  *
  * @author Roman Kennke (kennke@aicas.com)
  */
-public abstract class SwingToolkit extends ClasspathToolkit
+public abstract class SwingToolkit extends Toolkit
 {
 
   /**
