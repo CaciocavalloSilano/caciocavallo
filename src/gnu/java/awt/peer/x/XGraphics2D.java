@@ -431,31 +431,5 @@ public class XGraphics2D
       }
     return ret;
   }
-
-  public void setFont(Font f)
-  {
-    super.setFont(f);
-    FontPeer p = getFont().getPeer();
-    if (p instanceof XFontPeer)
-      {
-        XFontPeer xFontPeer = (XFontPeer) p;
-        xgc.set_font(xFontPeer.getXFont());
-      }
-  }
-
-  public void drawString(String s, int x, int y)
-  {
-    FontPeer p = getFont().getPeer();
-    if (p instanceof XFontPeer)
-      {
-        int tx = (int) transform.getTranslateX();
-        int ty = (int) transform.getTranslateY();
-        xdrawable.text(xgc, x + tx, y + ty, s);
-      }
-    else
-      {
-        super.drawString(s, x, y);
-      }
-  }
 }
 
