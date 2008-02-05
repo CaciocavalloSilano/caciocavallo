@@ -44,6 +44,7 @@ import java.awt.Canvas;
 import java.awt.Checkbox;
 import java.awt.CheckboxMenuItem;
 import java.awt.Choice;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -54,6 +55,7 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Label;
 import java.awt.List;
@@ -67,6 +69,7 @@ import java.awt.ScrollPane;
 import java.awt.Scrollbar;
 import java.awt.TextArea;
 import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.Window;
 import java.awt.Dialog.ModalExclusionType;
@@ -85,6 +88,7 @@ import java.awt.peer.CanvasPeer;
 import java.awt.peer.CheckboxMenuItemPeer;
 import java.awt.peer.CheckboxPeer;
 import java.awt.peer.ChoicePeer;
+import java.awt.peer.DesktopPeer;
 import java.awt.peer.DialogPeer;
 import java.awt.peer.FileDialogPeer;
 import java.awt.peer.FontPeer;
@@ -111,22 +115,17 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
 
-import gnu.classpath.SystemProperties;
-import gnu.java.awt.ClasspathToolkit;
-import gnu.java.awt.EmbeddedWindow;
-import gnu.java.awt.font.OpenTypeFontPeer;
-import gnu.java.awt.peer.ClasspathFontPeer;
-import gnu.java.awt.peer.EmbeddedWindowPeer;
+import sun.font.FontDesignMetrics;
+
 import gnu.java.awt.peer.swing.SwingCanvasPeer;
 import gnu.java.awt.peer.swing.SwingLabelPeer;
 import gnu.java.awt.peer.swing.SwingPanelPeer;
 
 public class XToolkit
-  extends ClasspathToolkit
+  extends Toolkit
 {
 
   /**
@@ -154,62 +153,9 @@ public class XToolkit
    */
   private HashMap imageCache = new HashMap();
 
-  /**
-   * The cached fonts.
-   */
-  private WeakHashMap<String,ClasspathFontPeer> fontCache =
-    new WeakHashMap<String,ClasspathFontPeer>();
-
-  public XToolkit()
-  {
-    SystemProperties.setProperty("gnu.javax.swing.noGraphics2D", "true");
-    SystemProperties.setProperty("java.awt.graphicsenv",
-                                 "gnu.java.awt.peer.x.XGraphicsEnvironment");
-  }
-
   public GraphicsEnvironment getLocalGraphicsEnvironment()
   {
     return new XGraphicsEnvironment();
-  }
-
-  /**
-   * Returns the font peer for a font with the specified name and attributes.
-   *
-   * @param name the font name
-   * @param attrs the font attributes
-   *
-   * @return the font peer for a font with the specified name and attributes
-   */
-  public ClasspathFontPeer getClasspathFontPeer(String name, Map attrs)
-  {
-    ClasspathFontPeer font;
-    if ("true".equals(System.getProperty("escherpeer.usexfonts")))
-      {
-        String canonical = XFontPeer.encodeFont(name, attrs);
-        if (!fontCache.containsKey(canonical))
-          {
-            font = new XFontPeer(name, attrs);
-            fontCache.put(canonical, font);
-          }
-        else
-          {
-            font = fontCache.get(canonical);
-          }
-      }
-    else
-      {
-        String canonical = OpenTypeFontPeer.encodeFont(name, attrs);
-        if (!fontCache.containsKey(canonical))
-          {
-            font = new OpenTypeFontPeer(name, attrs);
-            fontCache.put(canonical, font);
-          }
-        else
-          {
-            font = fontCache.get(canonical);
-          }
-      }
-    return font;
   }
 
   public Font createFont(int format, InputStream stream)
@@ -218,12 +164,6 @@ public class XToolkit
   }
 
   public RobotPeer createRobot(GraphicsDevice screen) throws AWTException
-  {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
-  }
-
-  public EmbeddedWindowPeer createEmbeddedWindow(EmbeddedWindow w)
   {
     // TODO: Implement this.
     throw new UnsupportedOperationException("Not yet implemented.");
@@ -389,10 +329,9 @@ public class XToolkit
     return ge.getAvailableFontFamilyNames();
   }
 
-  public FontMetrics getFontMetrics(Font name)
+  public FontMetrics getFontMetrics(Font font)
   {
-    ClasspathFontPeer peer = (ClasspathFontPeer) name.getPeer();
-    return peer.getFontMetrics(name);
+    return FontDesignMetrics.getMetrics(font);
   }
 
   public void sync()
@@ -635,6 +574,14 @@ public class XToolkit
   {
     // TODO Auto-generated method stub
     return false;
+  }
+
+  @Override
+  protected DesktopPeer createDesktopPeer(Desktop target)
+    throws HeadlessException
+  {
+	// TODO Auto-generated method stub
+	return null;
   }
 
 }
