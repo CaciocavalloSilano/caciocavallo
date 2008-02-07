@@ -1,0 +1,59 @@
+Project Caciocavallo - Classpath Escher Peer inside OpenJDK
+
+To build project Caciocavallo you need first a recent build of OpenJDK or
+IcedTea. Caciocavallo requires the use of Sun internal classes, so chances
+are that it will not even compile with anything different than the latest
+releases.
+
+Once you have a fresh build of the VM you can use ant to build the whole
+stuff. The ant build will work on Eclipse or NetBeans as well, and
+is provided for your hacking pleasure; we really think that real hackers
+use butterflies (http://xkcd.com/378/), but we also know that many don't
+want to waste time...
+
+So long... to compile you need to set the jvm first, like:
+
+JAVA_HOME=/path/to/your/openjdk/build/linux-i586/j2sdk-image/ ant
+
+IDEs should do that for you, otherwise you will need some tweaking.
+
+Caciocavallo needs Escher, you can grab the latest svn from here:
+
+http://sourceforge.net/projects/escher/
+
+You then need to alter the build.properties to point to the correct
+position of the jar files.
+
+While this point, Caciocavallo does not work :) if you are curious
+and want to try it out, this is what you need to do (the easy way):
+
+* create a file named testescher.sh
+
+--- cut ---
+#!/bin/sh
+# testescher.sh
+OPENJDK_DIR=/path/to/your/openjdk/build/linux-i586/j2sdk-image/
+BOOTCLASSPATH=/path/to/escher.jar:/path/to/caciocavallo/dist/echer-peer.jar
+TOOLKIT=gnu.java.awt.peer.x.XToolkit
+GRAPHICSENV=gnu.java.awt.peer.x.XGraphicsEnvironment
+  
+# change to suit your needs, we like to use the classpath code
+CLASSPATH=/opt/classpath/examples/examples.zip
+MAIN=gnu.classpath.examples.swing.Demo
+
+Xephyr :2 -ac -screen 1430x850 &
+metacity --display :2 &
+DISPLAY=:2 $OPENJDK_DIR/bin/java -Xbootclasspath/a:$BOOTCLASSPATH -Dawt.toolkit=$TOOLKIT -Djava.awt.graphicsenv=$GRAPHICSENV -cp $CLASSPATH $MAIN
+--- cut ---
+
+* run it
+
+The you can avoid the lines about Xephyr (so, remove the lines Xephyr,
+metacity and just 'DISPLAY=:2') if you have your X server setted up
+to accept TCP connections (otherwise you will get a Connection Refused
+Exception), at least until we finish to port the Unix Domain Socket
+implementation from Classpath.
+
+It's pretty much everything for now, but stay tuned for other cool
+stuff :)
+
