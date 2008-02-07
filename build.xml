@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CacioCavallo" default="jar" basedir=".">
+	<description>
+		Builds, tests, and runs the project Escher peers for OpenJDK.
+	</description>
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="${dist.dir}" />
+	<property name="jar.file" value="${dist.dir}/echer-peer.jar" />
+	
+	<property file="build.properties" />
+	<path id="classpath">
+		<fileset dir="${escher}" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="dist-clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+	
+	<target name="compile" depends="clean">
+		<mkdir dir="${build.dir}" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}"
+			     classpathref="classpath" />
+	</target>
+
+	<target name="jar" depends="clean, compile">
+		<mkdir dir="${dist.dir}" />
+		<jar destfile="${jar.file}" basedir="${build.dir}" />
+	</target>
+
+</project>
