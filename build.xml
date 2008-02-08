@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CacioCavallo" default="jar" basedir=".">
+<project name="CacioCavallo" default="all" basedir=".">
 	<description>
 		Builds, tests, and runs the project Escher peers for OpenJDK.
 	</description>
 
 	<property name="src.dir" value="src" />
+	<property name="test.src.dir" value="tests" />
 	<property name="build.dir" value="build" />
 	<property name="dist.dir" value="dist" />
+	
 	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="test.classes.dir" value="${build.dir}/test" />
+	
 	<property name="jar.dir" value="${dist.dir}" />
 	<property name="jar.file" value="${dist.dir}/echer-peer.jar" />
 	
@@ -26,14 +30,22 @@
 	</target>
 	
 	<target name="compile" depends="clean">
-		<mkdir dir="${build.dir}" />
-		<javac srcdir="${src.dir}" destdir="${build.dir}"
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"
 			     classpathref="classpath" />
 	</target>
 
+	<target name="tests" depends="compile">
+		  <mkdir dir="${test.classes.dir}" />
+	    <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}"
+	           classpathref="classpath" />
+	  </target>
+
 	<target name="jar" depends="clean, compile">
 		<mkdir dir="${dist.dir}" />
-		<jar destfile="${jar.file}" basedir="${build.dir}" />
+		<jar destfile="${jar.file}" basedir="${classes.dir}" />
 	</target>
 
+	<target name="all" depends="tests, jar" />
+	
 </project>
