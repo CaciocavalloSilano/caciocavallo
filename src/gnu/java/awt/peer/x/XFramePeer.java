@@ -38,24 +38,14 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.MenuBar;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.PaintEvent;
-import java.awt.event.WindowEvent;
-import java.awt.peer.FramePeer;
+import gnu.x11.Atom;
+import gnu.x11.Window.WMHints;
 
-import gnu.java.awt.peer.swing.SwingFramePeer;
-import gnu.x11.Window;
-import gnu.x11.event.Event;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.MenuBar;
+import java.awt.Rectangle;
+import java.awt.peer.FramePeer;
 
 public class XFramePeer
   extends XWindowPeer
@@ -105,8 +95,11 @@ public class XFramePeer
 
   public void setMaximizedBounds(Rectangle r)
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    if (r == null)
+      return;
+    
+    // TODO: set WM hints
+    // xwindow.change_property(Atom.WM_SIZE_HINTS, Atom.WM_SIZE_HINTS, );
   }
   
   /**
@@ -119,7 +112,7 @@ public class XFramePeer
   public boolean isRestackSupported()
   {
     // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return false;
   }
   
   /**
