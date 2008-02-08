@@ -87,8 +87,7 @@ public class XGraphicsDevice
 
   public String getIDstring()
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return ":" + displayName.display_no + "." + displayName.screen_no;
   }
 
   public GraphicsConfiguration[] getConfigurations()
