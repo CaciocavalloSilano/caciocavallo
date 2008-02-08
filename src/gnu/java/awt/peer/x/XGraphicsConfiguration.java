@@ -146,8 +146,7 @@ public class XGraphicsConfiguration
 
   public AffineTransform getDefaultTransform()
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return new AffineTransform();
   }
 
   public AffineTransform getNormalizingTransform()
