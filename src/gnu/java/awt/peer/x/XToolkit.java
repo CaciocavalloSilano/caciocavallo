@@ -57,6 +57,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
 import java.awt.Label;
 import java.awt.List;
 import java.awt.Menu;
@@ -93,6 +94,7 @@ import java.awt.peer.DialogPeer;
 import java.awt.peer.FileDialogPeer;
 import java.awt.peer.FontPeer;
 import java.awt.peer.FramePeer;
+import java.awt.peer.KeyboardFocusManagerPeer;
 import java.awt.peer.LabelPeer;
 import java.awt.peer.ListPeer;
 import java.awt.peer.MenuBarPeer;
@@ -118,6 +120,7 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
+import sun.awt.KeyboardFocusManagerPeerProvider;
 import sun.font.FontDesignMetrics;
 
 import gnu.java.awt.peer.swing.SwingCanvasPeer;
@@ -125,7 +128,7 @@ import gnu.java.awt.peer.swing.SwingLabelPeer;
 import gnu.java.awt.peer.swing.SwingPanelPeer;
 
 public class XToolkit
-  extends Toolkit
+  extends Toolkit implements KeyboardFocusManagerPeerProvider
 {
 
   /**
@@ -582,6 +585,14 @@ public class XToolkit
   {
 	// TODO Auto-generated method stub
 	return null;
+  }
+
+  @Override
+  public KeyboardFocusManagerPeer createKeyboardFocusManagerPeer(KeyboardFocusManager manager)
+  {
+    // TODO Auto-generated method stub
+    System.err.println("!!!IMPLEMENT ME!!!");
+    return null;
   }
 
 }
