@@ -55,7 +55,10 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import sun.awt.FontConfiguration;
+import sun.awt.motif.MFontConfiguration;
 import sun.font.FontManager;
+import sun.java2d.SunGraphicsEnvironment;
 
 /**
  * Represents the X environment for AWT.
@@ -200,5 +203,32 @@ public class XGraphicsEnvironment
     // TODO: Implement this properly.
     throw new UnsupportedOperationException("Not yet implemented");
   }
+/*
+  @Override
+  protected FontConfiguration createFontConfiguration()
+  {
+    return new MFontConfiguration(this);
+  }
 
+  @Override
+  public FontConfiguration createFontConfiguration(boolean preferLocaleFonts,
+                                                   boolean preferPropFonts)
+  {
+    return new MFontConfiguration(this, preferLocaleFonts, preferPropFonts);
+  }
+
+  @Override
+  protected int getNumScreens()
+  {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  protected GraphicsDevice makeScreenDevice(int arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+*/
 }
