@@ -117,18 +117,28 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
 
 import sun.awt.KeyboardFocusManagerPeerProvider;
+import sun.awt.X11.XFontPeer;
 import sun.font.FontDesignMetrics;
 
 import gnu.java.awt.peer.swing.SwingCanvasPeer;
 import gnu.java.awt.peer.swing.SwingLabelPeer;
 import gnu.java.awt.peer.swing.SwingPanelPeer;
 
+import gnu.java.awt.ClasspathToolkit;
+import gnu.java.awt.EmbeddedWindow;
+//import gnu.java.awt.EmbeddedWindow;
+import gnu.java.awt.font.OpenTypeFontPeer;
+import gnu.java.awt.peer.ClasspathFontPeer;
+import gnu.java.awt.peer.EmbeddedWindowPeer;
+
+
 public class XToolkit
-  extends Toolkit implements KeyboardFocusManagerPeerProvider
+  extends ClasspathToolkit implements KeyboardFocusManagerPeerProvider
 {
 
   /**
@@ -334,7 +344,8 @@ public class XToolkit
 
   public FontMetrics getFontMetrics(Font font)
   {
-    return FontDesignMetrics.getMetrics(font);
+    ClasspathFontPeer peer = (ClasspathFontPeer) font.getPeer();
+    return peer.getFontMetrics(font);
   }
 
   public void sync()
@@ -595,4 +606,45 @@ public class XToolkit
     return null;
   }
 
+  private WeakHashMap<String,ClasspathFontPeer> fontCache =
+    new WeakHashMap<String,ClasspathFontPeer>();
+  @SuppressWarnings("unchecked")
+  public ClasspathFontPeer getClasspathFontPeer(String name, Map attrs)
+  {
+    ClasspathFontPeer font;
+  /*  if ("true".equals(System.getProperty("escherpeer.usexfonts")))
+    {
+        String canonical = gnu.java.awt.peer.x.XFontPeer.encodeFont(name, attrs);
+        if (!fontCache.containsKey(canonical))
+          {
+            font = new gnu.java.awt.peer.x.XFontPeer(name, attrs);
+            fontCache.put(canonical, font);
+          }
+        else
+          {
+            font = fontCache.get(canonical);
+          }
+      }*/
+  //  else
+      {
+        String canonical = OpenTypeFontPeer.encodeFont(name, attrs);
+        if (!fontCache.containsKey(canonical))
+          {
+            font = new OpenTypeFontPeer(name, attrs);
+            fontCache.put(canonical, font);
+          }
+        else
+          {
+            font = fontCache.get(canonical);
+          }
+      }
+    return font;
+  }
+
+  @Override
+  public EmbeddedWindowPeer createEmbeddedWindow(EmbeddedWindow arg0)
+  {
+    System.out.println("CreateEmbeddedWindow -: !!1IMPLEMENT ME!!!");
+    return null;
+  }
 }
