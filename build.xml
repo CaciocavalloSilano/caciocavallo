@@ -18,6 +18,7 @@
 	<property file="build.properties" />
 	<path id="classpath">
 		<fileset dir="${escher}" includes="**/*.jar" />
+		<fileset dir="${openjdk}" includes="rt.jar" />
 	</path>
 
 	<target name="clean">
@@ -31,11 +32,14 @@
 	
 	<target name="compile" depends="clean">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src.dir}" destdir="${classes.dir}"
-			     classpathref="classpath" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"
+
+		  excludes="**/gnu/java/awt/java2d/**/*java,**/gnu/java/awt/font/opentype/**/*java"
+	 
+		/>
 	</target>
 
-	<target name="tests" depends="compile">
+	<target name="tests">
 		  <mkdir dir="${test.classes.dir}" />
 	    <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}"
 	           classpathref="classpath" />
@@ -46,6 +50,6 @@
 		<jar destfile="${jar.file}" basedir="${classes.dir}" />
 	</target>
 
-	<target name="all" depends="tests, jar" />
+	<target name="all" depends="jar, tests" />
 	
 </project>
