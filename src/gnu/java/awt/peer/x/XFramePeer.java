@@ -51,7 +51,9 @@ public class XFramePeer
   extends XWindowPeer
   implements FramePeer
 {
-
+  /* FIXME: package visible? Do we need? */
+  int state = 0;
+  
   XFramePeer(Frame f)
   {
     super(f);
@@ -83,14 +85,14 @@ public class XFramePeer
 
   public int getState()
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return this.state;
   }
 
   public void setState(int state)
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    this.state = state;
+    
+    // TODO: state change to take effect
   }
 
   public void setMaximizedBounds(Rectangle r)
