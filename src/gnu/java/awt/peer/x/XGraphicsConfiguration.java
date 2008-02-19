@@ -181,7 +181,7 @@ public class XGraphicsConfiguration
   /**
    * Determines the resolution of the primary screen in pixel-per-inch.
    *
-   * @returnthe resolution of the primary screen in pixel-per-inch
+   * @return the resolution of the primary screen in pixel-per-inch
    */
   int getResolution()
   {
