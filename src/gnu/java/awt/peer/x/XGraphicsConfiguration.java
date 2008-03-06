@@ -58,11 +58,24 @@ import java.awt.image.SampleModel;
 import java.awt.image.VolatileImage;
 import java.awt.image.WritableRaster;
 
+import sun.java2d.SurfaceData;
+import sun.java2d.loops.CompositeType;
+import sun.java2d.loops.RenderLoops;
+import sun.java2d.loops.SurfaceType;
+
 public class XGraphicsConfiguration
     extends GraphicsConfiguration
 {
 
+  static
+  {
+    System.setProperty("sun.java2d.volatilesurfacemanager",
+                       "gnu.java.awt.peer.x.EscherVolatileSurfaceManager");
+  }
+
   XGraphicsDevice device;
+
+  private RenderLoops solidLoops;
 
   XGraphicsConfiguration(XGraphicsDevice dev)
   {
@@ -74,74 +87,16 @@ public class XGraphicsConfiguration
     return device;
   }
 
-  public BufferedImage createCompatibleImage(int w, int h)
-  {
-    return createCompatibleImage(w, h, Transparency.OPAQUE);
-  }
-
-  public BufferedImage createCompatibleImage(int w, int h, int transparency)
-  {
-    BufferedImage bi;
-    switch (transparency)
-      {
-        case Transparency.OPAQUE:
-          DataBuffer buffer = new ZPixmapDataBuffer(w, h);
-          SampleModel sm = new ComponentSampleModel(DataBuffer.TYPE_BYTE, w, h,
-                                                    4, w * 4,
-                                                    new int[]{0, 1, 2, 3 });
-          ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
-          ColorModel cm = new ComponentColorModel(cs, true, false,
-                                                  Transparency.OPAQUE,
-                                                  DataBuffer.TYPE_BYTE);
-          WritableRaster raster = Raster.createWritableRaster(sm, buffer,
-                                                              new Point(0, 0));
-          bi = new BufferedImage(cm, raster, false, null);
-          break;
-        case Transparency.BITMASK:
-        case Transparency.TRANSLUCENT:
-          bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-          break;
-        default:
-          throw new IllegalArgumentException("Illegal transparency: "
-                                             + transparency);
-      }
-    return bi;
-  }
-
-  public VolatileImage createCompatibleVolatileImage(int w, int h)
-  {
-    return createCompatibleVolatileImage(w, h, Transparency.OPAQUE);
-  }
-
-  public VolatileImage createCompatibleVolatileImage(int width, int height,
-                                                     int transparency)
-  {
-    VolatileImage im;
-    switch (transparency)
-      {
-      case Transparency.OPAQUE:
-        im = new PixmapVolatileImage(width, height);
-        break;
-      case Transparency.BITMASK:
-      case Transparency.TRANSLUCENT:
-        throw new UnsupportedOperationException("Not yet implemented");
-      default:
-        throw new IllegalArgumentException("Unknown transparency type: "
-                                           + transparency);  
-      }
-    return im;
-  }
-
   public ColorModel getColorModel()
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    // TODO: Implement properly.
+    return ColorModel.getRGBdefault();
   }
 
   public ColorModel getColorModel(int transparency)
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    // TODO: Implement properly.
+    return ColorModel.getRGBdefault();
   }
 
   public AffineTransform getDefaultTransform()
@@ -197,4 +152,13 @@ public class XGraphicsConfiguration
     return dpi;
   }
 
+  synchronized RenderLoops getSolidLoops(SurfaceType stype)
+  {
+    if (solidLoops == null) {
+        solidLoops = SurfaceData.makeRenderLoops(SurfaceType.OpaqueColor,
+                                                 CompositeType.SrcNoEa,
+                                                 stype);
+    }
+    return solidLoops;
+}
 }
