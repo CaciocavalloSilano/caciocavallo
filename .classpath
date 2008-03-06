@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-7-icedtea"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/escher"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/OpenJDK"/>
+	<classpathentry kind="lib" path="/home/roman/src/openjdk-binary-plugs/jre/lib/rt-closed.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

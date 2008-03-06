@@ -113,7 +113,6 @@ public class XFramePeer
    */
   public boolean isRestackSupported()
   {
-    // TODO: Implement this.
     return false;
   }
   

@@ -38,6 +38,7 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
+import java.awt.AWTEvent;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -48,6 +49,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
 import java.util.HashMap;
+
+import sun.awt.AWTAutoShutdown;
+import sun.awt.AppContext;
+import sun.awt.SunToolkit;
 
 import gnu.x11.Display;
 import gnu.x11.event.ButtonPress;
@@ -113,7 +118,9 @@ public class XEventPump
       {
         try
           {
+            //AWTAutoShutdown.notifyToolkitThreadFree();
             Event xEvent = display.next_event();
+            AWTAutoShutdown.notifyToolkitThreadBusy();
             handleEvent(xEvent);
           }
         catch (ThreadDeath death)
@@ -175,7 +182,7 @@ public class XEventPump
                                      KeyboardMapping.mapModifiers(bp.state()) | buttonToModifier(button),
                                      bp.event_x(), bp.event_y(),
                                      1, false, button);
-      Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mp);
+      postEvent(mp);
       break;
     case ButtonRelease.CODE:
       ButtonRelease br = (ButtonRelease) xEvent;
@@ -192,7 +199,7 @@ public class XEventPump
                                      KeyboardMapping.mapModifiers(br.state()) | buttonToModifier(button),
                                      br.event_x(), br.event_y(),
                                      1, false, button);
-      Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mr);
+      postEvent(mr);
       break;
     case MotionNotify.CODE:
       MotionNotify mn = (MotionNotify) xEvent;
@@ -214,7 +221,7 @@ public class XEventPump
                               mn.event_x(), mn.event_y(),
                               1, false);
         }
-      Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mm);
+      postEvent(mm);
       break;
     case ConfigureNotify.CODE:
       key= new Integer(((ConfigureNotify) xEvent).event_window_id);
@@ -256,7 +263,7 @@ public class XEventPump
       g.clearRect(r.x, r.y, r.width, r.height);
       g.dispose();
       PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.PAINT, r);
-      Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(pev);
+      postEvent(pev);
       break;
     case KeyPress.CODE:
     case KeyRelease.CODE:
@@ -335,4 +342,8 @@ public class XEventPump
     return 0;        
   }
 
+  private void postEvent(AWTEvent ev)
+  {
+    SunToolkit.postEvent(AppContext.getAppContext(), ev);
+  }
 }

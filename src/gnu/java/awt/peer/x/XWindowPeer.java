@@ -38,6 +38,7 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.EventQueue;
@@ -52,7 +53,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.PaintEvent;
 import java.awt.event.WindowEvent;
+import java.awt.image.ColorModel;
 import java.awt.image.VolatileImage;
+
+import sun.java2d.SunGraphics2D;
+import sun.java2d.SurfaceData;
+import sun.java2d.loops.SurfaceType;
 
 import gnu.x11.Atom;
 import gnu.x11.Window;
@@ -91,6 +97,11 @@ public class XWindowPeer
    * The frame insets. These get updated in {@link #show()}.
    */
   private Insets insets;
+
+  /**
+   * The surface data object for this window.
+   */
+  private SurfaceData surfaceData;
 
   XWindowPeer(java.awt.Window window)
   {
@@ -139,6 +150,14 @@ public class XWindowPeer
           }
       }
     insets = new Insets(0, 0, 0, 0);
+
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice gd = ge.getDefaultScreenDevice();
+    GraphicsConfiguration gc = gd.getDefaultConfiguration();
+    surfaceData =
+      new XDrawableSurfaceData((XGraphicsConfiguration) gc, xwindow,
+                               XDrawableSurfaceData.EscherIntRgb,
+                               getColorModel());
   }
 
   public void toBack()
@@ -177,11 +196,15 @@ public class XWindowPeer
    */
   public Graphics getGraphics()
   {
-	XGraphics2D xg2d = new XGraphics2D(xwindow);
-	xg2d.setColor(awtComponent.getForeground());
-	xg2d.setBackground(awtComponent.getBackground());
-	xg2d.setFont(awtComponent.getFont());
-	return xg2d;
+    Color fg = awtComponent.getForeground();
+    if (fg == null)
+      fg = Color.BLACK;
+    Color bg = awtComponent.getBackground();
+    if (bg == null)
+      bg = Color.WHITE;
+    SunGraphics2D sg2d = new SunGraphics2D(surfaceData, fg, bg,
+                                           awtComponent.getFont());
+	return sg2d;
   }
 
   public Image createImage(int w, int h)
@@ -287,6 +310,11 @@ public class XWindowPeer
   {
     XGraphicsDevice dev = XToolkit.getDefaultDevice();
     dev.getEventPump().unregisterWindow(xwindow);
+  }
+
+  public ColorModel getColorModel()
+  {
+    return ColorModel.getRGBdefault();
   }
 
 }

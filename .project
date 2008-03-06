@@ -3,6 +3,7 @@
 	<name>escher-peers</name>
 	<comment></comment>
 	<projects>
+		<project>OpenJDK</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

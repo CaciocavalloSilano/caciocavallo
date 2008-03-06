@@ -38,27 +38,18 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
-import gnu.java.awt.java2d.RasterGraphics;
 import gnu.x11.Display;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Properties;
-import java.util.TreeMap;
 
-import sun.awt.FontConfiguration;
-import sun.awt.motif.MFontConfiguration;
-import sun.font.FontManager;
 import sun.java2d.SunGraphicsEnvironment;
+import sun.java2d.SurfaceManagerFactory;
 
 /**
  * Represents the X environment for AWT.
@@ -66,8 +57,16 @@ import sun.java2d.SunGraphicsEnvironment;
  * @author Roman Kennke (kennke@aicas.com)
  */
 public class XGraphicsEnvironment
-  extends GraphicsEnvironment
+  extends SunGraphicsEnvironment
 {
+
+  static
+  {
+    System.err.println("setting the surface manager");
+    SurfaceManagerFactory.setInstance(new EscherSurfaceManagerFactory());
+    System.err.println("finished setting the surface manager");
+    System.setProperty("sun.font.fontmanager", "gnu.java.awt.peer.x.EscherFontManager");
+  }
 
   /**
    * The default graphics device. This is normally the local main X
@@ -98,7 +97,7 @@ public class XGraphicsEnvironment
         FileInputStream configIn = new FileInputStream(config);
         props.load(configIn);
         int dev = 1;
-        ArrayList deviceList = new ArrayList();
+        ArrayList<XGraphicsDevice> deviceList = new ArrayList<XGraphicsDevice>();
         while (true)
           {
             String propName = "display." + dev;
@@ -135,7 +134,6 @@ public class XGraphicsEnvironment
         defaultDevice = initDefaultDevice();
         devices = new XGraphicsDevice[]{ defaultDevice };
       }
-    
   }
 
   /**
@@ -151,84 +149,22 @@ public class XGraphicsEnvironment
     return new XGraphicsDevice(displayName);
   }
 
-  /**
-   * Returns all configured screen devices.
-   *
-   * @return all configured screen devices
-   */
-  public GraphicsDevice[] getScreenDevices()
-  {
-    // We return a copy so that nobody can fiddle with our devices.
-    XGraphicsDevice[] copy = new XGraphicsDevice[devices.length];
-    System.arraycopy(devices, 0, copy, 0, devices.length);
-    return copy;
-  }
-
-  /**
-   * Returns the default screen device.
-   *
-   * @return the default screen device
-   */
-  public GraphicsDevice getDefaultScreenDevice()
-  {
-    return defaultDevice;
-  }
-
-  /**
-   * Returns a Graphics instance suitable for drawing on top of the
-   * BufferedImage.
-   *
-   * @param image the buffered image to create a graphics for
-   *
-   * @return a Graphics2D instance for drawing on the BufferedImage
-   */
-  public Graphics2D createGraphics(BufferedImage image)
-  {
-    return new RasterGraphics(image.getRaster(), image.getColorModel());
-  }
-
-  public Font[] getAllFonts()
-  {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
-  }
-
-  public String[] getAvailableFontFamilyNames()
-  {
-    return getAvailableFontFamilyNames(Locale.getDefault());
-  }
-
-  public String[] getAvailableFontFamilyNames(Locale requestedLocale)
-  {
-    // TODO: Implement this properly.
-    throw new UnsupportedOperationException("Not yet implemented");
-  }
-/*
-  @Override
-  protected FontConfiguration createFontConfiguration()
-  {
-    return new MFontConfiguration(this);
-  }
-
-  @Override
-  public FontConfiguration createFontConfiguration(boolean preferLocaleFonts,
-                                                   boolean preferPropFonts)
-  {
-    return new MFontConfiguration(this, preferLocaleFonts, preferPropFonts);
-  }
-
   @Override
   protected int getNumScreens()
   {
-    // TODO Auto-generated method stub
-    return 0;
+    return devices.length;
   }
 
   @Override
-  protected GraphicsDevice makeScreenDevice(int arg0)
+  protected GraphicsDevice makeScreenDevice(int i)
   {
-    // TODO Auto-generated method stub
-    return null;
+    return devices[i];
   }
-*/
+
+  @Override
+  public boolean isDisplayLocal()
+  {
+    // TODO: Implement properly.
+    return true;
+  }
 }
