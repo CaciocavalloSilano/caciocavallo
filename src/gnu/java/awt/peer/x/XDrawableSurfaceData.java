@@ -10,6 +10,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 
 import sun.awt.SunHints;
 import sun.awt.SunToolkit;
@@ -67,6 +68,11 @@ class XDrawableSurfaceData
   private GC xgc;
   private Drawable xDrawable;
 
+  /**
+   * The graphics configuration for that surface.
+   */
+  private XGraphicsConfiguration graphicsConfig;
+
   XDrawableSurfaceData(XGraphicsConfiguration gc, Drawable xd,
                        SurfaceType type, ColorModel cm)
   {
@@ -74,6 +80,7 @@ class XDrawableSurfaceData
     xDrawable = xd;
     lazyPipe = new LazyPipe();
     solidLoops = gc.getSolidLoops(type);
+    graphicsConfig = gc;
   }
 
   @Override
@@ -91,18 +98,25 @@ class XDrawableSurfaceData
   @Override
   public GraphicsConfiguration getDeviceConfiguration()
   {
-    throw new UnsupportedOperationException();
+    return graphicsConfig;
   }
+
+  private WritableRaster raster;
 
   @Override
   public Raster getRaster(int x, int y, int w, int h)
   {
-    System.err.println("WARNING: XDrawableSurface.getRaster() is slow.");
-    DataBuffer b = new XDrawableDataBuffer(xDrawable);
-    ColorModel cm = ColorModel.getRGBdefault();
-    SampleModel sm = cm.createCompatibleSampleModel(w, h);
-    Raster r =  new XDrawableRaster(sm, b, new Point(x, y));
-    return r;
+    if (raster == null)
+      {
+        int width = xDrawable.width;
+        int height = xDrawable.height;
+        DataBuffer b = new XDrawableDataBuffer(xDrawable);
+        ColorModel cm = ColorModel.getRGBdefault();
+        SampleModel sm = cm.createCompatibleSampleModel(width, height);
+        WritableRaster r =  new XDrawableRaster(sm, b, new Point(0, 0));
+        raster = r;
+      }
+    return raster;
   }
 
   @Override
