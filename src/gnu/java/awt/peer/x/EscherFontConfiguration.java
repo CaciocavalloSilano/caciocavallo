@@ -16,37 +16,44 @@ public class EscherFontConfiguration
   }
 
   @Override
-  protected Charset getDefaultFontCharset(String arg0)
+  protected Charset getDefaultFontCharset(String fontName)
   {
     // TODO Auto-generated method stub
+    System.err.println("IMPLEMENT ME: EscherFontConfiguration.getDefaultFontCharset");
     return null;
   }
 
   @Override
-  protected String getEncoding(String arg0, String arg1)
+  protected String getEncoding(String awtFontName,
+                               String characterSubsetName)
   {
     // TODO Auto-generated method stub
+    System.err.println("IMPLEMENT ME: EscherFontConfiguration.getEncoding");
     return null;
   }
 
   @Override
-  protected String getFaceNameFromComponentFontName(String arg0)
+  protected String getFaceNameFromComponentFontName(String componentFontName)
   {
     // TODO Auto-generated method stub
+    //System.err.println("IMPLEMENT ME: EscherFontConfiguration.getFaceNameFromComponentFontName: " + componentFontName);
+    // MFontConfiguration also returns null here, so maybe this is ok.
     return null;
   }
 
   @Override
-  public String getFallbackFamilyName(String arg0, String arg1)
+  public String getFallbackFamilyName(String fontName, String defaultFallback)
   {
     // TODO Auto-generated method stub
+    System.err.println("IMPLEMENT ME: EscherFontConfiguration.getFallbackFamilyName");
     return null;
   }
 
   @Override
-  protected String getFileNameFromComponentFontName(String arg0)
+  protected String getFileNameFromComponentFontName(String componentFontName)
   {
     // TODO Auto-generated method stub
+    System.err.println("IMPLEMENT ME: EscherFontConfiguration.getFileNameFromComponentFontName: " + componentFontName);
     return null;
   }
 
@@ -54,7 +61,7 @@ public class EscherFontConfiguration
   protected void initReorderMap()
   {
     // TODO Auto-generated method stub
-
+    System.err.println("IMPLEMENT ME: EscherFontConfiguration.initReorderMap");
   }
 
 }
