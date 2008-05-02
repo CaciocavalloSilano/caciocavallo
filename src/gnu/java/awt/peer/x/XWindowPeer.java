@@ -209,8 +209,10 @@ public class XWindowPeer
 
   public Image createImage(int w, int h)
   {
-    // FIXME: Should return a buffered image.
-    return createVolatileImage(w, h);
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice gd = ge.getDefaultScreenDevice();
+    GraphicsConfiguration gc = gd.getDefaultConfiguration();
+    return gc.createCompatibleImage(w, h);
   }
 
   @Override
