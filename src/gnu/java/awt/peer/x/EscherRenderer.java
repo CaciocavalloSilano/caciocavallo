@@ -132,9 +132,44 @@ public class EscherRenderer
     throw new UnsupportedOperationException();
   }
 
-  public void draw(SunGraphics2D arg0, Shape arg1)
+  public void draw(SunGraphics2D sg2d, Shape s)
   {
-    throw new UnsupportedOperationException();
+    if (sg2d.strokeState == sg2d.STROKE_THIN)
+      {
+        // Delegate to drawPolygon() if possible...
+        if (s instanceof Polygon &&
+            sg2d.transformState < sg2d.TRANSFORM_TRANSLATESCALE)
+          {
+            Polygon p = (Polygon) s;
+            drawPolygon(sg2d, p.xpoints, p.ypoints, p.npoints);
+            return;
+          }
+
+        // Otherwise we will use drawPath() for
+        // high-quality thin paths.
+        doPath(sg2d, s, false);
+      }
+    else if (sg2d.strokeState < sg2d.STROKE_CUSTOM)
+      {
+        // REMIND: X11 can handle uniform scaled wide lines
+        // and dashed lines itself if we set the appropriate
+        // XGC attributes (TBD).
+        ShapeSpanIterator si = LoopPipe.getStrokeSpans(sg2d, s);
+        try
+          {
+            SunToolkit.awtLock();
+            try
+              {
+                fillSpans(sg2d, si, 0, 0);
+          } finally {
+            SunToolkit.awtUnlock();
+          }
+        } finally {
+          si.dispose();
+        }
+  } else {
+      fill(sg2d, sg2d.stroke.createStrokedShape(s));
+  }
   }
 
   public void fill(SunGraphics2D sg2d, Shape s)
