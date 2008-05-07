@@ -206,18 +206,25 @@ public class XEventPump
       key= new Integer(mn.event_window_id);
       awtWindow = (Window) windows.get(key);
 
+      button = mn.detail();
+      // AWT cannot handle more than 3 buttons and expects 0 instead.
+      if (button >= gnu.x11.Input.BUTTON3)
+        button = 0;
+
       MouseEvent mm;
       if (drag == -1)
         {
           mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_MOVED,
-                              System.currentTimeMillis(), 0,
+                              System.currentTimeMillis(),
+                              KeyboardMapping.mapModifiers(mn.state()) | buttonToModifier(button),
                               mn.event_x(), mn.event_y(),
                               1, false);
         }
       else
         {
           mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_DRAGGED,
-                              System.currentTimeMillis(), 0,
+                              System.currentTimeMillis(),
+                              KeyboardMapping.mapModifiers(mn.state()) | buttonToModifier(drag),
                               mn.event_x(), mn.event_y(),
                               1, false);
         }
