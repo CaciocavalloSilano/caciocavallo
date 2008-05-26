@@ -236,7 +236,64 @@ public class XEventPump
       }
     postEvent(mm);
   }
+  
+  private void clearWindow(Window awtWindow, int width, int height)
+  {
+    XWindowPeer xwindow = (XWindowPeer) awtWindow.getPeer();
+    Insets i = xwindow.insets();
+    if (width != awtWindow.getWidth() - i.left - i.right
+        || height != awtWindow.getHeight() - i.top - i.bottom)
+      {
+        int w = width;
+        int h = height;
+        int x = xwindow.xwindow.x;
+        int y = xwindow.xwindow.y;
+        
+        if (XToolkit.DEBUG)
+          System.err.println("Setting size on AWT window: " + w
+                           + ", " + h + ", " + awtWindow.getWidth()
+                           + ", " + awtWindow.getHeight());
+        
+        // new width and height
+        xwindow.callback = true;
+        xwindow.xwindow.width = w;
+        xwindow.xwindow.height = h;
+        awtWindow.setSize(width + i.left + i.right,
+                          height + i.top + i.bottom);
+        xwindow.callback = false;
+        
+        // reshape the window
+        ComponentReshapeEvent cre =
+          new ComponentReshapeEvent(awtWindow, x, y, w, h);
+        awtWindow.dispatchEvent(cre);
+      }
+    
+    ComponentEvent ce =
+      new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
+    awtWindow.dispatchEvent(ce);
+  }
+  
+  private void handleConfigureNotify(ConfigureNotify event)
+  {
+    Integer key = new Integer(event.window_id);
+    Window awtWindow = (Window) windows.get(key);
    
+    if (XToolkit.DEBUG)
+      System.err.println("resize request for window id: " + key);
+
+    // Detect and report size changes.
+    this.clearWindow(awtWindow, event.width(), event.height());
+    
+    Rectangle r = awtWindow.getBounds();
+    
+    ComponentEvent ce =
+      new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
+    awtWindow.dispatchEvent(ce);
+    
+    PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.UPDATE, r);
+    postEvent(pev);
+  }
+  
   // FIME: refactor and make faster, maybe caching the event and handle
   // and/or check timing (timing is generated for PropertyChange)?
   private void handleExpose(Expose event)
@@ -256,30 +313,7 @@ public class XEventPump
     g.clearRect(r.x, r.y, r.width, r.height);
     g.dispose();
     
-    XWindowPeer xwindow = (XWindowPeer) awtWindow.getPeer();
-    Insets i = xwindow.insets();
-    if (event.width() != awtWindow.getWidth() - i.left - i.right
-        || event.height() != awtWindow.getHeight() - i.top - i.bottom)
-      {
-        int w = event.width();
-        int h = event.height();
-        int x = xwindow.xwindow.x;
-        int y = xwindow.xwindow.y;
-        
-        if (XToolkit.DEBUG)
-          System.err.println("Setting size on AWT window: " + w
-                           + ", " + h + ", " + awtWindow.getWidth()
-                           + ", " + awtWindow.getHeight());
-        
-        // new width and height
-        xwindow.xwindow.width = w;
-        xwindow.xwindow.height = h;
-        
-        // reshape the window
-        ComponentReshapeEvent cre =
-          new ComponentReshapeEvent(awtWindow, x, y, w, h);
-        awtWindow.dispatchEvent(cre);
-      }
+    this.clearWindow(awtWindow, event.width(), event.height());
   
     ComponentEvent ce =
       new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
@@ -318,7 +352,7 @@ public class XEventPump
         postEvent(event);
       }
   }
-  
+    
   private void handleEvent(Event xEvent)
   {
     if (XToolkit.DEBUG)
@@ -333,7 +367,7 @@ public class XEventPump
       this.handleButtonRelease((ButtonRelease) xEvent); 
       break;
     case MotionNotify.CODE:
-      this.handleMotionNotify((MotionNotify) xEvent); 
+      this.handleMotionNotify((MotionNotify) xEvent);
       break;
     case Expose.CODE:
       this.handleExpose((Expose) xEvent);
@@ -355,6 +389,9 @@ public class XEventPump
       awtWindow = (Window) windows.get(key);
       AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_STATE_CHANGED);
       postEvent(event);
+      break;
+    case ConfigureNotify.CODE:
+      this.handleConfigureNotify((ConfigureNotify) xEvent);
       break;
     default:
       if (XToolkit.DEBUG)
