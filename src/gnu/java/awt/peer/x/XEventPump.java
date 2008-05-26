@@ -167,7 +167,7 @@ public class XEventPump
     {
     case ButtonPress.CODE:
       ButtonPress bp = (ButtonPress) xEvent;
-      key= new Integer(bp.event_window_id);
+      key= new Integer(bp.getEventWindowID());
       awtWindow = (Window) windows.get(key);
       // Create and post the mouse event.
       int button = bp.detail();
@@ -179,14 +179,14 @@ public class XEventPump
 
       MouseEvent mp = new MouseEvent(awtWindow, MouseEvent.MOUSE_PRESSED,
                                      System.currentTimeMillis(),
-                                     KeyboardMapping.mapModifiers(bp.state()) | buttonToModifier(button),
-                                     bp.event_x(), bp.event_y(),
+                                     KeyboardMapping.mapModifiers(bp.getState()) | buttonToModifier(button),
+                                     bp.getEventX(), bp.getEventY(),
                                      1, false, button);
       postEvent(mp);
       break;
     case ButtonRelease.CODE:
       ButtonRelease br = (ButtonRelease) xEvent;
-      key= new Integer(br.event_window_id);
+      key= new Integer(br.getEventWindowID());
       awtWindow = (Window) windows.get(key);
 
       button = br.detail();
@@ -196,14 +196,14 @@ public class XEventPump
       drag = -1;
       MouseEvent mr = new MouseEvent(awtWindow, MouseEvent.MOUSE_RELEASED,
                                      System.currentTimeMillis(),
-                                     KeyboardMapping.mapModifiers(br.state()) | buttonToModifier(button),
-                                     br.event_x(), br.event_y(),
+                                     KeyboardMapping.mapModifiers(br.getState()) | buttonToModifier(button),
+                                     br.getEventX(), br.getEventY(),
                                      1, false, button);
       postEvent(mr);
       break;
     case MotionNotify.CODE:
       MotionNotify mn = (MotionNotify) xEvent;
-      key= new Integer(mn.event_window_id);
+      key= new Integer(mn.getEventWindowID());
       awtWindow = (Window) windows.get(key);
 
       button = mn.detail();
@@ -216,16 +216,16 @@ public class XEventPump
         {
           mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_MOVED,
                               System.currentTimeMillis(),
-                              KeyboardMapping.mapModifiers(mn.state()) | buttonToModifier(button),
-                              mn.event_x(), mn.event_y(),
+                              KeyboardMapping.mapModifiers(mn.getState()) | buttonToModifier(button),
+                              mn.getEventX(), mn.getEventY(),
                               1, false);
         }
       else
         {
           mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_DRAGGED,
                               System.currentTimeMillis(),
-                              KeyboardMapping.mapModifiers(mn.state()) | buttonToModifier(drag),
-                              mn.event_x(), mn.event_y(),
+                              KeyboardMapping.mapModifiers(mn.getState()) | buttonToModifier(drag),
+                              mn.getEventX(), mn.getEventY(),
                               1, false);
         }
       postEvent(mm);
@@ -274,7 +274,7 @@ public class XEventPump
       break;
     case KeyPress.CODE:
     case KeyRelease.CODE:
-      key = new Integer(((Input) xEvent).event_window_id);
+      key = new Integer(((Input) xEvent).getEventWindowID());
       awtWindow = (Window) windows.get(key);
       handleKeyEvent(xEvent, awtWindow);
       break;
@@ -294,7 +294,7 @@ public class XEventPump
   {
     Input keyEvent = (Input) xEvent;
     int xKeyCode = keyEvent.detail();
-    int xMods = keyEvent.state();
+    int xMods = keyEvent.getState();
     int keyCode = KeyboardMapping.mapToKeyCode(xEvent.display.input, xKeyCode,
                                                xMods);
     char keyChar = KeyboardMapping.mapToKeyChar(xEvent.display.input, xKeyCode,
