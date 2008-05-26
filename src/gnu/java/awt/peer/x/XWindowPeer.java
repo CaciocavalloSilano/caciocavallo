@@ -76,17 +76,23 @@ public class XWindowPeer
                                       //| Event.RESIZE_REDIRECT_MASK //
                                       | Event.EXPOSURE_MASK
                                       | Event.PROPERTY_CHANGE_MASK
-                                      //| Event.STRUCTURE_NOTIFY_MASK
+                                      | Event.STRUCTURE_NOTIFY_MASK //
                                       //| Event.SUBSTRUCTURE_NOTIFY_MASK
                                       | Event.KEY_PRESS_MASK
                                       | Event.KEY_RELEASE_MASK
                                       //| Event.VISIBILITY_CHANGE_MASK //
                                       ;
+  
   /**
    * The X window.
    */
   protected Window xwindow;
 
+  /*
+   * FIXME: Hack to workaround resizing in X11 peers with OpenJDK.
+   */
+  boolean callback = false;
+  
   /**
    * The frame insets. These get updated in {@link #show()}.
    */
@@ -286,9 +292,12 @@ public class XWindowPeer
    */
   public void reshape(int x, int y, int width, int height)
   {
-    Insets i = insets;
-    xwindow.move_resize(x - i.left, y - i.right, width - i.left - i.right,
-                        height - i.top - i.bottom);
+    if (! callback)
+      {
+        Insets i = insets;
+        xwindow.move_resize(x - i.left, y - i.right, width - i.left - i.right,
+                            height - i.top - i.bottom);
+      }
   }
 
   public Insets insets()
