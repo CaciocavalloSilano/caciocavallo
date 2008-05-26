@@ -55,7 +55,7 @@ import sun.awt.AWTAutoShutdown;
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 
-import gnu.java.awt.ComponentReshapeEvent;
+import gnu.java.util.ComponentReshapeEvent;
 import gnu.x11.Display;
 import gnu.x11.event.ButtonPress;
 import gnu.x11.event.ButtonRelease;
