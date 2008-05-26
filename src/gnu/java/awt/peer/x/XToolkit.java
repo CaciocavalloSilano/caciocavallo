@@ -334,7 +334,7 @@ public class XToolkit
   public KeyboardFocusManagerPeer createKeyboardFocusManagerPeer(KeyboardFocusManager manager)
   {
     // TODO Auto-generated method stub
-    System.err.println("!!!IMPLEMENT ME!!!");
+    System.err.println("XToolkit::createKeyboardFocusManagerPeer: !!!IMPLEMENT ME!!!");
     return null;
   }
 

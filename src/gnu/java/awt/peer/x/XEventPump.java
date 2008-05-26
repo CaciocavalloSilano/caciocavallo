@@ -48,22 +48,27 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 import sun.awt.AWTAutoShutdown;
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 
+import gnu.java.awt.ComponentReshapeEvent;
 import gnu.x11.Display;
 import gnu.x11.event.ButtonPress;
 import gnu.x11.event.ButtonRelease;
+import gnu.x11.event.ClientMessage;
 import gnu.x11.event.ConfigureNotify;
+import gnu.x11.event.DestroyNotify;
 import gnu.x11.event.Event;
 import gnu.x11.event.Expose;
 import gnu.x11.event.Input;
 import gnu.x11.event.KeyPress;
 import gnu.x11.event.KeyRelease;
 import gnu.x11.event.MotionNotify;
+import gnu.x11.event.PropertyNotify;
 
 /**
  * Fetches events from X, translates them to AWT events and pumps them up
@@ -155,128 +160,201 @@ public class XEventPump
     windows.remove(new Integer(xWindow.id));
   }
 
+  private void handleButtonPress(ButtonPress event)
+  {
+    Integer key = new Integer(event.getEventWindowID());
+    Window awtWindow = (Window) windows.get(key);
+
+    // Create and post the mouse event.
+    int button = event.detail();
+
+    // AWT cannot handle more than 3 buttons and expects 0 instead.
+    if (button >= gnu.x11.Input.BUTTON3)
+      button = 0;
+    drag = button;
+
+    MouseEvent mp = new MouseEvent(awtWindow, MouseEvent.MOUSE_PRESSED,
+                                   System.currentTimeMillis(),
+                                   KeyboardMapping.mapModifiers(event.getState())
+                                     | buttonToModifier(button),
+                                   event.getEventX(), event.getEventY(),
+                                   1, false, button);
+    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mp);
+  }
+  
+  private void handleButtonRelease(ButtonRelease event)
+  {
+    Integer key = new Integer(event.getEventWindowID());
+    Window awtWindow = (Window) windows.get(key);
+
+    int button = event.detail();
+    
+    // AWT cannot handle more than 3 buttons and expects 0 instead.
+    if (button >= gnu.x11.Input.BUTTON3)
+      button = 0;
+    drag = -1;
+    
+    MouseEvent mr = new MouseEvent(awtWindow, MouseEvent.MOUSE_RELEASED,
+                                   System.currentTimeMillis(),
+                                   KeyboardMapping.mapModifiers(event.getState())
+                                     | buttonToModifier(button),
+                                   event.getEventX(), event.getEventY(),
+                                   1, false, button);
+    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mr);
+  }
+  
+  private void handleMotionNotify(MotionNotify event)
+  {
+    Integer key = new Integer(event.getEventWindowID());
+    Window awtWindow = (Window) windows.get(key);
+
+    int button = event.detail();
+    
+    // AWT cannot handle more than 3 buttons and expects 0 instead.
+    if (button >= gnu.x11.Input.BUTTON3)
+      button = 0;
+
+    MouseEvent mm = null;
+    if (drag == -1)
+      {
+        mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_MOVED,
+                            System.currentTimeMillis(),
+                            KeyboardMapping.mapModifiers(event.getState())
+                              | buttonToModifier(button),
+                            event.getEventX(), event.getEventY(),
+                            1, false);
+
+      }
+    else
+      {
+        mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_DRAGGED,
+                            System.currentTimeMillis(),
+                            KeyboardMapping.mapModifiers(event.getState())
+                              | buttonToModifier(drag),
+                            event.getEventX(), event.getEventY(),
+                            1, false);
+      }
+    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mm);
+  }
+   
+  // FIME: refactor and make faster, maybe caching the event and handle
+  // and/or check timing (timing is generated for PropertyChange)?
+  private void handleExpose(Expose event)
+  {
+    Integer key = new Integer(event.window_id);
+    Window awtWindow = (Window) windows.get(key);
+    
+    if (XToolkit.DEBUG)
+      System.err.println("expose request for window id: " + key);
+    
+    Rectangle r = new Rectangle(event.x(), event.y(), event.width(),
+                                event.height());
+    // We need to clear the background of the exposed rectangle.
+    assert awtWindow != null : "awtWindow == null for window ID: " + key;
+     
+    Graphics g = awtWindow.getGraphics();
+    g.clearRect(r.x, r.y, r.width, r.height);
+    g.dispose();
+    
+    XWindowPeer xwindow = (XWindowPeer) awtWindow.getPeer();
+    Insets i = xwindow.insets();
+    if (event.width() != awtWindow.getWidth() - i.left - i.right
+        || event.height() != awtWindow.getHeight() - i.top - i.bottom)
+      {
+        int w = event.width();
+        int h = event.height();
+        int x = xwindow.xwindow.x;
+        int y = xwindow.xwindow.y;
+        
+        if (XToolkit.DEBUG)
+          System.err.println("Setting size on AWT window: " + w
+                           + ", " + h + ", " + awtWindow.getWidth()
+                           + ", " + awtWindow.getHeight());
+        
+        // new width and height
+        xwindow.xwindow.width = w;
+        xwindow.xwindow.height = h;
+        
+        // reshape the window
+        ComponentReshapeEvent cre =
+          new ComponentReshapeEvent(awtWindow, x, y, w, h);
+        awtWindow.dispatchEvent(cre);
+      }
+  
+    ComponentEvent ce =
+      new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
+    awtWindow.dispatchEvent(ce);
+    
+    PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.UPDATE, r);
+    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(pev);
+  }
+    
+  private void handleDestroyNotify(DestroyNotify destroyNotify)
+  {
+    if (XToolkit.DEBUG)
+      System.err.println("DestroyNotify event: " + destroyNotify);
+    
+    Integer key = new Integer(destroyNotify.event_window_id);
+    Window awtWindow = (Window) windows.get(key);
+    
+    AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_CLOSED);
+    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(event);
+  }
+  
+  private void handleClientMessage(ClientMessage clientMessage)
+  {
+    if (XToolkit.DEBUG)
+      System.err.println("ClientMessage event: " + clientMessage);
+    
+    if (clientMessage.delete_window())
+      {
+        if (XToolkit.DEBUG)
+          System.err.println("ClientMessage is a delete_window event");
+        
+        Integer key = new Integer(clientMessage.window_id);
+        Window awtWindow = (Window) windows.get(key);
+        
+        AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(event);
+      }
+  }
+  
   private void handleEvent(Event xEvent)
   {
-
-    Integer key = null;
-    Window awtWindow = null;
-
     if (XToolkit.DEBUG)
       System.err.println("fetched event: " + xEvent);
-    switch (xEvent.code())
+    
+    switch (xEvent.code() & 0x7f)
     {
     case ButtonPress.CODE:
-      ButtonPress bp = (ButtonPress) xEvent;
-      key= new Integer(bp.getEventWindowID());
-      awtWindow = (Window) windows.get(key);
-      // Create and post the mouse event.
-      int button = bp.detail();
-
-      // AWT cannot handle more than 3 buttons and expects 0 instead.
-      if (button >= gnu.x11.Input.BUTTON3)
-        button = 0;
-      drag = button;
-
-      MouseEvent mp = new MouseEvent(awtWindow, MouseEvent.MOUSE_PRESSED,
-                                     System.currentTimeMillis(),
-                                     KeyboardMapping.mapModifiers(bp.getState()) | buttonToModifier(button),
-                                     bp.getEventX(), bp.getEventY(),
-                                     1, false, button);
-      postEvent(mp);
+      this.handleButtonPress((ButtonPress) xEvent);
       break;
     case ButtonRelease.CODE:
-      ButtonRelease br = (ButtonRelease) xEvent;
-      key= new Integer(br.getEventWindowID());
-      awtWindow = (Window) windows.get(key);
-
-      button = br.detail();
-      // AWT cannot handle more than 3 buttons and expects 0 instead.
-      if (button >= gnu.x11.Input.BUTTON3)
-        button = 0;
-      drag = -1;
-      MouseEvent mr = new MouseEvent(awtWindow, MouseEvent.MOUSE_RELEASED,
-                                     System.currentTimeMillis(),
-                                     KeyboardMapping.mapModifiers(br.getState()) | buttonToModifier(button),
-                                     br.getEventX(), br.getEventY(),
-                                     1, false, button);
-      postEvent(mr);
+      this.handleButtonRelease((ButtonRelease) xEvent); 
       break;
     case MotionNotify.CODE:
-      MotionNotify mn = (MotionNotify) xEvent;
-      key= new Integer(mn.getEventWindowID());
-      awtWindow = (Window) windows.get(key);
-
-      button = mn.detail();
-      // AWT cannot handle more than 3 buttons and expects 0 instead.
-      if (button >= gnu.x11.Input.BUTTON3)
-        button = 0;
-
-      MouseEvent mm;
-      if (drag == -1)
-        {
-          mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_MOVED,
-                              System.currentTimeMillis(),
-                              KeyboardMapping.mapModifiers(mn.getState()) | buttonToModifier(button),
-                              mn.getEventX(), mn.getEventY(),
-                              1, false);
-        }
-      else
-        {
-          mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_DRAGGED,
-                              System.currentTimeMillis(),
-                              KeyboardMapping.mapModifiers(mn.getState()) | buttonToModifier(drag),
-                              mn.getEventX(), mn.getEventY(),
-                              1, false);
-        }
-      postEvent(mm);
-      break;
-    case ConfigureNotify.CODE:
-      key= new Integer(((ConfigureNotify) xEvent).event_window_id);
-      awtWindow = (Window) windows.get(key);
-      ConfigureNotify c = (ConfigureNotify) xEvent;
-      if (XToolkit.DEBUG)
-        System.err.println("resize request for window id: " + key);
-
-      // Detect and report size changes.
-      XWindowPeer xwindow = (XWindowPeer) awtWindow.getPeer();
-      Insets i = xwindow.insets();
-      if (c.width() != awtWindow.getWidth() - i.left - i.right
-          || c.height() != awtWindow.getHeight() - i.top - i.bottom)
-        {
-          if (XToolkit.DEBUG)
-            System.err.println("Setting size on AWT window: " + c.width()
-                             + ", " + c.height() + ", " + awtWindow.getWidth()
-                             + ", " + awtWindow.getHeight());
-          xwindow.callback = true;
-          xwindow.xwindow.width = c.width();
-          xwindow.xwindow.height = c.height();
-          awtWindow.setSize(c.width() + i.left + i.right,
-                            c.height() + i.top + i.bottom);
-          xwindow.callback = false;
-        }
+      this.handleMotionNotify((MotionNotify) xEvent); 
       break;
     case Expose.CODE:
-      key= new Integer(((Expose) xEvent).window_id);
-      awtWindow = (Window) windows.get(key);
-      Expose exp = (Expose) xEvent;
-      if (XToolkit.DEBUG)
-        System.err.println("expose request for window id: " + key);
-      Rectangle r = new Rectangle(exp.x(), exp.y(), exp.width(),
-                                  exp.height());
-      //System.err.println("expose paint: " + r);
-      // We need to clear the background of the exposed rectangle.
-      assert awtWindow != null : "awtWindow == null for window ID: " + key;
-      Graphics g = awtWindow.getGraphics();
-      g.clearRect(r.x, r.y, r.width, r.height);
-      g.dispose();
-      PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.PAINT, r);
-      postEvent(pev);
+      this.handleExpose((Expose) xEvent);
       break;
     case KeyPress.CODE:
     case KeyRelease.CODE:
-      key = new Integer(((Input) xEvent).getEventWindowID());
-      awtWindow = (Window) windows.get(key);
+      Integer key = new Integer(((Input) xEvent).getEventWindowID());
+      Window awtWindow = (Window) windows.get(key);
       handleKeyEvent(xEvent, awtWindow);
+      break;
+    case DestroyNotify.CODE:
+      this.handleDestroyNotify((DestroyNotify) xEvent);
+      break;
+    case ClientMessage.CODE:
+      this.handleClientMessage((ClientMessage) xEvent);
+      break;
+    case PropertyNotify.CODE:
+      key = new Integer (((PropertyNotify) xEvent).getWindowID());
+      awtWindow = (Window) windows.get(key);
+      AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_STATE_CHANGED);
+      Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(event);
       break;
     default:
       if (XToolkit.DEBUG)
