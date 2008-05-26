@@ -179,7 +179,7 @@ public class XEventPump
                                      | buttonToModifier(button),
                                    event.getEventX(), event.getEventY(),
                                    1, false, button);
-    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mp);
+    postEvent(mp);
   }
   
   private void handleButtonRelease(ButtonRelease event)
@@ -200,7 +200,7 @@ public class XEventPump
                                      | buttonToModifier(button),
                                    event.getEventX(), event.getEventY(),
                                    1, false, button);
-    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mr);
+    postEvent(mr);
   }
   
   private void handleMotionNotify(MotionNotify event)
@@ -234,7 +234,7 @@ public class XEventPump
                             event.getEventX(), event.getEventY(),
                             1, false);
       }
-    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(mm);
+    postEvent(mm);
   }
    
   // FIME: refactor and make faster, maybe caching the event and handle
@@ -286,7 +286,7 @@ public class XEventPump
     awtWindow.dispatchEvent(ce);
     
     PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.UPDATE, r);
-    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(pev);
+    postEvent(pev);
   }
     
   private void handleDestroyNotify(DestroyNotify destroyNotify)
@@ -298,7 +298,7 @@ public class XEventPump
     Window awtWindow = (Window) windows.get(key);
     
     AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_CLOSED);
-    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(event);
+    postEvent(event);
   }
   
   private void handleClientMessage(ClientMessage clientMessage)
@@ -315,7 +315,7 @@ public class XEventPump
         Window awtWindow = (Window) windows.get(key);
         
         AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_CLOSING);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(event);
+        postEvent(event);
       }
   }
   
@@ -354,7 +354,7 @@ public class XEventPump
       key = new Integer (((PropertyNotify) xEvent).getWindowID());
       awtWindow = (Window) windows.get(key);
       AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_STATE_CHANGED);
-      Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(event);
+      postEvent(event);
       break;
     default:
       if (XToolkit.DEBUG)
@@ -388,13 +388,13 @@ public class XEventPump
         ke = new KeyEvent(awtWindow, KeyEvent.KEY_PRESSED, when,
                           awtMods, keyCode,
                           KeyEvent.CHAR_UNDEFINED);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(ke);
+        postEvent(ke);
         if (keyChar != KeyEvent.CHAR_UNDEFINED)
           {
             ke = new KeyEvent(awtWindow, KeyEvent.KEY_TYPED, when,
                               awtMods, KeyEvent.VK_UNDEFINED,
                               keyChar);
-            Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(ke);
+            postEvent(ke);
           }
           
       }
@@ -403,7 +403,7 @@ public class XEventPump
         ke = new KeyEvent(awtWindow, KeyEvent.KEY_RELEASED, when,
                           awtMods, keyCode,
                           KeyEvent.CHAR_UNDEFINED);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(ke);
+        postEvent(ke);
       }
 
   }
