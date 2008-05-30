@@ -167,7 +167,7 @@ public class XEventPump
     {
     case ButtonPress.CODE:
       ButtonPress bp = (ButtonPress) xEvent;
-      key= new Integer(bp.event_window_id);
+      key= new Integer(bp.getEventWindowID());
       awtWindow = (Window) windows.get(key);
       // Create and post the mouse event.
       int button = bp.detail();
@@ -186,7 +186,7 @@ public class XEventPump
       break;
     case ButtonRelease.CODE:
       ButtonRelease br = (ButtonRelease) xEvent;
-      key= new Integer(br.event_window_id);
+      key= new Integer(br.getEventWindowID());
       awtWindow = (Window) windows.get(key);
 
       button = br.detail();
@@ -203,7 +203,7 @@ public class XEventPump
       break;
     case MotionNotify.CODE:
       MotionNotify mn = (MotionNotify) xEvent;
-      key= new Integer(mn.event_window_id);
+      key= new Integer(mn.getEventWindowID());
       awtWindow = (Window) windows.get(key);
 
       button = mn.detail();
@@ -274,7 +274,7 @@ public class XEventPump
       break;
     case KeyPress.CODE:
     case KeyRelease.CODE:
-      key = new Integer(((Input) xEvent).event_window_id);
+      key = new Integer(((Input) xEvent).getEventWindowID());
       awtWindow = (Window) windows.get(key);
       handleKeyEvent(xEvent, awtWindow);
       break;
