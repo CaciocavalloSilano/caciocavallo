@@ -38,7 +38,9 @@ exception statement from your version. */
 package gnu.java.awt.peer.x;
 
 import gnu.x11.Display;
+import gnu.x11.EscherServerConnectionError;
 
+import java.awt.AWTError;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.lang.reflect.Constructor;
@@ -113,31 +115,41 @@ public class XGraphicsDevice
   {
     if (display == null)
       {
-        if (displayName.hostname.equals(""))
-          displayName.hostname = "localhost";
-        if (XToolkit.DEBUG)
-          System.err.println("connecting to : " + displayName);
-        // Try to connect via unix domain sockets when host == localhost.
-        if ((displayName.hostname.equals("localhost")
-             || displayName.hostname.equals(""))
-          && System.getProperty("gnu.xawt.no_local_sockets") == null)
+        try
           {
-            Socket socket = createLocalSocket();
-            if (socket != null)
+            if (displayName.hostname.equals(""))
+              displayName.hostname = "localhost";
+            if (XToolkit.DEBUG)
+              System.err.println("connecting to : " + displayName);
+            // Try to connect via unix domain sockets when host == localhost.
+            if ((displayName.hostname.equals("localhost")
+                || displayName.hostname.equals(""))
+                && System.getProperty("gnu.xawt.no_local_sockets") == null)
               {
-                display = new Display(socket, "localhost",
-                                      displayName.display_no,
-                                      displayName.screen_no);
+                Socket socket = createLocalSocket();
+                if (socket != null)
+                  {
+                    display = new Display(socket, "localhost",
+                                          displayName.display_no,
+                                          displayName.screen_no);
+                  }
               }
+
+            // The following happens when we are configured to use plain sockets,
+            // when the connection is probably remote or when we couldn't load
+            // the LocalSocket class stuff.
+            if (display == null)
+              display = new Display(displayName);
+
+            eventPump = new XEventPump(display);
           }
-
-        // The following happens when we are configured to use plain sockets,
-        // when the connection is probably remote or when we couldn't load
-        // the LocalSocket class stuff.
-        if (display == null)
-          display = new Display(displayName);
-
-        eventPump = new XEventPump(display);
+        catch (EscherServerConnectionError ex)
+          {
+            AWTError awtErr = new AWTError("Cannot connect to X Server: "
+                                           + displayName);
+            awtErr.initCause(ex);
+            throw awtErr;
+          }
       }
     return display;
   }
