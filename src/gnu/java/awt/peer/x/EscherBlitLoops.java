@@ -5,6 +5,7 @@ import gnu.x11.GC;
 import gnu.x11.image.ZPixmap;
 
 import java.awt.Composite;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
 import sun.awt.SunToolkit;
@@ -73,15 +74,60 @@ class EscherBlitLoops
     XDrawableSurfaceData dxdsd = (XDrawableSurfaceData) dst;
     Drawable d = dxdsd.getDrawable();
     GC gc = dxdsd.getBlitGC(clip);
-    ZPixmap pm = new ZPixmap(gc.display, w, h);
-    for (int y = sy; y < sy + h; y++)
+    int transparency = bufImg.getTransparency();
+    if (transparency == Transparency.OPAQUE)
       {
-        for (int x = sx; x < sx + w; x++)
+        ZPixmap pm = new ZPixmap(gc.display, w, h);
+        for (int y = sy; y < sy + h; y++)
           {
-            int rgb = bufImg.getRGB(x, y);
-            pm.set(x, y, rgb);
+            for (int x = sx; x < sx + w; x++)
+              {
+                int rgb = bufImg.getRGB(x, y);
+                pm.set(x, y, rgb);
+              }
           }
+        d.put_image(gc, pm, dx, dy);
       }
-    d.put_image(gc, pm, dx, dy);
+    else
+      {
+        ZPixmap zpixmap = (ZPixmap) d.image(dx, dy, w, h, 0xffffffff,
+                                           gnu.x11.image.Image.Format.ZPIXMAP);
+        for (int yy = 0; yy < h; yy++)
+          {
+            for (int xx = 0; xx < w; xx++)
+              {
+                int rgb = bufImg.getRGB(xx + sx, yy + sy);
+                int alpha = 0xff & (rgb >> 24);
+                if (alpha == 0)
+                  {
+                    // Completely translucent.
+                    rgb = zpixmap.get_red(xx, yy) << 16
+                          | zpixmap.get_green(xx, yy) << 8
+                          | zpixmap.get_blue(xx, yy);
+                  }
+                else if (alpha < 255)
+                  {
+                    // Composite pixels.
+                    int red = 0xff & (rgb >> 16);
+                    red = red * alpha
+                             + (255 - alpha) * zpixmap.get_red(xx, yy);
+                    red = red / 255;
+                    int green = 0xff & (rgb >> 8);
+                    green = green * alpha
+                           + (255 - alpha) * zpixmap.get_green(xx, yy);
+                    green = green / 255;
+                    int blue = 0xff & rgb;
+                    blue = blue * alpha
+                            + (255 - alpha) * zpixmap.get_blue(xx, yy);
+                    blue = blue / 255;
+                    rgb = red << 16 | green << 8 | blue;
+                  }
+                // else keep rgb value from source image.
+
+                zpixmap.set(xx, yy, rgb);
+              }
+          }
+        d.put_image(gc, zpixmap, dx, dy);
+      }
   }
 }
