@@ -206,6 +206,7 @@ public class XWindowPeer
       bg = Color.WHITE;
     SunGraphics2D sg2d = new SunGraphics2D(surfaceData, fg, bg,
                                            awtComponent.getFont());
+    sg2d.translate(-insets.left, -insets.top);
 	return sg2d;
   }
 
