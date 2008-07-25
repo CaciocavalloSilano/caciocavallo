@@ -10,7 +10,7 @@ public class EscherFontManager
   @Override
   public String getFontPath(boolean noType1Fonts)
   {
-    return "/var/lib/defoma/x-ttcidfont-conf.d/dirs/TrueType";
+    return "/usr/share/fonts/liberation/";
   }
 
   @Override
