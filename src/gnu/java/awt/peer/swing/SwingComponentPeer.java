@@ -334,11 +334,13 @@ public class SwingComponentPeer
    */
   public Point getLocationOnScreen()
   {
-    Component parent = awtComponent.getParent();
-    ComponentPeer parentPeer = parent.getPeer();
-    Point location = parentPeer.getLocationOnScreen();
-    location.x += awtComponent.getX();
-    location.y += awtComponent.getY();
+    Component component = awtComponent;
+    Component parent = component.getParent();
+    
+    Point location = parent.getLocationOnScreen();
+    location.x += component.getX();
+    location.y += component.getY();
+    
     return location;
   }
 
