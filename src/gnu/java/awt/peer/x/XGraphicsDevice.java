@@ -38,7 +38,7 @@ exception statement from your version. */
 package gnu.java.awt.peer.x;
 
 import gnu.x11.Display;
-import gnu.x11.EscherServerConnectionError;
+import gnu.x11.EscherServerConnectionException;
 
 import java.awt.AWTError;
 import java.awt.GraphicsConfiguration;
@@ -143,7 +143,7 @@ public class XGraphicsDevice
 
             eventPump = new XEventPump(display);
           }
-        catch (EscherServerConnectionError ex)
+        catch (EscherServerConnectionException ex)
           {
             AWTError awtErr = new AWTError("Cannot connect to X Server: "
                                            + displayName);
