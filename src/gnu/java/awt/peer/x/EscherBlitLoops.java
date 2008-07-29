@@ -5,6 +5,7 @@ import gnu.x11.GC;
 import gnu.x11.image.ZPixmap;
 
 import java.awt.Composite;
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
@@ -30,7 +31,7 @@ class EscherBlitLoops
 //                            XDrawableSurfaceData.EscherIntRgb, false),
         new EscherBlitLoops(XDrawableSurfaceData.EscherIntRgb,
                             XDrawableSurfaceData.EscherIntRgb, true),
-        new EscherBlitLoops(SurfaceType.Any, SurfaceType.Any, true)
+        new EscherBlitLoops(SurfaceType.Any, XDrawableSurfaceData.EscherIntRgb, true)
       };
       GraphicsPrimitiveMgr.register(primitives);
   }
@@ -69,11 +70,39 @@ class EscherBlitLoops
                            Composite comp, Region clip, int sx, int sy, int dx,
                            int dy, int w, int h)
   {
-    // TODO: Implement transparency.
+    
     BufferedImage bufImg = (BufferedImage) src.getDestination();
     XDrawableSurfaceData dxdsd = (XDrawableSurfaceData) dst;
     Drawable d = dxdsd.getDrawable();
     GC gc = dxdsd.getBlitGC(clip);
+
+    // Do the clipping dance, to avoid X errors.
+    //System.err.println("unclipped: " + sx + ", " + sy + " -> " + dx + ", " + dy + " x " + w + ", " + h);
+    Rectangle dr = new Rectangle(dx, dy, w, h);
+    Rectangle dc = dr.intersection(new Rectangle(0, 0, d.width, d.height));
+    sx = sx + (dc.x - dx);
+    sy = sy + (dc.y - dy);
+    dx = dc.x;
+    dy = dc.y;
+    w = dc.width;
+    h = dc.height;
+    //System.err.println("clipped: " + sx + ", " + sy + " -> " + dx + ", " + dy + " x " + w + ", " + h);
+
+    if (w <= 0 || h <= 0)
+      return;
+
+    Rectangle sr = new Rectangle(sx, sy, w, h);
+    Rectangle sc = sr.intersection(new Rectangle(0, 0, bufImg.getWidth(), bufImg.getHeight()));
+    dx = dx + (sc.x - sx);
+    dy = dy + (sc.y - sy);
+    sx = sc.x;
+    sy = sc.y;
+    w = sc.width;
+    h = sc.height;
+
+    if (w <= 0 || h <= 0)
+      return;
+
     int transparency = bufImg.getTransparency();
     if (transparency == Transparency.OPAQUE)
       {
