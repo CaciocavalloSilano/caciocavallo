@@ -18,10 +18,10 @@
 	<property file="user.properties" />
 	<property file="build.properties" />
 	<path id="classpath">
-		<pathelement location="${escher}/build" />
+		<pathelement location="${escher}" />
 	</path>
 	<path id="bootclasspath">
-		<pathelement location="${openjdk}/build/linux-i586-debug/classes" />
+		<pathelement location="${openjdk}/classes" />
         </path>
 	<target name="clean">
 		<delete dir="${build.dir}" />
