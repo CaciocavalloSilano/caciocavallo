@@ -70,6 +70,11 @@ class EscherBlitLoops
                            Composite comp, Region clip, int sx, int sy, int dx,
                            int dy, int w, int h)
   {
+    if (dx < 0)
+      dx = 0;
+    
+    if (dy < 0)
+      dy = 0;
     
     BufferedImage bufImg = (BufferedImage) src.getDestination();
     XDrawableSurfaceData dxdsd = (XDrawableSurfaceData) dst;
@@ -118,9 +123,21 @@ class EscherBlitLoops
         d.put_image(gc, pm, dx, dy);
       }
     else
-      {
-        ZPixmap zpixmap = (ZPixmap) d.image(dx, dy, w, h, 0xffffffff,
-                                           gnu.x11.image.Image.Format.ZPIXMAP);
+      { 
+
+//        Rectangle source = new Rectangle(0, 0, d.width, d.height);
+//        Rectangle destination = new Rectangle(dx, dy, h, w);
+//        destination = source.intersection(destination);
+        
+        ZPixmap zpixmap = (ZPixmap) d.image(dx, dy,
+                                            w,
+                                            h, 0xffffffff,
+                                            gnu.x11.image.Image.Format.ZPIXMAP);
+
+//        ZPixmap zpixmap = (ZPixmap) d.image(destination.x, destination.y,
+//                                            destination.width, destination.height,
+//                                            0xffffffff,gnu.x11.image.Image.Format.ZPIXMAP);
+        
         for (int yy = 0; yy < h; yy++)
           {
             for (int xx = 0; xx < w; xx++)
