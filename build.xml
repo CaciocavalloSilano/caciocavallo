@@ -32,7 +32,7 @@
 	
 	<target name="compile" depends="clean">
 		<mkdir dir="${classes.dir}" />
-		<javac nowarn="on"
+		<javac nowarn="on" debug="true"
 		       srcdir="${src.dir}"
 		       destdir="${classes.dir}"
 		       bootclasspathref="classpath"
