@@ -14,13 +14,15 @@
 	
 	<property name="jar.dir" value="${dist.dir}" />
 	<property name="jar.file" value="${dist.dir}/echer-peer.jar" />
-	
+
+	<property file="user.properties" />
 	<property file="build.properties" />
 	<path id="classpath">
-		<fileset dir="${escher}" includes="**/*.jar" />
-		<fileset dir="${openjdk}" includes="rt.jar" />
+		<pathelement location="${escher}/build" />
 	</path>
-
+	<path id="bootclasspath">
+		<pathelement location="${openjdk}/build/linux-i586-debug/classes" />
+        </path>
 	<target name="clean">
 		<delete dir="${build.dir}" />
 	</target>
@@ -32,10 +34,11 @@
 	
 	<target name="compile" depends="clean">
 		<mkdir dir="${classes.dir}" />
-		<javac nowarn="on" debug="true"
+		<javac nowarn="on"
 		       srcdir="${src.dir}" destdir="${classes.dir}"
 
 			   classpathref="classpath"
+                           bootclasspathref="bootclasspath"
 			   debug="${value.compile.debug}"
 			   optimize="${value.compile.optimize}" />
 	</target>
