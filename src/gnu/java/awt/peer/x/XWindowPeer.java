@@ -320,4 +320,8 @@ public class XWindowPeer
     return ColorModel.getRGBdefault();
   }
 
+  public Window getXwindow()
+  {
+    return xwindow;
+  }
 }
