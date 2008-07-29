@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>escher-peers</name>
+	<name>caciocavallo-ng</name>
 	<comment></comment>
 	<projects>
 		<project>OpenJDK</project>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<triggers>full,incremental,</triggers>
+			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/Caciocavallo Builder.launch</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>

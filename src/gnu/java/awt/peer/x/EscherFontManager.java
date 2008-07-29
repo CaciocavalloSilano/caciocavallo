@@ -2,15 +2,18 @@ package gnu.java.awt.peer.x;
 
 import sun.awt.FontConfiguration;
 import sun.font.FontManager;
+import sun.font.FontManagerBase;
 
 public class EscherFontManager
-    extends FontManager
+    extends FontManagerBase
 {
+  // TODO: Just a wrapper class for now
+  // probably have to be implemented properly
 
   @Override
   public String getFontPath(boolean noType1Fonts)
   {
-    return "/var/lib/defoma/x-ttcidfont-conf.d/dirs/TrueType";
+    return "/usr/share/fonts/truetype/freefont/";
   }
 
   @Override
@@ -20,9 +23,9 @@ public class EscherFontManager
   }
 
   @Override
-  public FontConfiguration createFontConfiguration(boolean preferLocaleFonts, boolean preferPropFonts)
+  public FontConfiguration createFontConfiguration(boolean preferLocaleFonts,
+                                                   boolean preferPropFonts)
   {
     return new EscherFontConfiguration(this);
   }
-
 }

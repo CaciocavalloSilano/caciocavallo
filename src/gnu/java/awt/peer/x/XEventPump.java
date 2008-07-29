@@ -355,6 +355,9 @@ public class XEventPump
     
   private void handleEvent(Event xEvent)
   {
+    Integer key = null;
+    Window awtWindow = null;
+    
     if (XToolkit.DEBUG)
       System.err.println("fetched event: " + xEvent);
     
@@ -374,8 +377,8 @@ public class XEventPump
       break;
     case KeyPress.CODE:
     case KeyRelease.CODE:
-      Integer key = new Integer(((Input) xEvent).getEventWindowID());
-      Window awtWindow = (Window) windows.get(key);
+      key = new Integer(((Input) xEvent).getEventWindowID());
+      awtWindow = (Window) windows.get(key);
       handleKeyEvent(xEvent, awtWindow);
       break;
     case DestroyNotify.CODE:

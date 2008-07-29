@@ -1,33 +1,68 @@
 Project Caciocavallo - Classpath Escher Peer inside OpenJDK
+-----------------------------------------------------------
+
+Introduction
+------------
+
+Caciocavallo, as the name imply, is a project to port the Classpath peer
+to OpenJDK.
+
+As of March 17, 2008 (well, more or less), Caciocavallo was selected as a
+finalist to the OpenJDK challenge, so we have a cool new website with nothing
+in it :)
+
+http://openjdk.java.net/projects/caciocavallo/
+
+Here is the mail with the original proposal:
+
+http://mail.openjdk.java.net/pipermail/challenge-discuss/2008-March/000082.html
+
+Build
+-----
 
 To build project Caciocavallo you need first a recent build of OpenJDK or
 IcedTea. Caciocavallo requires the use of Sun internal classes, so chances
 are that it will not even compile with anything different than the latest
 releases.
 
-Once you have a fresh build of the VM you can use ant to build the whole
-stuff. The ant build will work on Eclipse or NetBeans as well, and
-is provided for your hacking pleasure; we really think that real hackers
-use butterflies (http://xkcd.com/378/), but we also know that many don't
-want to waste time...
+The patches to the OpenJDK tree are not included in this source, so
+you need to get them and apply them to the newly cloned jdk tree.
 
-So long... to compile you need to set the jvm first, like:
+The patches reside now in the caciocavallo repository on the
+OpenJDK website:
 
-JAVA_HOME=/path/to/your/openjdk/build/linux-i586/j2sdk-image/ ant
+http://hg.openjdk.java.net/caciocavallo/caciocavallo/
+
+Once you have a fresh checkout of OpenJDK you need to appy the patches and then
+do a complete build.
+
+For Caciocavallo, the ant build included should work on Eclipse or
+NetBeans as well, and is provided for your hacking pleasure. We maintain it, though
+we really think that real hackers use butterflies (http://xkcd.com/378/)...
+Nevertheless, if you don't want to wait for a butterfly to come (and if you are in
+Germany, you could wait a very long time) the ant script shoudl just work.
+
+So long... to compile you need to set the jvm path first, like:
+
+JAVA_HOME=/path/to/your/patched/openjdk/build/linux-i586/j2sdk-image/ ant
 
 IDEs should do that for you, otherwise you will need some tweaking.
 
-Caciocavallo needs Escher, you can grab the latest svn from here:
+There is a build.properties file that needs tweaking with the same path.
+The reason is that ant needs to know the path to the jvm before reding the build.xml,
+or you will get various error related to the internal classes.
 
-http://sourceforge.net/projects/escher/
+Escher is used to connect to the XServer.  We are trying hard to make Escher and
+Caciocavallo in sync, so that you can simply grab the latest sources from here:
 
-You then need to alter the build.properties to point to the correct
-position of the jar files.
+http://escher.sourceforge.net/hg/escher-trunk (just clone)
 
-While this point, Caciocavallo does not work :) if you are curious
-and want to try it out, this is what you need to do (the easy way):
+Again, tweak the build.properties to point to the correct position of the jar files.
 
-* create a file named testescher.sh
+Test
+----
+
+This is an small script that can be used to test the project:
 
 --- cut ---
 #!/bin/sh
@@ -36,23 +71,20 @@ OPENJDK_DIR=/path/to/your/openjdk/build/linux-i586/j2sdk-image/
 BOOTCLASSPATH=/path/to/escher.jar:/path/to/caciocavallo/dist/echer-peer.jar
 TOOLKIT=gnu.java.awt.peer.x.XToolkit
 GRAPHICSENV=gnu.java.awt.peer.x.XGraphicsEnvironment
-  
+FONT_MANAGER=gnu.java.awt.peer.x.EscherFontManager
+
 # change to suit your needs, we like to use the classpath code
 CLASSPATH=/opt/classpath/examples/examples.zip
 MAIN=gnu.classpath.examples.swing.Demo
 
-Xephyr :2 -ac -screen 1430x850 &
-metacity --display :2 &
-DISPLAY=:2 $OPENJDK_DIR/bin/java -Xbootclasspath/a:$BOOTCLASSPATH -Dawt.toolkit=$TOOLKIT -Djava.awt.graphicsenv=$GRAPHICSENV -cp $CLASSPATH $MAIN
+$OPENJDK_DIR/bin/java -Xbootclasspath/a:$BOOTCLASSPATH -Dswing.metalTheme=steel -Dawt.toolkit=$TOOLKIT -Djava.awt.graphicsenv=$GRAPHICSENV -Dsun.font.fontmanager=$FONT_MANAGER -cp $CLASSPATH $MAIN
 --- cut ---
 
-* run it
+if you have your X server setted up to prevent TCP connections (a sane thing!) you will get a
+Connection Refused Exception, at least until we finish to port the Unix Domain Socket
+implementation from Classpath, so you may need Xephyr or some other nested XServer.
 
-The you can avoid the lines about Xephyr (so, remove the lines Xephyr,
-metacity and just 'DISPLAY=:2') if you have your X server setted up
-to accept TCP connections (otherwise you will get a Connection Refused
-Exception), at least until we finish to port the Unix Domain Socket
-implementation from Classpath.
+You may also need issue an xhost + 127.0.0.1 to address a random bug in escher.
 
 It's pretty much everything for now, but stay tuned for other cool
 stuff :)

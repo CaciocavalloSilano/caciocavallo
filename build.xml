@@ -17,8 +17,8 @@
 	
 	<property file="build.properties" />
 	<path id="classpath">
-	  <pathelement location="${escher}/build"  />
-	  <pathelement location="${openjdk}/build/linux-i586/classes" />
+		<fileset dir="${escher}" includes="**/*.jar" />
+		<fileset dir="${openjdk}" includes="rt.jar" />
 	</path>
 
 	<target name="clean">
@@ -33,22 +33,17 @@
 	<target name="compile" depends="clean">
 		<mkdir dir="${classes.dir}" />
 		<javac nowarn="on" debug="true"
-		       srcdir="${src.dir}"
-		       destdir="${classes.dir}"
-		       bootclasspathref="classpath"
-		       classpathref="classpath"
-		       excludes="**/gnu/java/awt/java2d/**/*java,**/gnu/java/awt/font/opentype/**/*java"
-		/>
+		       srcdir="${src.dir}" destdir="${classes.dir}"
+
+			   classpathref="classpath"
+			   debug="${value.compile.debug}"
+			   optimize="${value.compile.optimize}" />
 	</target>
 
 	<target name="tests">
 		  <mkdir dir="${test.classes.dir}" />
-	    <javac nowarn="on"
-		   srcdir="${test.src.dir}"
-		   destdir="${test.classes.dir}"
-	           classpathref="classpath"
-	           bootclasspathref="classpath"
-		   />
+	    <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}"
+	           classpathref="classpath" />
 	  </target>
 
 	<target name="jar" depends="clean, compile">
@@ -57,5 +52,13 @@
 	</target>
 
 	<target name="all" depends="jar, tests" />
+	
+	<!-- this makes eclipse happy to have everything in one place -->
+	<target name="eclipse" depends="all" >
+		<copy todir="${build.dir}">
+		    <fileset dir="${classes.dir}" />
+			<fileset dir="${test.classes.dir}" />
+		  </copy>
+	</target>
 	
 </project>
