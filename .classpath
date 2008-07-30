@@ -3,7 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/escher"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenJDK"/>
-	<classpathentry kind="lib" path="/home/neugens/work_space/Eclipse/openjdk/binary_blobs/openjdk-binary-plugs/jre/lib/rt-closed.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/DebugJDK Packaged"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
