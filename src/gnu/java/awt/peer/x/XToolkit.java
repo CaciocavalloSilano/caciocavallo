@@ -38,6 +38,10 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
+import gnu.java.awt.peer.swing.SwingButtonPeer;
+import gnu.java.awt.peer.swing.SwingMenuBarPeer;
+import gnu.java.awt.peer.swing.SwingMenuPeer;
+
 import java.awt.AWTException;
 import java.awt.Button;
 import java.awt.Checkbox;
@@ -115,8 +119,7 @@ public class XToolkit
   @Override
   public ButtonPeer createButton(Button target)
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return new SwingButtonPeer(target);
   }
 
   @Override
@@ -197,15 +200,13 @@ public class XToolkit
   @Override
   public MenuBarPeer createMenuBar(MenuBar target)
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return new SwingMenuBarPeer(target);
   }
 
   @Override
   public MenuPeer createMenu(Menu target)
   {
-    // TODO: Implement this.
-    throw new UnsupportedOperationException("Not yet implemented.");
+    return new SwingMenuPeer(target);
   }
 
   @Override
@@ -335,7 +336,7 @@ public class XToolkit
   {
     // TODO Auto-generated method stub
     System.err.println("XToolkit::createKeyboardFocusManagerPeer: !!!IMPLEMENT ME!!!");
-    return null;
+    return new EscherKeyboardFocusManager(manager);
   }
 
   @Override
