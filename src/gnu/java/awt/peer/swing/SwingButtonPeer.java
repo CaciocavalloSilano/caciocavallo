@@ -194,6 +194,7 @@ public class SwingButtonPeer
      */
     public void handleFocusEvent(FocusEvent ev)
     {
+      ev.setSource(this);
       processFocusEvent(ev);
     }
 
