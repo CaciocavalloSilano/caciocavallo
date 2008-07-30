@@ -188,7 +188,7 @@ public class XWindowPeer
 
   public Point getLocationOnScreen()
   {
-    return new Point(xwindow.x, xwindow.y);
+    return new Point(xwindow.x - insets.left, xwindow.y - insets.top);
   }
 
   /**
