@@ -13,7 +13,7 @@ public class EscherFontManager
   @Override
   public String getFontPath(boolean noType1Fonts)
   {
-    return "/usr/share/fonts/truetype/freefont/";
+    return "/usr/share/fonts/freefont/";
   }
 
   @Override

@@ -4,12 +4,12 @@ Project Caciocavallo - Classpath Escher Peer inside OpenJDK
 Introduction
 ------------
 
-Caciocavallo, as the name imply, is a project to port the Classpath peer
-to OpenJDK.
+Caciocavallo, as the name imply, is a project to port the Classpath
+peer to OpenJDK.
 
-As of March 17, 2008 (well, more or less), Caciocavallo was selected as a
-finalist to the OpenJDK challenge, so we have a cool new website with nothing
-in it :)
+As of March 17, 2008 (well, more or less), Caciocavallo was selected
+as a finalist to the OpenJDK challenge (so we have a cool new website
+with nothing in it :):
 
 http://openjdk.java.net/projects/caciocavallo/
 
@@ -20,44 +20,55 @@ http://mail.openjdk.java.net/pipermail/challenge-discuss/2008-March/000082.html
 Build
 -----
 
-To build project Caciocavallo you need first a recent build of OpenJDK or
-IcedTea. Caciocavallo requires the use of Sun internal classes, so chances
-are that it will not even compile with anything different than the latest
-releases.
-
-The patches to the OpenJDK tree are not included in this source, so
-you need to get them and apply them to the newly cloned jdk tree.
-
-The patches reside now in the caciocavallo repository on the
-OpenJDK website:
+To build project Caciocavallo you need first a recent build of OpenJDK
+or IcedTea. Caciocavallo requires the use of Sun internal classes, so
+chances are that it will not even compile. The latest version known to
+work is TIP b7474b739d13. You can clone this tip from the OpenJDK
+website and then apply the needed patches. The patches are not
+included in this source, so you need to get them by cloning this repository:
 
 http://hg.openjdk.java.net/caciocavallo/caciocavallo/
 
-Once you have a fresh checkout of OpenJDK you need to appy the patches and then
-do a complete build.
+We maintain a branch of the OpenJDK mercurial forest with patches already
+applied here:
+
+http://kennke.org/~hg/openjdk-tip-b7474b739d13-caciocavallo-branch/
 
 For Caciocavallo, the ant build included should work on Eclipse or
-NetBeans as well, and is provided for your hacking pleasure. We maintain it, though
-we really think that real hackers use butterflies (http://xkcd.com/378/)...
-Nevertheless, if you don't want to wait for a butterfly to come (and if you are in
-Germany, you could wait a very long time) the ant script shoudl just work.
+NetBeans as well, and is provided for your hacking pleasure. We
+maintain it, though we really think that real hackers use butterflies
+(http://xkcd.com/378/)...  Nevertheless, if you don't want to wait for
+a butterfly to come (and if you are in Germany, you could wait a very
+long time...) the ant script should just work.
 
-So long... to compile you need to set the jvm path first, like:
+So long... to compile you can just type "ant jar" on the command line.
 
-JAVA_HOME=/path/to/your/patched/openjdk/build/linux-i586/j2sdk-image/ ant
+There is a build.properties file that needs tweaking with the same
+path, where you need to pass a couple of options. As an alternative,
+you can create and edit user.properties in the root directory of the
+project. This is handy because it's not tracked by mercurial, so you
+don't need to continually merge it if you frequently try to sync with our
+tree.
 
-IDEs should do that for you, otherwise you will need some tweaking.
+This is what is needed by ant:
 
-There is a build.properties file that needs tweaking with the same path.
-The reason is that ant needs to know the path to the jvm before reding the build.xml,
-or you will get various error related to the internal classes.
+escher=../escher/dist/escher-0.3.jar
+openjdk=../openjdk/build/linux-i586-debug/
 
-Escher is used to connect to the XServer.  We are trying hard to make Escher and
-Caciocavallo in sync, so that you can simply grab the latest sources from here:
+Just adjust with the correct paths on your configuration.
+
+Escher is used to connect to the XServer.  We are trying hard to make
+Escher and Caciocavallo in sync, so that you can simply grab the
+latest sources from here:
 
 http://escher.sourceforge.net/hg/escher-trunk (just clone)
 
-Again, tweak the build.properties to point to the correct position of the jar files.
+For the sake of the project, we maintain a branch of escher too:
+
+http://kennke.org/~hg/escher-trunk/
+
+Again, tweak the build.properties to point to the correct position of
+the jar files.
 
 Test
 ----
@@ -80,11 +91,13 @@ MAIN=gnu.classpath.examples.swing.Demo
 $OPENJDK_DIR/bin/java -Xbootclasspath/a:$BOOTCLASSPATH -Dswing.metalTheme=steel -Dawt.toolkit=$TOOLKIT -Djava.awt.graphicsenv=$GRAPHICSENV -Dsun.font.fontmanager=$FONT_MANAGER -cp $CLASSPATH $MAIN
 --- cut ---
 
-if you have your X server setted up to prevent TCP connections (a sane thing!) you will get a
-Connection Refused Exception, at least until we finish to port the Unix Domain Socket
-implementation from Classpath, so you may need Xephyr or some other nested XServer.
+if you have your X server setted up to prevent TCP connections (a sane
+thing!) you will get a Connection Refused Exception, at least until we
+finish to port the Unix Domain Socket implementation from Classpath,
+so you may need Xephyr or some other nested XServer.
 
-You may also need issue an xhost + 127.0.0.1 to address a random bug in escher.
+You may also need issue an xhost + 127.0.0.1 to address a random bug
+in escher.
 
 It's pretty much everything for now, but stay tuned for other cool
 stuff :)
