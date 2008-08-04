@@ -42,6 +42,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
@@ -120,6 +121,8 @@ public class XWindowPeer
     
     dev.getEventPump().registerWindow(xwindow, window);
     xwindow.set_wm_delete_window();
+    
+    awtComponent.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
     
     boolean undecorated;
     if (awtComponent instanceof Frame)
