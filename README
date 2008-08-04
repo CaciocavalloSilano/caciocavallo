@@ -1,15 +1,13 @@
-Project Caciocavallo - Classpath Escher Peer inside OpenJDK
+Project Caciocavallo - Portable GUI backends for OpenJDK
 -----------------------------------------------------------
 
 Introduction
 ------------
 
-Caciocavallo, as the name imply, is a project to port the Classpath peer
-to OpenJDK.
-
-As of March 17, 2008 (well, more or less), Caciocavallo was selected as a
-finalist to the OpenJDK challenge, so we have a cool new website with nothing
-in it :)
+Caciocavallo - Portable GUI backends is one of the finalists of the
+OpenJDK Innovators Challenge. As of March 17, 2008 (well, more or
+less), Caciocavallo was selected as a finalist to the OpenJDK
+challenge, so we have a cool new website with nothing in it :)
 
 http://openjdk.java.net/projects/caciocavallo/
 
