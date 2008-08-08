@@ -1,20 +1,20 @@
-/* XWindowPeer.java -- Window peer for X
-   Copyright (C) 2006 Free Software Foundation, Inc.
+/* XWindowPeer.java
+   Copyright (C) 2008 Mario Torre and Roman Kennke
 
-This file is part of GNU Classpath.
+This file is part of the Caciocavallo project.
 
-GNU Classpath is free software; you can redistribute it and/or modify
+Caciocavallo is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)
 any later version.
 
-GNU Classpath is distributed in the hope that it will be useful, but
+Caciocavallo is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with GNU Classpath; see the file COPYING.  If not, write to the
+along with Caciocavallo; see the file COPYING.  If not, write to the
 Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301 USA.
 
@@ -34,7 +34,6 @@ or based on this library.  If you modify this library, you may extend
 this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
-
 
 package gnu.java.awt.peer.x;
 
@@ -215,18 +214,14 @@ public class XWindowPeer
 
   public Image createImage(int w, int h)
   {
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice gd = ge.getDefaultScreenDevice();
-    GraphicsConfiguration gc = gd.getDefaultConfiguration();
+    GraphicsConfiguration gc = awtComponent.getGraphicsConfiguration();
     return gc.createCompatibleImage(w, h);
   }
 
   @Override
   public VolatileImage createVolatileImage(int width, int height)
   {
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice gd = ge.getDefaultScreenDevice();
-    GraphicsConfiguration gc = gd.getDefaultConfiguration();
+    GraphicsConfiguration gc = awtComponent.getGraphicsConfiguration();
     return gc.createCompatibleVolatileImage(width, height);
   }
 
