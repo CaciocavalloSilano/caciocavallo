@@ -150,7 +150,7 @@ class EscherBlitLoops
             for (int x = sx; x < sx + w; x++)
               {
                 int rgb = bufImg.getRGB(x, y);
-                pm.set(x, y, rgb);
+                pm.set(x - sx, y - sy, rgb);
               }
           }
         d.put_image(gc, pm, dx, dy);
