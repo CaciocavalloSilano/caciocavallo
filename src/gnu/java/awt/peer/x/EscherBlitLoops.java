@@ -68,7 +68,8 @@ class EscherBlitLoops
 //                            XDrawableSurfaceData.EscherIntRgb, false),
         new EscherBlitLoops(XDrawableSurfaceData.EscherIntRgb,
                             XDrawableSurfaceData.EscherIntRgb, true),
-        new EscherBlitLoops(SurfaceType.Any, XDrawableSurfaceData.EscherIntRgb, true)
+        new EscherBlitLoops(SurfaceType.Any, XDrawableSurfaceData.EscherIntRgb, true),
+        new EscherBlitLoops(SurfaceType.Any, XDrawableSurfaceData.EscherIntRgb, false)
       };
       GraphicsPrimitiveMgr.register(primitives);
   }
