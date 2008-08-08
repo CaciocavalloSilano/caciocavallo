@@ -269,7 +269,7 @@ public class XEventPump
     
     ComponentEvent ce =
       new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
-    awtWindow.dispatchEvent(ce);
+    postEvent(ce);
   }
   
   private void handleConfigureNotify(ConfigureNotify event)
@@ -316,7 +316,7 @@ public class XEventPump
   
     ComponentEvent ce =
       new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
-    awtWindow.dispatchEvent(ce);
+    postEvent(ce);
     
     PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.UPDATE, r);
     postEvent(pev);
