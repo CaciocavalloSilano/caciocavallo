@@ -172,11 +172,13 @@ public class XEventPump
       button = 0;
     drag = button;
 
+    Insets i = awtWindow.getInsets();
     MouseEvent mp = new MouseEvent(awtWindow, MouseEvent.MOUSE_PRESSED,
                                    System.currentTimeMillis(),
                                    KeyboardMapping.mapModifiers(event.getState())
                                      | buttonToModifier(button),
-                                   event.getEventX(), event.getEventY(),
+                                   event.getEventX() + i.left,
+                                   event.getEventY() + i.top,
                                    1, false, button);
     postEvent(mp);
   }
@@ -193,11 +195,13 @@ public class XEventPump
       button = 0;
     drag = -1;
     
+    Insets i = awtWindow.getInsets();
     MouseEvent mr = new MouseEvent(awtWindow, MouseEvent.MOUSE_RELEASED,
                                    System.currentTimeMillis(),
                                    KeyboardMapping.mapModifiers(event.getState())
                                      | buttonToModifier(button),
-                                   event.getEventX(), event.getEventY(),
+                                   event.getEventX() + i.left,
+                                   event.getEventY() + i.top,
                                    1, false, button);
     postEvent(mr);
   }
@@ -214,13 +218,15 @@ public class XEventPump
       button = 0;
 
     MouseEvent mm = null;
+    Insets i = awtWindow.getInsets();
     if (drag == -1)
       {
         mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_MOVED,
                             System.currentTimeMillis(),
                             KeyboardMapping.mapModifiers(event.getState())
                               | buttonToModifier(button),
-                            event.getEventX(), event.getEventY(),
+                            event.getEventX() + i.left,
+                            event.getEventY() + i.top,
                             1, false);
 
       }
@@ -236,17 +242,13 @@ public class XEventPump
     postEvent(mm);
   }
   
-  private void clearWindow(Window awtWindow, int width, int height)
+  private void clearWindow(Window awtWindow, int x, int y, int w, int h)
   {
     XWindowPeer xwindow = (XWindowPeer) awtWindow.getPeer();
     Insets i = xwindow.insets();
-    if (width != awtWindow.getWidth() - i.left - i.right
-        || height != awtWindow.getHeight() - i.top - i.bottom)
+    if (w != awtWindow.getWidth() - i.left - i.right
+        || h != awtWindow.getHeight() - i.top - i.bottom)
       {
-        int w = width;
-        int h = height;
-        int x = xwindow.xwindow.x;
-        int y = xwindow.xwindow.y;
         
         if (XToolkit.DEBUG)
           System.err.println("Setting size on AWT window: " + w
@@ -257,8 +259,8 @@ public class XEventPump
         xwindow.callback = true;
         xwindow.xwindow.width = w;
         xwindow.xwindow.height = h;
-        awtWindow.setSize(width + i.left + i.right,
-                          height + i.top + i.bottom);
+        awtWindow.setBounds(x - i.left, y - i.top, w + i.left + i.right,
+                            h + i.top + i.bottom);
         xwindow.callback = false;
         
         // reshape the window
@@ -281,8 +283,8 @@ public class XEventPump
       System.err.println("resize request for window id: " + key);
 
     // Detect and report size changes.
-    this.clearWindow(awtWindow, event.width(), event.height());
-    
+    this.clearWindow(awtWindow, event.x(), event.y(), event.width(), event.height());
+
     Rectangle r = awtWindow.getBounds();
     
     ComponentEvent ce =
@@ -312,7 +314,7 @@ public class XEventPump
     g.clearRect(r.x, r.y, r.width, r.height);
     g.dispose();
     
-    this.clearWindow(awtWindow, event.width(), event.height());
+    this.clearWindow(awtWindow, event.x(), event.y(), event.width(), event.height());
   
     ComponentEvent ce =
       new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
