@@ -61,6 +61,7 @@ import sun.java2d.SurfaceData;
 import sun.java2d.loops.SurfaceType;
 
 import gnu.x11.Atom;
+import gnu.x11.Drawable;
 import gnu.x11.Window;
 import gnu.x11.event.Event;
 
@@ -190,7 +191,9 @@ public class XWindowPeer
 
   public Point getLocationOnScreen()
   {
-    return new Point(xwindow.x - insets.left, xwindow.y - insets.top);
+    Drawable.GeometryInfo geoInfo = xwindow.get_geometry();
+    Point p = new Point(geoInfo.x - insets.left, geoInfo.y - insets.top);
+    return p;
   }
 
   /**
@@ -258,7 +261,7 @@ public class XWindowPeer
                                              Window.MAX_WM_LENGTH);
     if (p.format() != 0)
       {
-        insets = new Insets(p.value(0), p.value(1), p.value(2), p.value(3));
+        insets = new Insets(p.value(2), p.value(0), p.value(3), p.value(1));
         Window.Changes ch = new Window.Changes();
         ch.width(awtComponent.getWidth() - insets.left - insets.top);
         ch.height(awtComponent.getHeight() - insets.top - insets.bottom);
