@@ -28,12 +28,36 @@ package sun.awt.peer.cacio;
 import java.awt.AWTEvent;
 import java.awt.Component;
 
+/**
+ * The public interface to some functionality of the component peers. This
+ * can be used by {@link PlatformWindow} implementations to get some
+ * information from the peers.
+ */
 public interface CacioComponent {
 
+    /**
+     * Returns the AWT component of the component.
+     *
+     * @return the AWT component of the component
+     */
     Component getAWTComponent();
 
+    /**
+     * Returns the platform dependend native window implementation of the
+     * component.
+     *
+     * @return the platform dependend native window implementation of the
+     *         component
+     */
     PlatformWindow getPlatformWindow();
 
+    /**
+     * Handle events that come from the platform window. This is called by
+     * the PlatformWindow implementation to pass AWT events to the peer and
+     * to AWT itself.
+     *
+     * @param event the event to feed into AWT
+     */
     void handlePeerEvent(AWTEvent event);
 
 }
