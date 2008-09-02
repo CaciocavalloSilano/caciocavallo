@@ -43,10 +43,6 @@ import javax.swing.JComponent;
 
 class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
 
-    public CacioButtonPeer(Component awtC, PlatformWindowFactory pwf) {
-        super(awtC, pwf);
-    }
-
     /**
      * A specialized Swing button to be used as AWT button.
      *
@@ -232,6 +228,7 @@ class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
         button.setText(theButton.getLabel());
         button.addActionListener(new SwingButtonListener());
         setSwingComponent(button);
+        button.addNotify();
     }
 
     /**
