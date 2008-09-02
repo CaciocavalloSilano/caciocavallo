@@ -188,6 +188,7 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
         swingLabel.setOpaque(true);
         setSwingComponent(swingLabel);
         setAlignment(label.getAlignment());
+        swingLabel.addNotify();
     }
 
     /**

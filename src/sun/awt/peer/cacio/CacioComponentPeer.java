@@ -39,6 +39,9 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
 import java.awt.image.ColorModel;
 import java.awt.image.ImageObserver;
@@ -232,11 +235,75 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
                 }
             }
           break;
+        case MouseEvent.MOUSE_PRESSED:
+        case MouseEvent.MOUSE_RELEASED:
+        case MouseEvent.MOUSE_CLICKED:
+        case MouseEvent.MOUSE_ENTERED:
+        case MouseEvent.MOUSE_EXITED:
+          handleMouseEvent((MouseEvent) e);
+          break;
+        case MouseEvent.MOUSE_MOVED:
+        case MouseEvent.MOUSE_DRAGGED:
+          handleMouseMotionEvent((MouseEvent) e);
+          break;
+        case KeyEvent.KEY_PRESSED:
+        case KeyEvent.KEY_RELEASED:
+        case KeyEvent.KEY_TYPED:
+          handleKeyEvent((KeyEvent) e);
+          break;
+        case FocusEvent.FOCUS_GAINED:
+        case FocusEvent.FOCUS_LOST:
+          handleFocusEvent((FocusEvent)e);
+          break;
         default:
           // Other event types are not handled here.
           break;
         }
 
+    }
+
+    /**
+     * Handles mouse events on the component. This is usually forwarded to the
+     * SwingComponent's processMouseEvent() method.
+     *
+     * @param e the mouse event
+     */
+    private void handleMouseEvent(MouseEvent e) {
+        if (swingComponent != null)
+            swingComponent.handleMouseEvent(e);
+    }
+
+    /**
+     * Handles mouse motion events on the component. This is usually forwarded
+     * to the SwingComponent's processMouseMotionEvent() method.
+     *
+     * @param e the mouse motion event
+     */
+    private void handleMouseMotionEvent(MouseEvent e) {
+        if (swingComponent != null)
+            swingComponent.handleMouseMotionEvent(e);
+    }
+
+    /**
+     * Handles key events on the component. This is usually forwarded to the
+     * SwingComponent's processKeyEvent() method.
+     *
+     * @param e the key event
+     */
+    private void handleKeyEvent(KeyEvent e) {
+        if (swingComponent != null)
+            swingComponent.handleKeyEvent(e);
+    }
+
+    /**
+     * Handles focus events on the component. This is usually forwarded to the
+     * SwingComponent's processFocusEvent() method.
+     *
+     * @param e the key event
+     */
+    private void handleFocusEvent(FocusEvent e) {
+        if (swingComponent != null)
+            swingComponent.handleFocusEvent(e);
     }
 
     private void peerPaint(Graphics g, boolean update) {
@@ -358,8 +425,9 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     public void setEnabled(boolean b) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.setEnabled");
+        if (swingComponent != null) {
+            swingComponent.getJComponent().setEnabled(b);
+        }
 
     }
 
