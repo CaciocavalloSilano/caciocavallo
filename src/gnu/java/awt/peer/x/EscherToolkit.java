@@ -28,7 +28,9 @@ package gnu.java.awt.peer.x;
 import java.awt.AWTException;
 import java.awt.Desktop;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.PrintJob;
 import java.awt.Robot;
@@ -55,6 +57,8 @@ import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
 public class EscherToolkit extends CacioToolkit {
+
+    static final boolean DEBUG = false; 
 
     private PlatformWindowFactory platformWindowFactory;
 
@@ -156,8 +160,8 @@ public class EscherToolkit extends CacioToolkit {
 
     @Override
     public ColorModel getColorModel() throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO: I assume 24 bit depth here, we can do this better.
+        return ColorModel.getRGBdefault();
     }
 
     @Override
@@ -168,8 +172,12 @@ public class EscherToolkit extends CacioToolkit {
 
     @Override
     public int getScreenResolution() throws HeadlessException {
-        // TODO Auto-generated method stub
-        return 0;
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        GraphicsConfiguration gc = gd.getDefaultConfiguration();
+        XGraphicsConfiguration xgc = (XGraphicsConfiguration) gc;
+
+        return xgc.getResolution();
     }
 
     @Override

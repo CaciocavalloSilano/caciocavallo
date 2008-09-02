@@ -149,7 +149,7 @@ public class XEventPump
    */
   void registerWindow(gnu.x11.Window xWindow, CacioComponent cacioComponent)
   {
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("registering window id: " + xWindow.id);
     windows.put(new Integer(xWindow.id), cacioComponent);
   }
@@ -299,7 +299,7 @@ public class XEventPump
     CacioComponent cacioComponent = windows.get(key);
     Component awtComponent = cacioComponent.getAWTComponent();
 
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("resize request for window id: " + key);
 
     // Detect and report size changes.
@@ -315,7 +315,7 @@ public class XEventPump
     CacioComponent cacioComponent = windows.get(key);
     Component awtComponent = cacioComponent.getAWTComponent();
 
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("expose request for window id: " + key);
     
     Rectangle r = new Rectangle(event.x(), event.y(), event.width(),
@@ -333,7 +333,7 @@ public class XEventPump
     
   private void handleDestroyNotify(DestroyNotify destroyNotify)
   {
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("DestroyNotify event: " + destroyNotify);
     
     Integer key = new Integer(destroyNotify.event_window_id);
@@ -348,12 +348,12 @@ public class XEventPump
   
   private void handleClientMessage(ClientMessage clientMessage)
   {
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("ClientMessage event: " + clientMessage);
     
     if (clientMessage.delete_window())
       {
-        if (XToolkit.DEBUG)
+        if (EscherToolkit.DEBUG)
           System.err.println("ClientMessage is a delete_window event");
         
         Integer key = new Integer(clientMessage.window_id);
@@ -372,7 +372,7 @@ public class XEventPump
     Integer key = null;
     CacioComponent cacioComponent = null;
 
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("fetched event: " + xEvent);
     
     switch (xEvent.code() & 0x7f)
@@ -415,7 +415,7 @@ public class XEventPump
       this.handleConfigureNotify((ConfigureNotify) xEvent);
       break;
     default:
-      if (XToolkit.DEBUG)
+      if (EscherToolkit.DEBUG)
         System.err.println("Unhandled X event: " + xEvent);
     }
   }
@@ -436,7 +436,7 @@ public class XEventPump
                                                xMods);
     char keyChar = KeyboardMapping.mapToKeyChar(xEvent.display.input, xKeyCode,
                                                 xMods);
-    if (XToolkit.DEBUG)
+    if (EscherToolkit.DEBUG)
       System.err.println("XEventPump.handleKeyEvent: " + xKeyCode + ", "
                          + xMods + ": " + ((int) keyChar) + ", " + keyCode);
     int awtMods = KeyboardMapping.mapModifiers(xMods);
