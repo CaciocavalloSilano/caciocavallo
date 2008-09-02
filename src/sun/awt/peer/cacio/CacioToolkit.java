@@ -71,8 +71,7 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public ButtonPeer createButton(Button target) throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        return new CacioButtonPeer(target, getPlatformWindowFactory());
     }
 
     @Override
@@ -120,8 +119,7 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public LabelPeer createLabel(Label target) throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        return new CacioLabelPeer(target, getPlatformWindowFactory());
     }
 
     @Override

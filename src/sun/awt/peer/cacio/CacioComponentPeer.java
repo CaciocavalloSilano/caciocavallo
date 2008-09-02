@@ -77,6 +77,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     Component awtComponent;
 
     /**
+     * The backing Swing component. Some components don't have a backing
+     * swing component and leave that to <code>null</code>.
+     */
+    private CacioSwingComponent swingComponent;
+
+    /**
      * The underlying native platform window.
      */
     PlatformWindow platformWindow;
@@ -120,6 +126,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
             }
         }
         platformWindow = pwf.createPlatformWindow(this, parent);
+
+        initSwingComponent();
+    }
+
+    void initSwingComponent() {
+        // By default, do nothing.
     }
 
     /**
@@ -229,12 +241,20 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     private void peerPaint(Graphics g, boolean update) {
 
+        if (swingComponent != null) {
+            if (update) {
+                swingComponent.getJComponent().paint(g);
+            } else {
+                swingComponent.getJComponent().update(g);
+            }
+        }
         Graphics userGraphics = g.create();
         try {
-            if (update)
+            if (update) {
                 awtComponent.update(userGraphics);
-            else
+            } else {
                 awtComponent.paint(userGraphics);
+            }
         } finally {
             userGraphics.dispose();
         }
@@ -331,6 +351,9 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         platformWindow.setBounds(x, y, width, height, op);
 
+        if (swingComponent != null) {
+            swingComponent.getJComponent().setBounds(x, y, width, height);
+        }
     }
 
     public void setEnabled(boolean b) {
@@ -442,6 +465,19 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         return platformWindow.isObscured();
 
+    }
+
+    CacioSwingComponent getSwingComponent() {
+        return swingComponent;
+    }
+
+    /**
+     * Sets the swing component of this peer.
+     *
+     * @param swingComp the swing component to set
+     */
+    void setSwingComponent(CacioSwingComponent swingComp) {
+        swingComponent = swingComp;
     }
 
     public PlatformWindow getPlatformWindow() {
