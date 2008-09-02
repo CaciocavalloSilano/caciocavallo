@@ -34,9 +34,9 @@ import javax.swing.JComponent;
 interface CacioSwingComponent {
 
     /**
-     * Returns the actual swing compenent.
+     * Returns the actual swing component.
      *
-     * @return the actual swing compenent
+     * @return the actual swing component
      */
     JComponent getJComponent();
 
