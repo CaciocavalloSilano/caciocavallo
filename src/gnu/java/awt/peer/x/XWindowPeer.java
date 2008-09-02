@@ -119,7 +119,7 @@ public class XWindowPeer
     xwindow = new Window(dev.getDisplay().default_root, x, y, w, h, 0, atts);
     xwindow.select_input(standardSelect);
     
-    dev.getEventPump().registerWindow(xwindow, window);
+//    dev.getEventPump().registerWindow(xwindow, window);
     xwindow.set_wm_delete_window();
     
     awtComponent.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));

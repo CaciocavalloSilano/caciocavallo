@@ -38,10 +38,11 @@ exception statement from your version. */
 package gnu.java.awt.peer.x;
 
 import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -51,10 +52,9 @@ import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 import sun.awt.AWTAutoShutdown;
-import sun.awt.AppContext;
-import sun.awt.SunToolkit;
+import sun.awt.event.ComponentReshapeEvent;
+import sun.awt.peer.cacio.CacioComponent;
 
-import gnu.java.util.ComponentReshapeEvent;
 import gnu.x11.Display;
 import gnu.x11.event.ButtonPress;
 import gnu.x11.event.ButtonRelease;
@@ -88,7 +88,7 @@ public class XEventPump
    * Maps X Windows to AWT Windows to be able to correctly determine the
    * event targets.
    */
-  private HashMap windows;
+  private HashMap<Integer,CacioComponent> windows;
 
   /**
    * Indicates if we are currently inside a drag operation. This is
@@ -105,7 +105,7 @@ public class XEventPump
   XEventPump(Display d)
   {
     display = d;
-    windows = new HashMap();
+    windows = new HashMap<Integer,CacioComponent>();
     drag = -1;
     Thread thread = new Thread(this, "X Event Pump");
     thread.setDaemon(true);
@@ -147,11 +147,11 @@ public class XEventPump
    * @param xWindow the X Window
    * @param awtWindow the AWT Window
    */
-  void registerWindow(gnu.x11.Window xWindow, Window awtWindow)
+  void registerWindow(gnu.x11.Window xWindow, CacioComponent cacioComponent)
   {
     if (XToolkit.DEBUG)
       System.err.println("registering window id: " + xWindow.id);
-    windows.put(new Integer(xWindow.id), awtWindow);
+    windows.put(new Integer(xWindow.id), cacioComponent);
   }
 
   void unregisterWindow(gnu.x11.Window xWindow)
@@ -162,7 +162,7 @@ public class XEventPump
   private void handleButtonPress(ButtonPress event)
   {
     Integer key = new Integer(event.getEventWindowID());
-    Window awtWindow = (Window) windows.get(key);
+    CacioComponent cacioComponent = windows.get(key);
 
     // Create and post the mouse event.
     int button = event.detail();
@@ -172,21 +172,23 @@ public class XEventPump
       button = 0;
     drag = button;
 
-    Insets i = awtWindow.getInsets();
-    MouseEvent mp = new MouseEvent(awtWindow, MouseEvent.MOUSE_PRESSED,
+    Insets i = getComponentInsets(cacioComponent);
+    Component awtComponent = cacioComponent.getAWTComponent();
+    MouseEvent mp = new MouseEvent(awtComponent, MouseEvent.MOUSE_PRESSED,
                                    System.currentTimeMillis(),
                                    KeyboardMapping.mapModifiers(event.getState())
                                      | buttonToModifier(button),
                                    event.getEventX() + i.left,
                                    event.getEventY() + i.top,
                                    1, false, button);
-    postEvent(mp);
+    postEvent(cacioComponent, mp);
   }
   
   private void handleButtonRelease(ButtonRelease event)
   {
     Integer key = new Integer(event.getEventWindowID());
-    Window awtWindow = (Window) windows.get(key);
+    CacioComponent cacioComponent = windows.get(key);
+    Component awtComp = cacioComponent.getAWTComponent();
 
     int button = event.detail();
     
@@ -195,21 +197,22 @@ public class XEventPump
       button = 0;
     drag = -1;
     
-    Insets i = awtWindow.getInsets();
-    MouseEvent mr = new MouseEvent(awtWindow, MouseEvent.MOUSE_RELEASED,
+    Insets i = getComponentInsets(cacioComponent);
+    MouseEvent mr = new MouseEvent(awtComp, MouseEvent.MOUSE_RELEASED,
                                    System.currentTimeMillis(),
                                    KeyboardMapping.mapModifiers(event.getState())
                                      | buttonToModifier(button),
                                    event.getEventX() + i.left,
                                    event.getEventY() + i.top,
                                    1, false, button);
-    postEvent(mr);
+    postEvent(cacioComponent, mr);
   }
   
   private void handleMotionNotify(MotionNotify event)
   {
     Integer key = new Integer(event.getEventWindowID());
-    Window awtWindow = (Window) windows.get(key);
+    CacioComponent cacioComponent = windows.get(key);
+    Component awtComponent = cacioComponent.getAWTComponent();
 
     int button = event.detail();
     
@@ -218,10 +221,11 @@ public class XEventPump
       button = 0;
 
     MouseEvent mm = null;
-    Insets i = awtWindow.getInsets();
+    Insets i = getComponentInsets(cacioComponent);
+
     if (drag == -1)
       {
-        mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_MOVED,
+        mm = new MouseEvent(awtComponent, MouseEvent.MOUSE_MOVED,
                             System.currentTimeMillis(),
                             KeyboardMapping.mapModifiers(event.getState())
                               | buttonToModifier(button),
@@ -232,67 +236,75 @@ public class XEventPump
       }
     else
       {
-        mm = new MouseEvent(awtWindow, MouseEvent.MOUSE_DRAGGED,
+        mm = new MouseEvent(awtComponent, MouseEvent.MOUSE_DRAGGED,
                             System.currentTimeMillis(),
                             KeyboardMapping.mapModifiers(event.getState())
                               | buttonToModifier(drag),
                             event.getEventX(), event.getEventY(),
                             1, false);
       }
-    postEvent(mm);
+    postEvent(cacioComponent, mm);
   }
   
-  private void clearWindow(Window awtWindow, int x, int y, int w, int h)
+  private void clearWindow(CacioComponent cacioComponent, int x, int y, int w, int h)
   {
-    XWindowPeer xwindow = (XWindowPeer) awtWindow.getPeer();
-    Insets i = xwindow.insets();
-    if (w != awtWindow.getWidth() - i.left - i.right
-        || h != awtWindow.getHeight() - i.top - i.bottom)
-      {
-        
-        if (XToolkit.DEBUG)
-          System.err.println("Setting size on AWT window: " + w
-                           + ", " + h + ", " + awtWindow.getWidth()
-                           + ", " + awtWindow.getHeight());
-        
-        // new width and height
-        xwindow.callback = true;
-        xwindow.xwindow.width = w;
-        xwindow.xwindow.height = h;
-        awtWindow.setBounds(x - i.left, y - i.top, w + i.left + i.right,
-                            h + i.top + i.bottom);
-        xwindow.callback = false;
-        
-        // reshape the window
+    Component awtComponent = cacioComponent.getAWTComponent();
+
+    // Tell the AWT component about the new bounds without triggering any
+    // layout or event activity.
+    int compX = awtComponent.getX();
+    int compY = awtComponent.getY();
+    int compW = awtComponent.getWidth();
+    int compH = awtComponent.getHeight();
+    Insets i = getComponentInsets(cacioComponent);
+    boolean resized = false;
+    boolean moved = false;
+    if (compX + i.left != x || compY + i.top != y) {
+        moved = true;
+    }
+    if (compW - i.left - i.right != w || compH - i.top - i.bottom != h) {
+        resized = true;
+    }
+
+    if (resized || moved) {
         ComponentReshapeEvent cre =
-          new ComponentReshapeEvent(awtWindow, x, y, w, h);
-        awtWindow.dispatchEvent(cre);
-      }
+            new ComponentReshapeEvent(awtComponent, x - i.left, y - i.top,
+                                      w + i.left + i.right,
+                                      h + i.top + i.bottom);
+        postEvent(cacioComponent, cre);
+
+        ComponentEvent ce;
+        if (resized) {
+            ce = new ComponentEvent(awtComponent,
+                                    ComponentEvent.COMPONENT_RESIZED);
+            postEvent(cacioComponent, ce);
+        }
+        if (moved) {
+            ce = new ComponentEvent(awtComponent,
+                                    ComponentEvent.COMPONENT_RESIZED);
+            postEvent(cacioComponent, ce);
+        }
+
+        Rectangle r = awtComponent.getBounds();
+        PaintEvent pev = new PaintEvent(awtComponent, PaintEvent.UPDATE, r);
+        postEvent(cacioComponent, pev);
     
-    ComponentEvent ce =
-      new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
-    postEvent(ce);
+    }
+
   }
   
   private void handleConfigureNotify(ConfigureNotify event)
   {
     Integer key = new Integer(event.window_id);
-    Window awtWindow = (Window) windows.get(key);
-   
+    CacioComponent cacioComponent = windows.get(key);
+    Component awtComponent = cacioComponent.getAWTComponent();
+
     if (XToolkit.DEBUG)
       System.err.println("resize request for window id: " + key);
 
     // Detect and report size changes.
-    this.clearWindow(awtWindow, event.x(), event.y(), event.width(), event.height());
+    clearWindow(cacioComponent, event.x(), event.y(), event.width(), event.height());
 
-    Rectangle r = awtWindow.getBounds();
-    
-    ComponentEvent ce =
-      new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
-    postEvent(ce);
-    
-    PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.UPDATE, r);
-    postEvent(pev);
   }
   
   // FIME: refactor and make faster, maybe caching the event and handle
@@ -300,28 +312,23 @@ public class XEventPump
   private void handleExpose(Expose event)
   {
     Integer key = new Integer(event.window_id);
-    Window awtWindow = (Window) windows.get(key);
-    
+    CacioComponent cacioComponent = windows.get(key);
+    Component awtComponent = cacioComponent.getAWTComponent();
+
     if (XToolkit.DEBUG)
       System.err.println("expose request for window id: " + key);
     
     Rectangle r = new Rectangle(event.x(), event.y(), event.width(),
                                 event.height());
     // We need to clear the background of the exposed rectangle.
-    assert awtWindow != null : "awtWindow == null for window ID: " + key;
+    assert awtComponent != null : "awtWindow == null for window ID: " + key;
      
-    Graphics g = awtWindow.getGraphics();
+    Graphics g = awtComponent.getGraphics();
     g.clearRect(r.x, r.y, r.width, r.height);
     g.dispose();
-    
-    this.clearWindow(awtWindow, event.x(), event.y(), event.width(), event.height());
-  
-    ComponentEvent ce =
-      new ComponentEvent(awtWindow, ComponentEvent.COMPONENT_RESIZED);
-    postEvent(ce);
-    
-    PaintEvent pev = new PaintEvent(awtWindow, PaintEvent.UPDATE, r);
-    postEvent(pev);
+
+    PaintEvent pev = new PaintEvent(awtComponent, PaintEvent.UPDATE, r);
+    postEvent(cacioComponent, pev);
   }
     
   private void handleDestroyNotify(DestroyNotify destroyNotify)
@@ -330,10 +337,13 @@ public class XEventPump
       System.err.println("DestroyNotify event: " + destroyNotify);
     
     Integer key = new Integer(destroyNotify.event_window_id);
-    Window awtWindow = (Window) windows.get(key);
-    
-    AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_CLOSED);
-    postEvent(event);
+    CacioComponent cacioComponent = windows.get(key);
+    Component awtComp = cacioComponent.getAWTComponent();
+    if (awtComp instanceof Window) {
+        AWTEvent event = new WindowEvent((Window) awtComp,
+                                         WindowEvent.WINDOW_CLOSED);
+        postEvent(cacioComponent, event);
+    }
   }
   
   private void handleClientMessage(ClientMessage clientMessage)
@@ -347,18 +357,21 @@ public class XEventPump
           System.err.println("ClientMessage is a delete_window event");
         
         Integer key = new Integer(clientMessage.window_id);
-        Window awtWindow = (Window) windows.get(key);
-        
-        AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_CLOSING);
-        postEvent(event);
+        CacioComponent cacioComponent = windows.get(key);
+        Component awtComp = cacioComponent.getAWTComponent();
+        if (awtComp instanceof Window) {
+            AWTEvent event = new WindowEvent((Window) awtComp,
+                                             WindowEvent.WINDOW_CLOSING);
+            postEvent(cacioComponent, event);
+        }
       }
   }
     
   private void handleEvent(Event xEvent)
   {
     Integer key = null;
-    Window awtWindow = null;
-    
+    CacioComponent cacioComponent = null;
+
     if (XToolkit.DEBUG)
       System.err.println("fetched event: " + xEvent);
     
@@ -379,8 +392,8 @@ public class XEventPump
     case KeyPress.CODE:
     case KeyRelease.CODE:
       key = new Integer(((Input) xEvent).getEventWindowID());
-      awtWindow = (Window) windows.get(key);
-      handleKeyEvent(xEvent, awtWindow);
+      cacioComponent = windows.get(key);
+      handleKeyEvent(xEvent, cacioComponent);
       break;
     case DestroyNotify.CODE:
       this.handleDestroyNotify((DestroyNotify) xEvent);
@@ -390,9 +403,13 @@ public class XEventPump
       break;
     case PropertyNotify.CODE:
       key = new Integer (((PropertyNotify) xEvent).getWindowID());
-      awtWindow = (Window) windows.get(key);
-      AWTEvent event = new WindowEvent(awtWindow, WindowEvent.WINDOW_STATE_CHANGED);
-      postEvent(event);
+      cacioComponent = windows.get(key);
+      Component awtComponent = cacioComponent.getAWTComponent();
+      if (awtComponent instanceof Window) {
+          AWTEvent event = new WindowEvent((Window) awtComponent,
+                                           WindowEvent.WINDOW_STATE_CHANGED);
+          postEvent(cacioComponent, event);
+      }
       break;
     case ConfigureNotify.CODE:
       this.handleConfigureNotify((ConfigureNotify) xEvent);
@@ -409,8 +426,9 @@ public class XEventPump
    * @param xEvent the X event
    * @param awtWindow the AWT window to which the event gets posted
    */
-  private void handleKeyEvent(Event xEvent, Window awtWindow)
+  private void handleKeyEvent(Event xEvent, CacioComponent cacioComponent)
   {
+    Component awtComponent = cacioComponent.getAWTComponent();
     Input keyEvent = (Input) xEvent;
     int xKeyCode = keyEvent.detail();
     int xMods = keyEvent.getState();
@@ -426,25 +444,25 @@ public class XEventPump
     KeyEvent ke;
     if (keyEvent.code() == KeyPress.CODE)
       {
-        ke = new KeyEvent(awtWindow, KeyEvent.KEY_PRESSED, when,
+        ke = new KeyEvent(awtComponent, KeyEvent.KEY_PRESSED, when,
                           awtMods, keyCode,
                           KeyEvent.CHAR_UNDEFINED);
-        postEvent(ke);
+        postEvent(cacioComponent, ke);
         if (keyChar != KeyEvent.CHAR_UNDEFINED)
           {
-            ke = new KeyEvent(awtWindow, KeyEvent.KEY_TYPED, when,
+            ke = new KeyEvent(awtComponent, KeyEvent.KEY_TYPED, when,
                               awtMods, KeyEvent.VK_UNDEFINED,
                               keyChar);
-            postEvent(ke);
+            postEvent(cacioComponent, ke);
           }
           
       }
     else
       {
-        ke = new KeyEvent(awtWindow, KeyEvent.KEY_RELEASED, when,
+        ke = new KeyEvent(awtComponent, KeyEvent.KEY_RELEASED, when,
                           awtMods, keyCode,
                           KeyEvent.CHAR_UNDEFINED);
-        postEvent(ke);
+        postEvent(cacioComponent, ke);
       }
 
   }
@@ -468,8 +486,21 @@ public class XEventPump
     return 0;        
   }
 
-  private void postEvent(AWTEvent ev)
+  private void postEvent(CacioComponent cacioComponent, AWTEvent ev)
   {
-    SunToolkit.postEvent(AppContext.getAppContext(), ev);
+      cacioComponent.handlePeerEvent(ev);
+  }
+
+  private static final Insets EMPTY_INSETS = new Insets(0, 0, 0, 0);
+
+  private Insets getComponentInsets(CacioComponent cacioComp) {
+      Insets insets;
+      Component awtComp = cacioComp.getAWTComponent();
+      if (awtComp instanceof Container) {
+          insets = ((Container) awtComp).getInsets();
+      } else {
+          insets = EMPTY_INSETS;
+      }
+      return insets;
   }
 }
