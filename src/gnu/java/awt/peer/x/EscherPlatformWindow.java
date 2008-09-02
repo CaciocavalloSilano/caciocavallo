@@ -44,6 +44,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.PaintEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
@@ -174,8 +175,8 @@ class EscherPlatformWindow implements PlatformWindow {
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
-
+        XGraphicsDevice dev = EscherToolkit.getDefaultDevice();
+        dev.getEventPump().unregisterWindow(xwindow);
     }
 
     @Override
@@ -245,7 +246,7 @@ class EscherPlatformWindow implements PlatformWindow {
 
     @Override
     public Insets getInsets() {
-        return insets;
+        return (Insets) insets.clone();
     }
 
     @Override
@@ -270,9 +271,9 @@ class EscherPlatformWindow implements PlatformWindow {
       //xwindow.select_input(Event.NO_EVENT_MASK);
       //xwindow.select_input(noResizeRedirectSelect);
 
-      XGraphicsDevice dev = XToolkit.getDefaultDevice();
+      XGraphicsDevice dev = EscherToolkit.getDefaultDevice();
       xwindow.map();
-      EventQueue eq = XToolkit.getDefaultToolkit().getSystemEventQueue();
+      EventQueue eq = Toolkit.getDefaultToolkit().getSystemEventQueue();
       Component awtComponent = cacioComponent.getAWTComponent();
       if (awtComponent instanceof java.awt.Window) {
           java.awt.Window w = (java.awt.Window) awtComponent;
@@ -375,8 +376,7 @@ class EscherPlatformWindow implements PlatformWindow {
 
     @Override
     public void setTitle(String title) {
-        // TODO Auto-generated method stub
-        
+        xwindow.set_wm_name (title);
     }
 
 }

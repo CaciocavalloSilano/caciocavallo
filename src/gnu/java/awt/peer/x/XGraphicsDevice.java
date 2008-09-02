@@ -119,7 +119,7 @@ public class XGraphicsDevice
           {
             if (displayName.hostname.equals(""))
               displayName.hostname = "localhost";
-            if (XToolkit.DEBUG)
+            if (EscherToolkit.DEBUG)
               System.err.println("connecting to : " + displayName);
             // Try to connect via unix domain sockets when host == localhost.
             if ((displayName.hostname.equals("localhost")
