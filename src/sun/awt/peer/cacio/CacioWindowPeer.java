@@ -25,14 +25,19 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Window;
+import java.awt.event.FocusEvent;
+import java.awt.event.WindowEvent;
 import java.awt.peer.WindowPeer;
 
 class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
     CacioWindowPeer(Component awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
+        ((Window) awtC).setFocusableWindowState(true);
     }
 
     public void setAlwaysOnTop(boolean alwaysOnTop) {
@@ -56,8 +61,7 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
     }
 
     public void updateFocusableWindowState() {
-        // TODO Auto-generated method stub
-
+        // Nothing to do here for now.
     }
 
     public void updateIconImages() {
@@ -70,4 +74,14 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
     }
 
+    public void handlePeerEvent(AWTEvent ev) {
+        // If we receive a FOCUS_GAINED event, we also need to send a
+        // WINDOW_FOCUS_GAINED event.
+        if (ev.getID() == FocusEvent.FOCUS_GAINED) {
+            WindowEvent we = new WindowEvent((Window) getAWTComponent(),
+                                             WindowEvent.WINDOW_GAINED_FOCUS);
+            super.handlePeerEvent(we);
+        }
+        super.handlePeerEvent(ev);
+    }
 }

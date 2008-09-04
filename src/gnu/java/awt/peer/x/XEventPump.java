@@ -63,6 +63,7 @@ import gnu.x11.event.ConfigureNotify;
 import gnu.x11.event.DestroyNotify;
 import gnu.x11.event.Event;
 import gnu.x11.event.Expose;
+import gnu.x11.event.FocusIn;
 import gnu.x11.event.Input;
 import gnu.x11.event.KeyPress;
 import gnu.x11.event.KeyRelease;
@@ -297,7 +298,6 @@ public class XEventPump
   {
     Integer key = new Integer(event.window_id);
     CacioComponent cacioComponent = windows.get(key);
-    Component awtComponent = cacioComponent.getAWTComponent();
 
     if (EscherToolkit.DEBUG)
       System.err.println("resize request for window id: " + key);
@@ -414,10 +414,23 @@ public class XEventPump
     case ConfigureNotify.CODE:
       this.handleConfigureNotify((ConfigureNotify) xEvent);
       break;
+    case FocusIn.CODE:
+        this.handleFocusEvent((FocusIn) xEvent);
+        break;
     default:
       if (EscherToolkit.DEBUG)
         System.err.println("Unhandled X event: " + xEvent);
     }
+  }
+
+  private void handleFocusEvent(FocusIn focusEvent) {
+      Integer key = new Integer(focusEvent.getEventWindowID());
+      CacioComponent cacioComponent = windows.get(key);
+      Component awtComponent = cacioComponent.getAWTComponent();
+      java.awt.event.FocusEvent fe =
+          new java.awt.event.FocusEvent(awtComponent,
+                                       java.awt.event.FocusEvent.FOCUS_GAINED);
+      cacioComponent.handlePeerEvent(fe);
   }
 
   /**

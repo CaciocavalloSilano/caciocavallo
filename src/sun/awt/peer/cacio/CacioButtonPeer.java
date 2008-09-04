@@ -26,7 +26,6 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Button;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -40,6 +39,7 @@ import java.awt.peer.ButtonPeer;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
 
@@ -51,6 +51,7 @@ class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
     class SwingButton extends JButton implements CacioSwingComponent {
 
         Button button;
+        private boolean isFocused = false;
 
         SwingButton(Button button) {
             this.button = button;
@@ -151,21 +152,47 @@ class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
          * Handles key events by forwarding it to <code>processKeyEvent()</code>
          * after having retargetted it to this button.
          * 
-         * @param ev
-         *            the mouse event
+         * @param ev the mouse event
          */
         @Override
         public void handleKeyEvent(KeyEvent ev) {
             ev.setSource(this);
-            processKeyEvent(ev);
+            processKeyBindings(ev, ev.getID() == KeyEvent.KEY_PRESSED);
         }
 
+        /**
+         * We copy+paste this from JComponent to get into processKeyBinding,
+         * which is what we want really. But not the other stuff in
+         * processKeyBindings in JComponent.
+         */
+        void processKeyBindings(KeyEvent e, boolean pressed) {
+            // Get the KeyStroke
+            KeyStroke ks;
+
+            if (e.getID() == KeyEvent.KEY_TYPED) {
+                ks = KeyStroke.getKeyStroke(e.getKeyChar());
+            }
+            else {
+                ks = KeyStroke.getKeyStroke(e.getKeyCode(),e.getModifiers(),
+                                          (pressed ? false:true));
+            }
+
+            /* Do we have a key binding for e? */
+            processKeyBinding(ks, e, WHEN_FOCUSED, pressed);
+
+        }
         @Override
         public Container getParent() {
             Container par = null;
             if (button != null)
                 par = button.getParent();
             return par;
+        }
+
+        public void requestFocus() {
+            if (button != null) {
+                button.requestFocus();
+            }
         }
 
         /**
@@ -177,10 +204,13 @@ class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
          */
         @Override
         public void handleFocusEvent(FocusEvent ev) {
-            ev.setSource(this);
-            processFocusEvent(ev);
+            isFocused = ev.getID() == FocusEvent.FOCUS_GAINED;
+            repaint();
         }
 
+        public boolean hasFocus() {
+            return isFocused;
+        }
     }
 
     /**

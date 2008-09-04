@@ -19,6 +19,7 @@ public class TestComponents extends Canvas {
         f.add(new TestComponents());
         f.add(new Label("Hello World"));
         f.add(new Button("Hello button"));
+        f.add(new Button("Hello button2"));
         f.setSize(400, 600);
         f.setVisible(true);
     }
