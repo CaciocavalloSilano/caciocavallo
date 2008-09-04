@@ -184,18 +184,26 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     @Override
     public Dimension getMinimumSize() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.getMinimumSize");
-        return null;
+        Dimension min;
+        if (swingComponent != null) {
+            min = swingComponent.getJComponent().getMinimumSize();
+        } else {
+            min = new Dimension(0, 0);
+        }
+        return min;
 
     }
 
     @Override
     public Dimension getPreferredSize() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.getPreferredSize");
-        return null;
+        Dimension pref;
+        if (swingComponent != null) {
+            pref = swingComponent.getJComponent().getPreferredSize();
+        } else {
+            pref = new Dimension(0, 0);
+        }
+        return pref;
 
     }
 

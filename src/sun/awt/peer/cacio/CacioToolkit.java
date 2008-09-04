@@ -39,6 +39,7 @@ import java.awt.List;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.Panel;
 import java.awt.PopupMenu;
 import java.awt.ScrollPane;
 import java.awt.Scrollbar;
@@ -58,6 +59,7 @@ import java.awt.peer.ListPeer;
 import java.awt.peer.MenuBarPeer;
 import java.awt.peer.MenuItemPeer;
 import java.awt.peer.MenuPeer;
+import java.awt.peer.PanelPeer;
 import java.awt.peer.PopupMenuPeer;
 import java.awt.peer.ScrollPanePeer;
 import java.awt.peer.ScrollbarPeer;
@@ -82,8 +84,7 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public CheckboxPeer createCheckbox(Checkbox target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        return new CacioCheckboxPeer(target, getPlatformWindowFactory());
     }
 
     @Override
@@ -145,6 +146,11 @@ public abstract class CacioToolkit extends SunToolkit {
             throws HeadlessException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public PanelPeer createPanel(Panel target) {
+        return new CacioPanelPeer(target, getPlatformWindowFactory());
     }
 
     @Override
