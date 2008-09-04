@@ -51,6 +51,7 @@ import java.awt.image.ColorModel;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
+import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.peer.cacio.CacioComponent;
 import sun.awt.peer.cacio.PlatformWindow;
 import sun.java2d.SunGraphics2D;
@@ -68,6 +69,7 @@ class EscherPlatformWindow implements PlatformWindow {
                         // | Event.SUBSTRUCTURE_NOTIFY_MASK
                         | Event.KEY_PRESS_MASK | Event.KEY_RELEASE_MASK
                         // | Event.VISIBILITY_CHANGE_MASK //
+                        | Event.FOCUS_CHANGE_MASK
                         ;
 
     /**
@@ -377,6 +379,15 @@ class EscherPlatformWindow implements PlatformWindow {
     @Override
     public void setTitle(String title) {
         xwindow.set_wm_name (title);
+    }
+
+    public boolean requestFocus(Component lightweightChild, boolean temporary,
+                                boolean focusedWindowChangeAllowed, long time,
+                                Cause cause) {
+
+        xwindow.set_input_focus();
+
+        return true;
     }
 
 }

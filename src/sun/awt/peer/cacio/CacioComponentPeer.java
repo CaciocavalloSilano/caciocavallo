@@ -307,7 +307,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     }
 
     private void peerPaint(Graphics g, boolean update) {
-
+        
         if (swingComponent != null) {
             if (update) {
                 swingComponent.getJComponent().paint(g);
@@ -340,10 +340,13 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     @Override
     public boolean isFocusable() {
 
-        // TODO: Implement this correctly
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.isFocusable");
-        return false;
-
+        boolean ret;
+        if (swingComponent != null) {
+            ret = swingComponent.getJComponent().isFocusable();
+        } else {
+            ret = false;
+        }
+        return ret;
     }
 
     @Override
@@ -387,9 +390,9 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     public boolean requestFocus(Component lightweightChild, boolean temporary,
             boolean focusedWindowChangeAllowed, long time, Cause cause) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.requestFocus");
-        return false;
+        return platformWindow.requestFocus(lightweightChild, temporary,
+                                           focusedWindowChangeAllowed,
+                                           time, cause);
 
     }
 

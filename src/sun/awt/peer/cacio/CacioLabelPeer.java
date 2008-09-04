@@ -59,10 +59,6 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
             this.label = label;
         }
 
-        public void paint(Graphics g) {
-            super.paint(g);
-            System.out.println("CacioLabelPeer.paint: " + isShowing() + ", " + getBounds());
-        }
         /**
          * Returns this label.
          * 
@@ -231,4 +227,10 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
         }
     }
 
+    /**
+     * Swing labels are focusable, but AWT labels are not.
+     */
+    public boolean isFocusable() {
+        return false;
+    }
 }
