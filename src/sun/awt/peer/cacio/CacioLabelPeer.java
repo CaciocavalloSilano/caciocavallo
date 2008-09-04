@@ -43,11 +43,10 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
 
     public CacioLabelPeer(Component awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
-        // TODO Auto-generated constructor stub
     }
 
     /**
-     * A spezialized Swing label used to paint the label for the AWT Label. 
+     * A specialised Swing label used to paint the label for the AWT Label. 
      *
      * @author Roman Kennke (kennke@aicas.com)
      */
