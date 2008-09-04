@@ -2,11 +2,13 @@ package gnu.escher;
 
 import java.awt.Button;
 import java.awt.Canvas;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.Panel;
 
 public class TestComponents extends Canvas {
 
@@ -15,11 +17,15 @@ public class TestComponents extends Canvas {
      */
     public static void main(String[] args) {
         Frame f = new Frame();
-        f.setLayout(new GridLayout(2, 1));
+        f.setLayout(new GridLayout(0, 2));
         f.add(new TestComponents());
         f.add(new Label("Hello World"));
         f.add(new Button("Hello button"));
-        f.add(new Button("Hello button2"));
+        Panel p = new Panel();
+        p.add(new Button("Panel button"));
+        p.add(new Label("Panel label"));
+        f.add(p);
+        f.add(new Checkbox("Checkbox"));
         f.setSize(400, 600);
         f.setVisible(true);
     }
