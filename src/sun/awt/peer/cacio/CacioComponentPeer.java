@@ -502,7 +502,8 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     }
 
-    public void flip(BufferCapabilities.FlipContents flipAction) {
+    public void flip(int x1, int y1, int x2, int y2,
+                     BufferCapabilities.FlipContents flipAction) {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.flip");
