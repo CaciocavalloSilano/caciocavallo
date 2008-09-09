@@ -50,6 +50,7 @@ public class EscherFontConfiguration
   public EscherFontConfiguration(FontManager fm)
   {
     super(fm);
+    init();
   }
 
   @Override
