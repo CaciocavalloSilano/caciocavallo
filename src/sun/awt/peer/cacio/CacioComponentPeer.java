@@ -39,22 +39,28 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
+
 import java.awt.image.ColorModel;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.VolatileImage;
+
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
+
 import sun.awt.event.ComponentReshapeEvent;
+
 import sun.font.FontDesignMetrics;
+
 import sun.java2d.pipe.Region;
 
 /**
@@ -116,6 +122,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      * @param pwf
      */
     void init(PlatformWindowFactory pwf) {
+        
         // Figure out the heavyweight parent window.
         PlatformWindow parent = null; // Assume toplevel window for the start.
         Component parentComp = awtComponent.getParent();
@@ -144,7 +151,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     public void dispose() {
 
         platformWindow.dispose();
-
     }
 
     @Override
@@ -157,28 +163,24 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     public Graphics getGraphics() {
 
         return platformWindow.getGraphics();
-
     }
 
     @Override
     public GraphicsConfiguration getGraphicsConfiguration() {
 
         return platformWindow.getGraphicsConfiguration();
-
     }
 
     @Override
     public FontMetrics getFontMetrics(Font font) {
 
         return FontDesignMetrics.getMetrics(font);
-
     }
 
     @Override
     public Point getLocationOnScreen() {
 
         return platformWindow.getLocationOnScreen();
-
     }
 
     @Override
@@ -191,7 +193,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
             min = new Dimension(0, 0);
         }
         return min;
-
     }
 
     @Override
@@ -204,14 +205,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
             pref = new Dimension(0, 0);
         }
         return pref;
-
     }
 
     @Override
     public Toolkit getToolkit() {
 
         return Toolkit.getDefaultToolkit();
-
     }
 
     @Override
@@ -277,6 +276,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      * @param e the mouse event
      */
     private void handleMouseEvent(MouseEvent e) {
+        
         if (swingComponent != null)
             swingComponent.handleMouseEvent(e);
     }
@@ -288,6 +288,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      * @param e the mouse motion event
      */
     private void handleMouseMotionEvent(MouseEvent e) {
+        
         if (swingComponent != null)
             swingComponent.handleMouseMotionEvent(e);
     }
@@ -299,6 +300,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      * @param e the key event
      */
     private void handleKeyEvent(KeyEvent e) {
+        
         if (swingComponent != null)
             swingComponent.handleKeyEvent(e);
     }
@@ -310,6 +312,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      * @param e the key event
      */
     private void handleFocusEvent(FocusEvent e) {
+        
         if (swingComponent != null)
             swingComponent.handleFocusEvent(e);
     }
@@ -318,11 +321,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         
         if (swingComponent != null) {
             if (update) {
-                swingComponent.getJComponent().paint(g);
-            } else {
                 swingComponent.getJComponent().update(g);
+            } else {
+                swingComponent.getJComponent().paint(g);
             }
         }
+        
         Graphics userGraphics = g.create();
         try {
             if (update) {
@@ -333,7 +337,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         } finally {
             userGraphics.dispose();
         }
-      
     }
 
     @Override
@@ -361,14 +364,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     public boolean isReparentSupported() {
 
         return platformWindow.isReparentSuppored();
-
     }
 
     @Override
     public void reparent(ContainerPeer newContainer) {
 
         platformWindow.reparent(newContainer);
-
     }
 
     @Override
@@ -376,7 +377,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.layout");
-
     }
 
     @Override
@@ -384,7 +384,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.paint");
-
     }
 
     @Override
@@ -392,7 +391,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.print");
-
     }
 
     public boolean requestFocus(Component lightweightChild, boolean temporary,
@@ -401,28 +399,24 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         return platformWindow.requestFocus(lightweightChild, temporary,
                                            focusedWindowChangeAllowed,
                                            time, cause);
-
     }
 
     public void setBackground(Color c) {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.setBackground");
-
     }
 
     public void setFont(Font f) {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.setFont");
-
     }
 
     public void setForeground(Color c) {
 
         // TODO: Implement this correctly.
         System.out.println("IMPLEMENT ME: CacioComponentPeer.setForeground");
-
     }
 
     public void setBounds(int x, int y, int width, int height, int op) {
@@ -509,7 +503,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         System.out.println("IMPLEMENT ME: CacioComponentPeer.flip");
 
     }
-
+    
     public Image getBackBuffer() {
 
         // TODO: Implement this correctly.
