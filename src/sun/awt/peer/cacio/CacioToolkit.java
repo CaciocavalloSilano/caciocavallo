@@ -184,8 +184,8 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public TextFieldPeer createTextField(TextField target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        
+        return new CacioTextFieldPeer(target, getPlatformWindowFactory());
     }
 
     @Override
