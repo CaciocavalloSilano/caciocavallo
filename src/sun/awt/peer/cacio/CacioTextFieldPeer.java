@@ -20,8 +20,9 @@ import java.awt.peer.TextFieldPeer;
 
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+
 import javax.swing.KeyStroke;
+
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 
@@ -88,11 +89,19 @@ public class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldP
         
         @Override
         public void handleFocusEvent(FocusEvent ev) {
+            
+            isFocused = ev.getID() == FocusEvent.FOCUS_GAINED;
+            
             Caret caret = this.getCaret();
             if (caret instanceof DefaultCaret) {
-                ((DefaultCaret) caret).focusGained(ev);
+                DefaultCaret _caret = (DefaultCaret) caret;
+                if (isFocused) {
+                    _caret.focusGained(ev);
+                } else {
+                    _caret.focusLost(ev);
+                }
             }
-            isFocused = ev.getID() == FocusEvent.FOCUS_GAINED;
+            
             repaint();
         }
 
