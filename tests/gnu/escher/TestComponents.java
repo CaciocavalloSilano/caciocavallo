@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
+import java.awt.TextField;
 
 public class TestComponents extends Canvas {
 
@@ -26,6 +27,7 @@ public class TestComponents extends Canvas {
         p.add(new Label("Panel label"));
         f.add(p);
         f.add(new Checkbox("Checkbox"));
+        f.add(new TextField("TexField"));
         f.setSize(400, 600);
         f.setVisible(true);
     }
