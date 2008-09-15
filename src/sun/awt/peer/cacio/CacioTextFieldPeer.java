@@ -26,7 +26,7 @@ import javax.swing.KeyStroke;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 
-public class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
+class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
 
     CacioTextFieldPeer(Component awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
