@@ -135,18 +135,27 @@ public class XGraphicsDevice
                   }
               }
 
+          }
+        catch (EscherServerConnectionException ex)
+          {
+            /* do noting here */
+          }
+        
+        try
+          {
             // The following happens when we are configured to use plain sockets,
             // when the connection is probably remote or when we couldn't load
             // the LocalSocket class stuff.
             if (display == null)
-              display = new Display(displayName);
+                display = new Display(displayName);
 
             eventPump = new XEventPump(display);
           }
         catch (EscherServerConnectionException ex)
           {
+            // time to throw the real exception
             AWTError awtErr = new AWTError("Cannot connect to X Server: "
-                                           + displayName);
+                                         + displayName);
             awtErr.initCause(ex);
             throw awtErr;
           }
