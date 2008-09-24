@@ -115,10 +115,11 @@ public class XGraphicsDevice
   {
     if (display == null)
       {
+        if (displayName.hostname.equals(""))
+            displayName.hostname = "localhost";
+        
         try
           {
-            if (displayName.hostname.equals(""))
-              displayName.hostname = "localhost";
             if (EscherToolkit.DEBUG)
               System.err.println("connecting to : " + displayName);
             // Try to connect via unix domain sockets when host == localhost.
@@ -148,8 +149,6 @@ public class XGraphicsDevice
             // the LocalSocket class stuff.
             if (display == null)
                 display = new Display(displayName);
-
-            eventPump = new XEventPump(display);
           }
         catch (EscherServerConnectionException ex)
           {
@@ -159,6 +158,8 @@ public class XGraphicsDevice
             awtErr.initCause(ex);
             throw awtErr;
           }
+        
+        eventPump = new XEventPump(display);
       }
     return display;
   }
