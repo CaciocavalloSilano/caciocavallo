@@ -47,6 +47,7 @@ import java.awt.im.spi.InputMethodDescriptor;
 import java.awt.image.ColorModel;
 import java.awt.peer.DesktopPeer;
 import java.awt.peer.FontPeer;
+import java.awt.peer.MouseInfoPeer;
 import java.awt.peer.RobotPeer;
 import java.awt.peer.SystemTrayPeer;
 import java.awt.peer.TrayIconPeer;
@@ -156,6 +157,11 @@ public class EscherToolkit extends CacioToolkit {
             throws HeadlessException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    protected synchronized MouseInfoPeer getMouseInfoPeer() {
+        // TODO: Implement properly. Can't use the DefaultMouseInfoPeer...
+        throw new UnsupportedOperationException();
     }
 
     @Override
