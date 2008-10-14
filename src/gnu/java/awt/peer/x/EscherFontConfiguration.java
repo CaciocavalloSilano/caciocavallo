@@ -40,14 +40,13 @@ package gnu.java.awt.peer.x;
 import java.nio.charset.Charset;
 
 import sun.awt.FontConfiguration;
-import sun.font.FontManager;
-import sun.java2d.SunGraphicsEnvironment;
+import sun.font.FontManagerBase;
 
 public class EscherFontConfiguration
     extends FontConfiguration
 {
 
-  public EscherFontConfiguration(FontManager fm)
+  public EscherFontConfiguration(FontManagerBase fm)
   {
     super(fm);
     init();
