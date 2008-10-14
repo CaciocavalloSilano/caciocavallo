@@ -38,8 +38,10 @@ exception statement from your version. */
 package gnu.java.awt.peer.x;
 
 import gnu.x11.Display;
+import gnu.x11.EscherUnsupportedScreenBitDepthException;
 import gnu.x11.image.ZPixmap;
 
+import java.awt.AWTError;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.DataBuffer;
 
@@ -70,7 +72,16 @@ class ZPixmapDataBuffer
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     XGraphicsDevice dev = (XGraphicsDevice) env.getDefaultScreenDevice();
     Display d = dev.getDisplay();
-    zpixmap = new ZPixmap(d, w, h, d.default_pixmap_format);
+    try {
+        zpixmap =
+            new ZPixmap(d, w, h, d.default_pixmap_format, d.getDefaultVisual());
+        
+    } catch (EscherUnsupportedScreenBitDepthException e) {
+        // time to throw the real exception
+        AWTError awtErr = new AWTError("Cannot create ZPixmaps");
+        awtErr.initCause(e);
+        throw awtErr;
+    }
   }
 
   /**
@@ -80,20 +91,20 @@ class ZPixmapDataBuffer
    */
   ZPixmapDataBuffer(ZPixmap zpixmap)
   {
-    super(TYPE_BYTE, zpixmap.get_data_length());
+    super(TYPE_BYTE, zpixmap.getDataLength());
     this.zpixmap = zpixmap;
   }
 
   @Override
   public int getElem(int bank, int i)
   {
-    return 0xff & zpixmap.get_data_element(i);
+    return 0xff & zpixmap.getDataElement(i);
   }
 
   @Override
   public void setElem(int bank, int i, int val)
   {
-    zpixmap.set_data_element(i, (byte) val);
+    zpixmap.setDataElement(i, (byte) val);
   }
 
   ZPixmap getZPixmap()
