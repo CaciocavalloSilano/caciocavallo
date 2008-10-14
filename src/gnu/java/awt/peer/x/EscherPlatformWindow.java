@@ -111,7 +111,7 @@ class EscherPlatformWindow implements PlatformWindow {
 
         Insets parentInsets;
         if (parent == null) {
-            parentWindow = dev.getDisplay().default_root;
+            parentWindow = dev.getDisplay().getRootWindow();
             parentInsets = new Insets(0, 0, 0, 0);
         } else {
             parentWindow = ((EscherPlatformWindow) parent).xwindow;
@@ -243,7 +243,7 @@ class EscherPlatformWindow implements PlatformWindow {
     @Override
     public GraphicsConfiguration getGraphicsConfiguration() {
         // TODO Auto-generated method stub
-        return null;
+        return new XGraphicsConfiguration(EscherToolkit.getDefaultDevice());
     }
 
     @Override
