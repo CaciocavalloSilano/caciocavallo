@@ -38,10 +38,12 @@ exception statement from your version. */
 package gnu.java.awt.peer.x;
 
 import gnu.x11.Drawable;
+import gnu.x11.EscherUnsupportedScreenBitDepthException;
 import gnu.x11.GC;
 import gnu.x11.image.Image;
 import gnu.x11.image.ZPixmap;
 
+import java.awt.AWTError;
 import java.awt.image.DataBuffer;
 
 public class XDrawableDataBuffer
@@ -63,8 +65,15 @@ public class XDrawableDataBuffer
     int y = i / xDrawable.width;
     if (true || x < 0 || y < 0 || x >= xDrawable.width || y >= xDrawable.height)
       return 0;
-    ZPixmap pm = (ZPixmap) xDrawable.image(x, y, 1, 1, -1, Image.Format.ZPIXMAP);
-    return pm.get_data_element(0);
+    ZPixmap pm;
+    try {
+        pm = (ZPixmap) xDrawable.image(x, y, 1, 1, -1, Image.Format.ZPIXMAP);
+    } catch (EscherUnsupportedScreenBitDepthException e) {
+        AWTError awtErr = new AWTError("Cannot create a ZPixmpas");
+        awtErr.initCause(e);
+        throw awtErr;
+    }
+    return pm.getDataElement(0);
   }
 
   @Override
@@ -72,8 +81,16 @@ public class XDrawableDataBuffer
   {
     int x = i % xDrawable.width;
     int y = i / xDrawable.width;
-    ZPixmap pm = new ZPixmap(xDrawable.display, 1, 1);
-    pm.set(0, 0, value);
+    ZPixmap pm;
+    try {
+        pm = new ZPixmap(xDrawable.display, 1, 1,
+                                 xDrawable.display.getDefaultVisual());
+    } catch (EscherUnsupportedScreenBitDepthException e) {
+        AWTError awtErr = new AWTError("Cannot create a ZPixmpas");
+        awtErr.initCause(e);
+        throw awtErr;
+    }
+    pm.putPixel(0, 0, value);
     GC gc = new GC(xDrawable);
     xDrawable.put_image(gc, pm, x, y);
     gc.free();
