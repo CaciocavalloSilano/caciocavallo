@@ -39,6 +39,7 @@ package gnu.java.awt.peer.x;
 
 import gnu.x11.Drawable;
 import gnu.x11.GC;
+import gnu.x11.color.ColorMapper;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
@@ -315,7 +316,11 @@ class XDrawableSurfaceData
    */
   GC getRenderGC(SunGraphics2D sg2d)
   {
-    xgc.set_foreground(sg2d.pixel);
+    int pixel = ColorMapper.getInstace().
+            convertToNativePixel(sg2d.pixel,
+                                 xDrawable.display.getDefaultVisual());
+      
+    xgc.set_foreground(pixel);
     Region c = sg2d.clipRegion;
     if (c.isRectangular())
       {
