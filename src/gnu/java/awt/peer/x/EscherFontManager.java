@@ -39,18 +39,15 @@ package gnu.java.awt.peer.x;
 
 import sun.awt.FontConfiguration;
 import sun.font.FontManager;
-import sun.font.FontManagerBase;
+import sun.font.SunFontManager;
 
 public class EscherFontManager
-    extends FontManagerBase
-{
-  // TODO: Just a wrapper class for now
-  // probably have to be implemented properly
-
+    extends SunFontManager
+{  
   @Override
   public String getFontPath(boolean noType1Fonts)
   {
-    return "/usr/share/fonts/freefont/";
+    return "/usr/share/fonts/";
   }
 
   @Override
