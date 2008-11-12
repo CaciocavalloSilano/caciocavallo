@@ -73,18 +73,27 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public ButtonPeer createButton(Button target) throws HeadlessException {
-        return new CacioButtonPeer(target, getPlatformWindowFactory());
+	CacioButtonPeer peer = new CacioButtonPeer(target,
+						   getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
     public CanvasPeer createCanvas(Canvas target) {
-        return new CacioCanvasPeer(target, getPlatformWindowFactory());
+	CacioCanvasPeer peer = new CacioCanvasPeer(target,
+						   getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
    
     @Override
     public CheckboxPeer createCheckbox(Checkbox target)
             throws HeadlessException {
-        return new CacioCheckboxPeer(target, getPlatformWindowFactory());
+	CacioCheckboxPeer peer = new CacioCheckboxPeer(target,
+						   getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
@@ -115,12 +124,18 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public FramePeer createFrame(Frame target) throws HeadlessException {
-        return new CacioFramePeer(target, getPlatformWindowFactory());
+	CacioFramePeer peer = new CacioFramePeer(target,
+						 getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
     public LabelPeer createLabel(Label target) throws HeadlessException {
-        return new CacioLabelPeer(target, getPlatformWindowFactory());
+	CacioLabelPeer peer = new CacioLabelPeer(target,
+						 getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
@@ -150,7 +165,10 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public PanelPeer createPanel(Panel target) {
-        return new CacioPanelPeer(target, getPlatformWindowFactory());
+	CacioPanelPeer peer = new CacioPanelPeer(target,
+						 getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
@@ -185,14 +203,24 @@ public abstract class CacioToolkit extends SunToolkit {
     public TextFieldPeer createTextField(TextField target)
             throws HeadlessException {
         
-        return new CacioTextFieldPeer(target, getPlatformWindowFactory());
+	CacioTextFieldPeer peer = new CacioTextFieldPeer(target,
+			                           getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
     public WindowPeer createWindow(Window target) throws HeadlessException {
 
-        return new CacioWindowPeer(target, getPlatformWindowFactory());
+	CacioWindowPeer peer = new CacioWindowPeer(target,
+						   getPlatformWindowFactory());
+	SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
 
+    }
+
+    static void disposePeer(Object target, Object peer) {
+	SunToolkit.targetDisposedPeer(target, peer);
     }
 
     public abstract PlatformWindowFactory getPlatformWindowFactory();
