@@ -151,6 +151,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     public void dispose() {
 
         platformWindow.dispose();
+	CacioToolkit.disposePeer(awtComponent, this);
     }
 
     @Override
