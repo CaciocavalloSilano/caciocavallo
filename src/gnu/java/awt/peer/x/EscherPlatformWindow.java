@@ -390,4 +390,8 @@ class EscherPlatformWindow implements PlatformWindow {
         return true;
     }
 
+    @Override
+    public void updateCursorImmediately() {
+        System.err.println("IMPLEMENT ME: EscherPlatformWindow.updateCursorImmediately()");
+    }
 }
