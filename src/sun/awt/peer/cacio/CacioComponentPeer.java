@@ -445,8 +445,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     public void updateCursorImmediately() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.updateCursorImmediately");
+        platformWindow.updateCursorImmediately();
 
     }
 

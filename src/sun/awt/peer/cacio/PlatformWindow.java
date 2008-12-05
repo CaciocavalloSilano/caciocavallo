@@ -272,4 +272,10 @@ public interface PlatformWindow {
                          Cause cause);
 
 
+    /**
+     * Update the mouse cursor according to the current setting of the
+     * AWT component. This is called on each mouse movement. The
+     * implementation should check if the cursor actually has to be changed.
+     */
+    void updateCursorImmediately();
 }
