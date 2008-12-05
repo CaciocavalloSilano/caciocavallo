@@ -39,11 +39,13 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
+import java.awt.event.WindowEvent;
 
 import java.awt.image.ColorModel;
 import java.awt.image.ImageObserver;
@@ -56,8 +58,6 @@ import java.awt.peer.ContainerPeer;
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
-
-import sun.awt.event.ComponentReshapeEvent;
 
 import sun.font.FontDesignMetrics;
 
@@ -563,14 +563,27 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     }
 
     public void handlePeerEvent(AWTEvent event) {
-        // ComponentReshapeEvents are special events to notify AWT components
-        // about size changes without triggering any layout activity. They
-        // must not be sent over the event queue and not made visible
-        // to the application in any way.
-        if (event instanceof ComponentReshapeEvent) {
-            awtComponent.dispatchEvent(event);
-        } else {
-            SunToolkit.postEvent(AppContext.getAppContext(), event);
+        if (awtComponent instanceof Window) {
+            Window w = (Window) awtComponent;
+            if (event instanceof FocusEvent) {
+                FocusEvent fe = (FocusEvent) event;
+                if (fe.getID() == FocusEvent.FOCUS_GAINED) {
+                    WindowEvent we = new WindowEvent(w, WindowEvent.WINDOW_GAINED_FOCUS);
+                    postEvent(we);
+                    postEvent(event);
+                    return;
+                } else if (fe.getID() == FocusEvent.FOCUS_LOST) {
+                    postEvent(event);
+                    WindowEvent we = new WindowEvent(w, WindowEvent.WINDOW_LOST_FOCUS);
+                    postEvent(we);
+                    return;
+                }
+            }
         }
+        postEvent(event);
+    }
+
+    private void postEvent(AWTEvent event) {
+        SunToolkit.postEvent(AppContext.getAppContext(), event);
     }
 }

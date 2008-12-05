@@ -71,6 +71,11 @@ import sun.awt.SunToolkit;
 
 public abstract class CacioToolkit extends SunToolkit {
 
+    public CacioToolkit() {
+        CacioEventSource source = getEventSource();
+        new CacioEventPump(source);
+    }
+
     @Override
     public ButtonPeer createButton(Button target) throws HeadlessException {
 	CacioButtonPeer peer = new CacioButtonPeer(target,
@@ -224,4 +229,10 @@ public abstract class CacioToolkit extends SunToolkit {
     }
 
     public abstract PlatformWindowFactory getPlatformWindowFactory();
+
+    /**
+     * Returns the event source that polls the native event queue and 
+     * generates the basic lowlevel AWT events.
+     */
+    public abstract CacioEventSource getEventSource();
 }
