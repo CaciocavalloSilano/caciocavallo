@@ -54,6 +54,7 @@ import java.awt.peer.TrayIconPeer;
 import java.util.Map;
 import java.util.Properties;
 
+import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
@@ -218,4 +219,8 @@ public class EscherToolkit extends CacioToolkit {
         return (XGraphicsDevice) env.getDefaultScreenDevice();
     }
 
+    public CacioEventSource getEventSource() {
+        // TODO: Implement me.
+        return null;
+    }
 }
