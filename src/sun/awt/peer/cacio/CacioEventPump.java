@@ -67,13 +67,23 @@ class CacioEventPump implements Runnable {
             }
             try {
                 AWTAutoShutdown.notifyToolkitThreadFree();
-                AWTEvent ev = source.getNextEvent();
+                EventData ev = source.getNextEvent();
                 AWTAutoShutdown.notifyToolkitThreadBusy();
                 if (ev != null) {
-                    Component c = (Component) ev.getSource();
-                    ComponentPeer peer = c.getPeer();
-                    assert peer instanceof CacioComponent;
-                    ((CacioComponent) peer).handlePeerEvent(ev);
+                    Object source = ev.getSource();
+                    if (source instanceof ManagedWindowContainer) {
+                        ManagedWindowContainer c =
+                            (ManagedWindowContainer) source;
+                        c.dispatchEvent(ev);
+                    } else if (source instanceof CacioComponent) {
+                        CacioComponent c = (CacioComponent) source;
+                        ev.setSource(c.getAWTComponent());
+                        c.handlePeerEvent(ev.createAWTEvent());
+                    } else if (source instanceof Component) {
+                        SunToolkit.postEvent(AppContext.getAppContext(),
+                                             ev.createAWTEvent());
+
+                    }
                 }
             } catch (Exception ex) {
                 // Print stack trace but don't kill the pump.

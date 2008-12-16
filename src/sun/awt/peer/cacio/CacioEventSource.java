@@ -25,22 +25,32 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.AWTEvent;
-
 /**
- * The source of AWT events for Cacio Toolkits. This is expected to
- * generate all the necessary AWT events. In particular, these are:
- *
- * <ul>
- * <li>MouseEvent</li>
- * <li>MouseWheelEvent</li>
- * <li>KeyEvent</li>
- * <li>FocusEvent</li>
- * <li>WindowEvent</li>
- * </ul>
+ * The source of events for Cacio Toolkits. Which events need to be generated
+ * depends on the setup of the target. For fully managed environments (i.e.
+ * all windows are managed by CacioCavallo), only mouse and key events need
+ * to be generated, all other events are synthesized by the window management
+ * code. For fully native setups, all kinds of events need to be generated
+ * by the native backend, in particular: mouse, mouse wheel, key, focus and
+ * window events.
  *
  * The Caciocavallo framework will poll the event source for new events,
- * process them if necessary, and post them to the AWT event queue.
+ * process them if necessary, and post them to the AWT event queue. How
+ * the event is processed depends on the type of event source:
+ *
+ * <ul>
+ * <li>ManagedWindowContainer: the event data is processed in raw form by
+ *     the container's dispatchEvent() method. The container is responsible
+ *     for further processing, i.e. inferring synthesized events, and
+ *     eventually posting to the AWT event queue.</li>
+ * <li>CacioComponent: the event is turned into its correspondig AWT event
+ *     and is processed by the CacioComponent's handlePeerEvent() method.
+ *     The CacioComponent is responsible for further processing, and eventually
+ *     posting to the AWT event queue.</li>
+ * <li>AWT Component: the event is posted directly to the AWT event queue
+ *     without further processing.</li>
+ * <li>Other types or null events are discarded.</li>
+ * </ul>
  */
 public interface CacioEventSource {
 
@@ -50,5 +60,5 @@ public interface CacioEventSource {
      *
      * @return the next event from the event queue
      */
-    AWTEvent getNextEvent();
+    EventData getNextEvent();
 }
