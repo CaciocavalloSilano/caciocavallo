@@ -27,57 +27,22 @@ package sun.awt.peer.cacio;
 
 import java.awt.Component;
 import java.awt.Frame;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.ColorModel;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
 import sun.awt.CausedFocusEvent.Cause;
 import sun.java2d.pipe.Region;
 
-public interface PlatformWindow {
+public interface PlatformWindow extends BaseWindow {
 
     /**
      * Disposes the underlying platform window and releases all associated
      * resources.
      */
     void dispose();
-
-    /**
-     * Returns the color model used by the native window.
-     *
-     * @return the color model used by the native window
-     */
-    ColorModel getColorModel();
-
-    /**
-     * Returns a Graphics2D object for drawing on this window.
-     *
-     * @return  a Graphics2D object for drawing on this window
-     */
-    Graphics2D getGraphics();
-
-    /**
-     * Returns the graphics configuration used by the native window.
-     *
-     * @return the graphics configuration used by the native window
-     */
-    GraphicsConfiguration getGraphicsConfiguration();
-
-
-    /**
-     * Returns the bounds of the native window. The resulting rectangle
-     * has the X and Y coordinates of the window relative to its parent and
-     * the width and height of the window. For decorated windows the bounds
-     * must include the window decorations.
-     *
-     * @return the bounds of the native window
-     */
-    Rectangle getBounds();
 
     /**
      * Sets the bounds of this native window. The X and Y coordinates are
