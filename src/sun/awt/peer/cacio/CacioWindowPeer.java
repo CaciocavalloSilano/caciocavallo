@@ -40,6 +40,13 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
         ((Window) awtC).setFocusableWindowState(true);
     }
 
+    void init(PlatformWindowFactory pwf) {
+        
+        platformWindow = pwf.createPlatformWindow(this, null);
+
+        initSwingComponent();
+    }
+
     public void setAlwaysOnTop(boolean alwaysOnTop) {
         // TODO Auto-generated method stub
 
