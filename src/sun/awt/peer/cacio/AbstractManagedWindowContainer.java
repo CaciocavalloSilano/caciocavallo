@@ -129,10 +129,12 @@ public abstract class AbstractManagedWindowContainer
         Iterator<ManagedWindow> i = children.descendingIterator();
         while (i.hasNext()) {
             ManagedWindow child = i.next();
-            Rectangle b = child.getBounds();
-            if (x >= b.x && y >= b.y
-                && x < (b.x + b.width) && y < (b.y + b.height)) {
-                return child;
+            if (child.isVisible()) {
+                Rectangle b = child.getBounds();
+                if (x >= b.x && y >= b.y
+                    && x < (b.x + b.width) && y < (b.y + b.height)) {
+                    return child;
+                }
             }
         }
         // If we reach here, we found no child at those coordinates.
