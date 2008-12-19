@@ -27,6 +27,7 @@ package sun.awt.peer.cacio;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -43,6 +44,13 @@ public interface PlatformWindow extends BaseWindow {
      * resources.
      */
     void dispose();
+
+    /**
+     * Returns a Graphics2D object for drawing on this window.
+     *
+     * @return  a Graphics2D object for drawing on this window
+     */
+    Graphics2D getGraphics();
 
     /**
      * Sets the bounds of this native window. The X and Y coordinates are

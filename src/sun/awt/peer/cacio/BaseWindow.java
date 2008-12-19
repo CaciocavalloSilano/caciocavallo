@@ -40,13 +40,6 @@ public interface BaseWindow {
     ColorModel getColorModel();
 
     /**
-     * Returns a Graphics2D object for drawing on this window.
-     *
-     * @return  a Graphics2D object for drawing on this window
-     */
-    Graphics2D getGraphics();
-
-    /**
      * Returns the graphics configuration used by the native window.
      *
      * @return the graphics configuration used by the native window
