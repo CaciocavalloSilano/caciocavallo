@@ -28,8 +28,10 @@ package sun.awt.peer.cacio;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.util.LinkedList;
+import java.util.List;
 
 public interface ManagedWindowContainer extends BaseWindow {
 
@@ -71,4 +73,25 @@ public interface ManagedWindowContainer extends BaseWindow {
     void dispatchEvent(EventData event);
 
     void setVisible(ManagedWindow child, boolean v);
+
+    /**
+     * Creates and returns a Graphics2D that has the specified rectangles
+     * applied as default clip. No drawing operation must ever draw
+     * <em>inside</em> the specified rectangles. Note that this is
+     * the inverse meaning of the normal clip shape in Graphics2D.
+     * This clip must not be revertible, not even by calling
+     * {@code setClip(null)} or {@code resetClip()}. Applying addition clips
+     * to the returned {@code Graphics2D} object must always also apply this
+     * default clip.
+     *
+     * The clip rectangles are in the coordinate space of this container.
+     *
+     * If {@code clipRects} is empty or {@code null}, no default clip is
+     * to be set.
+     *
+     * @param clipRects the rectangles to be clipped 'away'
+     *
+     * @return a Graphics2D object with the specified default clips applied
+     */
+    Graphics2D getClippedGraphics(List<Rectangle> clipRects);
 }

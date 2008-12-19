@@ -38,6 +38,7 @@ import java.awt.peer.ContainerPeer;
 import java.awt.image.ColorModel;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import sun.awt.CausedFocusEvent.Cause;
 import sun.java2d.pipe.Region;
@@ -84,7 +85,6 @@ public class ManagedWindow
         cacioComponent = cacioComp;
         parent.add(this);
         Component c = cacioComponent.getAWTComponent();
-        System.err.println("create new ManagedWindow with parent: " + p + " and AWT component: " + c);
         setBounds(c.getX(), c.getY(), c.getWidth(), c.getHeight(), 0);
     }
 
@@ -94,32 +94,62 @@ public class ManagedWindow
     }
 
     @Override
+    public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
+        // Translate all clip rectangles to parent's coordinate system.
+        if (clipRects != null) {
+            for (Rectangle r : clipRects) {
+                r.x += x;
+                r.y += y;
+            }
+        }
+        return prepareClippedGraphics(clipRects);
+    }
+
+    @Override
     public Graphics2D getGraphics() {
-        Graphics2D pg = parent.getGraphics();
-        // Clip away sibling's areas that overlap.
+        // Check if we have obscuring siblings and add their clip
+        // rectangles to the list.
+        return prepareClippedGraphics(null);
+    }
+
+    private Graphics2D prepareClippedGraphics(List<Rectangle> clipRects) {
+        clipRects = addClipRects(null);
+        // Ask parent for clipped graphics.
+        Graphics2D pg = parent.getClippedGraphics(clipRects);
+        // Translate and clip to our own coordinate system.
+        return (Graphics2D) pg.create(x, y, width, height);
+    }
+
+    /**
+     * This method adds any necessary clip rectangles to the specified
+     * list. If the list is null and rectangles need to be added,
+     * then a new one is created. This method might return null, if no
+     * clip rectangles need to be added and the input argument has been null.
+     *
+     * @param clipRects the list of clip rectangles before adding new
+     *        rectangles, possibly null
+     *
+     * @return the list of clip rectangles, possibly null
+     */
+    private List<Rectangle> addClipRects(List<Rectangle> clipRects) {
         LinkedList<ManagedWindow> siblings = parent.getChildren();
-        // We only need to do this if the uppermost sibling is
-        // something different than this window.
         if (siblings.getLast() != this) {
-            Rectangle b = parent.getBounds();
-            Area clip = new Area(new Rectangle(0, 0, b.width, b.height));
-            Iterator<ManagedWindow> i = siblings.descendingIterator();
-            while (i.hasNext()) {
-                ManagedWindow s = i.next();
-                if (s == this) {
-                    break;
-                }
-                if (s.isVisible()) {
-                    Area sibArea = new Area(s.getBounds());
-                    clip.subtract(sibArea);
+            if (clipRects == null) {
+                clipRects = new LinkedList<Rectangle>();
+                Iterator<ManagedWindow> i = siblings.descendingIterator();
+                while (i.hasNext()) {
+                    ManagedWindow sibling = i.next();
+                    if (sibling == this) {
+                        break;
+                    }
+                    if (sibling.isVisible()) {
+                        Rectangle bounds = sibling.getBounds();
+                        clipRects.add(bounds);
+                    }
                 }
             }
-            pg.clip(clip);
         }
-
-        // Clip and translate to this window.
-        pg = (Graphics2D) pg.create(x, y, width, height);
-        return pg;
+        return clipRects;
     }
 
     @Override
