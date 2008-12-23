@@ -32,7 +32,7 @@
 		<delete dir="${dist.dir}" />
 	</target>
 	
-	<target name="compile" depends="clean">
+	<target name="compile">
 		<mkdir dir="${classes.dir}" />
 		<javac nowarn="on"
 		       srcdir="${src.dir}" destdir="${classes.dir}"
