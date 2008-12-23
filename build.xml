@@ -40,7 +40,8 @@
 			   classpathref="classpath"
                            bootclasspathref="bootclasspath"
 			   debug="${value.compile.debug}"
-			   optimize="${value.compile.optimize}" />
+		           optimize="${value.compile.optimize}"
+                           excludes="gnu/**/*" />
 	</target>
 
 	<target name="tests">
