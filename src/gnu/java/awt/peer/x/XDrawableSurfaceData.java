@@ -339,17 +339,19 @@ class XDrawableSurfaceData
 
   GC getBlitGC(Region c)
   {
-    if (c.isRectangular())
-      {
-        gnu.x11.Rectangle clip = new gnu.x11.Rectangle(c.getLoX(), c.getLoY(),
-                                                       c.getWidth(),
-                                                       c.getHeight());
-        xgc.set_clip_rectangles(0, 0,
-                                new gnu.x11.Rectangle[]{clip}, GC.UN_SORTED);
-      }
-    else
-      {
-        throw new UnsupportedOperationException();
+      if (c != null) {
+          if (c.isRectangular())
+          {
+              gnu.x11.Rectangle clip = new gnu.x11.Rectangle(c.getLoX(), c.getLoY(),
+                      c.getWidth(),
+                      c.getHeight());
+              xgc.set_clip_rectangles(0, 0,
+                      new gnu.x11.Rectangle[]{clip}, GC.UN_SORTED);
+          }
+          else
+          {
+              throw new UnsupportedOperationException();
+          }
       }
     return xgc;
   }
