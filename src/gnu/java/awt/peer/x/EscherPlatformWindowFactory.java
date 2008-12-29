@@ -43,4 +43,10 @@ class EscherPlatformWindowFactory implements PlatformWindowFactory {
         return new EscherPlatformWindow(component, null);
     }
 
+    @Override
+    public CacioEventSource createEventSource() {
+        XGraphicsDevice dev = EscherToolkit.getDefaultDevice();
+        return dev.getEventSource();
+    }
+
 }
