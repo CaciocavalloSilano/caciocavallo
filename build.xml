@@ -78,5 +78,16 @@
 			<fileset dir="${test.classes.dir}" />
 		  </copy>
 	</target>
-	
+
+    <target name="run-single-test" depends="compile,tests">
+        <exec executable="${openjdk}/bin/java">
+            <arg value="-Xbootclasspath/p:${classes.dir}:${escher}" />
+            <arg value="-Dawt.toolkit=gnu.java.awt.peer.x.EscherToolkit" />
+            <arg value="-Djava.awt.graphicsenv=gnu.java.awt.peer.x.XGraphicsEnvironment" />
+            <arg value="-cp" />
+            <arg value="${test.classes.dir}" />
+            <arg value="${testclass}" />
+        </exec>
+    </target>
+
 </project>
