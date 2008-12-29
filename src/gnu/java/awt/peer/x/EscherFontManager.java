@@ -37,13 +37,20 @@ exception statement from your version. */
 
 package gnu.java.awt.peer.x;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.File;
+
 import sun.awt.FontConfiguration;
 import sun.font.FontManager;
+import sun.font.PhysicalFont;
 import sun.font.SunFontManager;
 
 public class EscherFontManager
     extends SunFontManager
 {  
+    private PhysicalFont defaultPhysicalFont;
+
   @Override
   public String getFontPath(boolean noType1Fonts)
   {
@@ -76,4 +83,19 @@ public class EscherFontManager
                         };
   }
 
+  @Override
+  public PhysicalFont getDefaultPhysicalFont() {
+      if (defaultPhysicalFont == null) {
+          File fontFile = new File(getDefaultPlatformFont()[1]);
+          try {
+              defaultPhysicalFont = (PhysicalFont)
+              createFont2D(fontFile,
+                      Font.TRUETYPE_FONT,
+                      false);
+          } catch (FontFormatException ex) {
+              throw new Error("Probable fatal error:No fonts found.");
+          }
+      }
+      return defaultPhysicalFont;
+  }
 }
