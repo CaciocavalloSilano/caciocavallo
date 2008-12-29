@@ -29,6 +29,7 @@ import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
 
@@ -313,6 +314,11 @@ public class EventData {
         case MouseEvent.MOUSE_RELEASED:
             return new MouseEvent((Component) source, id, time, modifiers,
                                   x, y, clickCount, false, button);
+        case KeyEvent.KEY_PRESSED:
+        case KeyEvent.KEY_TYPED:
+        case KeyEvent.KEY_RELEASED:
+            return new KeyEvent((Component) source, id, time, modifiers,
+                                keyCode, keyChar);
         case ComponentEvent.COMPONENT_MOVED:
         case ComponentEvent.COMPONENT_RESIZED:
         case ComponentEvent.COMPONENT_SHOWN:
