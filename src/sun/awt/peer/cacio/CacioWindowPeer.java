@@ -42,7 +42,7 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
     void init(PlatformWindowFactory pwf) {
         
-        platformWindow = pwf.createPlatformWindow(this, null);
+        platformWindow = pwf.createPlatformToplevelWindow(this);
 
         initSwingComponent();
     }
@@ -90,5 +90,9 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
             super.handlePeerEvent(we);
         }
         super.handlePeerEvent(ev);
+    }
+
+    protected PlatformToplevelWindow getToplevelWindow() {
+        return (PlatformToplevelWindow) platformWindow;
     }
 }

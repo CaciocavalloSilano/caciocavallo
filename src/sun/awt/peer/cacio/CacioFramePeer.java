@@ -39,19 +39,19 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     public int getState() {
 
-        return platformWindow.getState();
+        return getToplevelWindow().getState();
 
     }
 
     public void setState(int state) {
 
-        platformWindow.setState(state);
+        getToplevelWindow().setState(state);
 
     }
 
     public void setMaximizedBounds(Rectangle bounds) {
 
-        platformWindow.setMaximizedBounds(bounds);
+        getToplevelWindow().setMaximizedBounds(bounds);
         
     }
 
@@ -64,13 +64,13 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     public void setResizable(boolean resizable) {
 
-        platformWindow.setResizable(resizable);
+        getToplevelWindow().setResizable(resizable);
 
     }
 
     public void setTitle(String title) {
 
-        platformWindow.setTitle(title);
+        getToplevelWindow().setTitle(title);
         
     }
 

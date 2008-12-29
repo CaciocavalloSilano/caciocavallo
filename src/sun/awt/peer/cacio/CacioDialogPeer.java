@@ -38,13 +38,13 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     public void setResizable(boolean resizable) {
 
-        platformWindow.setResizable(resizable);
+        getToplevelWindow().setResizable(resizable);
 
     }
 
     public void setTitle(String title) {
 
-        platformWindow.setTitle(title);
+        getToplevelWindow().setTitle(title);
         
     }
 

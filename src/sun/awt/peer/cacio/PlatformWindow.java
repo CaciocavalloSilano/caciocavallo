@@ -171,66 +171,6 @@ public interface PlatformWindow extends BaseWindow {
     void setVisible(boolean b);
 
     /**
-     * Returns the current state of the native window according to the
-     * constants in {@link java.awt.Frame}. The state is a bitmask, ORed
-     * together by these constants. This is only called for toplevel frames.
-     *
-     * @return the current state of the native window according to the
-     *         constants in java.awt.Frame
-     *
-     * @see Frame#getExtendedState()
-     * @see Frame#NORMAL
-     * @see Frame#ICONIFIED
-     * @see Frame#MAXIMIZED_HORIZ
-     * @see Frame#MAXIMIZED_VERT
-     * @see Frame#MAXIMIZED_BOTH
-     * @see #setState(int)
-     */
-    int getState();
-
-    /**
-     * Sets the state of the native window according to the various constants
-     * in {@link java.awt.Frame}. The state is a bitmask ORed together by
-     * these constants. This is only called for toplevel frames.
-     *
-     * @param state the new state of the window
-     *
-     * @see Frame#setExtendedState()
-     * @see Frame#NORMAL
-     * @see Frame#ICONIFIED
-     * @see Frame#MAXIMIZED_HORIZ
-     * @see Frame#MAXIMIZED_VERT
-     * @see Frame#MAXIMIZED_BOTH
-     * @see #getState(int)
-     */
-    void setState(int state);
-
-    /**
-     * Sets the bounds for this native window that it should take when it
-     * becomes maximized. This is only called for toplevel frames.
-     *
-     * @param bounds the maximized bounds to set
-     */
-    void setMaximizedBounds(Rectangle bounds);
-
-    /**
-     * Sets if the native window should be resizable (by the user) or not.
-     * This is only called for toplevel frames and dialogs.
-     *
-     * @param resizable <code>true</code> when the native window should be
-     *        resizable, <code>false</code> otherwise
-     */
-    void setResizable(boolean resizable);
-
-    /**
-     * Sets the title of the native window. This is only called for toplevel
-     * frames and dialogs.
-     *
-     * @param title the title to set
-     */
-    void setTitle(String title);
-
-    /**
      * Requests a focus change to this window. If the focus change was
      * successful it is necessary to send back the appropriate FocusEvent.
      *

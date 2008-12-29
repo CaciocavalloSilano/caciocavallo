@@ -52,14 +52,14 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      */
     public PlatformWindow createPlatformWindow(CacioComponent awtComponent,
                                                PlatformWindow parent) {
-        ManagedWindow window;
-        if (parent != null) {
-            ManagedWindow p = (ManagedWindow) parent;
-            window = new ManagedWindow(p, awtComponent);
-        } else {
-            window = new ManagedWindow(screen, awtComponent);
-        }
-        return window;
+        assert parent != null;
+        ManagedWindow p = (ManagedWindow) parent;
+        return new ManagedWindow(p, awtComponent);
+    }
+
+    @Override
+    public PlatformWindow createPlatformToplevelWindow(CacioComponent comp) {
+        return new ManagedWindow(screen, comp);
     }
 
     @Override
@@ -67,4 +67,5 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         // TODO: Implement fullscreen translating event source.
         return null;
     }
+
 }

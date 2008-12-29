@@ -55,7 +55,7 @@ import sun.java2d.pipe.Region;
  */
 public class ManagedWindow
     extends AbstractManagedWindowContainer
-    implements PlatformWindow {
+    implements PlatformToplevelWindow {
 
     /**
      * The parent container.
