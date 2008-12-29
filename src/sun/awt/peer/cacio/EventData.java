@@ -27,7 +27,10 @@ package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.PaintEvent;
 
 public class EventData {
 
@@ -70,6 +73,21 @@ public class EventData {
      * The button of a mouse event.
      */
     private int button;
+
+    /**
+     * The update rectangle for paint events.
+     */
+    private Rectangle updateRect;
+
+    /**
+     * The key code for key events.
+     */
+    private int keyCode;
+
+    /**
+     * The key char for key events.
+     */
+    private char keyChar;
 
     /**
      * Returns the event ID. This ID corresponds to the AWT event IDs.
@@ -223,6 +241,60 @@ public class EventData {
     }
 
     /**
+     * Returns the update rectangle for paint events.
+     *
+     * @return the update rectangle for paint events
+     */
+    public Rectangle getUpdateRect() {
+        return updateRect;
+    }
+
+    /**
+     * Sets the update rectangle for paint events.
+     *
+     * @param r the update rectangle to set
+     */
+    public void setUpdateRect(Rectangle r) {
+        updateRect = r;
+    }
+
+    /**
+     * Returns the key code for key events.
+     *
+     * @return the key code for key events
+     */
+    public int getKeyCode() {
+        return keyCode;
+    }
+
+    /**
+     * Sets the key code for key events.
+     *
+     * @param keyCode the key code to set
+     */
+    public void setKeyCode(int keyCode) {
+        this.keyCode = keyCode;
+    }
+
+    /**
+     * Returns the key char for key events.
+     *
+     * @return the key char for key events
+     */
+    public char getKeyChar() {
+        return keyChar;
+    }
+
+    /**
+     * Sets the key char for key events.
+     *
+     * @param keyChar the key code to set
+     */
+    public void setKeyChar(char keyChar) {
+        this.keyChar = keyChar;
+    }
+
+    /**
      * Creates the corresponding AWT event from this event data.
      * This requires that the event source in this object is of the appropriate
      * type, i.e. an AWT Component for input events or an AWT Window for
@@ -241,9 +313,29 @@ public class EventData {
         case MouseEvent.MOUSE_RELEASED:
             return new MouseEvent((Component) source, id, time, modifiers,
                                   x, y, clickCount, false, button);
+        case ComponentEvent.COMPONENT_MOVED:
+        case ComponentEvent.COMPONENT_RESIZED:
+        case ComponentEvent.COMPONENT_SHOWN:
+        case ComponentEvent.COMPONENT_HIDDEN:
+            return new ComponentEvent((Component) source, id);
+        case PaintEvent.PAINT:
+        case PaintEvent.UPDATE:
+            return new PaintEvent((Component) source, id, updateRect);
         default:
             // TODO: Implement the others.
             return null;
         }
+    }
+
+    public void clear() {
+        id = 0;
+        source = 0;
+        time = 0L;
+        modifiers = 0;
+        x = 0;
+        y = 0;
+        clickCount = 0;
+        button = 0;
+        rectangle = null;
     }
 }
