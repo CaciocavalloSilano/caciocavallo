@@ -26,14 +26,19 @@
 package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
+import java.awt.AWTException;
+import java.awt.BufferCapabilities;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.BufferCapabilities.FlipContents;
 import java.awt.event.PaintEvent;
-import java.awt.geom.Area;
 import java.awt.peer.ContainerPeer;
 import java.awt.image.ColorModel;
 import java.util.Iterator;
@@ -66,6 +71,21 @@ public class ManagedWindow
      * The bounds of this window, relative to the parent container.
      */
     private int x, y, width, height;
+
+    /**
+     * The background color of the component window.
+     */
+    private Color background;
+
+    /**
+     * The foreground color of the component window.
+     */
+    private Color foreground;
+
+    /**
+     * The font of the component window.
+     */
+    private Font font;
 
     /**
      * Indicates if this window is visible or not.
@@ -109,7 +129,11 @@ public class ManagedWindow
     public Graphics2D getGraphics() {
         // Check if we have obscuring siblings and add their clip
         // rectangles to the list.
-        return prepareClippedGraphics(null);
+        Graphics2D g2d = prepareClippedGraphics(null);
+        g2d.setColor(foreground);
+        g2d.setFont(font);
+        g2d.setBackground(background);
+        return g2d;
     }
 
     private Graphics2D prepareClippedGraphics(List<Rectangle> clipRects) {
@@ -315,5 +339,44 @@ public class ManagedWindow
             dispatched = true;
         }
         return dispatched;
+    }
+
+    @Override
+    public void setBackground(Color c) {
+        background = c;
+    }
+
+    @Override
+    public void setFont(Font f) {
+        font = f;
+    }
+
+    @Override
+    public void setForeground(Color c) {
+        foreground = c;
+    }
+
+    @Override
+    public void createBuffers(int numBuffers, BufferCapabilities caps)
+        throws AWTException {
+
+        // TODO: Implement this correctly.        
+        throw new AWTException("Not yet supported.");
+    }
+
+    @Override
+    public void destroyBuffers() {
+        // Nothing to do here yet.        
+    }
+
+    @Override
+    public void flip(int x1, int y1, int x2, int y2, FlipContents flipAction) {
+        // Nothing to do here yet.        
+    }
+
+    @Override
+    public Image getBackBuffer() {
+        // Nothing to do here yet.        
+        return null;
     }
 }

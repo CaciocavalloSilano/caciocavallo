@@ -30,6 +30,8 @@ import gnu.x11.Drawable;
 import gnu.x11.Window;
 import gnu.x11.event.Event;
 
+import java.awt.AWTException;
+import java.awt.BufferCapabilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -41,10 +43,12 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.BufferCapabilities.FlipContents;
 import java.awt.event.PaintEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
@@ -91,6 +95,21 @@ class EscherPlatformWindow implements PlatformWindow {
      * The frame insets. These get updated in {@link #show()}.
      */
     private Insets insets;
+
+    /**
+     * The background color of this component.
+     */
+    private Color background;
+
+    /**
+     * The foreground color of this component.
+     */
+    private Color foreground;
+
+    /**
+     * The font of this component.
+     */
+    private Font font;
 
     EscherPlatformWindow(CacioComponent cacioComp, PlatformWindow parent) {
 
@@ -226,14 +245,13 @@ class EscherPlatformWindow implements PlatformWindow {
     @Override
     public Graphics2D getGraphics() {
         Component awtComponent = cacioComponent.getAWTComponent();
-        Color fg = awtComponent.getForeground();
+        Color fg = foreground;
         if (fg == null)
             fg = Color.BLACK;
-        Color bg = awtComponent.getBackground();
+        Color bg = background;
         if (bg == null)
             bg = Color.WHITE;
-        SunGraphics2D sg2d = new SunGraphics2D(surfaceData, fg, bg,
-                awtComponent.getFont());
+        SunGraphics2D sg2d = new SunGraphics2D(surfaceData, fg, bg, font);
         sg2d.translate(-insets.left, -insets.top);
         return sg2d;
     }
@@ -391,5 +409,45 @@ class EscherPlatformWindow implements PlatformWindow {
     @Override
     public void updateCursorImmediately() {
         System.err.println("IMPLEMENT ME: EscherPlatformWindow.updateCursorImmediately()");
+    }
+
+    @Override
+    public void createBuffers(int numBuffers, BufferCapabilities caps)
+            throws AWTException {
+        throw new AWTException("Not yet implemented.");
+    }
+
+    @Override
+    public void destroyBuffers() {
+        // Nothing to do here yet.
+    }
+
+    @Override
+    public void flip(int x1, int y1, int x2, int y2, FlipContents flipAction) {
+        // Nothing to do here yet.
+    }
+
+    @Override
+    public Image getBackBuffer() {
+        // Nothing to do here yet.
+        return null;
+    }
+
+    @Override
+    public void setBackground(Color c) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setFont(Font f) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setForeground(Color c) {
+        // TODO Auto-generated method stub
+        
     }
 }
