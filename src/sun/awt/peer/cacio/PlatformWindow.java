@@ -252,13 +252,6 @@ public interface PlatformWindow extends BaseWindow {
 
 
     /**
-     * Update the mouse cursor according to the current setting of the
-     * AWT component. This is called on each mouse movement. The
-     * implementation should check if the cursor actually has to be changed.
-     */
-    void updateCursorImmediately();
-
-    /**
      * Sets the background color of the component window.
      *
      * @param c the background color to set
