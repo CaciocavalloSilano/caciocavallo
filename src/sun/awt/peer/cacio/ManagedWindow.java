@@ -316,11 +316,6 @@ public class ManagedWindow
         return false;
     }
 
-    @Override
-    public void updateCursorImmediately() {
-        // TODO: Implement this.
-    }
-
     CacioComponent getCacioComponent() {
         return cacioComponent;
     }
