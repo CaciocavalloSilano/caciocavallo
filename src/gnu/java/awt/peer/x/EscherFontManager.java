@@ -62,4 +62,18 @@ public class EscherFontManager
   {
     return new EscherFontConfiguration(this);
   }
+
+  /**
+   * Returns an array of two strings. The first element is the
+   * name of the font. The second element is the file name.
+   */
+  @Override
+  public String[] getDefaultPlatformFont() {
+    // TODO: This probably only works on my Linux distro (Ubuntu). Maybe
+    // figure out something more clever.
+    return new String[] { "DejaVu Sans Serif",
+                          "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"
+                        };
+  }
+
 }
