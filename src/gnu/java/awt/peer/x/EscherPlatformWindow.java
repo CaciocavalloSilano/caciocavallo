@@ -411,11 +411,6 @@ class EscherPlatformWindow implements PlatformToplevelWindow {
     }
 
     @Override
-    public void updateCursorImmediately() {
-        System.err.println("IMPLEMENT ME: EscherPlatformWindow.updateCursorImmediately()");
-    }
-
-    @Override
     public void createBuffers(int numBuffers, BufferCapabilities caps)
             throws AWTException {
         throw new AWTException("Not yet implemented.");
