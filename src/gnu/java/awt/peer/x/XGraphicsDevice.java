@@ -70,11 +70,6 @@ public class XGraphicsDevice
   private Display.Name displayName;
 
   /**
-   * The event pump for this X Display.
-   */
-  private XEventPump eventPump;
-
-  /**
    * Creates a new XGraphicsDevice.
    */
   XGraphicsDevice(Display.Name dn)
@@ -159,14 +154,8 @@ public class XGraphicsDevice
             throw awtErr;
           }
         
-        eventPump = new XEventPump(display);
       }
     return display;
-  }
-
-  XEventPump getEventPump()
-  {
-    return eventPump;
   }
 
   /**

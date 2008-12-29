@@ -122,7 +122,6 @@ class EscherPlatformWindow implements PlatformWindow {
                              y - parentInsets.top, w, h, 0, atts);
         xwindow.select_input(standardSelect);
 
-        dev.getEventPump().registerWindow(xwindow, cacioComp);
         xwindow.set_wm_delete_window();
 
         awtComp.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
@@ -178,7 +177,6 @@ class EscherPlatformWindow implements PlatformWindow {
     @Override
     public void dispose() {
         XGraphicsDevice dev = EscherToolkit.getDefaultDevice();
-        dev.getEventPump().unregisterWindow(xwindow);
     }
 
     @Override
