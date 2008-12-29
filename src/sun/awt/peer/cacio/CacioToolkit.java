@@ -72,7 +72,7 @@ import sun.awt.SunToolkit;
 public abstract class CacioToolkit extends SunToolkit {
 
     public CacioToolkit() {
-        CacioEventSource source = getEventSource();
+        CacioEventSource source = getPlatformWindowFactory().createEventSource();
         new CacioEventPump(source);
     }
 
@@ -232,9 +232,4 @@ public abstract class CacioToolkit extends SunToolkit {
 
     public abstract PlatformWindowFactory getPlatformWindowFactory();
 
-    /**
-     * Returns the event source that polls the native event queue and 
-     * generates the basic lowlevel AWT events.
-     */
-    public abstract CacioEventSource getEventSource();
 }

@@ -41,4 +41,11 @@ public interface PlatformWindowFactory {
     PlatformWindow createPlatformWindow(CacioComponent awtComponent,
                                         PlatformWindow parent);
 
+    /**
+     * Creates and returns the event source for the toolkit.
+     *
+     * @return the event source for the toolkit
+     */
+    CacioEventSource createEventSource();
+
 }
