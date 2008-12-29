@@ -26,6 +26,7 @@
 package gnu.java.awt.peer.x;
 
 import sun.awt.peer.cacio.CacioComponent;
+import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.PlatformWindow;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
@@ -35,6 +36,11 @@ class EscherPlatformWindowFactory implements PlatformWindowFactory {
     public PlatformWindow createPlatformWindow(CacioComponent cacioComponent,
                                                PlatformWindow parent) {
         return new EscherPlatformWindow(cacioComponent, parent);
+    }
+
+    @Override
+    public PlatformWindow createPlatformToplevelWindow(CacioComponent component) {
+        return new EscherPlatformWindow(component, null);
     }
 
 }

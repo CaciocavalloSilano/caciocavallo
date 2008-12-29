@@ -57,12 +57,13 @@ import java.awt.peer.ContainerPeer;
 
 import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.peer.cacio.CacioComponent;
+import sun.awt.peer.cacio.PlatformToplevelWindow;
 import sun.awt.peer.cacio.PlatformWindow;
 import sun.java2d.SunGraphics2D;
 import sun.java2d.SurfaceData;
 import sun.java2d.pipe.Region;
 
-class EscherPlatformWindow implements PlatformWindow {
+class EscherPlatformWindow implements PlatformToplevelWindow {
 
     private static int standardSelect =
                         Event.BUTTON_PRESS_MASK

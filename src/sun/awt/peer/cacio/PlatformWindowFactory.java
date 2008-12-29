@@ -42,6 +42,15 @@ public interface PlatformWindowFactory {
                                         PlatformWindow parent);
 
     /**
+     * Creates and returns a toplevel window for the specified peer.
+     *
+     * @param cacioWindowPeer the toplevel component
+     *
+     * @return the created toplevel window
+     */
+    PlatformWindow createPlatformToplevelWindow(CacioComponent component);
+
+    /**
      * Creates and returns the event source for the toolkit.
      *
      * @return the event source for the toolkit
