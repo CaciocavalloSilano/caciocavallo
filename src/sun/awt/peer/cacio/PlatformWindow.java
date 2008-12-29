@@ -25,12 +25,18 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.AWTException;
+import java.awt.BufferCapabilities;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.BufferCapabilities.FlipContents;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
@@ -251,4 +257,68 @@ public interface PlatformWindow extends BaseWindow {
      * implementation should check if the cursor actually has to be changed.
      */
     void updateCursorImmediately();
+
+    /**
+     * Sets the background color of the component window.
+     *
+     * @param c the background color to set
+     */
+    void setBackground(Color c);
+
+    /**
+     * Sets the foreground color of the component window.
+     *
+     * @param c the foreground color to set
+     */
+    void setForeground(Color c);
+
+    /**
+     * Sets the font of the component window.
+     *
+     * @param c the font to set
+     */
+    void setFont(Font f);
+
+    /**
+     * Creates back buffers for flipping. This method may throw an AWTException
+     * to indicate that flipping is not supported, in which case a blitting
+     * buffer strategy is used by AWT.
+     *
+     * @param numBuffers the number of buffers to create for flipping
+     * @param caps the required buffer capabilities
+     *
+     * @throws AWTException if flipping is not supported
+     */
+    void createBuffers(int numBuffers, BufferCapabilities caps)
+        throws AWTException;
+
+    /**
+     * Destroys the flipping buffers. If flipping is not supported (i.e.
+     * createBuffers() throws an AWTException), this method should do nothing.
+     *
+     * @see #createBuffers(int, BufferCapabilities)
+     */
+    void destroyBuffers();
+
+    /**
+     * Flips the (current) backbuffer to the front buffer.
+     * If flipping is not supported (i.e. createBuffers() throws an
+     * AWTException), this method should do nothing.
+     *
+     * @param x1 the area to flip, left X coordinate
+     * @param y1 the area to flip, top Y coordinate
+     * @param x2 the area to flip, right X coordinate
+     * @param y2 the area to flip, bottom Y coordinate
+     * @param flipAction the requested flip action
+     */
+    void flip(int x1, int y1, int x2, int y2, FlipContents flipAction);
+
+    /**
+     * Provides access to the (current) backbuffer as an image.
+     * If flipping is not supported (i.e. createBuffers() throws an
+     * AWTException), this method should do nothing.
+     *
+     * @return the current backbuffer, as an image
+     */
+    Image getBackBuffer();
 }

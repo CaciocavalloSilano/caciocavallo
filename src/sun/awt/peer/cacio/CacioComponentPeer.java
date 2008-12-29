@@ -343,8 +343,9 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     @Override
     public boolean handlesWheelScrolling() {
 
-        // TODO: Implement this correctly
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.handlesWheelScrolling");
+        // Only few components handle wheel scrolling (e.g. TextArea), but
+        // most don't. Therefore we generally return false here. Needs to
+        // be overridden by sub peers that actually handle wheel scrolling.
         return false;
 
     }
@@ -376,22 +377,20 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     @Override
     public void layout() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.layout");
+        // Nothing to do here. Few peers need to perform layout, those must
+        // override this method.
     }
 
     @Override
     public void paint(Graphics g) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.paint");
+        peerPaint(g, true);
     }
 
     @Override
     public void print(Graphics g) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.print");
+        peerPaint(g, true);
     }
 
     public boolean requestFocus(Component lightweightChild, boolean temporary,
@@ -404,20 +403,20 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     public void setBackground(Color c) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.setBackground");
+        platformWindow.setBackground(c);
+
     }
 
     public void setFont(Font f) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.setFont");
+        platformWindow.setFont(f);
+
     }
 
     public void setForeground(Color c) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.setForeground");
+        platformWindow.setForeground(c);
+
     }
 
     public void setBounds(int x, int y, int width, int height, int op) {
@@ -484,31 +483,26 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     public void createBuffers(int numBuffers, BufferCapabilities caps)
         throws AWTException {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.createBuffers");
-
+        platformWindow.createBuffers(numBuffers, caps);
     }
 
     public void destroyBuffers() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.destroyBuffers");
+        platformWindow.destroyBuffers();
 
     }
 
     public void flip(int x1, int y1, int x2, int y2,
                      BufferCapabilities.FlipContents flipAction) {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.flip");
+        platformWindow.flip(x1, y1, x2, y2, flipAction);
 
     }
     
     public Image getBackBuffer() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioComponentPeer.getBackBuffer");
-        return null;
+        return platformWindow.getBackBuffer();
+
     }
 
     public void coalescePaintEvent(PaintEvent e) {
