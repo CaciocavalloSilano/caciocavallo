@@ -31,8 +31,10 @@
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
 	</target>
-	
-	<target name="compile">
+
+	<target name="compile" depends="compile-cacio,compile-escher" />
+
+	<target name="compile-cacio">
 		<mkdir dir="${classes.dir}" />
 		<javac nowarn="on"
 		       srcdir="${src.dir}" destdir="${classes.dir}"
@@ -42,6 +44,18 @@
 			   debug="${value.compile.debug}"
 		           optimize="${value.compile.optimize}"
                            excludes="gnu/**/*" />
+	</target>
+
+	<target name="compile-escher">
+		<mkdir dir="${classes.dir}" />
+		<javac nowarn="on"
+		       srcdir="${src.dir}" destdir="${classes.dir}"
+
+			   classpathref="classpath"
+                           bootclasspathref="bootclasspath"
+			   debug="${value.compile.debug}"
+		           optimize="${value.compile.optimize}"
+                           excludes="sun/**/*" />
 	</target>
 
 	<target name="tests">
