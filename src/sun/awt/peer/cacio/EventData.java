@@ -329,7 +329,7 @@ public class EventData {
 
     public void clear() {
         id = 0;
-        source = 0;
+        source = null;
         time = 0L;
         modifiers = 0;
         x = 0;
