@@ -70,6 +70,11 @@ public class XGraphicsDevice
   private Display.Name displayName;
 
   /**
+   * The event pump for this X Display.
+   */
+  private XEventSource eventSource;
+   
+  /**
    * Creates a new XGraphicsDevice.
    */
   XGraphicsDevice(Display.Name dn)
@@ -154,8 +159,14 @@ public class XGraphicsDevice
             throw awtErr;
           }
         
+        eventSource = new XEventSource(display);
       }
     return display;
+  }
+
+  XEventSource getEventSource()
+  {
+      return eventSource;
   }
 
   /**
