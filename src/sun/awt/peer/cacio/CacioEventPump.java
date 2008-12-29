@@ -71,18 +71,23 @@ class CacioEventPump implements Runnable {
                 AWTAutoShutdown.notifyToolkitThreadBusy();
                 if (ev != null) {
                     Object source = ev.getSource();
-                    if (source instanceof ManagedWindowContainer) {
-                        ManagedWindowContainer c =
-                            (ManagedWindowContainer) source;
-                        c.dispatchEvent(ev);
-                    } else if (source instanceof CacioComponent) {
-                        CacioComponent c = (CacioComponent) source;
-                        ev.setSource(c.getAWTComponent());
-                        c.handlePeerEvent(ev.createAWTEvent());
-                    } else if (source instanceof Component) {
-                        SunToolkit.postEvent(AppContext.getAppContext(),
-                                             ev.createAWTEvent());
+                    if (source != null && ev.getId() != 0) {
+                        if (source instanceof ManagedWindowContainer) {
+                            ManagedWindowContainer c =
+                                (ManagedWindowContainer) source;
+                            c.dispatchEvent(ev);
+                        } else if (source instanceof CacioComponent) {
+                            CacioComponent c = (CacioComponent) source;
+                            ev.setSource(c.getAWTComponent());
+                            c.handlePeerEvent(ev.createAWTEvent());
+                        } else if (source instanceof Component) {
+                            AWTEvent awtEvent = ev.createAWTEvent();
+                            if (awtEvent != null) {
+                                SunToolkit.postEvent(AppContext.getAppContext(),
+                                        ev.createAWTEvent());
+                            }
 
+                        }
                     }
                 }
             } catch (Exception ex) {
