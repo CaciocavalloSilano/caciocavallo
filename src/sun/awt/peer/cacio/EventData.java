@@ -336,6 +336,6 @@ public class EventData {
         y = 0;
         clickCount = 0;
         button = 0;
-        rectangle = null;
+        updateRect = null;
     }
 }
