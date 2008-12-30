@@ -204,8 +204,10 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public TextAreaPeer createTextArea(TextArea target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioTextAreaPeer peer = new CacioTextAreaPeer(target,
+                                                   getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
