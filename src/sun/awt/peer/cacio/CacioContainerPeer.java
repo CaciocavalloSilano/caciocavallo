@@ -38,29 +38,29 @@ public abstract class CacioContainerPeer extends CacioComponentPeer implements
 
     public void beginLayout() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioContainerPeer.beginLayout");
+        // This can be used for optimization (e.g. defer painting while
+        // layouting). Nothing to do here for now.
 
     }
 
     public void endLayout() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioContainerPeer.endLayout");
+        // This can be used for optimization (e.g. defer painting while
+        // layouting). Nothing to do here for now.
 
     }
 
     public void beginValidate() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioContainerPeer.beginValidate");
+        // This can be used for optimization (e.g. defer painting while
+        // layouting). Nothing to do here for now.
 
     }
 
     public void endValidate() {
 
-        // TODO: Implement this correctly.
-        System.out.println("IMPLEMENT ME: CacioContainerPeer.endValidate");
+        // This can be used for optimization (e.g. defer painting while
+        // layouting). Nothing to do here for now.
 
     }
 
