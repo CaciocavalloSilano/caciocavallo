@@ -55,7 +55,7 @@ package sun.awt.peer.cacio;
 public interface CacioEventSource {
 
     /**
-     * Fetches the next event from the native event queue. This methods
+     * Fetches the next event from the native event queue. This method
      * blocks until the next event is available.
      *
      * @return the next event from the event queue
