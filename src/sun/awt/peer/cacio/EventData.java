@@ -35,6 +35,11 @@ import java.awt.event.PaintEvent;
 
 public class EventData {
 
+    private static final int BUTTON_DOWN_MASK =
+        MouseEvent.BUTTON1_DOWN_MASK
+        | MouseEvent.BUTTON2_DOWN_MASK
+        | MouseEvent.BUTTON3_DOWN_MASK;
+
     /**
      * The even id.
      */
@@ -89,6 +94,9 @@ public class EventData {
      * The key char for key events.
      */
     private char keyChar;
+
+
+    private int lastModifierState;
 
     /**
      * Returns the event ID. This ID corresponds to the AWT event IDs.
@@ -312,8 +320,11 @@ public class EventData {
         case MouseEvent.MOUSE_MOVED:
         case MouseEvent.MOUSE_PRESSED:
         case MouseEvent.MOUSE_RELEASED:
+            int modifierChange = (lastModifierState ^ modifiers);
+            lastModifierState = modifiers;
             return new MouseEvent((Component) source, id, time, modifiers,
-                                  x, y, clickCount, false, button);
+                                  x, y, clickCount, false,
+                                  getButton(modifierChange));
         case KeyEvent.KEY_PRESSED:
         case KeyEvent.KEY_TYPED:
         case KeyEvent.KEY_RELEASED:
@@ -330,6 +341,19 @@ public class EventData {
         default:
             // TODO: Implement the others.
             return null;
+        }
+    }
+
+    private int getButton(int theModifierChange) {
+        switch (theModifierChange & BUTTON_DOWN_MASK) {
+        case MouseEvent.BUTTON1_DOWN_MASK :
+            return MouseEvent.BUTTON1;
+        case MouseEvent.BUTTON2_DOWN_MASK :
+            return MouseEvent.BUTTON2;
+        case MouseEvent.BUTTON3_DOWN_MASK :
+            return MouseEvent.BUTTON3;
+        default :
+            return MouseEvent.NOBUTTON;
         }
     }
 
