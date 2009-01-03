@@ -33,13 +33,37 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     private ManagedWindowContainer screen;
 
     /**
+     * The event source that generates the basic events.
+     * Note: We create and return a FullScreenEventSource that
+     * uses this eventSource as 'backend' and infers all the higher
+     * level events.
+     */
+    private CacioEventSource eventSource;
+
+    /**
      * Constructs a new FullScreenWindowFactory that uses the
      * specified container as container for all toplevel windows.
      *
+     * The event source is expected to generate the following event types:
+     * <ul>
+     * <li>{@code MouseEvent.MOUSE_PRESSED}</li>
+     * <li>{@code MouseEvent.MOUSE_RELEASED}</li>
+     * <li>{@code MouseEvent.MOUSE_MOVED}</li>
+     * <li>{@code KeyEvent.KEY_PRESSED}</li>
+     * <li>{@code KeyEvent.KEY_RELEASED}</li>
+     * </ul>
+     *
+     * All the other events (component, window, focus, remaining mouse and key
+     * events) are inferred and synthesized by the event source that is
+     * created from this factory.
+     *
      * @param screen the container to be used for toplevel windows
+     * @param s the event source to use
      */
-    public FullScreenWindowFactory(ManagedWindowContainer screen) {
+    public FullScreenWindowFactory(ManagedWindowContainer screen,
+                                   CacioEventSource s) {
         this.screen = screen;
+        this.eventSource = s;
     }
 
     /**
@@ -64,8 +88,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
 
     @Override
     public CacioEventSource createEventSource() {
-        // TODO: Implement fullscreen translating event source.
-        return null;
+        return eventSource;
     }
 
 }
