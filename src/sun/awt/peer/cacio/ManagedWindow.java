@@ -278,20 +278,31 @@ public class ManagedWindow
     }
 
     @Override
-    public void setVisible(boolean b) {
-        visible = b;
-        parent.setVisible(this, b);
+    public void setVisible(boolean v) {
+        visible = v;
+        // Need to repaint the parent and maybe some siblings.
+        parent.setVisible(this, v);
+        if (v) {
+            // We need to repaint ourselves.
+            Rectangle b = new Rectangle(0, 0, width, height);
+            CacioComponent cacioComp = getCacioComponent();
+            Component awtComp = cacioComp.getAWTComponent();
+            PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
+            cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+        }
     }
 
     @Override
     public void setVisible(ManagedWindow child, boolean v) {
-        // We need to repaint ourselves and then call super to repaint the
-        // children.
-        Rectangle b = child.getBounds();
-        CacioComponent cacioComp = getCacioComponent();
-        Component awtComp = cacioComp.getAWTComponent();
-        PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
-        cacioComp.handlePeerEvent(ev);
+        if (! v) {
+            // We need to repaint ourselves and then call super to repaint the
+            // children.
+            Rectangle b = child.getBounds();
+            CacioComponent cacioComp = getCacioComponent();
+            Component awtComp = cacioComp.getAWTComponent();
+            PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
+            cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+        }
         super.setVisible(child, v);
     }
 

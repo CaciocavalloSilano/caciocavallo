@@ -145,28 +145,31 @@ public abstract class AbstractManagedWindowContainer
 
     @Override
     public void setVisible(ManagedWindow child, boolean v) {
-        // TODO: Lots of optimization potential here!
-        Rectangle rect = child.getBounds();
-        Rectangle intersect = new Rectangle();
+        if (! v) {
+            // TODO: Lots of optimization potential here!
+            Rectangle rect = child.getBounds();
+            Rectangle intersect = new Rectangle();
 
-        // Send paint events to repaint stuff 'behind' closed window.
-        // Paint from bottommost to topmost component.
-        Iterator<ManagedWindow> i = children.iterator();
-        while (i.hasNext()) {
-            ManagedWindow w = i.next();
-            if (w.isVisible()) {
-                Rectangle b = w.getBounds();
-                Rectangle2D.intersect(rect, b, intersect);
-                if (! intersect.isEmpty()) {
-                    CacioComponent cacioComp = w.getCacioComponent();
-                    Component awtComp = cacioComp.getAWTComponent();
-                    // We need to be relative to the target.
-                    intersect.x -= b.x;
-                    intersect.y -= b.y;
-                    PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT,
-                                                   intersect);
-                    cacioComp.handlePeerEvent(ev,
-                                   EventPriority.ULTIMATE);
+            // Send paint events to repaint stuff 'behind' closed window.
+            // Paint from bottommost to topmost component.
+            Iterator<ManagedWindow> i = children.iterator();
+            while (i.hasNext()) {
+                ManagedWindow w = i.next();
+                if (w.isVisible()) {
+                    Rectangle b = w.getBounds();
+                    Rectangle2D.intersect(rect, b, intersect);
+                    if (! intersect.isEmpty()) {
+                        CacioComponent cacioComp = w.getCacioComponent();
+                        Component awtComp = cacioComp.getAWTComponent();
+                        // We need to be relative to the target.
+                        intersect.x -= b.x;
+                        intersect.y -= b.y;
+                        PaintEvent ev = new PaintEvent(awtComp,
+                                                       PaintEvent.PAINT,
+                                                       intersect);
+                        cacioComp.handlePeerEvent(ev,
+                                                  EventPriority.ULTIMATE);
+                    }
                 }
             }
         }
