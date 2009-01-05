@@ -81,15 +81,15 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
     }
 
-    public void handlePeerEvent(AWTEvent ev) {
+    public void handlePeerEvent(AWTEvent ev, EventPriority prio) {
         // If we receive a FOCUS_GAINED event, we also need to send a
         // WINDOW_FOCUS_GAINED event.
         if (ev.getID() == FocusEvent.FOCUS_GAINED) {
             WindowEvent we = new WindowEvent((Window) getAWTComponent(),
                                              WindowEvent.WINDOW_GAINED_FOCUS);
-            super.handlePeerEvent(we);
+            super.handlePeerEvent(we, prio);
         }
-        super.handlePeerEvent(ev);
+        super.handlePeerEvent(ev, prio);
     }
 
     protected PlatformToplevelWindow getToplevelWindow() {

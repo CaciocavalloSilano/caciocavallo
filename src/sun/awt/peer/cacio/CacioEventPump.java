@@ -33,6 +33,8 @@ import sun.awt.AppContext;
 import sun.awt.AWTAutoShutdown;
 import sun.awt.SunToolkit;
 
+import sun.awt.peer.cacio.CacioComponent.EventPriority;
+
 /**
  * A thread that polls the native event queue for events and posts
  * them to the AWT event queue.
@@ -79,7 +81,8 @@ class CacioEventPump implements Runnable {
                         } else if (source instanceof CacioComponent) {
                             CacioComponent c = (CacioComponent) source;
                             ev.setSource(c.getAWTComponent());
-                            c.handlePeerEvent(ev.createAWTEvent());
+                            c.handlePeerEvent(ev.createAWTEvent(),
+                                              EventPriority.DEFAULT);
                         } else if (source instanceof Component) {
                             AWTEvent awtEvent = ev.createAWTEvent();
                             if (awtEvent != null) {

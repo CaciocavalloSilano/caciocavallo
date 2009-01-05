@@ -55,9 +55,12 @@ import java.awt.image.VolatileImage;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
+import java.lang.reflect.Field;
+
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
+import sun.awt.PeerEvent;
 
 import sun.font.FontDesignMetrics;
 
@@ -556,28 +559,69 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         return awtComponent;
     }
 
-    public void handlePeerEvent(AWTEvent event) {
+    public void handlePeerEvent(AWTEvent event, EventPriority prio) {
         if (awtComponent instanceof Window) {
             Window w = (Window) awtComponent;
             if (event instanceof FocusEvent) {
                 FocusEvent fe = (FocusEvent) event;
                 if (fe.getID() == FocusEvent.FOCUS_GAINED) {
                     WindowEvent we = new WindowEvent(w, WindowEvent.WINDOW_GAINED_FOCUS);
-                    postEvent(we);
-                    postEvent(event);
+                    postEvent(we, prio);
+                    postEvent(event, prio);
                     return;
                 } else if (fe.getID() == FocusEvent.FOCUS_LOST) {
-                    postEvent(event);
+                    postEvent(event, prio);
                     WindowEvent we = new WindowEvent(w, WindowEvent.WINDOW_LOST_FOCUS);
-                    postEvent(we);
+                    postEvent(we, prio);
                     return;
                 }
             }
         }
-        postEvent(event);
+        postEvent(event, prio);
     }
 
-    private void postEvent(AWTEvent event) {
-        SunToolkit.postEvent(AppContext.getAppContext(), event);
+    private void postEvent(AWTEvent event, EventPriority prio) {
+        if (prio == EventPriority.DEFAULT) {
+            SunToolkit.postEvent(AppContext.getAppContext(), event);
+        } else {
+            long peerEvPrio;
+            switch (prio) {
+            case LOW:
+                peerEvPrio = PeerEvent.LOW_PRIORITY_EVENT;
+                break;
+            case HIGH:
+                peerEvPrio = PeerEvent.PRIORITY_EVENT;
+                break;
+            case ULTIMATE:
+                peerEvPrio = PeerEvent.ULTIMATE_PRIORITY_EVENT;
+                break;
+            default:
+                throw new IllegalArgumentException();
+            }
+            postPriorityEvent(event, peerEvPrio);
+        }
     }
+
+    private static Field isPostedField;
+    
+    private void postPriorityEvent(final AWTEvent e, long prio) {
+        if (isPostedField == null) {
+            isPostedField = SunToolkit.getField(AWTEvent.class, "isPosted");
+        }
+        PeerEvent pe = new PeerEvent(Toolkit.getDefaultToolkit(),
+                                     new Runnable() {
+                public void run() {
+                    try {
+                        isPostedField.setBoolean(e, true);
+                    } catch (IllegalArgumentException e) {
+                        assert(false);
+                    } catch (IllegalAccessException e) {
+                        assert(false);
+                    }
+                    ((Component)e.getSource()).dispatchEvent(e);
+                }
+            }, prio);
+        SunToolkit.postEvent(SunToolkit.targetToAppContext(e.getSource()), pe);
+    }
+
 }

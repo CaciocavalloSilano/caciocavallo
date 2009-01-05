@@ -54,6 +54,7 @@ import java.util.LinkedList;
 
 import sun.awt.AWTAutoShutdown;
 import sun.awt.peer.cacio.CacioComponent;
+import sun.awt.peer.cacio.CacioComponent.EventPriority;
 import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.EventData;
 
@@ -422,7 +423,7 @@ public class XEventSource implements CacioEventSource
       java.awt.event.FocusEvent fe =
           new java.awt.event.FocusEvent(awtComponent,
                                        java.awt.event.FocusEvent.FOCUS_GAINED);
-      cacioComponent.handlePeerEvent(fe);
+      cacioComponent.handlePeerEvent(fe, EventPriority.DEFAULT);
   }
 
   /**

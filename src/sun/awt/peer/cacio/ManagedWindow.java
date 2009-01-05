@@ -48,6 +48,8 @@ import java.util.List;
 import sun.awt.CausedFocusEvent.Cause;
 import sun.java2d.pipe.Region;
 
+import sun.awt.peer.cacio.CacioComponent.EventPriority;
+
 /**
  * A {@link PlatformWindow} implementation that uses a ManagedWindowContainer
  * as parent and implements all the window management logic in Java. This
@@ -321,7 +323,7 @@ public class ManagedWindow
     }
 
     public void dispatchEvent(AWTEvent event) {
-        getCacioComponent().handlePeerEvent(event);
+        getCacioComponent().handlePeerEvent(event, EventPriority.DEFAULT);
     }
 
     protected boolean dispatchEventImpl(EventData event) {
@@ -330,7 +332,8 @@ public class ManagedWindow
         if (! dispatched) {
             // If not dispatched, then dispatch to our own component.
             event.setSource(cacioComponent.getAWTComponent());
-            cacioComponent.handlePeerEvent(event.createAWTEvent());
+            cacioComponent.handlePeerEvent(event.createAWTEvent(),
+                                           EventPriority.DEFAULT);
             dispatched = true;
         }
         return dispatched;

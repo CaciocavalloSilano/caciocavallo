@@ -35,6 +35,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
 
+import sun.awt.peer.cacio.CacioComponent.EventPriority;
+
 /**
  * A base implementation of {@link ManagedWindowContainer}. This can be
  * used as a basis for PlatformWindow implementations that are aimed
@@ -163,7 +165,8 @@ public abstract class AbstractManagedWindowContainer
                     intersect.y -= b.y;
                     PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT,
                                                    intersect);
-                    cacioComp.handlePeerEvent(ev);
+                    cacioComp.handlePeerEvent(ev,
+                                   EventPriority.ULTIMATE);
                 }
             }
         }
