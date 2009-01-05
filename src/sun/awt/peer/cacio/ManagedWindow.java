@@ -129,9 +129,23 @@ public class ManagedWindow
 
     @Override
     public Graphics2D getGraphics() {
+        // Our children obscure the container. Clip them.
+        LinkedList<Rectangle> clips;
+        LinkedList<ManagedWindow> children = getChildren();
+        if (children != null && children.size() > 0) {
+            clips = new LinkedList<Rectangle>();
+            for (ManagedWindow child : children) {
+                if (child.isVisible()) {
+                    clips.add(child.getBounds());
+                }
+            }
+        } else {
+            clips = null;
+        }
+
         // Check if we have obscuring siblings and add their clip
         // rectangles to the list.
-        Graphics2D g2d = prepareClippedGraphics(null);
+        Graphics2D g2d = getClippedGraphics(clips);
         g2d.setColor(foreground);
         g2d.setFont(font);
         g2d.setBackground(background);
@@ -139,7 +153,8 @@ public class ManagedWindow
     }
 
     private Graphics2D prepareClippedGraphics(List<Rectangle> clipRects) {
-        clipRects = addClipRects(null);
+        // Add clip rectangles of any siblings.
+        clipRects = addClipRects(clipRects);
         // Ask parent for clipped graphics.
         Graphics2D pg = parent.getClippedGraphics(clipRects);
         // Translate and clip to our own coordinate system.
@@ -162,16 +177,16 @@ public class ManagedWindow
         if (siblings.getLast() != this) {
             if (clipRects == null) {
                 clipRects = new LinkedList<Rectangle>();
-                Iterator<ManagedWindow> i = siblings.descendingIterator();
-                while (i.hasNext()) {
-                    ManagedWindow sibling = i.next();
-                    if (sibling == this) {
-                        break;
-                    }
-                    if (sibling.isVisible()) {
-                        Rectangle bounds = sibling.getBounds();
-                        clipRects.add(bounds);
-                    }
+            }
+            Iterator<ManagedWindow> i = siblings.descendingIterator();
+            while (i.hasNext()) {
+                ManagedWindow sibling = i.next();
+                if (sibling == this) {
+                    break;
+                }
+                if (sibling.isVisible()) {
+                    Rectangle bounds = sibling.getBounds();
+                    clipRects.add(bounds);
                 }
             }
         }
