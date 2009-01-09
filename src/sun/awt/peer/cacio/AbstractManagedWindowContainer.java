@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.PaintEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
@@ -121,6 +122,13 @@ public abstract class AbstractManagedWindowContainer
             } else {
                 return false;
             }
+        } else if (id >= KeyEvent.KEY_FIRST && id <= KeyEvent.KEY_LAST) {
+            FocusManager fm = FocusManager.getInstance();
+            ManagedWindow window = fm.getFocusedWindow();
+            if (window != null) {
+                window.dispatchKeyEvent(event);
+            }
+            return true;
         } else {
             return false;
         }

@@ -87,7 +87,7 @@ class CacioEventPump implements Runnable {
                             AWTEvent awtEvent = ev.createAWTEvent();
                             if (awtEvent != null) {
                                 SunToolkit.postEvent(AppContext.getAppContext(),
-                                        ev.createAWTEvent());
+                                                     awtEvent);
                             }
 
                         }

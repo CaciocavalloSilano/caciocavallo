@@ -38,6 +38,7 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
     CacioWindowPeer(Component awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
         ((Window) awtC).setFocusableWindowState(true);
+        ((Window) awtC).setFocusTraversalPolicyProvider(true);
     }
 
     void init(PlatformWindowFactory pwf) {
