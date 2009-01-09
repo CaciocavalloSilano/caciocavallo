@@ -38,6 +38,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.BufferCapabilities.FlipContents;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
 import java.awt.peer.ContainerPeer;
 import java.awt.image.ColorModel;
@@ -289,7 +291,11 @@ public class ManagedWindow
             Component awtComp = cacioComp.getAWTComponent();
             PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
             cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+
+            FocusEvent fe = new FocusEvent(awtComp, FocusEvent.FOCUS_GAINED);
+            cacioComp.handlePeerEvent(fe, EventPriority.DEFAULT);
         }
+        FocusManager.getInstance().setVisible(this, v);
     }
 
     @Override
@@ -340,8 +346,9 @@ public class ManagedWindow
     public boolean requestFocus(Component lightweightChild, boolean temporary,
                                 boolean focusedWindowChangeAllowed, long time,
                                 Cause cause) {
-        // TODO: Implement this.
-        return false;
+        FocusManager fm = FocusManager.getInstance();
+        fm.setFocusedWindow(this);
+        return true;
     }
 
     CacioComponent getCacioComponent() {
@@ -361,8 +368,17 @@ public class ManagedWindow
             cacioComponent.handlePeerEvent(event.createAWTEvent(),
                                            EventPriority.DEFAULT);
             dispatched = true;
+            if (event.getId() == MouseEvent.MOUSE_PRESSED) {
+                FocusManager.getInstance().mousePressed(this);
+            }
         }
         return dispatched;
+    }
+
+    void dispatchKeyEvent(EventData ev) {
+        ev.setSource(cacioComponent.getAWTComponent());
+        cacioComponent.handlePeerEvent(ev.createAWTEvent(),
+                                       EventPriority.DEFAULT);
     }
 
     @Override
@@ -402,5 +418,9 @@ public class ManagedWindow
     public Image getBackBuffer() {
         // Nothing to do here yet.        
         return null;
+    }
+
+    ManagedWindowContainer getParent() {
+        return parent;
     }
 }

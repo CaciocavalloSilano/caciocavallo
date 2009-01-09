@@ -34,6 +34,7 @@ import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.awt.KeyboardFocusManager;
 import java.awt.Label;
 import java.awt.List;
 import java.awt.Menu;
@@ -54,6 +55,7 @@ import java.awt.peer.ChoicePeer;
 import java.awt.peer.DialogPeer;
 import java.awt.peer.FileDialogPeer;
 import java.awt.peer.FramePeer;
+import java.awt.peer.KeyboardFocusManagerPeer;
 import java.awt.peer.LabelPeer;
 import java.awt.peer.ListPeer;
 import java.awt.peer.MenuBarPeer;
@@ -228,6 +230,10 @@ public abstract class CacioToolkit extends SunToolkit {
 	SunToolkit.targetCreatedPeer(target, peer);
         return peer;
 
+    }
+
+    public KeyboardFocusManagerPeer createKeyboardFocusManagerPeer(KeyboardFocusManager manager) throws HeadlessException {
+        return CacioKeyboardFocusManagerPeer.getInstance();
     }
 
     static void disposePeer(Object target, Object peer) {

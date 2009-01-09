@@ -396,12 +396,49 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         peerPaint(g, true);
     }
 
+    /* FIX ME: these constants copied from java.awt.KeyboardFocusManager */
+    static final int SNFH_FAILURE = 0;
+    static final int SNFH_SUCCESS_HANDLED = 1;
+    static final int SNFH_SUCCESS_PROCEED = 2;
+
     public boolean requestFocus(Component lightweightChild, boolean temporary,
             boolean focusedWindowChangeAllowed, long time, Cause cause) {
 
-        return platformWindow.requestFocus(lightweightChild, temporary,
-                                           focusedWindowChangeAllowed,
-                                           time, cause);
+        if (KFMHelper.processSynchronousLightweightTransfer(getAWTComponent(),
+                                                   lightweightChild,
+                                                   temporary,
+                                                   focusedWindowChangeAllowed,
+                                                   time)) {
+            return true;
+        }
+
+        int result = KFMHelper.shouldNativelyFocusHeavyweight(
+                                                   getAWTComponent(),
+                                                   lightweightChild,
+                                                   temporary,
+                                                   focusedWindowChangeAllowed,
+                                                   time, cause);
+
+        switch (result) {
+        case SNFH_FAILURE:
+            return false;
+        case SNFH_SUCCESS_PROCEED:
+            PlatformWindow pw = getPlatformWindow();
+            // TODO: Should ask platform window for focus.
+            if (pw instanceof ManagedWindow) {
+                FocusManager.getInstance().setFocusedWindowNoEvent((ManagedWindow) pw);
+            }
+            return CacioKeyboardFocusManagerPeer.getInstance().requestFocus(getAWTComponent(),
+                                                                            lightweightChild,
+                                                                            temporary,
+                                                                            focusedWindowChangeAllowed,
+                                                                            time, cause);
+        case SNFH_SUCCESS_HANDLED:
+            // Either lightweight or excessive request - all events are generated.
+            return true;
+        default:
+            return false;
+        }
     }
 
     public void setBackground(Color c) {
