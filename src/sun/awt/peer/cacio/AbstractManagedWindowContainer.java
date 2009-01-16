@@ -98,9 +98,8 @@ public abstract class AbstractManagedWindowContainer
      * to ourselves.
      */
     @Override
-    public Point getLocationOnScreen(ManagedWindow child) {
-        Rectangle bounds = child.getBounds();
-        return new Point(bounds.x, bounds.y);
+    public Point getLocationOnScreen() {
+        return new Point(0, 0);
     }
 
     @Override
@@ -178,6 +177,35 @@ public abstract class AbstractManagedWindowContainer
                         cacioComp.handlePeerEvent(ev,
                                                   EventPriority.ULTIMATE);
                     }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void repaint(int x, int y, int w, int h) {
+        // Repaint the correct rectangles for all visible children that
+        // are inside this rectangle.
+        Iterator<ManagedWindow> i = children.descendingIterator();
+        Rectangle rect = new Rectangle(x, y, w, h);
+        Rectangle intersect = new Rectangle();
+        while (i.hasNext()) {
+            ManagedWindow child = i.next();
+            if (child.isVisible()) {
+                Rectangle b = child.getBounds();
+                Rectangle2D.intersect(b, rect, intersect);
+                if (! intersect.isEmpty()) {
+                    CacioComponent cacioComp = child.getCacioComponent();
+                    Component awtComp = cacioComp.getAWTComponent();
+                    // We need to be relative to the target.
+                    Rectangle area = new Rectangle(intersect);
+                    area.x -= b.x;
+                    area.y -= b.y;
+                    PaintEvent ev = new PaintEvent(awtComp,
+                                                   PaintEvent.PAINT,
+                                                   area);
+                    cacioComp.handlePeerEvent(ev,
+                                              EventPriority.ULTIMATE);
                 }
             }
         }

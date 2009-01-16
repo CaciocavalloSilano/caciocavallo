@@ -214,11 +214,25 @@ public class ManagedWindow
 
     @Override
     public void setBounds(int x, int y, int width, int height, int op) {
+
+        int oldX = this.x;
+        int oldY = this.y;
+        int oldW = this.width;
+        int oldH = this.height;
+
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        // TODO: This needs to do more, like repainting, etc. Implement it.
+        // TODO: We brute-force repaint everything that could be damaged.
+        // Make this a little more intelligent.
+
+        if (isVisible()) {
+            // First we repaint the parent at the old bounds.
+            parent.repaint(oldX, oldY, oldW, oldH);
+            // And then we repaint the parent at the new bounds.
+            parent.repaint(x, y, width, height);
+        }
     }
 
     @Override
@@ -230,14 +244,10 @@ public class ManagedWindow
 
     @Override
     public Point getLocationOnScreen() {
-        return parent.getLocationOnScreen(this);
-    }
-
-    @Override
-    public Point getLocationOnScreen(ManagedWindow child) {
-        Point myLoc = getLocationOnScreen();
-        Rectangle childBounds = child.getBounds();
-        return new Point(myLoc.x + childBounds.x, myLoc.y + childBounds.y);
+        Point p = parent.getLocationOnScreen();
+        p.x += x;
+        p.y += y;
+        return p;
     }
 
     @Override
@@ -423,4 +433,12 @@ public class ManagedWindow
     ManagedWindowContainer getParent() {
         return parent;
     }
+
+    @Override
+    public void repaint(int x, int y, int w, int h) {
+        // Go all the way up to the toplevel and let this
+        // do the actual sending of the paint events.
+        parent.repaint(x + this.x, y + this.y, w, h);
+    }
+
 }

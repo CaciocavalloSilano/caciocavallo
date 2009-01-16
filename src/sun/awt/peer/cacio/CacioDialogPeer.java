@@ -30,6 +30,8 @@ import java.awt.Window;
 import java.awt.peer.DialogPeer;
 import java.util.List;
 
+import javax.swing.JRootPane;
+
 class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     public CacioDialogPeer(Component awtC, PlatformWindowFactory pwf) {
@@ -50,4 +52,11 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     public void blockWindows(List<Window> windows) {
     }
+
+
+    @Override
+    protected int getRootPaneDecorationStyle() {
+        return JRootPane.PLAIN_DIALOG;
+    }
+
 }

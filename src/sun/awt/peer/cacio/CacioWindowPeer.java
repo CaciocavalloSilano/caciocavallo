@@ -27,13 +27,182 @@ package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.peer.WindowPeer;
 
+import javax.swing.JComponent;
+import javax.swing.JRootPane;
+
+import sun.awt.ComponentAccessor;
+
 class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
+
+    class SwingRootPane extends JRootPane implements CacioSwingComponent {
+
+        private Window window;
+
+        SwingRootPane(Window w) {
+            window = w;
+        }
+
+        /**
+         * Overridden so that this method returns the correct value even without
+         * a peer.
+         * 
+         * @return the screen location of the button
+         */
+        @Override
+        public Point getLocationOnScreen() {
+            return CacioWindowPeer.this.getLocationOnScreen();
+        }
+
+        /**
+         * Overridden so that the isShowing method returns the correct value for
+         * the swing button, even if it has no peer on its own.
+         * 
+         * @return <code>true</code> if the button is currently showing,
+         *         <code>false</code> otherwise
+         */
+        @Override
+        public boolean isShowing() {
+            boolean retVal = false;
+            if (window != null)
+                retVal = window.isShowing();
+            return retVal;
+        }
+
+        /**
+         * Overridden, so that the Swing button can create an Image without its
+         * own peer.
+         * 
+         * @param w
+         *            the width of the image
+         * @param h
+         *            the height of the image
+         * 
+         * @return an image
+         */
+        @Override
+        public Image createImage(int w, int h) {
+            return CacioWindowPeer.this.createImage(w, h);
+        }
+
+        /**
+         * Overridden, so that the Swing button can create a Graphics without
+         * its own peer.
+         * 
+         * @return a graphics instance for the button
+         */
+        @Override
+        public Graphics getGraphics() {
+            return CacioWindowPeer.this.getGraphics();
+        }
+
+        /**
+         * Returns this button.
+         * 
+         * @return this button
+         */
+        @Override
+        public JComponent getJComponent() {
+            return this;
+        }
+
+        private MouseEvent retargetMouseEvent(MouseEvent ev, Component c) {
+            // Translate to target coordinates.
+            int x = ev.getX();
+            int y = ev.getY();
+            Component p = c;
+            while (p != this) {
+                x -= p.getX();
+                y -= p.getY();
+                p = p.getParent();
+            }
+            ev = new MouseEvent(c, ev.getID(), ev.getWhen(), ev.getModifiers(),
+                                x, y, ev.getClickCount(), ev.isPopupTrigger(),
+                                ev.getButton());
+            return ev;
+        }
+
+        /**
+         * Handles mouse events by forwarding it to
+         * <code>processMouseEvent()</code> after having retargetted it to
+         * this button.
+         * 
+         * @param ev
+         *            the mouse event
+         */
+        @Override
+        public void handleMouseEvent(MouseEvent ev) {
+            Component c = findComponentAt(ev.getX(), ev.getY());
+            if (c != null) {
+                ev = retargetMouseEvent(ev, c);
+                processMouseEvent(c, ev);
+            }
+        }
+
+        /**
+         * Handles mouse motion events by forwarding it to
+         * <code>processMouseMotionEvent()</code> after having retargetted it
+         * to this button.
+         * 
+         * @param ev
+         *            the mouse motion event
+         */
+        @Override
+        public void handleMouseMotionEvent(MouseEvent ev) {
+            Component c = findComponentAt(ev.getX(), ev.getY());
+            if (c != null) {
+                ev = retargetMouseEvent(ev, c);
+                processMouseMotionEvent(c, ev);
+            }
+        }
+
+        void processMouseEvent(Component c, MouseEvent ev) {
+            ComponentAccessor.processEvent(c, ev);
+        }
+
+        void processMouseMotionEvent(Component c, MouseEvent ev) {
+            ComponentAccessor.processEvent(c, ev);
+        }
+
+        /**
+         * Handles key events by forwarding it to <code>processKeyEvent()</code>
+         * after having retargetted it to this button.
+         * 
+         * @param ev the mouse event
+         */
+        @Override
+        public void handleKeyEvent(KeyEvent ev) {
+        }
+
+        @Override
+        public void handleFocusEvent(FocusEvent ev) {
+        }
+
+        @Override
+        public Container getParent() {
+            Container par = null;
+            if (window != null)
+                par = window;
+            return par;
+        }
+
+    }
 
     CacioWindowPeer(Component awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
@@ -46,6 +215,20 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
         platformWindow = pwf.createPlatformToplevelWindow(this);
 
         initSwingComponent();
+    }
+
+    @Override
+    void initSwingComponent() {
+        Window window = (Window) getAWTComponent();
+        SwingRootPane rootPane = new SwingRootPane(window);
+        int deco = getRootPaneDecorationStyle();
+        rootPane.setWindowDecorationStyle(deco);
+        setSwingComponent(rootPane);
+        rootPane.addNotify();
+    }
+
+    protected int getRootPaneDecorationStyle() {
+        return JRootPane.NONE;
     }
 
     public void setAlwaysOnTop(boolean alwaysOnTop) {
@@ -112,4 +295,28 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
     protected PlatformToplevelWindow getToplevelWindow() {
         return (PlatformToplevelWindow) platformWindow;
     }
+
+    private JRootPane getRootPane() {
+        return (JRootPane) getSwingComponent().getJComponent();
+    }
+
+    public Insets getInsets() {
+
+        JRootPane rp = getRootPane();
+        if (! rp.isValid()) {
+            rp.validate();
+        }
+        Component cp = rp.getContentPane();
+        Component lp = rp.getLayeredPane();
+        Dimension rpSize = getRootPane().getSize();
+        Rectangle cpBounds = cp.getBounds();
+        Point lpLoc = lp.getLocation();
+        int top = cpBounds.y + lpLoc.y;
+        int left = cpBounds.x + lpLoc.x;
+        Insets insets = new Insets(top, left,
+                                   rpSize.height - cpBounds.height - top,
+                                   rpSize.width - cpBounds.width - left);
+        return insets;
+    }
+
 }

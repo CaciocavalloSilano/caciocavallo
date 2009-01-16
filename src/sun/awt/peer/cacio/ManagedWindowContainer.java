@@ -60,7 +60,7 @@ public interface ManagedWindowContainer extends BaseWindow {
      *
      * @return the location of the specified child on screen
      */
-    Point getLocationOnScreen(ManagedWindow child);
+    Point getLocationOnScreen();
 
     /**
      * Processes and dispatches the incoming event. This should include
@@ -94,4 +94,19 @@ public interface ManagedWindowContainer extends BaseWindow {
      * @return a Graphics2D object with the specified default clips applied
      */
     Graphics2D getClippedGraphics(List<Rectangle> clipRects);
+
+    /**
+     * Triggers repainting of the specified area in this container. This
+     * should repaint all the child windows that actually lie in this
+     * region. This method does not perform any painting itself, but
+     * only calculates the correct rectangles for all the children
+     * and probably the parent (for overlapping windows), and sends
+     * appropriate paint events.
+     *
+     * @param x the x location of the area to be repainted
+     * @param y the y location of the area to be repainted
+     * @param w the width of the area to be repainted
+     * @param h the height of the area to be repainted
+     */
+    void repaint(int x, int y, int w, int h);
 }

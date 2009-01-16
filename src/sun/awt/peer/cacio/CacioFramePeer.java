@@ -30,6 +30,8 @@ import java.awt.MenuBar;
 import java.awt.Rectangle;
 import java.awt.peer.FramePeer;
 
+import javax.swing.JRootPane;
+
 class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     public CacioFramePeer(Component awtC, PlatformWindowFactory pwf) {
@@ -89,5 +91,9 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     }
 
+    @Override
+    protected int getRootPaneDecorationStyle() {
+        return JRootPane.FRAME;
+    }
 
 }
