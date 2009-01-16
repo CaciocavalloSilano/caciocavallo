@@ -597,23 +597,6 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     }
 
     public void handlePeerEvent(AWTEvent event, EventPriority prio) {
-        if (awtComponent instanceof Window) {
-            Window w = (Window) awtComponent;
-            if (event instanceof FocusEvent) {
-                FocusEvent fe = (FocusEvent) event;
-                if (fe.getID() == FocusEvent.FOCUS_GAINED) {
-                    WindowEvent we = new WindowEvent(w, WindowEvent.WINDOW_GAINED_FOCUS);
-                    postEvent(we, prio);
-                    postEvent(event, prio);
-                    return;
-                } else if (fe.getID() == FocusEvent.FOCUS_LOST) {
-                    postEvent(event, prio);
-                    WindowEvent we = new WindowEvent(w, WindowEvent.WINDOW_LOST_FOCUS);
-                    postEvent(we, prio);
-                    return;
-                }
-            }
-        }
         postEvent(event, prio);
     }
 
