@@ -115,6 +115,8 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     CacioComponentPeer(Component awtC, PlatformWindowFactory pwf) {
         awtComponent = awtC;
         init(pwf);
+        setBounds(awtC.getX(), awtC.getY(), awtC.getWidth(), awtC.getHeight(),
+                  ComponentPeer.SET_CLIENT_SIZE);
     }
 
     /**
@@ -469,7 +471,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         platformWindow.setBounds(x, y, width, height, op);
 
         if (swingComponent != null) {
-            swingComponent.getJComponent().setBounds(x, y, width, height);
+            swingComponent.getJComponent().setBounds(0, 0, width, height);
         }
     }
 
