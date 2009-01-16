@@ -322,15 +322,20 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
     }
 
     private void peerPaint(Graphics g, boolean update) {
-        
-        if (swingComponent != null) {
-            if (update) {
-                swingComponent.getJComponent().update(g);
-            } else {
-                swingComponent.getJComponent().paint(g);
+
+        Graphics peerG = g.create();
+        try {
+            if (swingComponent != null) {
+                if (update) {
+                    swingComponent.getJComponent().update(peerG);
+                } else {
+                    swingComponent.getJComponent().paint(peerG);
+                }
             }
+        } finally {
+            peerG.dispose();
         }
-        
+
         Graphics userGraphics = g.create();
         try {
             if (update) {
