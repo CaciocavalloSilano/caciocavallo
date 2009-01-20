@@ -57,6 +57,7 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
         SwingRootPane(Window w) {
             window = w;
+            ComponentAccessor.setParent(this, w);
         }
 
         /**
@@ -192,14 +193,6 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
         @Override
         public void handleFocusEvent(FocusEvent ev) {
-        }
-
-        @Override
-        public Container getParent() {
-            Container par = null;
-            if (window != null)
-                par = window;
-            return par;
         }
 
     }

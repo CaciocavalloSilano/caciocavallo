@@ -26,6 +26,8 @@ import javax.swing.KeyStroke;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 
+import sun.awt.ComponentAccessor;
+
 class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
 
     CacioTextFieldPeer(Component awtC, PlatformWindowFactory pwf) {
@@ -62,6 +64,7 @@ class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
             this.textField = textField;
             this.putClientProperty("JPasswordField.cutCopyAllowed",
                                    Boolean.TRUE);
+            ComponentAccessor.setParent(this, textField.getParent());
         }
         
         @Override
@@ -124,14 +127,6 @@ class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
         public void handleMouseMotionEvent(MouseEvent ev) {
             ev.setSource(this);
             processMouseMotionEvent(ev);
-        }
-        
-        @Override
-        public Container getParent() {
-            Container parent = null;
-            if (textField != null)
-                parent = textField.getParent();
-            return parent;
         }
         
         @Override

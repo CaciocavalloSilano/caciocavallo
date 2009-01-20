@@ -39,6 +39,8 @@ import java.awt.peer.LabelPeer;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import sun.awt.ComponentAccessor;
+
 class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
 
     public CacioLabelPeer(Component awtC, PlatformWindowFactory pwf) {
@@ -56,6 +58,7 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
 
         SwingLabel(Label label) {
             this.label = label;
+            ComponentAccessor.setParent(this, label.getParent());
         }
 
         /**
@@ -156,13 +159,6 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
             return CacioLabelPeer.this.getGraphics();
         }
 
-        @Override
-        public Container getParent() {
-            Container par = null;
-            if (label != null)
-                par = label.getParent();
-            return par;
-        }
     }
 
     /**
