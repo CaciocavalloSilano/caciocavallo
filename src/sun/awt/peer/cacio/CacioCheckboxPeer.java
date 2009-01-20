@@ -19,6 +19,8 @@ import javax.swing.JComponent;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
+import sun.awt.ComponentAccessor;
+
 class CacioCheckboxPeer extends CacioComponentPeer implements CheckboxPeer {
 
     public CacioCheckboxPeer(Component awtC, PlatformWindowFactory pwf) {
@@ -53,6 +55,7 @@ class CacioCheckboxPeer extends CacioComponentPeer implements CheckboxPeer {
 
         SwingCheckbox(Checkbox checkbox) {
             this.checkbox = checkbox;
+            ComponentAccessor.setParent(this, checkbox.getParent());
         }
 
         /**
@@ -178,13 +181,6 @@ class CacioCheckboxPeer extends CacioComponentPeer implements CheckboxPeer {
 
         public Graphics getGraphics() {
             return CacioCheckboxPeer.this.getGraphics();
-        }
-
-        public Container getParent() {
-            Container par = null;
-            if (checkbox != null)
-                par = checkbox.getParent();
-            return par;
         }
 
         public void requestFocus() {

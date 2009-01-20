@@ -41,6 +41,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import sun.awt.ComponentAccessor;
+
 class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
 
     /**
@@ -55,6 +57,7 @@ class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
 
         SwingButton(Button button) {
             this.button = button;
+            ComponentAccessor.setParent(this, button.getParent());
         }
 
         /**
@@ -180,13 +183,6 @@ class CacioButtonPeer extends CacioComponentPeer implements ButtonPeer {
             /* Do we have a key binding for e? */
             processKeyBinding(ks, e, WHEN_FOCUSED, pressed);
 
-        }
-        @Override
-        public Container getParent() {
-            Container par = null;
-            if (button != null)
-                par = button.getParent();
-            return par;
         }
 
         public void requestFocus() {

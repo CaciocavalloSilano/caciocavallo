@@ -42,6 +42,8 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import sun.awt.ComponentAccessor;
+
 class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
 
     class SwingScrollPane extends JScrollPane implements CacioSwingComponent {
@@ -51,6 +53,7 @@ class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
         SwingScrollPane(SwingTextArea ta, TextArea awtTextArea) {
             super(ta);
             textArea = awtTextArea;
+            ComponentAccessor.setParent(this, textArea.getParent());
         }
 
         @Override
@@ -107,13 +110,6 @@ class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
             return retVal;
         }
 
-        @Override
-        public Container getParent() {
-            Container par = null;
-            if (textArea != null)
-                par = textArea.getParent();
-            return par;
-        }
     }
 
     class SwingTextArea extends JTextArea implements CacioSwingComponent {
@@ -172,14 +168,6 @@ class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
             if (textArea != null)
                 retVal = textArea.isShowing();
             return retVal;
-        }
-
-        @Override
-        public Container getParent() {
-            Container par = null;
-            if (textArea != null)
-                par = textArea.getParent();
-            return par;
         }
     }
 
