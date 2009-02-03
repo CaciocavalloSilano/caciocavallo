@@ -181,6 +181,7 @@ public class ManagedWindow
                 clipRects = new LinkedList<Rectangle>();
             }
             Iterator<ManagedWindow> i = siblings.descendingIterator();
+            Rectangle myBounds = getBounds();
             while (i.hasNext()) {
                 ManagedWindow sibling = i.next();
                 if (sibling == this) {
@@ -188,7 +189,9 @@ public class ManagedWindow
                 }
                 if (sibling.isVisible()) {
                     Rectangle bounds = sibling.getBounds();
-                    clipRects.add(bounds);
+                    if (bounds.intersects(myBounds)) {
+                        clipRects.add(bounds);
+                    }
                 }
             }
         }
@@ -291,21 +294,27 @@ public class ManagedWindow
 
     @Override
     public void setVisible(boolean v) {
-        visible = v;
-        // Need to repaint the parent and maybe some siblings.
-        parent.setVisible(this, v);
-        if (v) {
-            // We need to repaint ourselves.
-            Rectangle b = new Rectangle(0, 0, width, height);
-            CacioComponent cacioComp = getCacioComponent();
-            Component awtComp = cacioComp.getAWTComponent();
-            PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
-            cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+        if (v != visible) {
+            visible = v;
 
-            FocusEvent fe = new FocusEvent(awtComp, FocusEvent.FOCUS_GAINED);
-            cacioComp.handlePeerEvent(fe, EventPriority.DEFAULT);
+            // Need to repaint the parent and maybe some siblings.
+            parent.setVisible(this, v);
+            if (v) {
+                // We need to repaint ourselves.
+                Rectangle b = new Rectangle(0, 0, width, height);
+                CacioComponent cacioComp = getCacioComponent();
+                Component awtComp = cacioComp.getAWTComponent();
+                PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
+                cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+            }
+            // We also need to notify all the children, recursively.
+            for (ManagedWindow w : getChildren()) {
+                if (w.getCacioComponent().getAWTComponent().isVisible()) {
+                    w.setVisible(v);
+                }
+            }
+            FocusManager.getInstance().setVisible(this, v);
         }
-        FocusManager.getInstance().setVisible(this, v);
     }
 
     @Override
