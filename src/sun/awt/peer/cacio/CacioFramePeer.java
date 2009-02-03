@@ -26,6 +26,7 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.MenuBar;
 import java.awt.Rectangle;
 import java.awt.peer.FramePeer;
@@ -93,7 +94,11 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     @Override
     protected int getRootPaneDecorationStyle() {
-        return JRootPane.FRAME;
+        if (((Frame) getAWTComponent()).isUndecorated()) {
+            return JRootPane.NONE;
+        } else {
+            return JRootPane.FRAME;
+        }
     }
 
 }

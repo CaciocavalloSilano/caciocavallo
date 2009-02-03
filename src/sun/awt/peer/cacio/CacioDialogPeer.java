@@ -26,6 +26,7 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.peer.DialogPeer;
 import java.util.List;
@@ -56,7 +57,11 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     @Override
     protected int getRootPaneDecorationStyle() {
-        return JRootPane.PLAIN_DIALOG;
+        if (((Dialog) getAWTComponent()).isUndecorated()) {
+            return JRootPane.NONE;
+        } else {
+            return JRootPane.PLAIN_DIALOG;
+        }
     }
 
 }
