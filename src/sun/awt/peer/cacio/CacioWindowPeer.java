@@ -27,10 +27,7 @@ package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
@@ -40,12 +37,12 @@ import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.peer.WindowPeer;
 
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
+import javax.swing.border.Border;
 
 import sun.awt.ComponentAccessor;
 
@@ -300,16 +297,23 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
             rp.validate();
         }
         Component cp = rp.getContentPane();
-        Component lp = rp.getLayeredPane();
-        Dimension rpSize = getRootPane().getSize();
         Rectangle cpBounds = cp.getBounds();
+        Component lp = rp.getLayeredPane();
         Point lpLoc = lp.getLocation();
         int top = cpBounds.y + lpLoc.y;
         int left = cpBounds.x + lpLoc.x;
-        Insets insets = new Insets(top, left,
-                                   rpSize.height - cpBounds.height - top,
-                                   rpSize.width - cpBounds.width - left);
+        Border b = rp.getBorder();
+        Insets bi = b.getBorderInsets(rp);
+        int bottom;
+        int right;
+        if (b != null) {
+            bottom = bi.bottom;
+            right = bi.right;
+        } else {
+            bottom = 0;
+            right = 0;
+        }
+        Insets insets = new Insets(top, left, bottom, right);
         return insets;
     }
-
 }
