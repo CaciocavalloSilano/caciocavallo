@@ -303,10 +303,10 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
         int top = cpBounds.y + lpLoc.y;
         int left = cpBounds.x + lpLoc.x;
         Border b = rp.getBorder();
-        Insets bi = b.getBorderInsets(rp);
         int bottom;
         int right;
         if (b != null) {
+            Insets bi = b.getBorderInsets(rp);
             bottom = bi.bottom;
             right = bi.right;
         } else {
