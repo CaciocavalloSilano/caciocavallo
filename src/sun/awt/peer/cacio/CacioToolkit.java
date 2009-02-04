@@ -88,8 +88,8 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public CanvasPeer createCanvas(Canvas target) {
-	CacioCanvasPeer peer = new CacioCanvasPeer(target,
-						   getPlatformWindowFactory());
+	CacioPanelPeer peer = new CacioPanelPeer(target,
+					  getPlatformWindowFactory());
 	SunToolkit.targetCreatedPeer(target, peer);
         return peer;
     }
