@@ -330,8 +330,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
             swingComponent.handleFocusEvent(e);
     }
 
-    private void peerPaint(Graphics g, boolean update) {
-
+    protected void peerPaint(Graphics g, boolean update) {
         Graphics peerG = g.create();
         try {
             if (swingComponent != null) {
