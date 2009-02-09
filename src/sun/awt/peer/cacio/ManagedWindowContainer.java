@@ -26,10 +26,8 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.ColorModel;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,8 +69,6 @@ public interface ManagedWindowContainer extends BaseWindow {
      * @param event the event to dispatch
      */
     void dispatchEvent(EventData event);
-
-    void setVisible(ManagedWindow child, boolean v);
 
     /**
      * Creates and returns a Graphics2D that has the specified rectangles

@@ -38,7 +38,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.BufferCapabilities.FlipContents;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
 import java.awt.peer.ContainerPeer;
@@ -255,14 +254,46 @@ public class ManagedWindow
 
     @Override
     public boolean canDetermineObscurity() {
-        // TODO: Implement this for real.
-        return false;
+        return true;
     }
 
     @Override
     public boolean isObscured() {
-        // TODO: Implement this for real.
-        return false;
+        // We are obscured when:
+        // 1. The parent is obscured. TODO: Optimize!!
+        // 2. Or when we have overlapping siblings.
+        return isParentObscured() || hasOverlappingSiblings();
+        
+    }
+
+    private boolean isParentObscured() {
+        ManagedWindowContainer parent = getParent();
+        boolean isParentObscured;
+        if (parent instanceof ManagedWindow) {
+            isParentObscured = ((ManagedWindow) parent).isObscured();
+        } else {
+            // Non- ManagedWindow parents can only be toplevel containers
+            // and are never obscured.
+            isParentObscured = false;
+        }
+        return isParentObscured;
+    }
+
+    private boolean hasOverlappingSiblings() {
+        LinkedList<ManagedWindow> siblings = getParent().getChildren();
+        boolean hasOverlappingSiblings = false;
+        Rectangle myBounds = getBounds();
+        // Only windows that are 'over' us can be overlapping.
+        Iterator<ManagedWindow> descIter = siblings.descendingIterator();
+        while (descIter.hasNext() && ! hasOverlappingSiblings) {
+            ManagedWindow sibling = descIter.next();
+            if (sibling == this) {
+                break;
+            }
+            Rectangle siblingBounds = sibling.getBounds();
+            hasOverlappingSiblings = myBounds.intersects(siblingBounds);
+        }
+        return hasOverlappingSiblings;
     }
 
     @Override
@@ -297,16 +328,10 @@ public class ManagedWindow
         if (v != visible) {
             visible = v;
 
-            // Need to repaint the parent and maybe some siblings.
-            parent.setVisible(this, v);
-            if (v) {
-                // We need to repaint ourselves.
-                Rectangle b = new Rectangle(0, 0, width, height);
-                CacioComponent cacioComp = getCacioComponent();
-                Component awtComp = cacioComp.getAWTComponent();
-                PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
-                cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
-            }
+            Rectangle b = getBounds();
+            b.x = b.y = 0;
+            triggerRepaint(b);
+
             // We also need to notify all the children, recursively.
             for (ManagedWindow w : getChildren()) {
                 if (w.getCacioComponent().getAWTComponent().isVisible()) {
@@ -317,18 +342,28 @@ public class ManagedWindow
         }
     }
 
-    @Override
-    public void setVisible(ManagedWindow child, boolean v) {
-        if (! v) {
-            // We need to repaint ourselves and then call super to repaint the
-            // children.
-            Rectangle b = child.getBounds();
-            CacioComponent cacioComp = getCacioComponent();
-            Component awtComp = cacioComp.getAWTComponent();
-            PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, b);
-            cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+    private void triggerRepaint(Rectangle b) {
+        // If we completely contain the specified rectangle and are not
+        // obscured by other windows, and we are visible ourselves,
+        // then we don't need to go further up.
+        Rectangle myBounds = getBounds();
+        myBounds.x = myBounds.y = 0;
+        if (isVisible() && myBounds.contains(b) && ! isObscured()) {
+            repaint(b.x, b.y, b.width, b.height);
+        } else {
+            ManagedWindowContainer c = getParent();
+            if (c instanceof ManagedWindow) {
+
+                ManagedWindow mw = (ManagedWindow) c;
+                if (mw.isVisible()) {
+                    b.x += x;
+                    b.y += y;
+                    ((ManagedWindow) c).triggerRepaint(b);
+                }
+            } else  {
+                c.repaint(b.x, b.y, b.width, b.height);
+            }
         }
-        super.setVisible(child, v);
     }
 
     boolean isVisible() {
@@ -445,9 +480,12 @@ public class ManagedWindow
 
     @Override
     public void repaint(int x, int y, int w, int h) {
-        // Go all the way up to the toplevel and let this
-        // do the actual sending of the paint events.
-        parent.repaint(x + this.x, y + this.y, w, h);
+        CacioComponent cacioComp = getCacioComponent();
+        Component awtComp = cacioComp.getAWTComponent();
+        // We need to be relative to the target.
+        Rectangle area = new Rectangle(x, y, w, h);
+        PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, area);
+        cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+        super.repaint(x, y, w, h);
     }
-
 }
