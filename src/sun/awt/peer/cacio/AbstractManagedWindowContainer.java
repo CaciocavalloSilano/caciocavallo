@@ -25,18 +25,13 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.PaintEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Iterator;
-
-import sun.awt.peer.cacio.CacioComponent.EventPriority;
 
 /**
  * A base implementation of {@link ManagedWindowContainer}. This can be
@@ -151,38 +146,6 @@ public abstract class AbstractManagedWindowContainer
     }
 
     @Override
-    public void setVisible(ManagedWindow child, boolean v) {
-        if (! v) {
-            // TODO: Lots of optimization potential here!
-            Rectangle rect = child.getBounds();
-            Rectangle intersect = new Rectangle();
-
-            // Send paint events to repaint stuff 'behind' closed window.
-            // Paint from bottommost to topmost component.
-            Iterator<ManagedWindow> i = children.iterator();
-            while (i.hasNext()) {
-                ManagedWindow w = i.next();
-                if (w.isVisible()) {
-                    Rectangle b = w.getBounds();
-                    Rectangle2D.intersect(rect, b, intersect);
-                    if (! intersect.isEmpty()) {
-                        CacioComponent cacioComp = w.getCacioComponent();
-                        Component awtComp = cacioComp.getAWTComponent();
-                        // We need to be relative to the target.
-                        intersect.x -= b.x;
-                        intersect.y -= b.y;
-                        PaintEvent ev = new PaintEvent(awtComp,
-                                                       PaintEvent.PAINT,
-                                                       intersect);
-                        cacioComp.handlePeerEvent(ev,
-                                                  EventPriority.ULTIMATE);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     public void repaint(int x, int y, int w, int h) {
         // Repaint the correct rectangles for all visible children that
         // are inside this rectangle.
@@ -195,17 +158,11 @@ public abstract class AbstractManagedWindowContainer
                 Rectangle b = child.getBounds();
                 Rectangle2D.intersect(b, rect, intersect);
                 if (! intersect.isEmpty()) {
-                    CacioComponent cacioComp = child.getCacioComponent();
-                    Component awtComp = cacioComp.getAWTComponent();
                     // We need to be relative to the target.
                     Rectangle area = new Rectangle(intersect);
                     area.x -= b.x;
                     area.y -= b.y;
-                    PaintEvent ev = new PaintEvent(awtComp,
-                                                   PaintEvent.PAINT,
-                                                   area);
-                    cacioComp.handlePeerEvent(ev,
-                                              EventPriority.ULTIMATE);
+                    child.repaint(area.x, area.y, area.width, area.height);
                 }
             }
         }
