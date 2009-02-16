@@ -361,7 +361,7 @@ public class ManagedWindow
                     ((ManagedWindow) c).triggerRepaint(b);
                 }
             } else  {
-                c.repaint(b.x, b.y, b.width, b.height);
+                c.repaint(b.x + x, b.y + y, b.width, b.height);
             }
         }
     }
