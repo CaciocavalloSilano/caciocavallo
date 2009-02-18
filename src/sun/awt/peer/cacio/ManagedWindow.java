@@ -259,18 +259,24 @@ public class ManagedWindow
 
     @Override
     public boolean isObscured() {
+        return isRegionObscured(0, 0, width, height);
+    }
+
+    private boolean isRegionObscured(int x, int y, int w, int h) {
         // We are obscured when:
         // 1. The parent is obscured. TODO: Optimize!!
         // 2. Or when we have overlapping siblings.
-        return isParentObscured() || hasOverlappingSiblings();
-        
+        return isParentObscured(x, y, w, h)
+               || hasOverlappingSiblings(x, y, w, h);
     }
 
-    private boolean isParentObscured() {
+    private boolean isParentObscured(int x, int y, int w, int h) {
         ManagedWindowContainer parent = getParent();
         boolean isParentObscured;
         if (parent instanceof ManagedWindow) {
-            isParentObscured = ((ManagedWindow) parent).isObscured();
+            ManagedWindow p = (ManagedWindow) parent;
+            isParentObscured = p.isRegionObscured(x + this.x, y + this.y,
+                                                  w, h);
         } else {
             // Non- ManagedWindow parents can only be toplevel containers
             // and are never obscured.
@@ -279,11 +285,11 @@ public class ManagedWindow
         return isParentObscured;
     }
 
-    private boolean hasOverlappingSiblings() {
+    private boolean hasOverlappingSiblings(int x, int y, int w, int h) {
         LinkedList<ManagedWindow> siblings = getParent().getChildren();
         boolean hasOverlappingSiblings = false;
-        Rectangle myBounds = getBounds();
-        // Only windows that are 'over' us can be overlapping.
+        Rectangle myBounds = new Rectangle(x, y, w, h);
+        // Only windows that are 'over' the target region can be overlapping.
         Iterator<ManagedWindow> descIter = siblings.descendingIterator();
         while (descIter.hasNext() && ! hasOverlappingSiblings) {
             ManagedWindow sibling = descIter.next();
@@ -348,7 +354,8 @@ public class ManagedWindow
         // then we don't need to go further up.
         Rectangle myBounds = getBounds();
         myBounds.x = myBounds.y = 0;
-        if (isVisible() && myBounds.contains(b) && ! isObscured()) {
+        if (isVisible() && myBounds.contains(b)
+            && ! isRegionObscured(b.x, b.y, b.width, b.height)) {
             repaint(b.x, b.y, b.width, b.height);
         } else {
             ManagedWindowContainer c = getParent();
