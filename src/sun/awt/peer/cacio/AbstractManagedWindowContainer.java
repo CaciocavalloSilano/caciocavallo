@@ -25,6 +25,7 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -147,6 +148,13 @@ public abstract class AbstractManagedWindowContainer
 
     @Override
     public void repaint(int x, int y, int w, int h) {
+        // Non-managed window containers are usually toplevel containers.
+        // Since they have no repaint mechanism of their own, we need to
+        // trigger repainting on them here, so that they can clear their
+        // background when necessary.
+        if (! (this instanceof ManagedWindow)) {
+            repaintSelf(x, y, w, h);
+        }
         // Repaint the correct rectangles for all visible children that
         // are inside this rectangle.
         Iterator<ManagedWindow> i = children.descendingIterator();
@@ -166,5 +174,20 @@ public abstract class AbstractManagedWindowContainer
                 }
             }
         }
+    }
+
+    private void repaintSelf(int x, int y, int w, int h) {
+        Rectangle r = new Rectangle(x, y, w, h);
+        LinkedList<Rectangle> rects = new LinkedList<Rectangle>();
+        for (ManagedWindow c : children) {
+            if (c.isVisible()) {
+                Rectangle b = c.getBounds();
+                if (b.intersects(r)) {
+                    rects.add(b);
+                }
+            }
+        }
+        Graphics2D g = getClippedGraphics(rects);
+        g.clearRect(x, y, w, h);
     }
 }
