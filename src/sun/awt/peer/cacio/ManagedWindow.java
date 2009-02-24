@@ -47,6 +47,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sun.awt.CausedFocusEvent.Cause;
+import sun.awt.ConstrainableGraphics;
 import sun.java2d.pipe.Region;
 
 import sun.awt.peer.cacio.CacioComponent.EventPriority;
@@ -159,7 +160,12 @@ public class ManagedWindow
         // Ask parent for clipped graphics.
         Graphics2D pg = parent.getClippedGraphics(clipRects);
         // Translate and clip to our own coordinate system.
-        return (Graphics2D) pg.create(x, y, width, height);
+        if (pg instanceof ConstrainableGraphics)  {
+            ((ConstrainableGraphics) pg).constrain(x, y, width, height);
+        } else {
+            pg = (Graphics2D) pg.create(x, y, width, height);
+        }
+        return pg;
     }
 
     /**
