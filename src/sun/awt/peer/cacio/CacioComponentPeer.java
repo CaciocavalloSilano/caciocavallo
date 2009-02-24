@@ -482,11 +482,10 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         this.y = y;
         this.width = width;
         this.height = height;
-        if (op == ComponentPeer.SET_CLIENT_SIZE) {
-            Insets i = getInsets();
-            this.width += i.left + i.right;
-            this.height += i.top + i.bottom;
-        }
+        // We don't need to take care about SET_SIZE vs. SET_CLIENT_SIZE,
+        // since we assume we know the insets of the window even when
+        // it is not shown, and the only purpose of these flags is
+        // to support system where we don't know the insets in advance.
         platformWindow.setBounds(this.x, this.y, this.width, this.height, op);
         if (swingComponent != null) {
             swingComponent.getJComponent().setBounds(0, 0, this.width, this.height);
