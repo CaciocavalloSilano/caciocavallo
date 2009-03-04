@@ -1,0 +1,3 @@
+- Shouldn't the imgCache in SunToolkit be in AppContext rather than static field?
+- Same for the locks and probably a couple of more static fields there (mPeer, startupLocale)?
+

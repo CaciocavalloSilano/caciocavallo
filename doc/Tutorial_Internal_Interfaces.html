@@ -1,0 +1,859 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>Portable GUI Backends (The Caciocavallo project)</title>
+</head>
+<body>
+
+<h1>OpenJDK Challenge</h1>
+
+<h1>Internal Toolkit Implementation Tutorial</h1>
+
+<h2>Introduction</h2>
+
+<p>
+By using the public and semipublic peer interfaces, it is possible to
+implement graphics backends for AWT and Java2D, as described
+in <a href='Tutorial_External_Interfaces.html'>External Toolkit
+Implementation, a walkthrough</a>.  However, this requires
+implementing the complete graphics stack, including the Toolkit,
+Graphics, and a part of or all of fonts and image support.  This can
+be quite a large task.  On the other hand, OpenJDK already has a lot of code
+that can be reused to implement most of the above mentioned
+subsystems.  This tutorial describes the internal interfaces and
+classes that are relevant for implementing a graphics backend for a
+new system.
+</p>
+
+<h2>Summary</h2>
+
+<ul>
+  <li>Provide a Toolkit implementation</li>
+  <li>Provide top level AWT widget peers</li>
+  <li>Provide AWT widget peers</li>
+  <li>Provide a GraphicsEnvironment</li>
+  <li>Provide a graphics pipeline</li>
+  <li>VolatileImage support</li>
+  <li>Provide font implementation or configuration</li>
+</ul>
+
+<h2>Toolkit implementation</h2>
+
+<p>
+The starting point for implementing a graphics backend should be to
+implement <code>java.awt.Toolkit</code>.  In OpenJDK there is a base
+implementation of this class called <code>sun.awt.SunToolkit</code>,
+from which all of the internal toolkit implementations are derived,
+and upon which new implementations may be based.  This provides
+implementations for the image subsystem as well as a couple of useful
+default implementations for other areas.  It is still necessary to
+provide implementations for most of the AWT widget peers. (However, it
+will be possible in the future to plug in portable platform
+independent Swing based widget peers.)
+</p>
+
+<h2>Methods with usable default implementation in SunToolkit</h2>
+
+<pre>
+  <code>
+    public FontMetrics getFontMetrics(Font font);
+    public String[] getFontList();
+  </code>
+</pre>
+
+<p>
+Those two methods provide the necessary font support and hook into the
+font subsystem of OpenJDK.  This only needed to be implemented when a new font subsystem is needed.
+</p>
+
+<pre>
+  <code>
+    public PanelPeer createPanel(Panel target);
+    public CanvasPeer createCanvas(Canvas target);
+  </code>
+</pre>
+
+<p>
+These calls provide default implementations for the <code>Panel</code>
+and <code>Canvas</code> peers.  Both use the default peers for
+lightweight components, so the functionality might be limited.  Some
+applications expect <code>Panel</code> and <code>Canvas</code> to be
+real heavyweights, so one might need to override this.
+</p>
+
+<pre>
+  <code>
+    public Image getImage(String filename);
+    public Image getImage(URL url);
+    public Image createImage(String filename);
+    public Image createImage(URL url);
+    public Image createImage(byte[] data, int offset, int length);
+    public Image createImage(ImageProducer producer);
+    public int checkImage(Image img, int w, int h, ImageObserver o);
+    public boolean prepareImage(Image img, int w, int h, ImageObserver o);
+  </code>
+</pre>
+
+<p>
+These methods implement the image related methods of <code>java.awt.Toolkit</code>
+and hook into the image subsystem of OpenJDK.  Unless a new image subsystem is needed,
+these methods need not be override.
+</p>
+
+<pre>
+  <code>
+    protected EventQueue getSystemEventQueueImpl();
+  </code>
+</pre>
+
+<p>
+This method provides a default system event queue, that should be
+perfect for most toolkit implementations.
+</p>
+
+<pre>
+  <code>
+    protected synchronized MouseInfoPeer getMouseInfoPeer();
+  </code>
+</pre>
+
+<p>
+This provides a default <code>MouseInfoPeer</code>
+implementation.  However, this is implemented to map to native methods
+which need to be implemented by each backend.  It is a good idea to
+override this and provide a custom <code>MouseInfoPeer</code>.
+</p>
+
+<pre>
+  <code>
+    public boolean isModalityTypeSupported(Dialog.ModalityType modalityType);
+    public boolean isModalExclusionTypeSupported(Dialog.ModalExclusionType exclusionType);
+  </code>
+</pre>
+
+<p>
+These predicates provide default implementation for both abstract methods in
+<code>java.awt.Toolkit</code>.  One may override
+these, depending on the modality support in the backend.
+</p>
+
+<pre>
+  <code>
+    public KeyboardFocusManagerPeer createKeyboardFocusManagerPeer(KeyboardFocusManager manager) throws HeadlessException;
+  </code>
+</pre>
+
+<p>
+This creates a default <code>KeyboardFocusManagerPeer</code>, which might or might
+not be ok for a new backend.
+</p>
+
+<pre>
+  <code>
+    public Dimension getScreenSize();
+  </code>
+</pre>
+
+<p>
+This provides a default implementation
+of <code>getScreenSize()</code>.  However, it only maps to two new
+abstract methods <code>getScreenWidth()</code>
+and <code>getScreenHeight()<code>, which one needs to implement.
+</p>
+
+<h2>Additional abstract methods in SunToolkit</h2>
+
+<p>
+<code>SunToolkit</code> also defines a couple of additional abstract methods over
+<code>java.awt.Toolkit</code> for extended functionality.  One needs to provide
+implementation of those methods in a new backend.  The following lists
+summarizes the new abstract methods.
+</p>
+
+<pre>
+  <code>
+    public abstract TrayIconPeer createTrayIcon(TrayIcon target)
+        throws HeadlessException, AWTException;
+    public abstract SystemTrayPeer createSystemTray(SystemTray target);
+    public abstract boolean isTraySupported();
+  <code>
+</pre>
+
+<p>
+These methods provides tray icon support.  For systems without tray icon support, it
+is ok to return false in <code>isTraySupported()</code>, and null in
+the other two methods.
+</p>
+
+<pre>
+  <code>
+    protected abstract int getScreenWidth();
+    protected abstract int getScreenHeight();
+  </code>
+</pre>
+
+<p>
+Determines the screen width and height.
+</p>
+
+<pre>
+  <code>
+    protected abstract boolean syncNativeQueue(final long timeout);
+  </code>
+</pre>
+
+<p>
+Platform toolkits need to implement this method to synchronize with
+the native queue.  Refer to the API documentation for details.
+</p>
+
+<pre>
+  <code>
+    public abstract void grab(Window w);
+    public abstract void ungrab(Window w);
+  </code>
+</pre>
+
+<p>
+Implements mouse grabbing and ungrabbing for Swing's PopupMenu.  Refer
+to the API documentation for details.
+</p>
+
+<pre>
+  <code>
+    public abstract boolean isDesktopSupported();
+  </code>
+</pre>
+
+<p>
+This predicate should return <code>true</code> if the Desktop API is
+supported, <code>false</code> otherwise.  When the Desktop API is not
+supported, the method <code>createDesktopPeer()</code> (declared
+abstract by <code>java.awt.Toolkit</code>) can return <code>null</code>.
+
+<h2>Provide top level AWT widget peers</h2>
+
+<p>
+As part of implementing the <code>Toolkit</code>, one also has to provide peer
+implementations for the 3 top level AWT widgets:
+</p>
+
+<pre>
+  <code>
+    public abstract WindowPeer createWindow(Window target)
+        throws HeadlessException;
+    public abstract FramePeer createFrame(Frame target)
+        throws HeadlessException;
+    public abstract DialogPeer createDialog(Dialog target)
+        throws HeadlessException;
+  </code>
+</pre>
+
+<p>
+These are mandatory, because without top level widgets it is not
+possible to create a graphical application.  Please refer to the API
+documentations of the widget peers
+and <a href='Tutorial_External_Interfaces.html'>External Toolkit
+Implementation, a walkthrough</a> for details.
+</p>
+
+<p>
+It should be noted, that the top level widgets also provide the entry
+points for the graphics pipeline.
+</p>
+
+<p>
+There is no common base implementation for these interfaces.
+</p>
+
+<h2>Provide AWT widget peers</h2>
+
+<p>
+Also, as part of implementing the <code>Toolkit</code>, one can
+provide AWT widget peers for all other AWT components. This is only
+needed for supporting the AWT widgets.  For Swing
+applications these are not used.  Refer to the API documentation for
+details.
+</p>
+
+<p>
+In the future, it will be possible to use portable Swing based widget
+peers.
+</p>
+
+<h2>Providing a GraphicsEnvironment</h2>
+
+<p>
+The other central entry point for implementing a graphics backend is
+the <code>java.awt.GraphicsEnvironment</code> and its related classes
+<code>java.awt.GraphicsDevice</code>
+and <code>java.awt.GraphicsConfiguration</code>.  In OpenJDK there is
+a common base implementation for <code>java.awt.GraphicsEnvironment</code>, called
+<code>sun.java2d.SunGraphicsEnvironment</code>, which provides convenient default
+implementations for a couple of subsystems. For the other two classes
+there is no default implementation.
+</p>
+
+<h2>Useful default implementations</h2>
+
+<pre>
+  <code>
+    public synchronized GraphicsDevice[] getScreenDevices();
+    public GraphicsDevice getDefaultScreenDevice();
+  </code>
+</pre>
+
+<p>
+These provide default implementations for screen device creation and handling.  These
+use the two new abstract methods <code>getNumScreens()</code> and
+<code>makeScreenDevice()</code> to actually create the screen devices.
+</p>
+
+<pre>
+  <code>
+    public Graphics2D createGraphics(BufferedImage img);
+  </code>
+</pre>
+
+<pr>
+This method creates a <code>Graphics2D</code> for drawing
+on <code>BufferedImages</code>.  This hooks into the graphics pipeline
+of OpenJDK.  This does not need to be overridden, unless one provides
+a <code>BufferedImage</code> implementation in the
+<code>GraphicsConfiguration.createCompatibleImage()</code> methods,
+that are not compatible with the standard pipeline.
+</p>
+
+<pre>
+  <code>
+    public Font[] getAllFonts();
+    public String[] getAvailableFontFamilyNames(Locale requestedLocale);
+    public String[] getAvailableFontFamilyNames();
+  </code>
+</pre>
+
+<p>
+These routines Implement font support of the <code>GraphicsEnvironment</code>
+class.  This hooks into the font subsystem of OpenJDK, and does not
+need to be overridden, unless one provides a new font subsystem.
+</p>
+
+<h2>New abstract methods</h2>
+
+<pre>
+  <code>
+    protected abstract int getNumScreens();
+    protected abstract GraphicsDevice makeScreenDevice(int screennum);
+  </code>
+</pre>
+
+<p>
+These are used to create the screen devices.
+</p>
+
+<pre>
+  <code>
+    public abstract boolean isDisplayLocal();
+  </code>
+</pre>
+
+<p>
+This is used to determine if a display is local or remote.
+</p>
+
+<h2>GraphicsDevice and GraphicsConfiguration</h2>
+
+<p>
+As part of implementing the <code>GraphicsEnvironment</code>, one also
+must provide implementations of <code>java.awt.GraphicsDevice</code> and
+<code>java.awt.GraphicsConfiguration</code>.  There are no common base
+implementations for these two classes, so one must follow the API
+specification for the public classes.
+</p>
+
+<h2>Implement graphics pipeline</h2>
+
+<p>
+<code>ComponentPeer</code> (especially a new <code>WindowPeer</code>
+implementation) requires the implementation of <code>getGraphics()</code>:
+</p>
+
+<pre>
+  <code>
+    Graphics getGraphics();
+  </code>
+</pre>
+
+<p>
+The declaration of this method is slightly misleading, because most
+applications expect the subclass <code>Graphics2D</code>, so
+it makes sense to provide a <code>Graphics2D</code> object
+here. (It makes sense in future versions of the peer
+interface to require <code>Graphics2D</code>).
+</p>
+
+<p>
+In theory, it is possible to implement a
+<code>Graphics</code>/<code>Graphics2D</code> based solely on the
+public API specification (as shown in the Caciocavallo prototype for
+the external API).  However, this is a really huge task.  It makes a lot
+of sense to reuse existing code from the OpenJDK graphics pipeline
+because a lot of portable generic and less generic rendering loops
+already exist.
+</p>
+
+<p>
+The central class of the graphics pipeline
+is <code>SunGraphics2D</code>, a concrete final implementation of
+<code>java.awt.Graphics2D</code>, which implements a lot of generic
+functionality (bookkeeping of graphics state) and hooks into a
+rendering pipeline for actual rendering.
+</p>
+
+<p>
+The usual implementation of getGraphics() looks like this:
+</p>
+
+<pre>
+  <code>
+  public Graphics getGraphics()
+  {
+    SunGraphics2D sg2d = new SunGraphics2D(surfaceData, foreground, background,
+                                           font);
+    return sg2d;
+  }
+  </code>
+</pre>
+
+<p>
+where foreground and background are <code>java.awt.Color</code> objects specifying
+the foreground and background colors respectively and font is a
+<code>java.awt.Font</code> object specifying the font.  The most
+important argument here is the surfaceData object, which is an
+implementation of <code>sun.java2d.SurfaceData</code>.
+</p>
+
+<h2>Implement SurfaceData</h2>
+
+<p>
+<code>SurfaceData</code> is the central class that defines the rendering pipeline
+for a specific drawing surface.  A drawing surface is usually something
+like an on-screen window area, an off-screen backing image (volatile
+image) or similar.  Each drawing surface usually has exactly one
+<code>SurfaceData</code> object associated.
+</p>
+
+<h2>Abstract methods to be implemented by specific SurfaceData implementations</h2>
+
+<pre>
+  <code>
+    public abstract GraphicsConfiguration getDeviceConfiguration();
+  </code>
+</pre>
+
+<p>
+This must return a <code>GraphicsConfiguration</code> object that describes the
+graphics configuration of the destination drawable.
+</p>
+
+<pre>
+  <code>
+    public abstract Rectangle getBounds();
+  </code>
+</pre>
+
+<p>
+Returns the bounds of the drawable.
+</p>
+
+<pre>
+  <code>
+    public abstract Object getDestination();
+  </code>
+</pre>
+
+<p>
+Returns the destination, that is either the AWT component or the image
+to which this <code>SurfaceData</code> draws.  This is used only by Swing's
+<code>RepaintManager</code>.
+</p>
+
+<pre>
+  <code>
+    public abstract SurfaceData getReplacement();
+  </code>
+</pre>
+
+<p>
+Changes in the configuration of a surface require the invalidation and
+creation of a new <code>SurfaceData</code> object.  Please refer to the API
+documentation of this method for details. This probably do not have to
+be changed.
+</p>
+
+<pre>
+  <code>
+    public abstract Raster getRaster(int x, int y, int w, int h);
+  </code>
+</pre>
+
+<p>
+This method returns a <code>Raster</code> object which provides access to the
+pixel data of the surface.  This probably do not need to be provided, as
+long as all rendering with new rendering loops.  However, if one would like
+to use the (slow) generic loops that operate
+on <code>Rasters</code>, then one can save time by provding this.
+</p>
+
+<h2>Pipes and Loops</h2>
+
+<p>
+Most likely want, <code>validatePipe()</code> will need to be overriden in a new <code>SurfaceData</code>
+subclass:
+</p>
+
+<pre>
+  <code>
+    public void validatePipe(SunGraphics2D sg2d);
+  </code>
+</pre>
+
+<p>
+This method is supposed to setup the various XXXpipe objects in the
+<code>SunGraphics2D</code> instance.
+</p>
+
+<h3>
+What are pipes and loops?
+</h3>
+
+<p>
+To put it simple, pipes are objects that are used
+by <code>SunGraphics2D</code> to perform the actual rendering.  Pipes
+can do the rendering directly, i.e., <code>EscherRenderer</code> is
+a <code>PixelDrawPipe</code> that implements primitive drawing
+operations by calling directly into
+the <a href='http://escher.sf.net'>Escher X11</a> API, or they can
+apply some transformation to the drawing call and delegate to some
+other pipe.  This usually happens in complex drawing calls.  Some pipes
+use loops for rendering.  Loops are generic (or less generic)
+implementations for some rendering primitives like lines, rectangles,
+etc.
+</p>
+
+<p>
+The method <code>validatePipe()</code> should check the state of
+the <code>SunGraphics2D</code> object (the various state fields) and
+setup the pipeline accordingly.  Usually, in the primitive case (no
+composite, paint, etc) one would setup drawpipe and fillpipe that use
+graphics primitives of the graphics backend.  In the complex cases, one
+usually wants to use the pipes that are setup by the superclass.
+</p>
+
+<p>
+It is most useful to study existing implementations of this method,
+for example the <code>XDrawableSurfaceData.validatePipe()</code> of the
+Caciocavallo-NG prototype or the implementations included in OpenJDK.
+</p>
+
+<h3>Setup blit loops</h3>
+
+<p>
+There is one special type of loops that one needs to take care of, that
+are the blit loops (defined
+by <code>sun.java2d.loops.Blit</code>).  <code>Blits</code> perform
+copying of rectangles of pixels from one surface to another (or within
+one surface).  This is used by <code>copyArea()</code>, the
+various <code>drawImage()</code> methods and some of the other loops.
+</p>
+
+<p>
+One detail sets blits apart from other loops.  They are not simply
+installed as a value of a certain field; they are registered into a
+special datastructure, which enables them to be looked up by the
+rendering pipeline, according to their supported source and
+destination surface types.  This registry data structure is a kind of
+hierarchy.  The top node is always a generic (but slow) blit
+registered, which serves as fallback if no other blit operation can
+take over a certain operation.  Then, one can register blit operations
+for more specific surface types.
+</p>
+
+<p>
+One can reuse a set of standard surface types (defined in
+<code>sun.java2d.loops.SurfaceType</code>) when they match a given surface,
+or one can derive new subtypes for surfaces that are not predefined.  This is done <strong>not</strong>
+by subclassing <code>SurfaceType</code>, but rather by
+calling <code>deriveSubType()</code> on an
+existing <code>SurfaceType</code>, such as in the following code (from the Caciocavallo
+prototype):
+</p>
+
+<pre>
+  <code>
+  static final SurfaceType Escher =
+    SurfaceType.Any.deriveSubType(DESC_ESCHER_INT_RGB);
+  static final SurfaceType EscherInt =
+    Escher.deriveSubType(DESC_ESCHER_INT);
+  static final SurfaceType EscherIntRgb =
+    EscherInt.deriveSubType(DESC_ESCHER_INT_RGB);
+  </code>
+</pre>
+
+<p>
+This defines a subhierarchy, that uses the type <code>'Any'</code> as
+supertype (this is the most generic type), and derives a
+generic <code>'Escher'</code> supertype (for all Escher-based
+surfaces) as well as more generic subtypes <code>'EscherInt'</code>
+and <code>'EscherIntRgb'</code> (for integer-based and
+integer-based-RGB Escher types).
+</p>
+
+<p>
+To register specific <code>Blit</code> loops, one can call in the
+static initializer of <code>SurfaceData</code> subclass a static
+<code>register()</code> method of a new <code>BlitLoops</code> class
+like this (from <code>XDrawableSurfaceData.java</code>):
+</p>
+
+<pre>
+  <code>
+  static
+  {
+    EscherBlitLoops.register();
+  }
+  </code>
+</pre>
+
+<p>
+and then define this register method like this (from
+<code>EscherBlitLoops.java</code>):
+</p>
+
+<pre>
+  <code>
+  static void register()
+  {
+      GraphicsPrimitive[] primitives =
+      {
+        new EscherBlitLoops(XDrawableSurfaceData.EscherIntRgb,
+                            XDrawableSurfaceData.EscherIntRgb, true),
+        new EscherBlitLoops(SurfaceType.Any, XDrawableSurfaceData.EscherIntRgb, true)
+      };
+      GraphicsPrimitiveMgr.register(primitives);
+  }
+  </code>
+</pre>
+
+<p>
+This creates an array with blit loops to be registered.  In this case
+one has one loop that is specific to copy from <code>EscherIntRgb</code> to
+<code>EscherIntRgb</code> surfaces only, and one more generic loop to
+transfer from any other surface (e.g. <code>BufferedImage</code>) to an
+<code>EscherIntRgb</code> surface.  Finally, the blit loops are
+registered by calling <code>GraphicsPrimitiveMgr.register()</code>
+with this array as argument.
+</p>
+
+<h2>Volatile image support</h2>
+
+<p>
+The <code>ComponentPeer</code> interface also mandates the implementation of
+createVolatileImage(int,int):
+</p>
+
+<pre>
+  <code>
+    VolatileImage createVolatileImage(int width, int height);
+  </code>
+</pre>
+
+<p>
+as does the <code>GraphicsConfiguration</code> class:
+</p>
+
+<pre>
+  <code>
+    public VolatileImage createCompatibleVolatileImage(int width, int height);
+  </code>
+</pre>
+
+<p>
+Infact, the authors recommend implementing the <code>ComponentPeer</code> method as follows:
+</p>
+
+<pre>
+  <code>
+  @Override
+  public VolatileImage createVolatileImage(int width, int height)
+  {
+    GraphicsConfiguration gc = awtComponent.getGraphicsConfiguration();
+    return gc.createCompatibleVolatileImage(width, height);
+  }
+  </code>
+</pre>
+<!--
+We love Neil Young!
+see http://www.neilyoung.com/lwwtoday/index.html
+-->
+<p>
+However, the <code>GraphicsConfiguration</code> method
+<code>createCompatibleVolatileImage()</code> is not an abstract method, so it is
+not necessary to override it.  The default implementation creates a
+<code>SunVolatileImage</code> which in turn uses
+a <code>VolatileSurfaceManager</code> to perform its platform specific
+tasks.
+</p>
+
+<code>
+So in order to support <code>VolatileImages</code>, one only need create a
+subclass of <code>sun.awt.image.VolatileSurfaceManager</code> and a subclass of
+<code>sun.java2d.SurfaceManagerFactory</code>.  Then one only needs to tell the
+<code>SurfaceManagerFactory</code> to use the new factory to create
+<code>VolatileSurfaceManager</code> instances for the new volatile
+images.  The authors recommend doing this in the static initializer of a new
+<code>GraphicsEnvironment</code> implementation:
+</code>
+
+<pre>
+  <code>
+    static {
+        SurfaceManagerFactory.setInstance(new MySurfaceManagerFactory());
+    }
+  </code>
+</pre>
+
+<p>
+The <code>VolatileSurfaceManager</code> class declares the following abstract
+methods:
+</p>
+
+<pre>
+  <code>
+    protected abstract boolean isAccelerationEnabled();
+    </code>
+</pre>
+
+<p>
+to determine if acceleration is enabled or not;
+</p>
+
+<pre>
+  <code>
+    protected abstract SurfaceData initAcceleratedSurface();
+  </code>
+</pre>
+
+<p>
+to initialize and return the accelerated surface;
+</p>
+
+<pre>
+  <code>
+    public abstract SurfaceData getPrimarySurfaceData();
+  </code>
+</pre>
+
+<p>
+to returns the <code>SurfaceData</code> object that is used to draw on the volatile
+image; and
+</p>
+
+<pre>
+  <code>
+    public abstract SurfaceData restoreContents();
+    </code>
+</pre>
+
+<p>
+to restore the content if it has become invalid.
+</p>
+
+<p>
+There are also a lot of other useful methods that one might or might
+not want to override.  See the excellent API documentation for
+<code>VolatileSurfaceManager</code> for details.
+</p>
+
+<h2>Fonts</h2>
+
+<p>
+The <code>Toolkit</code> is also resposible for creating
+a <code>Font</code> peer.  However, this interface is not actively used
+anymore.  There is an internal API for implementing fonts, which
+consist of a couple of classes and interfaces:
+</p>
+
+<pre>
+  <code>
+sun.font.Font2D
+sun.font.FontManager
+sun.awt.FontConfiguration
+    </code>
+</pre>
+
+<p>
+In order to implement a new font backend one must provide a
+<code>FontManager</code> and all the referenced support classes.
+</p>
+
+<p>
+It is possible to reuse most of the existing <code>FontManager</code>
+code.  For the most portable approach, just implement the methods
+described in the <code>FontManager</code> interface.  Currently, there
+is an ongoing work to make this interface more portable and more
+documented.
+</p>
+
+<p>
+To use the new <code>FontManager</code> implementation, pass a system
+property to the VM:
+</p>
+
+<pre>
+  <code>
+java -Dsun.font.fontmanager=your.fontmanager.ClassName
+  </code>
+</pre>
+
+<p>
+One can also set this property in the static initializer of a
+<code>GraphicsEnvironment</code> implementation:
+</p>
+
+<pre>
+  <code>
+  static
+  {
+    System.setProperty("sun.font.fontmanager", "your.fontmanager.ClassName");
+  }
+</code>
+</pre>
+
+<h2>Relevant classes</h2>
+
+<pre>
+<code>
+java.awt.GraphicsConfiguration
+java.awt.GraphicsDevice
+java.awt.peer.WindowPeer
+java.awt.peer.FramePeer
+java.awt.peer.DialogPeer
+java.awt.peer.*
+sun.awt.SunToolkit
+sun.awt.KeyboardFocusManagerPeerImpl
+sun.awt.image.(Volatile)SurfaceManager
+sun.java2d.SunGraphicsEnvironment
+sun.java2d.SurfaceData
+sun.java2d.loops.Blit
+sun.java2d.pipe.PixelDrawPipe
+sun.java2d.pipe.PixelFillPipe
+sun.java2d.pipe.ShapeDrawPipe
+sun.java2d.pipe.GlyphListPipe
+sun.java2d.SurfaceManagerFactory
+sun.font.FontManagerBase
+sun.awt.FontConfiguration
+</code>
+</pre>
+
+</body>

@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>Portable GUI Backends (The Caciocavallo project)</title>
+</head>
+<!-- 
+
+This is a nice recipe for preparing a great italian dish called
+"Linguine al Nero di Seppia" (linguine is a kind of pasta, nero di
+seppia is the black ink from the cuttlefish, or sepia).
+
+You need some seafood, but not much, then good italian linguine and the ink.
+You can find the ink in some specialized shop, try to get the good one. If you are lucky,
+you can even do it by yourself, from the cuttlebone ink bags (my granfather did it that way,
+and is the best way).
+
+First, the seafood.
+
+1. Some pieces of cuttlefish.
+2. Very few clams take 5 at most of dish.
+3. Very few mussels, like 3, 4 for dish. 
+4. Maybe a couple of shrimps, small.
+
+You don't need much of all these, infact you can even not use them at all, so be conservative :)
+
+Now, fry in good olive oil a little piece of garlic. As soon as the garlic becomes golden, throw it away.
+Make the oil to cool down a little and then sprinkle some white wine on the oil and mix it.
+
+Add the cuttelfish and the shrimps and turn the fire on again. After a while, add the
+clams and the mussels, as they take less to cook. More or less at 3/4 of the cooking (you can spot it!)
+add the ink with some water. The final result should be dense, but not gluey. Turn off the fire.
+
+Pasta: Linguine, no discussion over this :)
+
+Just prepare them the usual (italian) way. When they are done, take out the water, turn on the fire under the pot with the ink
+and seafood, and put the pasta into it, mixing carefully, for one minute or less.
+
+If you like, you can add some olive oil on top. Instead of salting the water for the pasta, you can use
+"colatura di alici". Google for it, but I doubt you can find it outside Cetara/Salerno/Napoli.
+
+Serve on pasta dishes, with a leaf of parsley.
+
+-->
+
+<body>
+
+<h1>OpenJDK Challenge</h1>
+
+<h1>External Toolkit Implementation, a walkthrough</h1>
+
+<h2>Introduction</h2>
+<p>
+Using the public and semipublic peer interfaces it is
+possible to implement graphics backends for AWT and Java2D.
+This requires the implementation of the complete graphics stack, including the Toolkit,
+Graphics, and part of or all of fonts and image support.
+This can be quite a large task, but has the advantage that there are no assumptions about the underlying platform.
+</p>
+<p>
+This tutorial illuminates the external interfaces and
+classes that are relevant for implementing a graphics backend for a
+new system.  A JavaDoc description of the API is available as part of the
+project.
+</p>
+
+<h2>Summary</h2>
+<ul>
+
+  <li>
+    Toolkit implementation
+  </li>
+
+  <li>
+    Provide top level AWT widget peers
+  </li>
+
+  <li>
+    Provide AWT widget peers
+  </li>
+  
+  <li>
+    Provide a GraphicsEnvironment
+  </li>
+
+  <li>
+    Provide a graphics pipeline
+  </li>
+
+  <li>
+    VolatileImage support
+  </li>
+
+  <li>
+    Provide font implementation or configuration List of Classes
+  </li>
+</ul>
+
+<h2>Toolkit implementation</h2>
+
+<p>
+The starting point for implementing a graphics backend is the
+<code>java.awt.Toolkit</code>.
+</p>
+
+<p>
+The <code>Toolkit</code> abstract class provides many abstract methods that are
+meant to create the native peers for the AWT widgets and implement
+general toolkit functionality such as image handling, some font support,
+and some printing support.
+</p>
+
+<p>
+A large part of implementing <code>java.awt.Toolkit</code> is the
+implementation of the AWT peer interfaces in the package
+<code>java.awt.peer</code>.  One should follow the API documentation
+for <code>Toolkit</code> and the required peer interfaces.
+</p>
+
+<p>
+In order to use a new <code>Toolkit</code> implementation, pass a system
+property to the VM like this:
+</p>
+
+<code>
+java -Dawt.toolkit=your.toolkit.Classname
+</code>
+
+<p>
+<strong>Note:</strong> that one may also need to provide a
+dedicated <code>GraphicsEnvironment</code>.
+</p>
+
+<h2>
+GraphicEnvironent, GraphicsDevice and GraphicsConfiguration
+</h2>
+
+<p>
+The <code>java.awt.GraphicsEnvironment</code> class is the other central entry
+point for implementing a graphics backend.  It provides the
+graphics devices and graphics configuration information.
+</p>
+
+<p>
+In order to implement <code>java.awt.GraphicsEnvironment</code>, you will also have
+to provide implementations of <code>java.awt.GraphicsDevice</code> and
+<code>java.awt.GraphicsConfiguration</code>.  Please review the API documentation
+for those classes as reference.
+</p>
+
+<p>
+In order to use your own <code>GraphicsEnvironment</code>, pass a system property
+to the VM like this:
+</p>
+
+<code>
+java -Djava.awt.graphicsenv=your.graphicsenv.ClassName
+</code>
+
+<p>
+<strong>Note:</strong> that you will most likely also want to use your own <code>Toolkit</code>
+implementation.
+</p>
+
+<h2>
+Graphics2D
+</h2>
+
+<p>
+As part of implementing the AWT peers and the <code>GraphicsEnvironment</code>, one
+also must provide an implementation for <code>java.awt.Graphics</code>, to be
+able to draw on the AWT components or images.  While the API only mandates
+implementing <code>java.awt.Graphics</code>, it is very advisable to actually
+provide a <code>java.awt.Graphics2D</code> implementation, because many
+applications expect the <code>Graphics</code> object to actually be a <code>Graphics2D</code>
+object.  Please refer to the API documentation of these two
+abstract classes for reference.
+</p>
+
+<h2>
+Fonts
+</h2>
+
+<p>
+The <code>Toolkit</code> is also resposible for creating a <code>Font</code> peer.  However, this
+interface is not actively used anymore.  There is an internal API for
+implementing fonts, which consist of a couple of classes and
+interfaces:
+</p>
+
+<pre>
+<code>
+sun.font.Font2D
+sun.font.FontManager
+sun.awt.FontConfiguration
+</code>
+</pre>
+
+<p>
+In order to implement a new font backend one has to provide a
+<code>FontManager</code> and all the referenced support classes.
+</p>
+<p>
+It is possible to reuse part of the existing <code>FontManager</code>
+code even in newly written toolkit, even if this is not portable to different
+implementation (see the internal interfaces documentation).  For the
+most portable approach, just implement the methods described in the
+FontManager interface.  Currently, there is an ongoing project to make
+this interface more portable and improve its documentation.
+</p>
+
+<p>
+<strong>Note</strong> that there is no public/semipublic API (like the AWT widget
+peers) for fonts right now.
+</p>
+<p>
+To use a new <code>FontManager</code> implementation,
+pass a system property to the VM:
+</p>
+
+<code>
+java -Dsun.font.fontmanager=your.fontmanager.ClassName
+</code>
+
+<p>
+it is also possible to set this property in the static initializer of the
+<code>GraphicsEnvironment</code> implementation:
+</p>
+<pre>
+<code>
+  static
+  {
+    System.setProperty("sun.font.fontmanager", "your.fontmanager.ClassName");
+  }
+</code>
+</pre>
+
+<h2>
+KeyboardFocusManagerPeer
+</h2>
+
+<p>
+It is possible to reuse the <code>FocusManagerPeer</code> in OpenJDK.
+Currently, a process is underway to make it more portable and this functionality
+should be ported into the <code>Toolkit</code>.  For now, if one would like to provide a
+<code>KeyboardFocusManager</code>, one can set the <code>"sun.font.keyboardfocusmanager"</code>
+system property to point to a valid implementation of
+<code>KeyboardFocusManagerPeer</code>.
+</p>
+
+<h2>
+Further Readings
+</h2>
+
+<p>
+Please, refer to the <a href='Tutorial_Internal_Interfaces.html'>Internal Toolkit Implementation Tutorial</a> for more details on how to implement
+the <code>Toolkit</code> Interface, without needing to reimplement
+everything from scratch, and reuse most of the existing code in
+OpenJDK.  Refer to the API documentation of the relevant classes and
+interfaces for details of the implementation.
+</p>
+
+<h2>
+Relevant classes
+</h2>
+
+<pre>
+<code>
+java.awt.Toolkit
+java.awt.GraphicsEnvironment
+java.awt.GraphicsDevice
+java.awt.GraphicsConfiguration
+java.awt.Graphics
+java.awt.Graphics2D
+sun.font.Font2D
+sun.font.FontManager
+sun.awt.FontConfiguration
+sun.awt.KeyboardFocusManagerPeerImpl
+</code>
+</pre>
+
+<p>
+in <code>java.awt.peer</code>:
+</p>
+
+<pre>
+<code>
+ButtonPeer
+CanvasPeer
+CheckboxMenuItemPeer
+CheckboxPeer
+ChoicePeer
+ComponentPeer
+ContainerPeer
+DesktopPeer
+DialogPeer
+FileDialogPeer
+FontPeer
+FramePeer
+KeyboardFocusManagerPeer
+LabelPeer
+LightweightPeer
+ListPeer
+MenuBarPeer
+MenuComponentPeer
+MenuItemPeer
+MenuPeer
+MouseInfoPeer
+PanelPeer
+PopupMenuPeer
+RobotPeer
+ScrollbarPeer
+ScrollPanePeer
+SystemTrayPeer
+TextAreaPeer
+TextComponentPeer
+TextFieldPeer
+TrayIconPeer
+WindowPeer
+</code>
+</pre>
+</body>
