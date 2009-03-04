@@ -1,0 +1,151 @@
+Draft proposal
+--------------
+ 
+ 
+                              Portable GUI Backends
+ 
+                           Roman Kennke and Mario Torre
+                                  aicas GmbH
+
+
+0. Summary
+----------
+
+In order to support the spread of Java for graphical applications,
+particularly in embedded systems, aicas proposes to improve the AWT and
+Java2D in OpenJDK to enable easier porting of AWT to new platforms.
+
+1. Introduction
+---------------
+
+The AWT is designed as an abstract toolkit (hence the name: abstract
+windowing toolkit).  There is a public Java API, which is the same
+across all platforms, and platform specific implementation code for each
+supported platform.  These two parts are isolated from each other
+through the AWT peer interface.  This basically comprises the classes
+java.awt.Toolkit, java.awt.GraphicsEnvironment, the interfaces in
+java.awt.peer (which are not part of the spec), and a couple of related
+classes.  By implementing these interfaces, it should be possible to
+create new backend implementations for AWT and (by extension) Java2D.
+
+Unfortunately, the current implementations do not abide by this
+interface.  In various places in Swing and AWT, this interface is
+circumvented and OpenJDK specific implementation classes
+(e.g. SunToolkit, SunGraphics2D) are called directly.  This defeats the
+whole purpose of having such an interface in the first place and makes
+porting AWT to new platforms unnecessarily hard or impossible without
+modifying Swing and AWT themselves.  Not only does the code simply
+assume that the current implementation is the OpenJDK implementation,
+but the interface itself is often incomplete.
+
+To make things even worse, there is not an interface for font
+implementations.  Instead, there is only one font implementation tied
+into various places in OpenJDK.  Using this implementation in a new AWT
+backend implementation should, in theory a least, be possible; but again,
+the font implementation is so tied to internal implementation classes
+(e.g. SunGraphicsEnvironment) that this would not work either.  Having a
+cleanly separated interface for the font implementation would enable
+reusing the existing implementation in a new AWT backend, or even for
+replacing the font implementation, e.g., with a platform-specific one.
+
+At a lower level in the Java2D stack, there are various interfaces and
+extension points which enable easy porting of the graphics stack.  The
+OpenJDK Java 2D implementation has a rendering pipeline with various
+generic pipes and render loops, which make porting the graphics stack as
+easy as providing a render loop for setting and getting single pixels
+from the render surface, but still can be optimized by providing more
+powerful primatives.  Usually graphics primitives such as lines,
+rectangles, and circles are needed for good performance, but one can
+also include more sophisticated operations such as blits, compositing,
+and transparency.  This is generally a very well thought out design, but
+is also not without its problems.  Because nobody seems to have ever
+created a AWT/Java2D port to another platform, the architecture does not
+allow for flexible extension at some points, e.g., volatile images[1].
+
+ 
+2. Goals and Deliverables
+-------------------------
+
+The project will have two parts.  The first one focuses on the extending
+the external interface.  The second on documenting and cleaning up the
+internal Java2D interface.  In the end, it should be much easier to port
+to a new platform.  This will be demonstrated with a concrete example.
+
+2.1 Extenal AWT/Java2D Peer Interface
+-------------------------------------
+
+As described above, it is currently not possible to provide an
+external implementations for the AWT and Java2D peer interfaces.  The
+first goal of this project is to clean up the interface and the Swing
+and AWT implementation, so that it is possible to create an AWT
+backend without changing any details in Swing or elsewhere.  It is
+important to note that there already are a couple of such
+implementations.  For example, the FBToolkit project [2] and the Escher
+and GTK based peers in GNU Classpath [3], all of which require hacks
+and patches to OpenJDK code to actually work with OpenJDK.  This
+subproject would cover the following tasks.
+
+- Improve Swing and AWT, so that they do not rely on specific
+  implementation details.
+
+- Add functionality to the AWT peer interface where necessary.
+
+- Propose a new interface for font implementations.  This should at
+  least enable the reuse of existing font implemenation in new AWT
+  stacks.  Ideally one could even use an external implementation for
+  fonts.
+
+- Document all the necessary interfaces which are required to port AWT
+  backends.
+
+- Create a proof-of-concept AWT/Java2D peer implementation that makes
+  use of these public interfaces (and not the internal implementation
+  classes).
+
+- Provide test cases for changed and new code.
+
+2.2 Internal Java2D Interfaces
+------------------------------
+
+Implementing a whole complete and compatible Java2D stack is a huge
+task, and not feasible for small to midsized projects.  Considering
+that there are already all the necessary pieces in OpenJDK, it would
+be nice to make it possible to reuse these in new ports of AWT/Java2D
+backends.  As described above, the general architecture does seem to
+enablle that, but has small problems in various places.  Also, there is
+practically no documentation on how to implement an external rendering
+pipeline.  This part of the project should improve this through the
+following tasks.
+
+- Extend the Java2D architecture to be reusable in new AWT/Java2D ports.
+
+- Document the architecture and interfaces to be used, including
+  an architectural overview, API documentation, and a tutorial.
+
+- Create a proof-of-concept implementation that makes use of OpenJDKs
+  rendering pipeline.
+
+- Provide test cases for changed and new code.
+
+
+3. Previous work
+----------------
+
+Mr. Kennke is the author of the Escher based toolkit in GNU Classpath,
+and has helped with the GTK based toolkit in GNU Classpath.  Both of
+these implement the public interfaces only and work with Classpath's
+Swing.  The authors have created (very) prototypical ports of these to
+OpenJDK [4] and create a very early prototype for a Java2D port based on
+the internal Java2D interfaces [5]. This work should demonstrate that
+the proposed project is feasible, and it will serve as a basis for
+further development.
+
+
+References:
+-----------
+
+[1] http://mail.openjdk.java.net/pipermail/2d-dev/2008-February/000142.html
+[2] https://fbtoolkit.dev.java.net/
+[3] http://www.gnu.org/software/classpath/
+[4] http://kennke.org/blog/2007/06/21/gtk-peers-on-openjdk/
+[5] http://kennke.org/blog/2008/02/25/escher-on-openjdk-graphics/
