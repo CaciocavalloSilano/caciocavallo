@@ -48,6 +48,8 @@ import sun.awt.ComponentAccessor;
 
 class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
+    private static boolean decorateWindows = "true".equals(System.getProperty("cacio.decorateWindows", "true"));
+
     class SwingRootPane extends JRootPane implements CacioSwingComponent {
 
         private Window window;
@@ -209,12 +211,14 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
 
     @Override
     void initSwingComponent() {
-        Window window = (Window) getAWTComponent();
-        SwingRootPane rootPane = new SwingRootPane(window);
-        int deco = getRootPaneDecorationStyle();
-        rootPane.setWindowDecorationStyle(deco);
-        setSwingComponent(rootPane);
-        rootPane.addNotify();
+        if (decorateWindows) {
+            Window window = (Window) getAWTComponent();
+            SwingRootPane rootPane = new SwingRootPane(window);
+            int deco = getRootPaneDecorationStyle();
+            rootPane.setWindowDecorationStyle(deco);
+            setSwingComponent(rootPane);
+            rootPane.addNotify();
+        }
     }
 
     protected int getRootPaneDecorationStyle() {
@@ -287,12 +291,20 @@ class CacioWindowPeer extends CacioContainerPeer implements WindowPeer {
     }
 
     private JRootPane getRootPane() {
-        return (JRootPane) getSwingComponent().getJComponent();
+        CacioSwingComponent swingComp = getSwingComponent();
+        if (swingComp != null) {
+            return (JRootPane) swingComp.getJComponent();
+        } else {
+            return null;
+        }
     }
 
     public Insets getInsets() {
 
         JRootPane rp = getRootPane();
+        if (rp == null) {
+            return new Insets(0, 0, 0, 0);
+        }
         if (! rp.isValid()) {
             rp.validate();
         }
