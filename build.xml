@@ -7,6 +7,7 @@
 	<property name="src.dir" value="src" />
 	<property name="test.src.dir" value="tests" />
 	<property name="build.dir" value="build" />
+	<property name="javadoc.dir" value="javadoc" />
 	<property name="dist.dir" value="dist" />
 	
 	<property name="classes.dir" value="${build.dir}/classes" />
@@ -68,6 +69,13 @@
 		<mkdir dir="${dist.dir}" />
 		<jar destfile="${jar.file}" basedir="${classes.dir}" />
 	</target>
+
+        <target name="javadoc">
+          <mkdir dir="${javadoc.dir}" />
+          <javadoc sourcepath="${src.dir}"
+                   destdir="${javadoc.dir}"
+                   packagenames="sun/awt/peer/cacio" />
+        </target>
 
 	<target name="all" depends="jar, tests" />
 	
