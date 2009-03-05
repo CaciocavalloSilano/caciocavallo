@@ -40,7 +40,7 @@ import java.util.Iterator;
  * to implement toplevel windows only, and use ManagedWindow instances
  * for nested windows.
  */
-public abstract class AbstractManagedWindowContainer
+abstract class AbstractManagedWindowContainer
     implements ManagedWindowContainer {
 
     /**
@@ -63,7 +63,7 @@ public abstract class AbstractManagedWindowContainer
      * @param child the window to add
      */
     @Override
-    public void add(ManagedWindow child) {
+    public final void add(ManagedWindow child) {
         children.add(child);
         // TODO: This needs to do a little more in reality (repaint, etc).
         // Fix it.
@@ -75,14 +75,14 @@ public abstract class AbstractManagedWindowContainer
      * @param child the window to be removed
      */
     @Override
-    public void remove(ManagedWindow child) {
+    public final void remove(ManagedWindow child) {
         children.remove(child);
         // TODO: This needs to do a little more in reality (repaint, etc).
         // Fix it.
     }
 
     @Override
-    public LinkedList<ManagedWindow> getChildren() {
+    public final LinkedList<ManagedWindow> getChildren() {
         return children;
     }
 
@@ -99,11 +99,11 @@ public abstract class AbstractManagedWindowContainer
     }
 
     @Override
-    public void dispatchEvent(EventData event) {
+    public final void dispatchEvent(EventData event) {
         dispatchEventImpl(event);
     }
 
-    protected boolean dispatchEventImpl(EventData event) {
+    boolean dispatchEventImpl(EventData event) {
         int id = event.getId();
         if (id >= MouseEvent.MOUSE_FIRST
             && id <= MouseEvent.MOUSE_LAST) {
@@ -129,7 +129,7 @@ public abstract class AbstractManagedWindowContainer
         }
     }
 
-    protected ManagedWindow findWindowAt(int x, int y) {
+    ManagedWindow findWindowAt(int x, int y) {
         // Search from topmost to bottommost component and see if one matches.
         Iterator<ManagedWindow> i = children.descendingIterator();
         while (i.hasNext()) {

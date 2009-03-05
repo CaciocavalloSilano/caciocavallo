@@ -30,7 +30,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 
-public interface BaseWindow {
+interface BaseWindow {
 
     /**
      * Returns the color model used by the native window.

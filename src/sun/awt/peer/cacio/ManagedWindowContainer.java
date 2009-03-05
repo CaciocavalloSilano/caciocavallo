@@ -31,7 +31,14 @@ import java.awt.Rectangle;
 import java.util.Deque;
 import java.util.List;
 
-public interface ManagedWindowContainer extends BaseWindow {
+/**
+ * A container for Caciocavallo managed windows. Each managed window has to
+ * live in a container that provides the necessary infrastructure for the
+ * managed window. This container can either be another managed window
+ * (windows can be nested), or a top level container, which is usually
+ * implemented by client code.
+ */
+interface ManagedWindowContainer extends BaseWindow {
 
     /**
      * Adds a child window to this container. This will be the topmost
