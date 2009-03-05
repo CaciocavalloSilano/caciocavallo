@@ -28,7 +28,7 @@ package sun.awt.peer.cacio;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 
 public interface ManagedWindowContainer extends BaseWindow {
@@ -48,7 +48,7 @@ public interface ManagedWindowContainer extends BaseWindow {
      */
     void remove(ManagedWindow child);
 
-    LinkedList<ManagedWindow> getChildren();
+    Deque<ManagedWindow> getChildren();
 
     /**
      * Returns the location of the specified child window relative to
