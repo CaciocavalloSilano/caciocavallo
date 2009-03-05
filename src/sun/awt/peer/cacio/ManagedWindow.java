@@ -58,7 +58,7 @@ import sun.awt.peer.cacio.CacioComponent.EventPriority;
  * as parent and implements all the window management logic in Java. This
  * is most useful on target systems without or with limited window support.
  */
-public class ManagedWindow
+class ManagedWindow
     extends AbstractManagedWindowContainer
     implements PlatformToplevelWindow {
 

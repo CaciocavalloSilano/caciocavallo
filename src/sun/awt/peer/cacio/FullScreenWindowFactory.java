@@ -60,9 +60,9 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      * @param screen the container to be used for toplevel windows
      * @param s the event source to use
      */
-    public FullScreenWindowFactory(ManagedWindowContainer screen,
+    public FullScreenWindowFactory(PlatformScreen screen,
                                    CacioEventSource s) {
-        this.screen = screen;
+        this.screen = new ScreenManagedWindowContainer(screen);
         this.eventSource = s;
     }
 
@@ -74,20 +74,20 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      *
      * @return the platform window instance
      */
-    public PlatformWindow createPlatformWindow(CacioComponent awtComponent,
-                                               PlatformWindow parent) {
+    public final PlatformWindow createPlatformWindow(CacioComponent awtComponent,
+                                                     PlatformWindow parent) {
         assert parent != null;
         ManagedWindow p = (ManagedWindow) parent;
         return new ManagedWindow(p, awtComponent);
     }
 
     @Override
-    public PlatformWindow createPlatformToplevelWindow(CacioComponent comp) {
+    public final PlatformWindow createPlatformToplevelWindow(CacioComponent comp) {
         return new ManagedWindow(screen, comp);
     }
 
     @Override
-    public CacioEventSource createEventSource() {
+    public final CacioEventSource createEventSource() {
         return eventSource;
     }
 

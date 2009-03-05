@@ -29,7 +29,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.peer.ContainerPeer;
 
-public abstract class CacioContainerPeer extends CacioComponentPeer implements
+abstract class CacioContainerPeer extends CacioComponentPeer implements
         ContainerPeer {
 
     public CacioContainerPeer(Component awtC, PlatformWindowFactory pwf) {
