@@ -42,6 +42,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
 import java.awt.peer.ContainerPeer;
 import java.awt.image.ColorModel;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -180,7 +181,7 @@ public class ManagedWindow
      * @return the list of clip rectangles, possibly null
      */
     private List<Rectangle> addClipRects(List<Rectangle> clipRects) {
-        LinkedList<ManagedWindow> siblings = parent.getChildren();
+        Deque<ManagedWindow> siblings = parent.getChildren();
         if (siblings.getLast() != this) {
             if (clipRects == null) {
                 clipRects = new LinkedList<Rectangle>();
@@ -292,7 +293,7 @@ public class ManagedWindow
     }
 
     private boolean hasOverlappingSiblings(int x, int y, int w, int h) {
-        LinkedList<ManagedWindow> siblings = getParent().getChildren();
+        Deque<ManagedWindow> siblings = getParent().getChildren();
         boolean hasOverlappingSiblings = false;
         Rectangle myBounds = new Rectangle(x, y, w, h);
         // Only windows that are 'over' the target region can be overlapping.
