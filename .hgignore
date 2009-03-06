@@ -1,2 +1,4 @@
-user.properties
-javadoc
+syntax: regexp
+^user.properties
+^javadoc
+^build/
