@@ -28,6 +28,18 @@ package sun.awt.peer.cacio;
 public class FullScreenWindowFactory implements PlatformWindowFactory {
 
     /**
+     * This is used to re-source the events coming from the
+     * PlatformScreen to the corresponding ManagedWindowContainer.
+     */
+    private class FullScreenEventSource implements CacioEventSource {
+        public EventData getNextEvent() {
+            EventData d = eventSource.getNextEvent();
+            d.setSource(screen);
+            return d;
+        }
+    }
+
+    /**
      * The container for the toplevel windows.
      */
     private ManagedWindowContainer screen;
@@ -88,7 +100,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
 
     @Override
     public final CacioEventSource createEventSource() {
-        return eventSource;
+        return new FullScreenEventSource();
     }
 
 }
