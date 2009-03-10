@@ -148,7 +148,9 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
             }
         }
         platformWindow = pwf.createPlatformWindow(this, parent);
-
+        if (awtComponent.isVisible()) {
+            platformWindow.setVisible(true);
+        }
         initSwingComponent();
     }
 
