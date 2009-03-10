@@ -1,7 +1,6 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -22,9 +21,6 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 
 import javax.swing.KeyStroke;
-
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultCaret;
 
 import sun.awt.ComponentAccessor;
 
@@ -92,18 +88,11 @@ class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
         
         @Override
         public void handleFocusEvent(FocusEvent ev) {
-            
+
             isFocused = ev.getID() == FocusEvent.FOCUS_GAINED;
             
-            Caret caret = this.getCaret();
-            if (caret instanceof DefaultCaret) {
-                DefaultCaret _caret = (DefaultCaret) caret;
-                if (isFocused) {
-                    _caret.focusGained(ev);
-                } else {
-                    _caret.focusLost(ev);
-                }
-            }
+            FocusEvent fev = new FocusEvent(this, ev.getID());
+            processFocusEvent(fev);
             
             repaint();
         }
@@ -173,7 +162,7 @@ class CacioTextFieldPeer extends CacioComponentPeer implements TextFieldPeer {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            
+
             TextField textField =
                 (TextField) CacioTextFieldPeer.this.awtComponent;
             
