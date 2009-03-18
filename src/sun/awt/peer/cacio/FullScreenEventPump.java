@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,32 +23,25 @@
  * have any questions.
  */
 
-package gnu.java.awt.peer.x;
+package sun.awt.peer.cacio;
 
-import sun.awt.peer.cacio.CacioComponent;
-import sun.awt.peer.cacio.CacioEventSource;
-import sun.awt.peer.cacio.CacioEventPump;
-import sun.awt.peer.cacio.PlatformWindow;
-import sun.awt.peer.cacio.PlatformWindowFactory;
+class FullScreenEventPump extends CacioEventPump<EventData> {
 
-class EscherPlatformWindowFactory implements PlatformWindowFactory {
+    private CacioEventSource source;
 
-    @Override
-    public PlatformWindow createPlatformWindow(CacioComponent cacioComponent,
-                                               PlatformWindow parent) {
-        return new EscherPlatformWindow(cacioComponent, parent);
+    FullScreenEventPump(CacioEventSource s) {
+        source = s;
     }
 
     @Override
-    public PlatformWindow createPlatformToplevelWindow(CacioComponent component) {
-        return new EscherPlatformWindow(component, null);
+    protected EventData fetchNativeEvent() {
+        return source.getNextEvent();
     }
 
     @Override
-    public CacioEventPump createEventPump() {
-        return null; // TODO: FIX this!
-        // XGraphicsDevice dev = EscherToolkit.getDefaultDevice();
-        // return dev.getEventSource();
+    protected void dispatchNativeEvent(EventData d) {
+        ManagedWindowContainer c = (ManagedWindowContainer) d.getSource();
+        c.dispatchEvent(d);
     }
 
 }
