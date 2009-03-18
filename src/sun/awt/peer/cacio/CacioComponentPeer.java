@@ -34,19 +34,18 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.Window;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
-import java.awt.event.WindowEvent;
 
 import java.awt.image.ColorModel;
 import java.awt.image.ImageObserver;
@@ -60,8 +59,8 @@ import java.lang.reflect.Field;
 
 import javax.swing.JComponent;
 
-import sun.awt.AppContext;
 import sun.awt.ComponentAccessor;
+import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.PeerEvent;
@@ -152,6 +151,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
             platformWindow.setVisible(true);
         }
         initSwingComponent();
+        if (swingComponent != null) {
+            JComponent jcomp = swingComponent.getJComponent();
+            awtComponent.setForeground(jcomp.getForeground());
+            awtComponent.setBackground(jcomp.getBackground());
+            awtComponent.setFont(jcomp.getFont());
+        }
     }
 
     void initSwingComponent() {
