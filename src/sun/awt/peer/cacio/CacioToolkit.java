@@ -190,10 +190,11 @@ public abstract class CacioToolkit extends SunToolkit {
     }
 
     @Override
-    public ScrollPanePeer createScrollPane(ScrollPane target)
-            throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+    public ScrollPanePeer createScrollPane(ScrollPane target) {
+        CacioScrollPanePeer peer = new CacioScrollPanePeer(target,
+                                                   getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
