@@ -74,8 +74,8 @@ import sun.awt.SunToolkit;
 public abstract class CacioToolkit extends SunToolkit {
 
     public CacioToolkit() {
-        CacioEventSource source = getPlatformWindowFactory().createEventSource();
-        new CacioEventPump(source);
+        CacioEventPump pump = getPlatformWindowFactory().createEventPump();
+        pump.start();
     }
 
     @Override
