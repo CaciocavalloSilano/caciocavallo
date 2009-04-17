@@ -88,7 +88,10 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      */
     public final PlatformWindow createPlatformWindow(CacioComponent awtComponent,
                                                      PlatformWindow parent) {
-        assert parent != null;
+        if (parent == null) {
+            throw new IllegalArgumentException("parent cannot be null");
+        }
+
         ManagedWindow p = (ManagedWindow) parent;
         return new ManagedWindow(p, awtComponent);
     }
