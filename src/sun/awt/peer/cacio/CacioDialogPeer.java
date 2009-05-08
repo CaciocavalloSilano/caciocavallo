@@ -25,7 +25,6 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.peer.DialogPeer;
@@ -35,7 +34,7 @@ import javax.swing.JRootPane;
 
 class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
-    public CacioDialogPeer(Component awtC, PlatformWindowFactory pwf) {
+    public CacioDialogPeer(Dialog awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
