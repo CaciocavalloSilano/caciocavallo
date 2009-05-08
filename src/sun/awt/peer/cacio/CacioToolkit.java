@@ -88,9 +88,9 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public CanvasPeer createCanvas(Canvas target) {
-	CacioPanelPeer peer = new CacioPanelPeer(target,
-					  getPlatformWindowFactory());
-	SunToolkit.targetCreatedPeer(target, peer);
+        CacioCanvasPeer peer = new CacioCanvasPeer(target,
+                                                   getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
         return peer;
     }
    
@@ -226,13 +226,17 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public WindowPeer createWindow(Window target) throws HeadlessException {
 
-	CacioWindowPeer peer = new CacioWindowPeer(target,
-						   getPlatformWindowFactory());
-	SunToolkit.targetCreatedPeer(target, peer);
+        if (target instanceof ProxyWindow) {
+            return new ProxyWindowPeer((ProxyWindow) target);
+        }
+        CacioWindowPeer peer = new CacioWindowPeer(target,
+                                                   getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
         return peer;
 
     }
 
+    @Override
     public KeyboardFocusManagerPeer createKeyboardFocusManagerPeer(KeyboardFocusManager manager) throws HeadlessException {
         return CacioKeyboardFocusManagerPeer.getInstance();
     }

@@ -84,18 +84,25 @@ import sun.java2d.pipe.Region;
  * Swing component.</li>
  * </ul>
  */
-class CacioComponentPeer implements ComponentPeer, CacioComponent {
+class CacioComponentPeer<AWTComponentType extends Component,
+                         SwingComponentType extends JComponent>
+    implements ComponentPeer, CacioComponent {
 
     /**
      * The AWT component that corresponds to this component peer.
      */
-    Component awtComponent;
+    private AWTComponentType awtComponent;
 
     /**
      * The backing Swing component. Some components don't have a backing
      * swing component and leave that to <code>null</code>.
      */
-    private CacioSwingComponent swingComponent;
+    private SwingComponentType swingComponent;
+
+    /**
+     * The proxy for the Swing component.
+     */
+    private ProxyWindow proxy;
 
     /**
      * The underlying native platform window.
@@ -109,6 +116,8 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     protected int x, y, width, height;
 
+    private boolean visible;
+
     /**
      * Creates a new CacioComponentPeer.
      * 
@@ -117,9 +126,12 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      * @param pwf
      *            a platform window factory for creating the platform window
      */
-    CacioComponentPeer(Component awtC, PlatformWindowFactory pwf) {
+    CacioComponentPeer(AWTComponentType awtC, PlatformWindowFactory pwf) {
         awtComponent = awtC;
         init(pwf);
+        swingComponent = initSwingComponent();
+        initProxy();
+        postInitSwingComponent();
         // Initialize basic properties.
         setBounds(awtC.getX(), awtC.getY(), awtC.getWidth(), awtC.getHeight(),
                   ComponentPeer.SET_SIZE);
@@ -150,17 +162,30 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         if (awtComponent.isVisible()) {
             platformWindow.setVisible(true);
         }
-        initSwingComponent();
+    }
+
+    private void initProxy() {
         if (swingComponent != null) {
-            JComponent jcomp = swingComponent.getJComponent();
-            awtComponent.setForeground(jcomp.getForeground());
-            awtComponent.setBackground(jcomp.getBackground());
-            awtComponent.setFont(jcomp.getFont());
+
+            // Setup the proxy window.
+            proxy = new ProxyWindow(this, swingComponent);
+            proxy.setBounds(x, y, width, height);
+            proxy.setVisible(/* visible */ true);
+
+            // Set some properties on the Swing component.
+            awtComponent.setForeground(swingComponent.getForeground());
+            awtComponent.setBackground(swingComponent.getBackground());
+            awtComponent.setFont(swingComponent.getFont());
         }
     }
 
-    void initSwingComponent() {
+    void postInitSwingComponent() {
+        // Nothing to do here. Subclasses override this.
+    }
+
+    SwingComponentType initSwingComponent() {
         // By default, do nothing.
+        return null;
     }
 
     /**
@@ -208,7 +233,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         Dimension min;
         if (swingComponent != null) {
-            min = swingComponent.getJComponent().getMinimumSize();
+            min = swingComponent.getMinimumSize();
         } else {
             min = new Dimension(0, 0);
         }
@@ -220,7 +245,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         Dimension pref;
         if (swingComponent != null) {
-            pref = swingComponent.getJComponent().getPreferredSize();
+            pref = swingComponent.getPreferredSize();
         } else {
             pref = new Dimension(0, 0);
         }
@@ -297,8 +322,8 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      */
     private void handleMouseEvent(MouseEvent e) {
         
-        if (swingComponent != null)
-            swingComponent.handleMouseEvent(e);
+        if (proxy != null)
+            proxy.handleMouseEvent(e);
     }
 
     /**
@@ -309,8 +334,8 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      */
     private void handleMouseMotionEvent(MouseEvent e) {
         
-        if (swingComponent != null)
-            swingComponent.handleMouseMotionEvent(e);
+        if (proxy != null)
+            proxy.handleMouseMotionEvent(e);
     }
 
     /**
@@ -321,8 +346,8 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      */
     private void handleKeyEvent(KeyEvent e) {
         
-        if (swingComponent != null)
-            swingComponent.handleKeyEvent(e);
+        if (proxy != null)
+            proxy.handleKeyEvent(e);
     }
 
     /**
@@ -333,20 +358,20 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
      */
     private void handleFocusEvent(FocusEvent e) {
         
-        if (swingComponent != null)
-            swingComponent.handleFocusEvent(e);
+        if (proxy != null)
+            proxy.handleFocusEvent(e);
     }
 
     protected void peerPaint(Graphics g, boolean update) {
         Graphics peerG = g.create();
         try {
             if (swingComponent != null) {
-                JComponent c = swingComponent.getJComponent();
+                JComponent c = swingComponent;
                 g.clipRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
                 if (update) {
-                    swingComponent.getJComponent().update(peerG);
+                    c.update(peerG);
                 } else {
-                    swingComponent.getJComponent().paint(peerG);
+                    c.paint(peerG);
                 }
             }
         } finally {
@@ -382,7 +407,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
         boolean ret;
         if (swingComponent != null) {
-            ret = swingComponent.getJComponent().isFocusable();
+            ret = swingComponent.isFocusable();
         } else {
             ret = false;
         }
@@ -494,23 +519,27 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
         // it is not shown, and the only purpose of these flags is
         // to support system where we don't know the insets in advance.
         platformWindow.setBounds(this.x, this.y, this.width, this.height, op);
-        if (swingComponent != null) {
-            swingComponent.getJComponent().setBounds(0, 0, this.width, this.height);
+        if (proxy != null) {
+            proxy.setBounds(x, y, this.width, this.height);
+            proxy.validate();
         }
     }
 
     public void setEnabled(boolean b) {
 
         if (swingComponent != null) {
-            swingComponent.getJComponent().setEnabled(b);
+            swingComponent.setEnabled(b);
         }
 
     }
 
     public void setVisible(boolean b) {
 
+        visible = b;
+        if (proxy != null) {
+            proxy.setVisible(b);
+        }
         platformWindow.setVisible(b);
-
     }
 
     public void updateCursorImmediately() {
@@ -606,24 +635,11 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     }
 
-    CacioSwingComponent getSwingComponent() {
-        return swingComponent;
-    }
-
-    /**
-     * Sets the swing component of this peer.
-     *
-     * @param swingComp the swing component to set
-     */
-    void setSwingComponent(CacioSwingComponent swingComp) {
-        swingComponent = swingComp;
-    }
-
     public PlatformWindow getPlatformWindow() {
         return platformWindow;
     }
 
-    public Component getAWTComponent() {
+    public AWTComponentType getAWTComponent() {
         return awtComponent;
     }
 
@@ -681,4 +697,7 @@ class CacioComponentPeer implements ComponentPeer, CacioComponent {
 
     }
 
+    SwingComponentType getSwingComponent() {
+        return swingComponent;
+    }
 }

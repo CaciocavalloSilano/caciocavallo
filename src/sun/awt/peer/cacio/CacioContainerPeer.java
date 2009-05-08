@@ -28,11 +28,13 @@ package sun.awt.peer.cacio;
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.peer.ContainerPeer;
+import javax.swing.JComponent;
 
-abstract class CacioContainerPeer extends CacioComponentPeer implements
-        ContainerPeer {
+abstract class CacioContainerPeer<AWTComponentType extends Component, SwingComponentType extends JComponent>
+    extends CacioComponentPeer<AWTComponentType, SwingComponentType>
+    implements ContainerPeer {
 
-    public CacioContainerPeer(Component awtC, PlatformWindowFactory pwf) {
+    public CacioContainerPeer(AWTComponentType awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
@@ -64,6 +66,7 @@ abstract class CacioContainerPeer extends CacioComponentPeer implements
 
     }
 
+    @Override
     public Insets getInsets() {
 
         return platformWindow.getInsets();
