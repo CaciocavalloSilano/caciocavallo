@@ -25,141 +25,12 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Label;
-import java.awt.Point;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.peer.LabelPeer;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import sun.awt.ComponentAccessor;
-
-class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
-
-    public CacioLabelPeer(Component awtC, PlatformWindowFactory pwf) {
-        super(awtC, pwf);
-    }
-
-    /**
-     * A specialised Swing label used to paint the label for the AWT Label. 
-     *
-     * @author Roman Kennke (kennke@aicas.com)
-     */
-    private class SwingLabel extends JLabel implements CacioSwingComponent {
-
-        Label label;
-
-        SwingLabel(Label label) {
-            this.label = label;
-            ComponentAccessor.setParent(this, label.getParent());
-        }
-
-        /**
-         * Returns this label.
-         * 
-         * @return <code>this</code>
-         */
-        @Override
-        public JComponent getJComponent() {
-            return this;
-        }
-
-        /**
-         * Handles mouse events by forwarding it to
-         * <code>processMouseEvent()</code>.
-         * 
-         * @param ev the mouse event
-         */
-        @Override
-        public void handleMouseEvent(MouseEvent ev) {
-            processMouseEvent(ev);
-        }
-
-        /**
-         * Handles mouse motion events by forwarding it to
-         * <code>processMouseMotionEvent()</code>.
-         * 
-         * @param ev the mouse motion event
-         */
-        @Override
-        public void handleMouseMotionEvent(MouseEvent ev) {
-            processMouseMotionEvent(ev);
-        }
-
-        /**
-         * Handles key events by forwarding it to <code>processKeyEvent()</code>.
-         * 
-         * @param ev the mouse event
-         */
-        @Override
-        public void handleKeyEvent(KeyEvent ev) {
-            processKeyEvent(ev);
-        }
-
-        /**
-         * Handles focus events by forwarding it to
-         * <code>processFocusEvent()</code>.
-         * 
-         * @param ev the Focus event
-         */
-        @Override
-        public void handleFocusEvent(FocusEvent ev) {
-            processFocusEvent(ev);
-        }
-
-        /**
-         * Overridden so that this method returns the correct value even without
-         * a peer.
-         * 
-         * @return the screen location of the button
-         */
-        @Override
-        public Point getLocationOnScreen() {
-            return CacioLabelPeer.this.getLocationOnScreen();
-        }
-
-        /**
-         * Overridden so that the isShowing method returns the correct value for
-         * the swing button, even if it has no peer on its own.
-         * 
-         * @return <code>true</code> if the button is currently showing,
-         *         <code>false</code> otherwise
-         */
-        @Override
-        public boolean isShowing() {
-            boolean retVal = false;
-            if (label != null)
-                retVal = label.isShowing();
-            return retVal;
-        }
-
-        /**
-         * Overridden, so that the Swing button can create an Image without its
-         * own peer.
-         * 
-         * @param w the width of the image
-         * @param h the height of the image
-         * 
-         * @return an image
-         */
-        @Override
-        public Image createImage(int w, int h) {
-            return CacioLabelPeer.this.createImage(w, h);
-        }
-
-        @Override
-        public Graphics getGraphics() {
-            return CacioLabelPeer.this.getGraphics();
-        }
-
-    }
+class CacioLabelPeer extends CacioComponentPeer<Label, JLabel> implements LabelPeer {
 
     /**
      * Creates a new <code>SwingLabelPeer</code> for the specified AWT label.
@@ -172,14 +43,19 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
     }
 
     @Override
-    void initSwingComponent() {
-        Label label = (Label) getAWTComponent();
-        SwingLabel swingLabel = new SwingLabel(label);
+    JLabel initSwingComponent() {
+        Label label = getAWTComponent();
+        JLabel swingLabel = new JLabel();
         swingLabel.setText(label.getText());
         swingLabel.setOpaque(true);
-        setSwingComponent(swingLabel);
-        setAlignment(label.getAlignment());
-        swingLabel.addNotify();
+        return swingLabel;
+    }
+
+    @Override
+    void postInitSwingComponent() {
+        super.postInitSwingComponent();
+        // TODO: Maybe make the AWT component type generic.
+        setAlignment(getAWTComponent().getAlignment());
     }
 
     /**
@@ -189,9 +65,8 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
      * @param text the text to be set
      */
     @Override
-    public void setText(String text)
-    {
-      ((JLabel) getSwingComponent().getJComponent()).setText(text);
+    public void setText(String text) {
+        getSwingComponent().setText(text);
     }
 
     /**
@@ -204,27 +79,27 @@ class CacioLabelPeer extends CacioComponentPeer implements LabelPeer {
      * @see Label#RIGHT
      * @see Label#CENTER
      */
-    public void setAlignment(int alignment)
-    {
-      JLabel swingLabel = (JLabel) getSwingComponent().getJComponent();
-      switch (alignment)
-        {
-        case Label.RIGHT:
-          swingLabel.setHorizontalAlignment(JLabel.RIGHT);
-          break;
-        case Label.CENTER:
-          swingLabel.setHorizontalAlignment(JLabel.CENTER);
-          break;
-        case Label.LEFT:
-        default:
-          swingLabel.setHorizontalAlignment(JLabel.LEFT);
-          break;
+    @Override
+    public void setAlignment(int alignment) {
+        JLabel swingLabel = getSwingComponent();
+        switch (alignment) {
+            case Label.RIGHT:
+                swingLabel.setHorizontalAlignment(JLabel.RIGHT);
+                break;
+            case Label.CENTER:
+                swingLabel.setHorizontalAlignment(JLabel.CENTER);
+                break;
+            case Label.LEFT:
+            default:
+                swingLabel.setHorizontalAlignment(JLabel.LEFT);
+                break;
         }
     }
 
     /**
      * Swing labels are focusable, but AWT labels are not.
      */
+    @Override
     public boolean isFocusable() {
         return false;
     }

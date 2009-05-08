@@ -2,3 +2,4 @@ syntax: regexp
 ^user.properties
 ^javadoc
 ^build/
+.orig$

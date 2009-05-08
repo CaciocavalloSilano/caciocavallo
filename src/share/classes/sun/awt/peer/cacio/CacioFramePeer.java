@@ -25,7 +25,6 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Component;
 import java.awt.Frame;
 import java.awt.MenuBar;
 import java.awt.Rectangle;
@@ -35,7 +34,7 @@ import javax.swing.JRootPane;
 
 class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
-    public CacioFramePeer(Component awtC, PlatformWindowFactory pwf) {
+    public CacioFramePeer(Frame awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
         // TODO Auto-generated constructor stub
     }

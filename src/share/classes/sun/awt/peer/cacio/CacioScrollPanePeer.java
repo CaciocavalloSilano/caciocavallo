@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,42 +25,48 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Dialog;
-import java.awt.Window;
-import java.awt.peer.DialogPeer;
-import java.util.List;
+import java.awt.Adjustable;
+import java.awt.Component;
+import java.awt.peer.ScrollPanePeer;
 
-import javax.swing.JRootPane;
+class CacioScrollPanePeer extends CacioContainerPeer
+                          implements ScrollPanePeer {
 
-class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
-    public CacioDialogPeer(Dialog awtC, PlatformWindowFactory pwf) {
+    CacioScrollPanePeer(Component awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
-    public void setResizable(boolean resizable) {
-
-        getToplevelWindow().setResizable(resizable);
-
+    @Override
+    public int getHScrollbarHeight() {
+        System.err.println("IMPLEMENT ME: CacioScrollPanePeer.getHScrollbarHeight()");
+        return 0;
     }
-
-    public void setTitle(String title) {
-
-        getToplevelWindow().setTitle(title);
-        
-    }
-
-    public void blockWindows(List<Window> windows) {
-    }
-
 
     @Override
-    protected int getRootPaneDecorationStyle() {
-        if (((Dialog) getAWTComponent()).isUndecorated()) {
-            return JRootPane.NONE;
-        } else {
-            return JRootPane.PLAIN_DIALOG;
-        }
+    public int getVScrollbarWidth() {
+        System.err.println("IMPLEMENT ME: CacioScrollPanePeer.getVScrollbarWidth()");
+        return 0;
+    }
+
+    @Override
+    public void setScrollPosition(int arg0, int arg1) {
+        System.err.println("IMPLEMENT ME: CacioScrollPanePeer.setScrollPosition()");
+    }
+
+    @Override
+    public void childResized(int arg0, int arg1) {
+        System.err.println("IMPLEMENT ME: CacioScrollPanePeer.childResized()");
+    }
+
+    @Override
+    public void setUnitIncrement(Adjustable arg0, int arg1) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setValue(Adjustable arg0, int arg1) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

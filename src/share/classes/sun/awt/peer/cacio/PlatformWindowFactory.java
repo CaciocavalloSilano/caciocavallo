@@ -51,10 +51,11 @@ public interface PlatformWindowFactory {
     PlatformWindow createPlatformToplevelWindow(CacioComponent component);
 
     /**
-     * Creates and returns the event source for the toolkit.
+     * Creates and returns the event pump to be used for getting the platform
+     * events into the AWT event queue.
      *
      * @return the event source for the toolkit
      */
-    CacioEventSource createEventSource();
+    CacioEventPump createEventPump();
 
 }

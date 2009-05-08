@@ -1,27 +1,31 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package sun.awt.peer.cacio;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.Panel;
 import java.awt.peer.CanvasPeer;
-import java.awt.peer.PanelPeer;
-
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-class CacioPanelPeer extends CacioContainerPeer<Panel, JPanel>
-    implements PanelPeer {
+class CacioCanvasPeer extends CacioComponentPeer<Canvas, JPanel>
+                      implements CanvasPeer {
 
-    public CacioPanelPeer(Panel awtC, PlatformWindowFactory pwf) {
+    public CacioCanvasPeer(Canvas awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
+    // TODO: Consolidate CacioCanvasPeer and CacioPanelPeer. Avoid duplication.
     @Override
     void init(PlatformWindowFactory pwf) {
         super.init(pwf);
-        Panel awtComponent = getAWTComponent();
+        Canvas awtComponent = getAWTComponent();
         Color fg = UIManager.getColor("Panel.foreground");
         awtComponent.setForeground(fg);
         Color bg = UIManager.getColor("Panel.background");
@@ -46,4 +50,5 @@ class CacioPanelPeer extends CacioContainerPeer<Panel, JPanel>
         g.setColor(old);
         super.peerPaint(g, update);
     }
+
 }
