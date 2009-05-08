@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,42 +25,23 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Dialog;
-import java.awt.Window;
-import java.awt.peer.DialogPeer;
-import java.util.List;
+class FullScreenEventPump extends CacioEventPump<EventData> {
 
-import javax.swing.JRootPane;
+    private CacioEventSource source;
 
-class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
-
-    public CacioDialogPeer(Dialog awtC, PlatformWindowFactory pwf) {
-        super(awtC, pwf);
+    FullScreenEventPump(CacioEventSource s) {
+        source = s;
     }
-
-    public void setResizable(boolean resizable) {
-
-        getToplevelWindow().setResizable(resizable);
-
-    }
-
-    public void setTitle(String title) {
-
-        getToplevelWindow().setTitle(title);
-        
-    }
-
-    public void blockWindows(List<Window> windows) {
-    }
-
 
     @Override
-    protected int getRootPaneDecorationStyle() {
-        if (((Dialog) getAWTComponent()).isUndecorated()) {
-            return JRootPane.NONE;
-        } else {
-            return JRootPane.PLAIN_DIALOG;
-        }
+    protected EventData fetchNativeEvent() {
+        return source.getNextEvent();
+    }
+
+    @Override
+    protected void dispatchNativeEvent(EventData d) {
+        ManagedWindowContainer c = (ManagedWindowContainer) d.getSource();
+        c.dispatchEvent(d);
     }
 
 }

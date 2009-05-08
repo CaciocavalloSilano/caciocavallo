@@ -25,165 +25,29 @@
 
 package sun.awt.peer.cacio;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
 import java.awt.TextArea;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.im.InputMethodRequests;
 import java.awt.peer.TextAreaPeer;
 
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import sun.awt.ComponentAccessor;
+class CacioTextAreaPeer extends CacioComponentPeer<TextArea, JScrollPane> implements TextAreaPeer {
 
-class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
+    private JTextArea textArea;
 
-    class SwingScrollPane extends JScrollPane implements CacioSwingComponent {
-
-        private TextArea textArea;
-
-        SwingScrollPane(SwingTextArea ta, TextArea awtTextArea) {
-            super(ta);
-            textArea = awtTextArea;
-            ComponentAccessor.setParent(this, textArea.getParent());
-        }
-
-        @Override
-        public JComponent getJComponent() {
-            return this;
-        }
-
-        @Override
-        public void handleFocusEvent(FocusEvent ev) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public void handleKeyEvent(KeyEvent ev) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public void handleMouseEvent(MouseEvent ev) {
-            ev.setSource(this);
-            processMouseEvent(ev);
-        }
-
-        @Override
-        public void handleMouseMotionEvent(MouseEvent ev) {
-            ev.setSource(this);
-            processMouseMotionEvent(ev);
-        }
-        
-        @Override
-        public Point getLocationOnScreen() {
-            
-            return CacioTextAreaPeer.this.getLocationOnScreen();
-        }
-
-        @Override
-        public Image createImage(int w, int h) {
-            
-            return CacioTextAreaPeer.this.createImage(w, h);
-        }
-        
-        @Override
-        public Graphics getGraphics() {
-            return CacioTextAreaPeer.this.getGraphics();
-        }
-        
-        @Override
-        public boolean isShowing() {
-            boolean retVal = false;
-            if (textArea != null)
-                retVal = textArea.isShowing();
-            return retVal;
-        }
-
-    }
-
-    class SwingTextArea extends JTextArea implements CacioSwingComponent {
-
-        private TextArea textArea;
-
-        SwingTextArea(TextArea ta) {
-            textArea = ta;
-        }
-
-        @Override
-        public JComponent getJComponent() {
-            return this;
-        }
-
-        @Override
-        public void handleFocusEvent(FocusEvent ev) {
-            // TODO: Implement.
-        }
-
-        @Override
-        public void handleKeyEvent(KeyEvent ev) {
-            // TODO: Implement.
-        }
-
-        @Override
-        public void handleMouseEvent(MouseEvent ev) {
-            // TODO: Implement.
-        }
-
-        @Override
-        public void handleMouseMotionEvent(MouseEvent ev) {
-            // TODO: Implement.
-        }
-        
-        @Override
-        public Point getLocationOnScreen() {
-            
-            return CacioTextAreaPeer.this.getLocationOnScreen();
-        }
-
-        @Override
-        public Image createImage(int w, int h) {
-            
-            return CacioTextAreaPeer.this.createImage(w, h);
-        }
-        
-        @Override
-        public Graphics getGraphics() {
-            return CacioTextAreaPeer.this.getGraphics();
-        }
-        
-        @Override
-        public boolean isShowing() {
-            boolean retVal = false;
-            if (textArea != null)
-                retVal = textArea.isShowing();
-            return retVal;
-        }
-    }
-
-    private SwingTextArea textArea;
-
-    public CacioTextAreaPeer(Component awtC, PlatformWindowFactory pwf) {
+    public CacioTextAreaPeer(TextArea awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
     @Override
-    void initSwingComponent() {
-        TextArea awtTextArea = (TextArea) awtComponent;
-        textArea = new SwingTextArea(awtTextArea);
+    JScrollPane initSwingComponent() {
+        TextArea awtTextArea = getAWTComponent();
+        textArea = new JTextArea();
+        JScrollPane sp = new JScrollPane(textArea);
         int sbv = awtTextArea.getScrollbarVisibility();
         if (sbv != TextArea.SCROLLBARS_NONE) {
-            SwingScrollPane sp = new SwingScrollPane(textArea, awtTextArea);
             if (sbv == TextArea.SCROLLBARS_BOTH) {
                 sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
                 sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -192,13 +56,13 @@ class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
             } else if (sbv == TextArea.SCROLLBARS_VERTICAL_ONLY) {
                 sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             }
-            setSwingComponent(sp);
-            sp.addNotify();
-        } else {
-            setSwingComponent(textArea);
         }
-        setText(awtTextArea.getText());
-        textArea.addNotify();
+        return sp;
+    }
+
+    @Override
+    void postInitSwingComponent() {
+        setText(getAWTComponent().getText());
     }
 
     @Override
@@ -270,7 +134,8 @@ class CacioTextAreaPeer extends CacioComponentPeer implements TextAreaPeer {
     @Override
     public void layout() {
 
-        getSwingComponent().getJComponent().doLayout();
+        // TODO: Is this needed?
+        getSwingComponent().doLayout();
 //        getSwingComponent().getJComponent().invalidate();
 //        getSwingComponent().getJComponent().validate();
     }

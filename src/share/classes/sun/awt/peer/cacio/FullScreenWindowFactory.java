@@ -102,8 +102,9 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     }
 
     @Override
-    public final CacioEventSource createEventSource() {
-        return new FullScreenEventSource();
+    public final CacioEventPump createEventPump() {
+        FullScreenEventSource s = new FullScreenEventSource();
+        return new FullScreenEventPump(s);
     }
 
 }

@@ -7,8 +7,8 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
-                <root id="src.classes2.dir" name="Shared Classes"/>
-                <root id="src.classes.dir" name="X11 Classes"/>
+                <root id="src.classes.dir" name="Shared Classes"/>
+                <root id="src.classes2.dir" name="X11 Classes"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>

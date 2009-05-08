@@ -26,12 +26,14 @@
 package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
-import java.awt.Component;
-import java.awt.peer.ComponentPeer;
 
-import sun.awt.AppContext;
+import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.PaintEvent;
 import sun.awt.AWTAutoShutdown;
-import sun.awt.SunToolkit;
 
 import sun.awt.peer.cacio.CacioComponent.EventPriority;
 
@@ -39,9 +41,18 @@ import sun.awt.peer.cacio.CacioComponent.EventPriority;
  * A thread that polls the native event queue for events and posts
  * them to the AWT event queue.
  */
-class CacioEventPump implements Runnable {
+public abstract class CacioEventPump<ET> implements Runnable {
 
-    private CacioEventSource source;
+    private static final int BUTTON_DOWN_MASK =
+        MouseEvent.BUTTON1_DOWN_MASK
+        | MouseEvent.BUTTON2_DOWN_MASK
+        | MouseEvent.BUTTON3_DOWN_MASK;
+
+    /**
+     * The last state of the modifier mask for mouse events. Used to compute
+     * the changed button mask.
+     */
+    private int lastModifierState;
 
     /**
      * Creates and starts a CacioEventPump with the specified
@@ -49,8 +60,11 @@ class CacioEventPump implements Runnable {
      *
      * @param s the event source to get events from
      */
-    CacioEventPump(CacioEventSource s) {
-        source = s;
+    protected CacioEventPump() {
+        // Nothing to do here.
+    }
+
+    void start() {
         Thread t = new Thread(this, "CacioEventPump");
         t.setDaemon(true);
         t.start();
@@ -59,7 +73,7 @@ class CacioEventPump implements Runnable {
     /**
      * The main loop of the event pump.
      */
-    public void run() {
+    public final void run() {
 
         AWTAutoShutdown.notifyToolkitThreadBusy();
         while (true) {
@@ -69,34 +83,110 @@ class CacioEventPump implements Runnable {
             }
             try {
                 AWTAutoShutdown.notifyToolkitThreadFree();
-                EventData ev = source.getNextEvent();
+                ET nativeEvent = fetchNativeEvent();
                 AWTAutoShutdown.notifyToolkitThreadBusy();
-                if (ev != null) {
-                    Object source = ev.getSource();
-                    if (source != null && ev.getId() != 0) {
-                        if (source instanceof ManagedWindowContainer) {
-                            ManagedWindowContainer c =
-                                (ManagedWindowContainer) source;
-                            c.dispatchEvent(ev);
-                        } else if (source instanceof CacioComponent) {
-                            CacioComponent c = (CacioComponent) source;
-                            ev.setSource(c.getAWTComponent());
-                            c.handlePeerEvent(ev.createAWTEvent(),
-                                              EventPriority.DEFAULT);
-                        } else if (source instanceof Component) {
-                            AWTEvent awtEvent = ev.createAWTEvent();
-                            if (awtEvent != null) {
-                                SunToolkit.postEvent(AppContext.getAppContext(),
-                                                     awtEvent);
-                            }
-
-                        }
-                    }
-                }
+                dispatchNativeEvent(nativeEvent);
             } catch (Exception ex) {
                 // Print stack trace but don't kill the pump.
                 ex.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Fetches the next native event. This method is called in an AWT
+     * Autoshutdown free block, that means, as long as the thread is in this
+     * method, it doesn't prevent shutting down AWT. Therefore, this method
+     * should only wait for the next native event and return it as soon as
+     * possible. Implement {@link dispatchNativeEvent} for dispatching the
+     * event.
+     *
+     * @return the native event
+     */
+    protected abstract ET fetchNativeEvent();
+
+    /**
+     * Dispatches the native event. This method is called in an AWT
+     * Autoshutdown busy block, that means, as long as the thread is in this
+     * method, it prevents shutting down AWT.
+     *
+     * @param nativeEvent
+     */
+    protected abstract void dispatchNativeEvent(ET nativeEvent);
+
+    protected final void postMouseEvent(CacioComponent source, int id,
+                                        long time, int modifiers, int x, int y,
+                                        int clickCount, boolean popupTrigger) {
+
+        int modifierChange = lastModifierState ^ modifiers;
+        lastModifierState = modifiers;
+        MouseEvent ev = new MouseEvent(source.getAWTComponent(), id, time,
+                                       modifiers, x, y, clickCount,
+                                       popupTrigger,
+                                       getButton(modifierChange));
+        postEvent(source, ev);
+
+    }
+
+    private int getButton(int theModifierChange) {
+        switch (theModifierChange & BUTTON_DOWN_MASK) {
+        case MouseEvent.BUTTON1_DOWN_MASK :
+            return MouseEvent.BUTTON1;
+        case MouseEvent.BUTTON2_DOWN_MASK :
+            return MouseEvent.BUTTON2;
+        case MouseEvent.BUTTON3_DOWN_MASK :
+            return MouseEvent.BUTTON3;
+        default :
+            return MouseEvent.NOBUTTON;
+        }
+    }
+
+    protected final void postKeyEvent(CacioComponent source, int id, long time,
+                                      int modifiers, int keyCode) {
+
+        KeyEvent ke = new KeyEvent(source.getAWTComponent(), id, time,
+                                   modifiers, keyCode, KeyEvent.CHAR_UNDEFINED);
+        postEvent(source, ke);
+
+    }
+
+    protected final void postKeyTypedEvent(CacioComponent source, int id,
+                                           long time, int modifiers,
+                                           char keyChar) {
+
+        KeyEvent ke = new KeyEvent(source.getAWTComponent(), id, time,
+                                   modifiers, KeyEvent.VK_UNDEFINED, keyChar);
+        postEvent(source, ke);
+
+    }
+
+    protected final void postComponentEvent(CacioComponent source, int id) {
+
+        ComponentEvent ev = new ComponentEvent(source.getAWTComponent(), id);
+        postEvent(source, ev);
+
+    }
+
+    protected final void postPaintEvent(CacioComponent source, int id,
+                                        Rectangle updateRect) {
+
+        PaintEvent ev = new PaintEvent(source.getAWTComponent(), id,
+                                       updateRect);
+        postEvent(source, ev);
+
+    }
+
+    protected final void postFocusEvent(CacioComponent source, int id,
+                                        boolean temporary,
+                                        CacioComponent opposite) {
+
+        FocusEvent ev = new FocusEvent(source.getAWTComponent(), id, temporary,
+                                       opposite.getAWTComponent());
+        postEvent(source, ev);
+
+    }
+
+    private void postEvent(CacioComponent c, AWTEvent ev) {
+        c.handlePeerEvent(ev, EventPriority.DEFAULT);
     }
 }
