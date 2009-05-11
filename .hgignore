@@ -3,3 +3,5 @@ syntax: regexp
 ^javadoc
 ^build/
 .orig$
+^netbeans/native/build
+^netbeans/native/dist
