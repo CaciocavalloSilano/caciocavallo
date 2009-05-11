@@ -1,0 +1,103 @@
+/*
+ * Copyright 2009 Sun Microsystems, Inc.  All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.  Sun designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Sun in the LICENSE file that accompanied this code.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version
+ * 2 along with this work; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+ * CA 95054 USA or visit www.sun.com if you need additional information or
+ * have any questions.
+ */
+
+package sun.awt.peer.x11;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
+import java.awt.image.ColorModel;
+import java.security.AccessController;
+import java.util.List;
+import sun.awt.peer.cacio.CacioEventSource;
+import sun.awt.peer.cacio.EventData;
+import sun.awt.peer.cacio.PlatformScreen;
+import sun.java2d.SunGraphics2D;
+import sun.security.action.GetPropertyAction;
+
+class X11PlatformScreen implements PlatformScreen, CacioEventSource {
+
+    private X11SurfaceData surfaceData;
+
+    private int width, height;
+
+    private long window;
+
+    private native long nativeInitScreen(long display, int width, int height);
+
+    X11PlatformScreen() {
+        String size = AccessController.doPrivileged(
+                new GetPropertyAction("cacio.x11.screensize", "1024x800"));
+        int x = size.indexOf('x');
+        width = Integer.parseInt(size.substring(0, x));
+        height = Integer.parseInt(size.substring(x + 1));
+        window = nativeInitScreen(X11GraphicsEnvironment.getDisplay(),
+                                  width, height);
+    }
+
+    public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
+        X11SurfaceData sd = getSurfaceData();
+        Graphics2D g2d = new SunGraphics2D(sd, Color.BLACK, Color.BLACK,
+                                        new Font(Font.DIALOG, Font.PLAIN, 12));
+        // TODO: Implement the clipping part.
+        return g2d;
+    }
+
+    private X11SurfaceData getSurfaceData() {
+        if (surfaceData == null) {
+            surfaceData = new X11SurfaceData(X11SurfaceData.typeDefault,
+                                             getColorModel(), getBounds(),
+                                             getGraphicsConfiguration(), this,
+                                             window);
+        }
+        return surfaceData;
+    }
+
+    public ColorModel getColorModel() {
+        // TODO: Implement!
+        return ColorModel.getRGBdefault();
+    }
+
+    public GraphicsConfiguration getGraphicsConfiguration() {
+        return X11GraphicsConfiguration.getDefaultGC();
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(0, 0, width, height);
+    }
+
+    public EventData getNextEvent() {
+        // TODO: Implement for real.
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException ex) {
+            // Ignore.
+        }
+        return new EventData();
+    }
+
+}

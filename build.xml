@@ -1,101 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CacioCavallo" default="all" basedir=".">
+<project name="caciocavallo" default="all" basedir=".">
 	<description>
-		Builds, tests, and runs the project Escher peers for OpenJDK.
+		The main build script for Caciocavallo.
 	</description>
 
-	<property name="src.dir" value="src" />
-	<property name="test.src.dir" value="tests" />
-	<property name="build.dir" value="build" />
-	<property name="javadoc.dir" value="javadoc" />
-	<property name="dist.dir" value="dist" />
-	
-	<property name="classes.dir" value="${build.dir}/classes" />
-	<property name="test.classes.dir" value="${build.dir}/test" />
-	
-	<property name="jar.dir" value="${dist.dir}" />
-	<property name="jar.file" value="${dist.dir}/echer-peer.jar" />
+    <property file="${basedir}/user.properties" />
+    <property file="${basedir}/build.properties" />
 
-	<property file="user.properties" />
-	<property file="build.properties" />
-	<path id="classpath">
-		<pathelement location="${escher}" />
-	</path>
-	<path id="bootclasspath">
-		<pathelement location="${openjdk}/classes" />
-        </path>
-	<target name="clean">
-		<delete dir="${build.dir}" />
+    <import file="${dir.src.shared}/build.xml" />
+    <import file="${dir.src.x11}/build.xml" />
+
+	<target name="clean" depends="cacio.shared.clean,cacio.x11.clean">
 	</target>
 
-	<target name="dist-clean">
-		<delete dir="${build.dir}" />
-		<delete dir="${dist.dir}" />
-	</target>
+	<target name="compile" depends="cacio.shared.compile,cacio.x11.compile" />
 
-	<target name="compile" depends="compile-cacio,compile-escher" />
+	<target name="all" depends="clean,compile" />
 
-	<target name="compile-cacio">
-		<mkdir dir="${classes.dir}" />
-		<javac nowarn="on"
-		       srcdir="${src.dir}" destdir="${classes.dir}"
-
-			   classpathref="classpath"
-                           bootclasspathref="bootclasspath"
-			   debug="${value.compile.debug}"
-		           optimize="${value.compile.optimize}"
-                           excludes="gnu/**/*" />
-	</target>
-
-	<target name="compile-escher">
-		<mkdir dir="${classes.dir}" />
-		<javac nowarn="on"
-		       srcdir="${src.dir}" destdir="${classes.dir}"
-
-			   classpathref="classpath"
-                           bootclasspathref="bootclasspath"
-			   debug="${value.compile.debug}"
-		           optimize="${value.compile.optimize}"
-                           excludes="sun/**/*" />
-	</target>
-
-	<target name="tests">
-		  <mkdir dir="${test.classes.dir}" />
-	    <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}"
-	           classpathref="classpath" />
-	  </target>
-
-	<target name="jar" depends="clean, compile">
-		<mkdir dir="${dist.dir}" />
-		<jar destfile="${jar.file}" basedir="${classes.dir}" />
-	</target>
-
-        <target name="javadoc">
-          <mkdir dir="${javadoc.dir}" />
-          <javadoc sourcepath="${src.dir}"
-                   destdir="${javadoc.dir}"
-                   packagenames="sun/awt/peer/cacio" />
-        </target>
-
-	<target name="all" depends="jar, tests" />
-	
-	<!-- this makes eclipse happy to have everything in one place -->
-	<target name="eclipse" depends="all" >
-		<copy todir="${build.dir}">
-		    <fileset dir="${classes.dir}" />
-			<fileset dir="${test.classes.dir}" />
-		  </copy>
-	</target>
-
-    <target name="run-single-test" depends="compile,tests">
-        <exec executable="${openjdk}/bin/java">
-            <arg value="-Xbootclasspath/p:${classes.dir}:${escher}" />
-            <arg value="-Dawt.toolkit=gnu.java.awt.peer.x.EscherToolkit" />
-            <arg value="-Djava.awt.graphicsenv=gnu.java.awt.peer.x.XGraphicsEnvironment" />
-            <arg value="-cp" />
-            <arg value="${test.classes.dir}" />
-            <arg value="${testclass}" />
-        </exec>
-    </target>
-
+    <target name="javadoc"><!-- TODO --></target>
 </project>
