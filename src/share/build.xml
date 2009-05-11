@@ -1,0 +1,17 @@
+<project name="cacio.shared" basedir="../..">
+
+    <property file="${basedir}/user.properties" />
+    <property file="${basedir}/build.properties" />
+
+    <target name="compile">
+        <mkdir dir="${dir.build.shared.classes}" />
+        <javac srcdir="${dir.src.shared.classes}"
+               destdir="${dir.build.shared.classes}"
+               bootclasspath="${openjdk}/classes"
+               excludes="gnu/**/*" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${dir.build.shared.classes}" />
+    </target>
+</project>

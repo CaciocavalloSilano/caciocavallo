@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="51">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>../../src/x11/native/X11GraphicsEnvironment.c</itemPath>
+      <itemPath>../../src/x11/native/X11PlatformScreen.c</itemPath>
+      <itemPath>../../src/x11/native/X11SurfaceData.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../src/x11/native</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../../src/x11/native/X11GraphicsEnvironment.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11PlatformScreen.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11SurfaceData.c">
+        <itemTool>0</itemTool>
+      </item>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <cCompilerTool>
+          <developmentMode>5</developmentMode>
+        </cCompilerTool>
+        <ccCompilerTool>
+          <developmentMode>5</developmentMode>
+        </ccCompilerTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../../src/x11/native/X11GraphicsEnvironment.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11PlatformScreen.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11SurfaceData.c">
+        <itemTool>0</itemTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

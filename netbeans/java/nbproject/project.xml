@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ant.freeform</type>
+    <configuration>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>Caciocavallo</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
+            <name>Caciocavallo</name>
+            <properties>
+                <property name="root">../..</property>
+            </properties>
+            <folders>
+                <source-folder>
+                    <label>Caciocavallo</label>
+                    <location>${root}</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>Shared classes</label>
+                    <type>java</type>
+                    <location>${root}/src/share/classes</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>X11 classes</label>
+                    <type>java</type>
+                    <location>${root}/src/x11/classes</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>Test classes</label>
+                    <type>java</type>
+                    <location>${root}/tests</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>Caciocavallo</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>compile</target>
+                </action>
+                <action name="clean">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>clean</target>
+                </action>
+                <action name="javadoc">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>javadoc</target>
+                </action>
+                <action name="run">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>run-single-test</target>
+                </action>
+                <action name="test">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>run-single-test</target>
+                </action>
+                <action name="rebuild">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>clean</target>
+                    <target>compile</target>
+                </action>
+            </ide-actions>
+            <view>
+                <items>
+                    <source-folder style="packages">
+                        <label>Shared classes</label>
+                        <location>${root}/src/share/classes</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>X11 classes</label>
+                        <location>${root}/src/x11/classes</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>Test classes</label>
+                        <location>${root}/tests</location>
+                    </source-folder>
+                    <source-file>
+                        <label>Central build script</label>
+                        <location>${root}/build.xml</location>
+                    </source-file>
+                    <source-file>
+                        <label>Shared build script</label>
+                        <location>${root}/src/share/build.xml</location>
+                    </source-file>
+                    <source-file>
+                        <label>X11 build script</label>
+                        <location>${root}/src/x11/build.xml</location>
+                    </source-file>
+                    <source-file>
+                        <label>Build properties</label>
+                        <location>${root}/build.properties</location>
+                    </source-file>
+                    <source-file>
+                        <label>User properties</label>
+                        <location>${root}/user.properties</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
+                    <ide-action name="run"/>
+                    <ide-action name="test"/>
+                </context-menu>
+            </view>
+            <subprojects/>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
+            <compilation-unit>
+                <package-root>${root}/src/share/classes</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>${root}/src/x11/classes</package-root>
+                <classpath mode="compile">${root}/src/share/classes</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>${root}/tests</package-root>
+                <unit-tests/>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+        </java-data>
+    </configuration>
+</project>
