@@ -9,8 +9,8 @@ TOP=`pwd`
 PLATFORM=GNU-Linux-x86
 TMPDIR=build/Debug/${PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/Debug/${PLATFORM}/libnative.so
-OUTPUT_BASENAME=libnative.so
+OUTPUT_PATH=dist/Debug/${PLATFORM}/libcacio-x11.so
+OUTPUT_BASENAME=libcacio-x11.so
 PACKAGE_TOP_DIR=libnative.so/
 
 # Functions
