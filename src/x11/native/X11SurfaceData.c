@@ -28,6 +28,10 @@
 
 #include "SurfaceData.h"
 
+static jclass sunToolkitCls;
+static jmethodID sunToolkitLockMID;
+static jmethodID sunToolkitUnlockMID;
+
 typedef struct {
 
   SurfaceDataOps sdOps;
@@ -37,8 +41,30 @@ typedef struct {
   jint x, y, width, height;
 } X11SurfaceDataOps;
 
+/*
+ * Class:     sun_awt_peer_x11_X11SurfaceData
+ * Method:    initIDs
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11SurfaceData_initIDs
+  (JNIEnv *env, jclass cls)
+{
+    sunToolkitCls = (*env)->FindClass(env, "sun/awt/SunToolkit");
+    if ((*env)->ExceptionCheck(env)) return;
+    /*
+    sunToolkitCls = (*env)->NewGlobalRef(env, sunToolkitCls);
+    if ((*env)->ExceptionCheck(env)) return;
+     **/
+    sunToolkitLockMID = (*env)->GetStaticMethodID(env, sunToolkitCls,
+                                                  "awtLock", "()V");
+    if ((*env)->ExceptionCheck(env)) return;
+    sunToolkitUnlockMID = (*env)->GetStaticMethodID(env, sunToolkitCls,
+                                                    "awtUnlock", "()V");
+    if ((*env)->ExceptionCheck(env)) return;
+}
+
 static jint X11Lock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasInfo, jint lockFlags) {
-  /* TODO: Implement locking. */
+  (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
   return SD_SUCCESS;
 }
 
@@ -99,6 +125,7 @@ static void X11Release(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* ras
 }
 
 static void X11Unlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasInfo) {
+  (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
 }
 
 /*

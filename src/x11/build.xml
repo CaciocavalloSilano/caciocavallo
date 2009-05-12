@@ -38,11 +38,12 @@
 
     <target name="create-headers" depends="compile-java">
         <mkdir dir="${dir.build.x11.include}" />
-        <javah classpath="${dir.build.x11.classes}"
+        <javah classpath="${dir.build.x11.classes}:${dir.build.shared.classes}"
                destdir="${dir.build.x11.include}"
                class="sun.awt.peer.x11.X11SurfaceData,
                       sun.awt.peer.x11.X11GraphicsEnvironment,
-                      sun.awt.peer.x11.X11PlatformScreen" />
+                      sun.awt.peer.x11.X11PlatformScreen,
+                      java.awt.event.MouseEvent" />
     </target>
 
     <target name="clean">
