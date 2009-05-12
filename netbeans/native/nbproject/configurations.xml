@@ -40,6 +40,8 @@
             <directoryPath>${openjdk.build}/include</directoryPath>
             <directoryPath>${openjdk.build}/include/linux</directoryPath>
             <directoryPath>${openjdk.src}/jdk/src/share/native/sun/java2d</directoryPath>
+            <directoryPath>../../../openjdk/openjdk7/build/linux-amd64/include</directoryPath>
+            <directoryPath>../../../openjdk/openjdk7/build/linux-amd64/include/linux</directoryPath>
           </includeDirectories>
         </cCompilerTool>
         <linkerTool>
@@ -70,9 +72,11 @@
           <developmentMode>5</developmentMode>
           <includeDirectories>
             <directoryPath>../../build/x11/include</directoryPath>
+            <directoryPath>${openjdk.build}/include</directoryPath>
+            <directoryPath>${openjdk.build}/include/linux</directoryPath>
+            <directoryPath>${openjdk.src}/jdk/src/share/native/sun/java2d</directoryPath>
             <directoryPath>../../../openjdk/openjdk7/build/linux-amd64/include</directoryPath>
             <directoryPath>../../../openjdk/openjdk7/build/linux-amd64/include/linux</directoryPath>
-            <directoryPath>../../../openjdk/openjdk7/jdk/src/share/native/sun/java2d</directoryPath>
           </includeDirectories>
         </cCompilerTool>
         <ccCompilerTool>
