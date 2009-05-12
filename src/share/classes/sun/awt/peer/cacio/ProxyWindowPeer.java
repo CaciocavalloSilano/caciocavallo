@@ -23,10 +23,12 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.PaintEvent;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.VolatileImage;
+import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 import java.awt.peer.WindowPeer;
 import sun.awt.CausedFocusEvent.Cause;
@@ -253,4 +255,33 @@ class ProxyWindowPeer implements WindowPeer {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void setOpacity(float opacity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateWindow(BufferedImage backBuffer) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void repositionSecurityWarning() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setZOrder(ComponentPeer above) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateGraphicsData(GraphicsConfiguration gc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

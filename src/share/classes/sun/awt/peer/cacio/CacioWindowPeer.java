@@ -34,6 +34,7 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.awt.peer.WindowPeer;
 
 import javax.swing.JRootPane;
@@ -177,5 +178,25 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         }
         Insets insets = new Insets(top, left, bottom, right);
         return insets;
+    }
+
+    @Override
+    public void setOpacity(float opacity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateWindow(BufferedImage backBuffer) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void repositionSecurityWarning() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
