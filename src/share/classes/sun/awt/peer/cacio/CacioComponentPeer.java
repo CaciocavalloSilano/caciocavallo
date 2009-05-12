@@ -704,11 +704,11 @@ class CacioComponentPeer<AWTComponentType extends Component,
     @Override
     public void setZOrder(ComponentPeer above) {
 
-        System.err.print("CacioComponentPeer::setZOrder: NOT YET IMPLEMENTED");
+        System.err.println("CacioComponentPeer::setZOrder: NOT YET IMPLEMENTED");
     }
 
     @Override
     public void updateGraphicsData(GraphicsConfiguration gc) {
-        System.err.print("CacioComponentPeer::updateGraphicsData: NOT YET IMPLEMENTED");
+        System.err.println("CacioComponentPeer::updateGraphicsData: NOT YET IMPLEMENTED");
     }
 }
