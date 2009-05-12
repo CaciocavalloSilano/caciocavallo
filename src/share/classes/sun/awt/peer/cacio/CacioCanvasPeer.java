@@ -9,6 +9,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
 import java.awt.peer.CanvasPeer;
 import javax.swing.JPanel;
@@ -51,4 +52,8 @@ class CacioCanvasPeer extends CacioComponentPeer<Canvas, JPanel>
         super.peerPaint(g, update);
     }
 
+    @Override
+    public GraphicsConfiguration getAppropriateGraphicsConfiguration(GraphicsConfiguration gc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
