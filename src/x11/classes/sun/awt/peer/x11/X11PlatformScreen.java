@@ -41,13 +41,23 @@ import sun.security.action.GetPropertyAction;
 
 class X11PlatformScreen implements PlatformScreen, CacioEventSource {
 
+    static {
+        initIDs();
+    }
+
     private X11SurfaceData surfaceData;
 
     private int width, height;
 
     private long window;
 
+    private EventData eventData;
+
+    private native static void initIDs();
+
     private native long nativeInitScreen(long display, int width, int height);
+
+    private native void nativeGetEvent(long display, EventData ed);
 
     X11PlatformScreen() {
         String size = AccessController.doPrivileged(
@@ -91,13 +101,12 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
     }
 
     public EventData getNextEvent() {
-        // TODO: Implement for real.
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException ex) {
-            // Ignore.
+        if (eventData == null) {
+            eventData = new EventData();
         }
-        return new EventData();
+        eventData.clear();
+        nativeGetEvent(X11GraphicsEnvironment.getDisplay(), eventData);
+        return eventData;
     }
 
 }

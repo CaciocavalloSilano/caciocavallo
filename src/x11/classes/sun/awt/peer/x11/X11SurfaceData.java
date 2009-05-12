@@ -34,6 +34,10 @@ import sun.java2d.loops.SurfaceType;
 
 class X11SurfaceData extends SurfaceData {
 
+    static {
+        initIDs();
+    }
+
     // TODO: Implement all the surface types.
     static SurfaceType typeDefault =
             SurfaceType.IntRgb.deriveSubType("Cacio X11 default");
@@ -43,6 +47,8 @@ class X11SurfaceData extends SurfaceData {
     private GraphicsConfiguration configuration;
 
     private Object destination;
+
+    private static native void initIDs();
 
     private native void initOps(long display, long drawable);
 

@@ -48,12 +48,14 @@ class X11GraphicsConfiguration extends GraphicsConfiguration {
 
     @Override
     public ColorModel getColorModel() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO: Implement.
+        return ColorModel.getRGBdefault();
     }
 
     @Override
     public ColorModel getColorModel(int transparency) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO: Implement.
+        return ColorModel.getRGBdefault();
     }
 
     @Override
