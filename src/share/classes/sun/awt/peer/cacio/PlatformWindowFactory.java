@@ -56,6 +56,6 @@ public interface PlatformWindowFactory {
      *
      * @return the event source for the toolkit
      */
-    CacioEventPump createEventPump();
+    CacioEventPump<?> createEventPump();
 
 }

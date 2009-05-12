@@ -25,6 +25,10 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.GraphicsConfiguration;
+import java.util.HashMap;
+import java.util.Map;
+
 public class FullScreenWindowFactory implements PlatformWindowFactory {
 
     /**
@@ -34,15 +38,18 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     private class FullScreenEventSource implements CacioEventSource {
         public EventData getNextEvent() {
             EventData d = eventSource.getNextEvent();
-            d.setSource(screen);
+            PlatformScreen source = (PlatformScreen) d.getSource();
+            d.setSource(screenMap.get(source));
             return d;
         }
     }
 
     /**
-     * The container for the toplevel windows.
+     *
      */
-    private ManagedWindowContainer screen;
+    private PlatformScreenSelector selector;
+
+    private Map<PlatformScreen,ScreenManagedWindowContainer> screenMap;
 
     /**
      * The event source that generates the basic events.
@@ -74,9 +81,18 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      */
     public FullScreenWindowFactory(PlatformScreen screen,
                                    CacioEventSource s) {
-        this.screen = new ScreenManagedWindowContainer(screen);
-        this.eventSource = s;
+
+        this(new DefaultScreenSelector(screen), s);
     }
+
+    public FullScreenWindowFactory(PlatformScreenSelector screenSelector,
+                                   CacioEventSource s) {
+
+        this.selector = screenSelector;
+        this.eventSource = s;
+        screenMap = new HashMap<PlatformScreen,ScreenManagedWindowContainer>();
+    }
+
 
     /**
      * Creates a {@link PlatformWindow} instance.
@@ -98,13 +114,38 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
 
     @Override
     public final PlatformWindow createPlatformToplevelWindow(CacioComponent comp) {
-        return new ManagedWindow(screen, comp);
+
+        GraphicsConfiguration gc = comp.getAWTComponent().getGraphicsConfiguration();
+        PlatformScreen screen = selector.getPlatformScreen(gc);
+        ScreenManagedWindowContainer smwc = screenMap.get(screen);
+        if (smwc == null) {
+            smwc = new ScreenManagedWindowContainer(screen);
+            screenMap.put(screen, smwc);
+        }
+
+        return new ManagedWindow(smwc, comp);
     }
 
     @Override
-    public final CacioEventPump createEventPump() {
+    public final CacioEventPump<?> createEventPump() {
         FullScreenEventSource s = new FullScreenEventSource();
         return new FullScreenEventPump(s);
     }
 
+    private static final class DefaultScreenSelector implements
+        PlatformScreenSelector {
+
+        PlatformScreen screen = null;
+
+        DefaultScreenSelector(PlatformScreen screen) {
+
+            this.screen = screen;
+        }
+
+        @Override
+        public PlatformScreen getPlatformScreen(GraphicsConfiguration config) {
+
+            return screen;
+        }
+    }
 }
