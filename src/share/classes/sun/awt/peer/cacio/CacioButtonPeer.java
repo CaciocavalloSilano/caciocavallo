@@ -26,6 +26,7 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Button;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.peer.ButtonPeer;
@@ -79,6 +80,7 @@ class CacioButtonPeer extends CacioComponentPeer<Button, JButton>
         Button theButton = getAWTComponent();
         jbutton.setText(theButton.getLabel());
         jbutton.addActionListener(new SwingButtonListener());
+        jbutton.setMargin(new Insets(0, 0, 0, 0));
         return jbutton;
     }
 
