@@ -320,7 +320,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
      *
      * @param e the mouse event
      */
-    private void handleMouseEvent(MouseEvent e) {
+    protected void handleMouseEvent(MouseEvent e) {
         
         if (proxy != null)
             proxy.handleMouseEvent(e);
@@ -332,7 +332,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
      *
      * @param e the mouse motion event
      */
-    private void handleMouseMotionEvent(MouseEvent e) {
+    protected void handleMouseMotionEvent(MouseEvent e) {
         
         if (proxy != null)
             proxy.handleMouseMotionEvent(e);
@@ -344,7 +344,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
      *
      * @param e the key event
      */
-    private void handleKeyEvent(KeyEvent e) {
+    protected void handleKeyEvent(KeyEvent e) {
         
         if (proxy != null)
             proxy.handleKeyEvent(e);
@@ -356,7 +356,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
      *
      * @param e the key event
      */
-    private void handleFocusEvent(FocusEvent e) {
+    protected void handleFocusEvent(FocusEvent e) {
         
         if (proxy != null)
             proxy.handleFocusEvent(e);
@@ -368,11 +368,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
             if (swingComponent != null) {
                 JComponent c = swingComponent;
                 g.clipRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
-                if (update) {
-                    c.update(peerG);
-                } else {
-                    c.paint(peerG);
-                }
+                c.paint(peerG);
             }
         } finally {
             peerG.dispose();
@@ -386,7 +382,11 @@ class CacioComponentPeer<AWTComponentType extends Component,
             int cw = width - i.left - i.right;
             int ch = height - i.top - i.bottom;
             userGraphics.clipRect(cx, cy, cw, ch);
-            awtComponent.paint(userGraphics);
+            if (update) {
+                awtComponent.update(userGraphics);
+            } else {
+                awtComponent.paint(userGraphics);
+            }
         } finally {
             userGraphics.dispose();
         }
