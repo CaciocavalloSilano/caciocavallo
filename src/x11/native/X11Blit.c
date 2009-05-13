@@ -40,7 +40,6 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11Blit_nativeBlit
 
     X11SurfaceDataOps *sops = (X11SurfaceDataOps*) SurfaceData_GetOps(env, src);
     X11SurfaceDataOps *dops = (X11SurfaceDataOps*) SurfaceData_GetOps(env, dst);
-    printf("blitting\n");
     gc = XCreateGC(sops->display, dops->drawable, 0, NULL);
     XCopyArea(sops->display, sops->drawable, dops->drawable, gc, sx, sy, w, h,
               dx, dy);

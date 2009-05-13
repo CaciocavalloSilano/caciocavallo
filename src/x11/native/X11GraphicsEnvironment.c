@@ -37,6 +37,5 @@ JNIEXPORT jlong JNICALL Java_sun_awt_peer_x11_X11GraphicsEnvironment_initDisplay
   Display *display;
 
   display = XOpenDisplay(NULL);
-  printf("display: %p\n", display);
   return (jlong) display;
 }
