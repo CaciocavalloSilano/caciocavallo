@@ -108,6 +108,7 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
         if (eventData.getId() == 0) {
             try { Thread.sleep(100); } catch (Exception ex) {}
         }
+        eventData.setSource(this);
         return eventData;
     }
 
