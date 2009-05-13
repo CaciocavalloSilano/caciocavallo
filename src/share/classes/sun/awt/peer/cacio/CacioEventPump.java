@@ -27,14 +27,16 @@ package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
 
-import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.PaintEvent;
+import java.awt.event.WindowEvent;
 import sun.awt.AWTAutoShutdown;
 
+import sun.awt.PaintEventDispatcher;
 import sun.awt.peer.cacio.CacioComponent.EventPriority;
 
 /**
@@ -118,12 +120,18 @@ public abstract class CacioEventPump<ET> implements Runnable {
                                         long time, int modifiers, int x, int y,
                                         int clickCount, boolean popupTrigger) {
 
-        int modifierChange = lastModifierState ^ modifiers;
-        lastModifierState = modifiers;
+        int button;
+        if (id == MouseEvent.MOUSE_DRAGGED) {
+            button = getButton(modifiers);
+        } else {
+            int modifierChange = lastModifierState ^ modifiers;
+            button = getButton(modifierChange);
+            lastModifierState = modifiers;
+        }
+
         MouseEvent ev = new MouseEvent(source.getAWTComponent(), id, time,
                                        modifiers, x, y, clickCount,
-                                       popupTrigger,
-                                       getButton(modifierChange));
+                                       popupTrigger, button);
         postEvent(source, ev);
 
     }
@@ -167,11 +175,10 @@ public abstract class CacioEventPump<ET> implements Runnable {
 
     }
 
-    protected final void postPaintEvent(CacioComponent source, int id,
-                                        Rectangle updateRect) {
+    protected final void postPaintEvent(CacioComponent source, int x, int y, int width, int height) {
 
-        PaintEvent ev = new PaintEvent(source.getAWTComponent(), id,
-                                       updateRect);
+        PaintEvent ev = PaintEventDispatcher.getPaintEventDispatcher()
+              .createPaintEvent(source.getAWTComponent(), x, y, width, height);
         postEvent(source, ev);
 
     }
@@ -182,6 +189,20 @@ public abstract class CacioEventPump<ET> implements Runnable {
 
         FocusEvent ev = new FocusEvent(source.getAWTComponent(), id, temporary,
                                        opposite.getAWTComponent());
+        postEvent(source, ev);
+
+    }
+
+    protected final void postWindwoEvent(CacioComponent source, int id,
+                                         int oldState, int newState) {
+
+        WindowEvent ev;
+        if (id == WindowEvent.WINDOW_STATE_CHANGED) {
+            ev = new WindowEvent((Window) (source.getAWTComponent()), id,
+                                 oldState, newState);
+        } else {
+            ev = new WindowEvent((Window) (source.getAWTComponent()), id);
+        }
         postEvent(source, ev);
 
     }
