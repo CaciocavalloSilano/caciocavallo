@@ -29,8 +29,10 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
+import java.awt.image.DirectColorModel;
 
 class X11GraphicsConfiguration extends GraphicsConfiguration {
 
@@ -49,13 +51,18 @@ class X11GraphicsConfiguration extends GraphicsConfiguration {
     @Override
     public ColorModel getColorModel() {
         // TODO: Implement.
-        return ColorModel.getRGBdefault();
+        return new DirectColorModel(24, 0x00FF0000, 0x0000FF00,
+                                    0x000000FF);
     }
 
     @Override
     public ColorModel getColorModel(int transparency) {
         // TODO: Implement.
-        return ColorModel.getRGBdefault();
+        if (transparency == Transparency.OPAQUE) {
+            return getColorModel();
+        } else {
+            return ColorModel.getRGBdefault();
+        }
     }
 
     @Override

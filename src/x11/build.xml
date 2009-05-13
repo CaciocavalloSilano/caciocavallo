@@ -14,7 +14,9 @@
         <javac classpath="${dir.build.shared.classes}"
                bootclasspath="${openjdk}/classes"
                srcdir="${dir.src.x11.classes}"
-               destdir="${dir.build.x11.classes}" />
+               destdir="${dir.build.x11.classes}"
+               debug="${compile.debug}"
+        />
     </target>
 
     <target name="compile-native" depends="create-headers">
@@ -43,6 +45,8 @@
                class="sun.awt.peer.x11.X11SurfaceData,
                       sun.awt.peer.x11.X11GraphicsEnvironment,
                       sun.awt.peer.x11.X11PlatformScreen,
+                      sun.awt.peer.x11.X11Blit,
+                      sun.awt.peer.x11.X11VolatileSurfaceManager,
                       java.awt.event.MouseEvent" />
     </target>
 

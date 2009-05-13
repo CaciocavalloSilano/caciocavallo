@@ -56,6 +56,10 @@ import sun.awt.peer.cacio.PlatformWindowFactory;
 
 public class X11Toolkit extends CacioToolkit {
 
+    static {
+        System.loadLibrary("cacio-x11");
+    }
+
     private PlatformWindowFactory platformWindowFactory;
 
     @Override

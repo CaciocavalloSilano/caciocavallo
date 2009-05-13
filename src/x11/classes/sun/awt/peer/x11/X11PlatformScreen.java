@@ -88,8 +88,7 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
     }
 
     public ColorModel getColorModel() {
-        // TODO: Implement!
-        return ColorModel.getRGBdefault();
+        return getGraphicsConfiguration().getColorModel();
     }
 
     public GraphicsConfiguration getGraphicsConfiguration() {
@@ -106,6 +105,9 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
         }
         eventData.clear();
         nativeGetEvent(X11GraphicsEnvironment.getDisplay(), eventData);
+        if (eventData.getId() == 0) {
+            try { Thread.sleep(100); } catch (Exception ex) {}
+        }
         return eventData;
     }
 

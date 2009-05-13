@@ -25,11 +25,17 @@
 
 package sun.awt.peer.x11;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
+import java.awt.Transparency;
+import sun.awt.SunToolkit;
 import sun.awt.image.SunVolatileImage;
 import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceData;
 
 class X11VolatileSurfaceManager extends VolatileSurfaceManager {
+
+    private native long initPixmap(long display, int w, int h);
 
     X11VolatileSurfaceManager(SunVolatileImage img, Object ctx) {
         super(img, ctx);
@@ -37,12 +43,27 @@ class X11VolatileSurfaceManager extends VolatileSurfaceManager {
 
     @Override
     protected boolean isAccelerationEnabled() {
-        return false;
+        return vImg.getTransparency() == Transparency.OPAQUE;
     }
 
     @Override
     protected SurfaceData initAcceleratedSurface() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int width = vImg.getWidth();
+        int height = vImg.getHeight();
+        GraphicsConfiguration gc = vImg.getGraphicsConfig();
+        SunToolkit.awtLock();
+        try {
+            long drawable = initPixmap(X11GraphicsEnvironment.getDisplay(),
+                                       width, height);
+            X11SurfaceData sd = new X11SurfaceData(X11SurfaceData.typeDefault,
+                                          gc.getColorModel(),
+                                          new Rectangle(0, 0, width, height),
+                                          vImg.getGraphicsConfig(), vImg,
+                                          drawable);
+            return sd;
+        } finally {
+            SunToolkit.awtUnlock();
+        }
     }
 
 }
