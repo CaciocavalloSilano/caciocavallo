@@ -39,7 +39,6 @@ import sun.java2d.pipe.Region;
 class X11Blit extends Blit implements BlitClipHelper.Blitter {
 
     static void register() {
-        System.err.println("registering blits");
         GraphicsPrimitive[] prims = {
 
             new X11Blit(X11SurfaceData.typeDefault, X11SurfaceData.typeDefault, false),
@@ -56,14 +55,12 @@ class X11Blit extends Blit implements BlitClipHelper.Blitter {
         super(srcType,
               over ? CompositeType.SrcOverNoEa : CompositeType.SrcNoEa,
               dstType);
-        System.err.println("register X11Blit: " + srcType + "->" + dstType);
     }
 
     @Override
     public void Blit(SurfaceData src, SurfaceData dst, Composite comp,
                      Region clip, int sx, int sy, int dx, int dy,
                      int w, int h) {
-        System.err.println("BLIT");
         SunToolkit.awtLock();
         try {
             BlitClipHelper.blitWithAnyClip(this, src, dst, comp, clip, sx, sy,

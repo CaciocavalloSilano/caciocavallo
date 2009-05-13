@@ -109,7 +109,6 @@ static void fetchEvent(JNIEnv *env, Display *display, jobject eventData) {
     XNextEvent(display, &event);
     switch (event.type) {
         case ButtonPress: {
-            printf("PRESS\n");
             XButtonEvent bp = event.xbutton;
             (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
                                    java_awt_event_MouseEvent_MOUSE_PRESSED);
@@ -123,7 +122,6 @@ static void fetchEvent(JNIEnv *env, Display *display, jobject eventData) {
           }
           break;
         case ButtonRelease: {
-            printf("RELEASE\n");
             XButtonEvent bp = event.xbutton;
             (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
                                    java_awt_event_MouseEvent_MOUSE_RELEASED);
@@ -153,7 +151,7 @@ static void fetchEvent(JNIEnv *env, Display *display, jobject eventData) {
           break;
         case Expose:
         default:
-          printf("unsupported event type: %d\n" + event.type);
+          break;
     }
 }
 
