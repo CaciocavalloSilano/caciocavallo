@@ -34,7 +34,6 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.awt.peer.WindowPeer;
 
 import javax.swing.JRootPane;
@@ -151,33 +150,36 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     @Override
     public Insets getInsets() {
-
-        JRootPane rp = getSwingComponent();
-        if (rp == null) {
-            return new Insets(0, 0, 0, 0);
-        }
-        if (! rp.isValid()) {
-            rp.validate();
-        }
-        Component cp = rp.getContentPane();
-        Rectangle cpBounds = cp.getBounds();
-        Component lp = rp.getLayeredPane();
-        Point lpLoc = lp.getLocation();
-        int top = cpBounds.y + lpLoc.y;
-        int left = cpBounds.x + lpLoc.x;
-        Border b = rp.getBorder();
-        int bottom;
-        int right;
-        if (b != null) {
-            Insets bi = b.getBorderInsets(rp);
-            bottom = bi.bottom;
-            right = bi.right;
+        if (decorateWindows) {
+            JRootPane rp = getSwingComponent();
+            if (rp == null) {
+                return new Insets(0, 0, 0, 0);
+            }
+            if (! rp.isValid()) {
+                rp.validate();
+            }
+            Component cp = rp.getContentPane();
+            Rectangle cpBounds = cp.getBounds();
+            Component lp = rp.getLayeredPane();
+            Point lpLoc = lp.getLocation();
+            int top = cpBounds.y + lpLoc.y;
+            int left = cpBounds.x + lpLoc.x;
+            Border b = rp.getBorder();
+            int bottom;
+            int right;
+            if (b != null) {
+                Insets bi = b.getBorderInsets(rp);
+                bottom = bi.bottom;
+                right = bi.right;
+            } else {
+                bottom = 0;
+                right = 0;
+            }
+            Insets insets = new Insets(top, left, bottom, right);
+            return insets;
         } else {
-            bottom = 0;
-            right = 0;
+            return platformWindow.getInsets();
         }
-        Insets insets = new Insets(top, left, bottom, right);
-        return insets;
     }
 
     @Override
