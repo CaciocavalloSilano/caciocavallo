@@ -31,10 +31,10 @@ import java.awt.BufferCapabilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Insets;
@@ -59,10 +59,10 @@ import java.lang.reflect.Field;
 
 import javax.swing.JComponent;
 
-import sun.awt.ComponentAccessor;
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
+import sun.awt.PaintEventDispatcher;
 import sun.awt.PeerEvent;
 
 import sun.font.FontDesignMetrics;
@@ -113,10 +113,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
      * The current repaint area.
      */
     private Rectangle paintArea;
-
-    protected int x, y, width, height;
-
-    private boolean visible;
+    private final Object paintAreaLock = new Object();
 
     /**
      * Creates a new CacioComponentPeer.
@@ -169,23 +166,22 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
             // Setup the proxy window.
             proxy = new ProxyWindow(this, swingComponent);
-            proxy.setBounds(x, y, width, height);
-            proxy.setVisible(/* visible */ true);
-
-            // Set some properties on the Swing component.
-            awtComponent.setForeground(swingComponent.getForeground());
-            awtComponent.setBackground(swingComponent.getBackground());
-            awtComponent.setFont(swingComponent.getFont());
+            proxy.setBounds(awtComponent.getX(), awtComponent.getY(),
+                            awtComponent.getWidth(), awtComponent.getHeight());
+            proxy.setVisible(awtComponent.isVisible());
         }
     }
 
     void postInitSwingComponent() {
         // Nothing to do here. Subclasses override this.
+        setBackground(awtComponent.getBackground());
+        setForeground(awtComponent.getForeground());
+        setFont(awtComponent.getFont());
     }
 
     SwingComponentType initSwingComponent() {
-        // By default, do nothing.
-        return null;
+        
+        return (SwingComponentType) new JComponent() {};
     }
 
     /**
@@ -268,13 +264,12 @@ class CacioComponentPeer<AWTComponentType extends Component,
           if (awtComponent.isShowing())
             {
               Rectangle clip ;
-              synchronized (this)
+              synchronized (paintAreaLock)
                 {
-                  coalescePaintEvent((PaintEvent) e);
-                  assert paintArea != null;
                   clip = paintArea;
                   paintArea = null;
                 }
+              if (clip == null || clip.isEmpty()) return;
               Graphics g = awtComponent.getGraphics();
               try
                 {
@@ -363,11 +358,19 @@ class CacioComponentPeer<AWTComponentType extends Component,
     }
 
     protected void peerPaint(Graphics g, boolean update) {
+
+        // There is a pending paint event for this area that is contained
+        // in the curren clip we cancle that event.
+        Rectangle clip = g.getClipBounds();
+        synchronized(paintAreaLock){
+            if (paintArea != null && clip.contains(paintArea))
+                paintArea = null;
+        }
+
         Graphics peerG = g.create();
         try {
             if (swingComponent != null) {
                 JComponent c = swingComponent;
-                g.clipRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
                 c.paint(peerG);
             }
         } finally {
@@ -379,8 +382,8 @@ class CacioComponentPeer<AWTComponentType extends Component,
             Insets i = getInsets();
             int cx = i.left;
             int cy = i.top;
-            int cw = width - i.left - i.right;
-            int ch = height - i.top - i.bottom;
+            int cw = getAWTComponent().getWidth() - i.left - i.right;
+            int ch = getAWTComponent().getHeight() - i.top - i.bottom;
             userGraphics.clipRect(cx, cy, cw, ch);
             if (update) {
                 awtComponent.update(userGraphics);
@@ -390,6 +393,22 @@ class CacioComponentPeer<AWTComponentType extends Component,
         } finally {
             userGraphics.dispose();
         }
+    }
+
+    protected void peerRepaint(int x, int y, int width, int height) {
+        if (EventQueue.isDispatchThread()) {
+              Graphics g = awtComponent.getGraphics();
+              try {
+                  g.clipRect(x, y, width, height);
+                  peerPaint(g, false);
+              } finally {
+                  g.dispose();
+              }
+        } else {
+            PaintEvent event = PaintEventDispatcher.getPaintEventDispatcher().createPaintEvent((Component) awtComponent, 0,0, awtComponent.getWidth(), awtComponent.getHeight());
+            awtComponent.getToolkit().getSystemEventQueue().postEvent(event);
+        }
+
     }
 
     @Override
@@ -493,34 +512,34 @@ class CacioComponentPeer<AWTComponentType extends Component,
     public void setBackground(Color c) {
 
         platformWindow.setBackground(c);
+        swingComponent.setBackground(c);
 
     }
 
     public void setFont(Font f) {
 
         platformWindow.setFont(f);
+        swingComponent.setFont(f);
 
     }
 
     public void setForeground(Color c) {
 
         platformWindow.setForeground(c);
+        swingComponent.setForeground(c);
 
     }
 
     public void setBounds(int x, int y, int width, int height, int op) {
 
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        // We don't need to take care about SET_SIZE vs. SET_CLIENT_SIZE,
-        // since we assume we know the insets of the window even when
-        // it is not shown, and the only purpose of these flags is
-        // to support system where we don't know the insets in advance.
-        platformWindow.setBounds(this.x, this.y, this.width, this.height, op);
+        platformWindow.setBounds(x, y, width, height, op);
+
         if (proxy != null) {
-            proxy.setBounds(x, y, this.width, this.height);
+            // Use the updated bounds from the awtCompnent here. The new bounds
+            // may be different from the given paramenters if 'op' was SET_CLIENT_SIZE
+            // or if this is a top level window and the system has forced some
+            // different bounds.
+            proxy.setBounds(awtComponent.getX(), awtComponent.getY(), awtComponent.getWidth(), awtComponent.getHeight());
             proxy.validate();
         }
     }
@@ -535,7 +554,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     public void setVisible(boolean b) {
 
-        visible = b;
         if (proxy != null) {
             proxy.setVisible(b);
         }
@@ -607,7 +625,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     public void coalescePaintEvent(PaintEvent e) {
 
-        synchronized (this) {
+        synchronized (paintAreaLock) {
             Rectangle newRect = e.getUpdateRect();
             if (paintArea == null)
                 paintArea = newRect;
@@ -643,58 +661,16 @@ class CacioComponentPeer<AWTComponentType extends Component,
         return awtComponent;
     }
 
-    public void handlePeerEvent(AWTEvent event, EventPriority prio) {
-        postEvent(event, prio);
+    public void handlePeerEvent(AWTEvent event) {
+        postEvent(event);
     }
 
-    private void postEvent(AWTEvent event, EventPriority prio) {
-        if (prio == EventPriority.DEFAULT) {
-            SunToolkit.postEvent(AppContext.getAppContext(), event);
-        } else {
-            long peerEvPrio;
-            switch (prio) {
-            case LOW:
-                peerEvPrio = PeerEvent.LOW_PRIORITY_EVENT;
-                break;
-            case HIGH:
-                peerEvPrio = PeerEvent.PRIORITY_EVENT;
-                break;
-            case ULTIMATE:
-                peerEvPrio = PeerEvent.ULTIMATE_PRIORITY_EVENT;
-                break;
-            default:
-                throw new IllegalArgumentException();
-            }
-            postPriorityEvent(event, peerEvPrio);
-        }
-    }
-
-    private static Field isPostedField;
-    
-    private void postPriorityEvent(final AWTEvent e, long prio) {
-        if (isPostedField == null) {
-            isPostedField = SunToolkit.getField(AWTEvent.class, "isPosted");
-        }
-        PeerEvent pe = new PeerEvent(Toolkit.getDefaultToolkit(),
-                                     new Runnable() {
-                public void run() {
-                    try {
-                        isPostedField.setBoolean(e, true);
-                    } catch (IllegalArgumentException e) {
-                        assert(false);
-                    } catch (IllegalAccessException e) {
-                        assert(false);
-                    }
-                    ((Component)e.getSource()).dispatchEvent(e);
-                }
-            }, prio);
-        SunToolkit.postEvent(SunToolkit.targetToAppContext(e.getSource()), pe);
+    private void postEvent(AWTEvent event) {
+        SunToolkit.postEvent(AppContext.getAppContext(), event);
     }
 
     public Insets getInsets() {
-
-        return new Insets(0, 0, 0, 0);
-
+        return platformWindow.getInsets();
     }
 
     SwingComponentType getSwingComponent() {

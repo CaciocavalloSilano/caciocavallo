@@ -118,7 +118,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     }
 
     @Override
-    public void handlePeerEvent(AWTEvent ev, EventPriority prio) {
+    public void handlePeerEvent(AWTEvent ev) {
 
 
         Window w = (Window) getAWTComponent();
@@ -128,20 +128,20 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
             {
                 WindowEvent we =
                     new WindowEvent(w, WindowEvent.WINDOW_GAINED_FOCUS);
-                super.handlePeerEvent(we, prio);
-                super.handlePeerEvent(ev, prio);
+                super.handlePeerEvent(we);
+                super.handlePeerEvent(ev);
             }
             break;
         case FocusEvent.FOCUS_LOST:
             {
-                super.handlePeerEvent(ev, prio);
+                super.handlePeerEvent(ev);
                 WindowEvent we =
                     new WindowEvent(w, WindowEvent.WINDOW_LOST_FOCUS);
-                super.handlePeerEvent(we, prio);
+                super.handlePeerEvent(we);
             }
             break;
         default:
-            super.handlePeerEvent(ev, prio);
+            super.handlePeerEvent(ev);
         }
     }
 

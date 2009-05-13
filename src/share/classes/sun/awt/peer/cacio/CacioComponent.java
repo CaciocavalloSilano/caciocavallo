@@ -35,13 +35,6 @@ import java.awt.Component;
  */
 public interface CacioComponent {
 
-    enum EventPriority {
-        DEFAULT,
-        LOW,
-        HIGH,
-        ULTIMATE
-    }
-
     /**
      * Returns the AWT component of the component.
      *
@@ -66,6 +59,6 @@ public interface CacioComponent {
      * @param event the event to feed into AWT
      * @param the priority for the event
      */
-    void handlePeerEvent(AWTEvent event, EventPriority prio);
+    void handlePeerEvent(AWTEvent event);
 
 }
