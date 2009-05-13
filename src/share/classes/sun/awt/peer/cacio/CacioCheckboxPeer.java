@@ -1,5 +1,6 @@
 package sun.awt.peer.cacio;
 
+import java.awt.BorderLayout;
 import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 import java.awt.event.ItemEvent;
@@ -7,9 +8,14 @@ import java.awt.event.ItemListener;
 import java.awt.peer.CheckboxPeer;
 
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JToggleButton;
 
-class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JCheckBox>
+class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JPanel>
                         implements CheckboxPeer {
+
+    private JToggleButton toggleButton;
 
     public CacioCheckboxPeer(Checkbox awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
@@ -20,16 +26,24 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JCheckBox>
      * Creates a new SwingCheckboxPeer instance.
      */
     @Override
-    public JCheckBox initSwingComponent() {
+    public JPanel initSwingComponent() {
 
-        Checkbox checkbox = (Checkbox) getAWTComponent();
-        JCheckBox jcheckbox = new JCheckBox();
-        jcheckbox.addItemListener(new SwingCheckboxListener());
-        return jcheckbox;
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        if (getAWTComponent().getCheckboxGroup() == null) {
+            toggleButton = new JCheckBox();
+        } else {
+            toggleButton = new JRadioButton();
+        }
+        panel.add(toggleButton);
+        return panel;
     }
 
     @Override
     void postInitSwingComponent() {
+        toggleButton.addItemListener(new SwingCheckboxListener());
+
         Checkbox checkbox = getAWTComponent();
         setLabel(checkbox.getLabel());
         setState(checkbox.getState());
@@ -61,15 +75,23 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JCheckBox>
         }
     }
 
+    @Override
     public void setCheckboxGroup(CheckboxGroup group) {
-        // TODO: Implement this.
+        if (group == null) {
+            toggleButton = new JCheckBox();
+        } else {
+            toggleButton = new JRadioButton();
+        }
+        getSwingComponent().removeAll();
+        getSwingComponent().add(toggleButton);
+        postInitSwingComponent();
     }
 
     public void setLabel(String label) {
-        getSwingComponent().setText(label);
+        toggleButton.setText(label);
     }
 
     public void setState(boolean state) {
-        getSwingComponent().setSelected(state);
+        toggleButton.setSelected(state);
     }
 }
