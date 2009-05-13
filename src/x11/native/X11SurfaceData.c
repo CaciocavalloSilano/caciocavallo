@@ -27,19 +27,11 @@
 #include "sun_awt_peer_x11_X11SurfaceData.h"
 
 #include "SurfaceData.h"
+#include "cacio-x11.h"
 
 static jclass sunToolkitCls;
 static jmethodID sunToolkitLockMID;
 static jmethodID sunToolkitUnlockMID;
-
-typedef struct {
-
-  SurfaceDataOps sdOps;
-  Display *display;
-  Drawable drawable;
-  XImage *img;
-  jint x, y, width, height;
-} X11SurfaceDataOps;
 
 /*
  * Class:     sun_awt_peer_x11_X11SurfaceData
@@ -64,8 +56,30 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11SurfaceData_initIDs
 }
 
 static jint X11Lock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasInfo, jint lockFlags) {
-  (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
-  return SD_SUCCESS;
+    X11SurfaceDataOps *xops;
+    int ret;
+
+    (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
+
+    xops = (X11SurfaceDataOps*) ops;
+    if (rasInfo->bounds.x1 < 0) {
+      rasInfo->bounds.x1 = 0;
+    }
+    if (rasInfo->bounds.y1 < 0) {
+      rasInfo->bounds.y1 = 0;
+    }
+    if (rasInfo->bounds.x2 > xops->width) {
+      rasInfo->bounds.x2 = xops->width;
+    }
+    if (rasInfo->bounds.y2 > xops->height) {
+      rasInfo->bounds.y2 = xops->height;
+    }
+    if (lockFlags & SD_LOCK_FASTEST) {
+        ret = SD_SLOWLOCK;
+    } else {
+        ret = SD_SUCCESS;
+    }
+    return ret;
 }
 
 static void X11GetRasInfo(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasInfo) {
@@ -91,10 +105,6 @@ static void X11GetRasInfo(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* 
   if (xops->img) {
     int scan = xops->img->bytes_per_line;
     int mult = 4; /* TODO. */
-    xops->x = x;
-    xops->y = y;
-    xops->width = w;
-    xops->height = h;
     rasInfo->rasBase = xops->img->data - x * mult - y * scan;
     rasInfo->pixelStride = mult;
     rasInfo->pixelBitOffset = 0;
@@ -113,13 +123,19 @@ static void X11Release(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* ras
   Display *display;
   Drawable drawable;
   GC gc;
+  int x, y, w, h;
 
   xops = (X11SurfaceDataOps*) ops;
   display = xops->display;
   drawable = xops->drawable;
 
+  x = rasInfo->bounds.x1;
+  y = rasInfo->bounds.y1;
+  w = rasInfo->bounds.x2 - x;
+  h = rasInfo->bounds.y2 - y;
+
   gc = XCreateGC(display, drawable, 0, NULL);
-  XPutImage(display, drawable, gc, xops->img, 0, 0, xops->x, xops->y, xops->width, xops->height);
+  XPutImage(display, drawable, gc, xops->img, 0, 0, x, y, w, h);
   XFreeGC(display, gc);
 
 }
@@ -134,7 +150,7 @@ static void X11Unlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11SurfaceData_initOps
-  (JNIEnv *env, jobject thiz, jlong d, jlong w)
+  (JNIEnv *env, jobject thiz, jlong d, jlong w, jint width, jint height)
 {
   Display *display;
   Drawable drawable;
@@ -142,7 +158,7 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11SurfaceData_initOps
 
   display = (Display*) d;
   drawable = (Drawable) w;
-  xops = SurfaceData_InitOps(env, thiz, sizeof(X11SurfaceDataOps));
+  xops = (X11SurfaceDataOps*) SurfaceData_InitOps(env, thiz, sizeof(X11SurfaceDataOps));
 
   xops->sdOps.Lock = &X11Lock;
   xops->sdOps.GetRasInfo = &X11GetRasInfo;
@@ -150,5 +166,7 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11SurfaceData_initOps
   xops->sdOps.Unlock = &X11Unlock;
   xops->display = display;
   xops->drawable = drawable;
+  xops->width = width;
+  xops->height = height;
 }
 

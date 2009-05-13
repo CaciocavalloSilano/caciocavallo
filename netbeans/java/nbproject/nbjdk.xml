@@ -13,7 +13,7 @@
     <target depends="-jdk-init" name="javadoc">
         <ant antfile="../../build.xml" inheritall="false" target="javadoc"/>
     </target>
-    <target depends="-jdk-init" name="run-single-test">
-        <ant antfile="../../build.xml" inheritall="false" target="run-single-test"/>
+    <target depends="-jdk-init" name="run">
+        <ant antfile="../../build.xml" inheritall="false" target="run"/>
     </target>
 </project>
