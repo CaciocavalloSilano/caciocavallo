@@ -1,23 +1,33 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
 import java.awt.peer.ListPeer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-final class CacioListPeer extends CacioComponentPeer<List, JList> implements ListPeer {
+final class CacioListPeer extends CacioComponentPeer<List, JScrollPane> implements ListPeer {
+
+    private JList list;
 
     public CacioListPeer(List awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
     @Override
-    JList initSwingComponent() {
-        JList list = new JList();
-        return list;
+    JScrollPane initSwingComponent() {
+        list = new JList(new DefaultListModel());
+        JScrollPane pane = new JScrollPane(list);
+        return pane;
     }
 
     @Override
@@ -28,18 +38,22 @@ final class CacioListPeer extends CacioComponentPeer<List, JList> implements Lis
         for (int i = 0; i < itemCount; i++) {
             add(theList.getItem(i), i);
         }
+        setMultipleMode(theList.isMultipleMode());
+        list.addListSelectionListener(new SelectionListener());
     }
 
     private DefaultListModel getModel() {
-        JList l = getSwingComponent();
-        DefaultListModel m = (DefaultListModel) l.getModel();
+        DefaultListModel m = (DefaultListModel) list.getModel();
         return m;
     }
 
     @Override
     public void add(String item, int index) {
-        
-        getModel().add(index, item);
+        if (index < 0) {
+            getModel().addElement(item);
+        } else {
+            getModel().add(index, item);
+        }
     }
 
     @Override
@@ -49,39 +63,55 @@ final class CacioListPeer extends CacioComponentPeer<List, JList> implements Lis
 
     @Override
     public Dimension getMinimumSize(int rows) {
-        return super.getPreferredSize();
+        FontMetrics fm = getFontMetrics(getAWTComponent().getFont());
+        return new Dimension(20 + fm.stringWidth("0123456789abcde"),
+                             (fm.getHeight() * rows));
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return getMinimumSize(5);
     }
 
     @Override
     public Dimension getPreferredSize(int rows) {
-        return super.getPreferredSize();
+        Dimension minSize = getMinimumSize(5);
+        Dimension actualSize = getSwingComponent().getPreferredSize();
+        if (actualSize.width < minSize.width) actualSize.width = minSize.width;
+        if (actualSize.height < actualSize.height) actualSize.height = minSize.height;
+        return actualSize;
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+        int rows = getModel().getSize();
+        return getPreferredSize((rows < 5) ? 5 : rows);
     }
 
     @Override
     public void makeVisible(int index) {
-        getSwingComponent().ensureIndexIsVisible(index);
+        list.ensureIndexIsVisible(index);
     }
 
     @Override
     public void select(int index) {
-        getSwingComponent().setSelectedIndex(index);
+        list.setSelectedIndex(index);
     }
 
     @Override
     public void deselect(int index) {
-        getSwingComponent().removeSelectionInterval(index, index);
+        list.removeSelectionInterval(index, index);
     }
 
     @Override
-    public void removeAll() {
-        JList l = getSwingComponent();
-        ListSelectionModel m = l.getSelectionModel();
+    public void removeAll() {        
+        ListSelectionModel m = list.getSelectionModel();
         m.clearSelection();
     }
 
     @Override
     public int[] getSelectedIndexes() {
-        return getSwingComponent().getSelectedIndices();
+        return list.getSelectedIndices();
     }
 
     @Override
@@ -92,7 +122,29 @@ final class CacioListPeer extends CacioComponentPeer<List, JList> implements Lis
         } else {
             mode = ListSelectionModel.SINGLE_SELECTION;
         }
-        getSwingComponent().setSelectionMode(mode);
+        list.setSelectionMode(mode);
+    }
+
+    @Override
+    protected void handleMouseEvent(MouseEvent e)
+    {
+        super.handleMouseEvent(e);
+        if (e.getID() == MouseEvent.MOUSE_RELEASED && e.getClickCount() == 2) {
+              getToolkit().getSystemEventQueue().postEvent(new ActionEvent(getAWTComponent(),ActionEvent.ACTION_PERFORMED, ""+getModel().getElementAt(list.locationToIndex(e.getPoint()))));
+        }
+    }
+
+    class SelectionListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e)
+        {
+            for (int index = e.getFirstIndex(); index < e.getLastIndex(); index ++ )
+            {
+              getToolkit().getSystemEventQueue().postEvent(new ItemEvent(getAWTComponent(),ItemEvent.ITEM_STATE_CHANGED , getModel().getElementAt(index) ,list.isSelectedIndex(index)? ItemEvent.SELECTED:ItemEvent.DESELECTED));
+            }
+        }
+
     }
 
 }
