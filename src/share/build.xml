@@ -8,10 +8,43 @@
         <javac srcdir="${dir.src.shared.classes}"
                destdir="${dir.build.shared.classes}"
                bootclasspath="${openjdk}/classes"
+               debug="${compile.debug}"
                excludes="gnu/**/*" />
     </target>
 
     <target name="clean">
         <delete dir="${dir.build.shared.classes}" />
+    </target>
+
+    <target name="run">
+        <java classname="cacio.fluff.TestAWT">
+            <classpath>
+                <pathelement location="${basedir}/demo/dist/testAWT.jar" />
+                <pathelement location="${basedir}/demo/dist/lib/AbsoluteLayout.jar" />
+                <pathelement location="${basedir}/build/shared/classes" />
+                <pathelement location="${basedir}/build/x11/classes" />
+            </classpath>
+            <sysproperty key="awt.toolkit" value="sun.awt.peer.x11.X11Toolkit" />
+            <sysproperty key="java.awt.graphicsenv" value="sun.awt.peer.x11.X11GraphicsEnvironment" />
+            <sysproperty key="java.library.path" value="build/x11/lib" />
+        </java>
+    </target>
+    <target name="profile">
+            <path id="cp">
+                <pathelement location="${basedir}/demo/dist/testAWT.jar" />
+                <pathelement location="${basedir}/demo/dist/lib/AbsoluteLayout.jar" />
+                <pathelement location="${basedir}/build/shared/classes" />
+                <pathelement location="${basedir}/build/x11/classes" />
+            </path>
+        <nbprofiledirect mainclass="cacio.fluff.TestAWT">
+            <classpath refid="cp" />
+        </nbprofiledirect>
+        <java classname="cacio.fluff.TestAWT">
+            <classpath refid="cp" />
+            <sysproperty key="awt.toolkit" value="sun.awt.peer.x11.X11Toolkit" />
+            <sysproperty key="java.awt.graphicsenv" value="sun.awt.peer.x11.X11GraphicsEnvironment" />
+            <sysproperty key="java.library.path" value="build/x11/lib" />
+           <jvmarg value="${profiler.info.jvmargs.agent}"/>
+        </java>
     </target>
 </project>
