@@ -27,7 +27,6 @@ package sun.awt.peer.cacio;
 
 import java.awt.Component;
 import java.awt.event.FocusEvent;
-import sun.awt.peer.cacio.CacioComponent.EventPriority;
 
 class FocusManager {
 
@@ -80,7 +79,7 @@ class FocusManager {
             Component opposite = getAWTComponent(lostTo);
             FocusEvent fe = new FocusEvent(c, FocusEvent.FOCUS_LOST, false,
                                            opposite);
-            cacioComp.handlePeerEvent(fe, EventPriority.DEFAULT);
+            cacioComp.handlePeerEvent(fe);
         }
     }
 
@@ -91,7 +90,7 @@ class FocusManager {
             Component opposite = getAWTComponent(lost);
             FocusEvent fe = new FocusEvent(c, FocusEvent.FOCUS_GAINED, false,
                                            opposite);
-            cacioComp.handlePeerEvent(fe, EventPriority.DEFAULT);
+            cacioComp.handlePeerEvent(fe);
         }
     }
 

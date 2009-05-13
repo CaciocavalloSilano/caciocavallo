@@ -37,7 +37,6 @@ import java.awt.event.WindowEvent;
 import sun.awt.AWTAutoShutdown;
 
 import sun.awt.PaintEventDispatcher;
-import sun.awt.peer.cacio.CacioComponent.EventPriority;
 
 /**
  * A thread that polls the native event queue for events and posts
@@ -208,6 +207,6 @@ public abstract class CacioEventPump<ET> implements Runnable {
     }
 
     private void postEvent(CacioComponent c, AWTEvent ev) {
-        c.handlePeerEvent(ev, EventPriority.DEFAULT);
+        c.handlePeerEvent(ev);
     }
 }

@@ -51,8 +51,6 @@ import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.ConstrainableGraphics;
 import sun.java2d.pipe.Region;
 
-import sun.awt.peer.cacio.CacioComponent.EventPriority;
-
 /**
  * A {@link PlatformWindow} implementation that uses a ManagedWindowContainer
  * as parent and implements all the window management logic in Java. This
@@ -424,7 +422,7 @@ class ManagedWindow
     }
 
     public void dispatchEvent(AWTEvent event) {
-        getCacioComponent().handlePeerEvent(event, EventPriority.DEFAULT);
+        getCacioComponent().handlePeerEvent(event);
     }
 
     protected boolean dispatchEventImpl(EventData event) {
@@ -433,8 +431,7 @@ class ManagedWindow
         if (! dispatched) {
             // If not dispatched, then dispatch to our own component.
             event.setSource(cacioComponent.getAWTComponent());
-            cacioComponent.handlePeerEvent(event.createAWTEvent(),
-                                           EventPriority.DEFAULT);
+            cacioComponent.handlePeerEvent(event.createAWTEvent());
             dispatched = true;
             if (event.getId() == MouseEvent.MOUSE_PRESSED) {
                 FocusManager.getInstance().mousePressed(this);
@@ -445,8 +442,7 @@ class ManagedWindow
 
     void dispatchKeyEvent(EventData ev) {
         ev.setSource(cacioComponent.getAWTComponent());
-        cacioComponent.handlePeerEvent(ev.createAWTEvent(),
-                                       EventPriority.DEFAULT);
+        cacioComponent.handlePeerEvent(ev.createAWTEvent());
     }
 
     @Override
@@ -499,7 +495,7 @@ class ManagedWindow
         // We need to be relative to the target.
         Rectangle area = new Rectangle(x, y, w, h);
         PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, area);
-        cacioComp.handlePeerEvent(ev, EventPriority.ULTIMATE);
+        cacioComp.handlePeerEvent(ev);
         super.repaint(x, y, w, h);
     }
 }
