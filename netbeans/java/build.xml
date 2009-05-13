@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="Caciocavallo">
+    <property file="nbproject/nbjdk.properties"/>
+    <property location="${netbeans.user}/build.properties" name="user.properties.file"/>
+    <property file="${user.properties.file}"/>
+    <import file="nbproject/jdk.xml"/>
+    <target depends="-jdk-init" name="compile">
+        <ant antfile="../../build.xml" inheritall="false" target="compile"/>
+    </target>
+    <target depends="-jdk-init" name="clean">
+        <ant antfile="../../build.xml" inheritall="false" target="clean"/>
+    </target>
+    <target depends="-jdk-init" name="javadoc">
+        <ant antfile="../../build.xml" inheritall="false" target="javadoc"/>
+    </target>
+    <target depends="-jdk-init" name="run">
+        <ant antfile="../../build.xml" inheritall="false" target="run"/>
+    </target>
+    <target depends="-jdk-init" name="profile">
+        <ant antfile="../../build.xml" inheritall="false" target="profile"/>
+    </target>
+</project>
