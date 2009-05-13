@@ -42,8 +42,8 @@ class CacioCanvasPeer extends CacioComponentPeer<Canvas, JPanel>
         Insets i = getInsets();
         int cx = i.left;
         int cy = i.top;
-        int cw = width - i.left - i.right;
-        int ch = height - i.top - i.bottom;
+        int cw = getAWTComponent().getWidth() - i.left - i.right;
+        int ch = getAWTComponent().getHeight() - i.top - i.bottom;
         Color bg = UIManager.getColor("Panel.background");
         Color old = g.getColor();
         g.setColor(bg);
