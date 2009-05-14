@@ -51,7 +51,7 @@ import java.awt.peer.TrayIconPeer;
 import java.util.Map;
 import java.util.Properties;
 import sun.awt.peer.cacio.CacioToolkit;
-import sun.awt.peer.cacio.FullScreenWindowFactory;
+import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
 public class X11Toolkit extends CacioToolkit {

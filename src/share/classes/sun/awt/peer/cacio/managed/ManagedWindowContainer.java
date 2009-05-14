@@ -23,11 +23,13 @@
  * have any questions.
  */
 
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.ColorModel;
 import java.util.Deque;
 import java.util.List;
 
@@ -38,7 +40,7 @@ import java.util.List;
  * (windows can be nested), or a top level container, which is usually
  * implemented by client code.
  */
-interface ManagedWindowContainer extends BaseWindow {
+interface ManagedWindowContainer {
 
     /**
      * Adds a child window to this container. This will be the topmost
@@ -112,4 +114,8 @@ interface ManagedWindowContainer extends BaseWindow {
      * @param h the height of the area to be repainted
      */
     void repaint(int x, int y, int w, int h);
+
+    ColorModel getColorModel();
+
+    GraphicsConfiguration getGraphicsConfiguration();
 }

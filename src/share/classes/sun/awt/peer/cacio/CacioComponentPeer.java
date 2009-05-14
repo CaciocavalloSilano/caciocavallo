@@ -492,10 +492,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
             return false;
         case SNFH_SUCCESS_PROCEED:
             PlatformWindow pw = getPlatformWindow();
-            // TODO: Should ask platform window for focus.
-            if (pw instanceof ManagedWindow) {
-                FocusManager.getInstance().setFocusedWindowNoEvent((ManagedWindow) pw);
-            }
+            pw.requestFocus();
             return CacioKeyboardFocusManagerPeer.getInstance().requestFocus(getAWTComponent(),
                                                                             lightweightChild,
                                                                             temporary,

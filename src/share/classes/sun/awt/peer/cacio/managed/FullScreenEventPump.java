@@ -23,14 +23,27 @@
  * have any questions.
  */
 
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.util.List;
+import sun.awt.peer.cacio.*;
 
-public interface PlatformScreen extends BaseWindow {
+class FullScreenEventPump extends CacioEventPump<EventData> {
 
-    abstract Graphics2D getClippedGraphics(List<Rectangle> clipRects);
+    private CacioEventSource source;
+
+    FullScreenEventPump(CacioEventSource s) {
+        source = s;
+    }
+
+    @Override
+    protected EventData fetchNativeEvent() {
+        return source.getNextEvent();
+    }
+
+    @Override
+    protected void dispatchNativeEvent(EventData d) {
+        ManagedWindowContainer c = (ManagedWindowContainer) d.getSource();
+        c.dispatchEvent(d);
+    }
 
 }

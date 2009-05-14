@@ -25,6 +25,8 @@
 
 package sun.awt.peer.cacio;
 
+import sun.awt.peer.cacio.managed.EventData;
+
 /**
  * The source of events for Cacio Toolkits. Which events need to be generated
  * depends on the setup of the target. For fully managed environments (i.e.

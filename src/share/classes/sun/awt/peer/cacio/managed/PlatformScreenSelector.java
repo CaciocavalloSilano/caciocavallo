@@ -1,4 +1,4 @@
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
 import java.awt.GraphicsConfiguration;
 
