@@ -124,12 +124,12 @@ public class X11Toolkit extends CacioToolkit {
 
     @Override
     public void grab(Window arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.err.println("IMPLEMENT ME: X11Toolkit.grab()");
     }
 
     @Override
     public void ungrab(Window arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.err.println("IMPLEMENT ME: X11Toolkit.ungrab()");
     }
 
     @Override

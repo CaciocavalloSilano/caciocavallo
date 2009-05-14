@@ -112,8 +112,10 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public ChoicePeer createChoice(Choice target) throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioChoicePeer peer = new CacioChoicePeer(target,
+                getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
