@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,14 +23,15 @@
  * have any questions.
  */
 
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
+import java.util.List;
 
-interface BaseWindow {
+public interface PlatformScreen {
 
     /**
      * Returns the color model used by the native window.
@@ -57,5 +58,6 @@ interface BaseWindow {
      */
     Rectangle getBounds();
 
+    abstract Graphics2D getClippedGraphics(List<Rectangle> clipRects);
 
 }

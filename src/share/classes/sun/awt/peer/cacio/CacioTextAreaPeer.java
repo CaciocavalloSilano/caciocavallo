@@ -45,18 +45,23 @@ class CacioTextAreaPeer extends CacioComponentPeer<TextArea, JScrollPane> implem
     JScrollPane initSwingComponent() {
         TextArea awtTextArea = getAWTComponent();
         textArea = new JTextArea();
-        JScrollPane sp = new JScrollPane(textArea);
         int sbv = awtTextArea.getScrollbarVisibility();
-        if (sbv != TextArea.SCROLLBARS_NONE) {
-            if (sbv == TextArea.SCROLLBARS_BOTH) {
-                sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-                sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            } else if (sbv == TextArea.SCROLLBARS_HORIZONTAL_ONLY) {
-                sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            } else if (sbv == TextArea.SCROLLBARS_VERTICAL_ONLY) {
-                sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            }
+        int hsp;
+        int vsp;
+        if (sbv == TextArea.SCROLLBARS_NONE) {
+            hsp = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
+            vsp = JScrollPane.VERTICAL_SCROLLBAR_NEVER;
+        } else if (sbv == TextArea.SCROLLBARS_HORIZONTAL_ONLY) {
+            hsp = JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS;
+            vsp = JScrollPane.VERTICAL_SCROLLBAR_NEVER;
+        } else if (sbv == TextArea.SCROLLBARS_VERTICAL_ONLY) {
+            hsp = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
+            vsp = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
+        } else {
+            hsp = JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS;
+            vsp = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
         }
+        JScrollPane sp = new JScrollPane(textArea, vsp, hsp);
         return sp;
     }
 
@@ -129,15 +134,6 @@ class CacioTextAreaPeer extends CacioComponentPeer<TextArea, JScrollPane> implem
     @Override
     public void setText(String text) {
         getTextArea().setText(text);
-    }
-
-    @Override
-    public void layout() {
-
-        // TODO: Is this needed?
-        getSwingComponent().doLayout();
-//        getSwingComponent().getJComponent().invalidate();
-//        getSwingComponent().getJComponent().validate();
     }
 
     private JTextArea getTextArea() {

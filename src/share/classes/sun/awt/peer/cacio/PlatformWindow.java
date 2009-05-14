@@ -37,13 +37,40 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.BufferCapabilities.FlipContents;
+import java.awt.GraphicsConfiguration;
+import java.awt.image.ColorModel;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
 import sun.awt.CausedFocusEvent.Cause;
 import sun.java2d.pipe.Region;
 
-public interface PlatformWindow extends BaseWindow {
+public interface PlatformWindow {
+
+    /**
+     * Returns the color model used by the native window.
+     *
+     * @return the color model used by the native window
+     */
+    ColorModel getColorModel();
+
+    /**
+     * Returns the graphics configuration used by the native window.
+     *
+     * @return the graphics configuration used by the native window
+     */
+    GraphicsConfiguration getGraphicsConfiguration();
+
+
+    /**
+     * Returns the bounds of the native window. The resulting rectangle
+     * has the X and Y coordinates of the window relative to its parent and
+     * the width and height of the window. For decorated windows the bounds
+     * must include the window decorations.
+     *
+     * @return the bounds of the native window
+     */
+    Rectangle getBounds();
 
     /**
      * Disposes the underlying platform window and releases all associated
@@ -254,4 +281,13 @@ public interface PlatformWindow extends BaseWindow {
      * @return the current backbuffer, as an image
      */
     Image getBackBuffer();
+
+    /**
+     * Request focus on the window. When the focus has been granted by the
+     * platform windowing implementation, the platform window needs to send
+     * an appropriate FOCUS_GAINED event. It is not necessary to send
+     * FOCUS_LOST events though.
+     */
+    void requestFocus();
+
 }

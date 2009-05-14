@@ -23,8 +23,9 @@
  * have any questions.
  */
 
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
+import sun.awt.peer.cacio.*;
 import java.awt.AWTEvent;
 import java.awt.AWTException;
 import java.awt.BufferCapabilities;
@@ -497,5 +498,10 @@ class ManagedWindow
         PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, area);
         cacioComp.handlePeerEvent(ev);
         super.repaint(x, y, w, h);
+    }
+
+    @Override
+    public void requestFocus() {
+        FocusManager.getInstance().setFocusedWindowNoEvent(this);
     }
 }

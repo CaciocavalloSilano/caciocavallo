@@ -1,4 +1,4 @@
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -17,11 +17,6 @@ class ScreenManagedWindowContainer extends AbstractManagedWindowContainer {
     @Override
     public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
         return screen.getClippedGraphics(clipRects);
-    }
-
-    @Override
-    public Rectangle getBounds() {
-        return screen.getBounds();
     }
 
     @Override

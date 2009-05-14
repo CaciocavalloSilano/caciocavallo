@@ -23,7 +23,7 @@
  * have any questions.
  */
 
-package sun.awt.peer.cacio;
+package sun.awt.peer.cacio.managed;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
