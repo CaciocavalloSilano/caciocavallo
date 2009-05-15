@@ -25,11 +25,25 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.security.AccessController;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import sun.security.action.GetPropertyAction;
 
 public class FullScreenWindowFactory implements PlatformWindowFactory {
+
+    private static final Dimension screenSize;
+    static {
+        String size = AccessController.doPrivileged(
+                new GetPropertyAction("cacio.managed.screensize", "1024x800"));
+        int x = size.indexOf('x');
+        int width = Integer.parseInt(size.substring(0, x));
+        int height = Integer.parseInt(size.substring(x + 1));
+        screenSize = new Dimension(width, height);
+    }
 
     /**
      * This is used to re-source the events coming from the
@@ -132,6 +146,14 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         return new FullScreenEventPump(s);
     }
 
+    public static Dimension getScreenDimension() {
+        return screenSize;
+    }
+
+    /**
+     * Default implementation for the PlatformScreenSelector. Just return
+     * the single screen instance we have.
+     */
     private static final class DefaultScreenSelector implements
         PlatformScreenSelector {
 
@@ -145,7 +167,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         @Override
         public PlatformScreen getPlatformScreen(GraphicsConfiguration config) {
 
-            return screen;
+            return this.screen;
         }
     }
 }
