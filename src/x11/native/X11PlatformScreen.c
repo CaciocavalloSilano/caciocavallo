@@ -45,7 +45,7 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11PlatformScreen_initIDs
   (JNIEnv *env, jclass cls)
 {
     jclass eventDataCls = (*env)->FindClass(env,
-                                            "sun/awt/peer/cacio/EventData");
+                                            "sun/awt/peer/cacio/managed/EventData");
     if ((*env)->ExceptionCheck(env)) return;
 
     eventDataSetIdMID = (*env)->GetMethodID(env, eventDataCls,
