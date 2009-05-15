@@ -56,9 +56,9 @@ class SDLScreen implements PlatformScreen, CacioEventSource {
         height = dim.height;
     }
 
-    private long nativeSDLdata = 0L;
-    private EventData eventData = null;
-    private SDLSurfaceData surfaceData = null;
+    private long nativeSDLdata;
+    private EventData eventData;
+    private SDLSurfaceData surfaceData;
 
     SDLScreen() {
         nativeSDLdata = nativeInitScreen(width, height);
