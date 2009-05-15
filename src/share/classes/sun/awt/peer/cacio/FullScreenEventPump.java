@@ -41,7 +41,9 @@ class FullScreenEventPump extends CacioEventPump<EventData> {
     @Override
     protected void dispatchNativeEvent(EventData d) {
         ManagedWindowContainer c = (ManagedWindowContainer) d.getSource();
-        c.dispatchEvent(d);
+        if (c != null) {
+            c.dispatchEvent(d);
+        }
     }
 
 }
