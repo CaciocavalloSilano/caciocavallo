@@ -23,6 +23,10 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>SDL classes</label>
+                    <location>${root}/src/sdl/classes</location>
+                </source-folder>
+                <source-folder>
                     <label>Shared classes</label>
                     <type>java</type>
                     <location>${root}/src/share/classes</location>
@@ -41,10 +45,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <build-folder>
-                    <location>../../build/shared/classes</location>
+                    <location>${root}/build/shared/classes</location>
                 </build-folder>
                 <build-folder>
-                    <location>../../build/x11/classes</location>
+                    <location>${root}/build/x11/classes</location>
+                </build-folder>
+                <build-folder>
+                    <location>${root}/build/sdl/classes</location>
                 </build-folder>
             </folders>
             <ide-actions>
@@ -80,13 +87,19 @@
             </ide-actions>
             <export>
                 <type>folder</type>
-                <location>../../build/shared/classes</location>
+                <location>${root}/build/shared/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>../../build/x11/classes</location>
+                <location>${root}/build/x11/classes</location>
+                <script>nbproject/nbjdk.xml</script>
+                <build-target>compile</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>${root}/build/sdl/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
@@ -99,6 +112,10 @@
                     <source-folder style="packages">
                         <label>X11 classes</label>
                         <location>${root}/src/x11/classes</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SDL classes</label>
+                        <location>${root}/src/sdl/classes</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>Test classes</label>
@@ -115,6 +132,10 @@
                     <source-file>
                         <label>X11 build script</label>
                         <location>${root}/src/x11/build.xml</location>
+                    </source-file>
+                    <source-file>
+                        <label>SDL build script</label>
+                        <location>${root}/src/sdl/build.xml</location>
                     </source-file>
                     <source-file>
                         <label>Build properties</label>
@@ -150,10 +171,33 @@
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
+                <package-root>${root}/src/sdl/classes</package-root>
+                <classpath mode="compile">${root}/src/share/classes</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
                 <package-root>${root}/tests</package-root>
                 <unit-tests/>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
+        <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
+            <module name="org-netbeans-modules-editor-indent">
+                <node name="CodeStyle">
+                    <property name="usedProfile" value="default"/>
+                    <node name="project">
+                        <property name="tab-size" value="8"/>
+                        <property name="text-limit-width" value="80"/>
+                    </node>
+                </node>
+                <node name="text">
+                    <node name="x-java">
+                        <node name="CodeStyle">
+                            <node name="project"/>
+                        </node>
+                    </node>
+                </node>
+            </module>
+        </preferences>
     </configuration>
 </project>

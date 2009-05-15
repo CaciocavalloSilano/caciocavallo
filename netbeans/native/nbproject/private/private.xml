@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/netbeans/native/nbproject/configurations.xml</file>
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/netbeans/native/nbproject/project.properties</file>
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/src/sdl/native/SDLScreen.c</file>
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/src/sdl/native/SDLSurfaceData.c</file>
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/src/x11/native/X11PlatformScreen.c</file>
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/src/x11/native/X11SurfaceData.c</file>
+        <file>file:/home/neugens/work_space/netbeans/caciocavallo/src/x11/native/X11VolatileSurfaceManager.c</file>
+        <file>file:/home/neugens/work_space/netbeans/openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders/java_awt_event_MouseEvent.h</file>
+    </open-files>
 </project-private>
