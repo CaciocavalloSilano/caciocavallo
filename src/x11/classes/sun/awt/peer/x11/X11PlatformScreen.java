@@ -31,10 +31,12 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
+import java.awt.geom.Area;
 import java.awt.image.ColorModel;
 import java.util.List;
 
 import sun.awt.peer.cacio.CacioEventSource;
+import sun.awt.peer.cacio.WindowClippedGraphics;
 import sun.awt.peer.cacio.managed.EventData;
 import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 import sun.awt.peer.cacio.managed.PlatformScreen;
@@ -72,7 +74,13 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
         X11SurfaceData sd = getSurfaceData();
         Graphics2D g2d = new SunGraphics2D(sd, Color.BLACK, Color.BLACK,
                                         new Font(Font.DIALOG, Font.PLAIN, 12));
-        // TODO: Implement the clipping part.
+        if (clipRects != null && clipRects.size() > 0) {
+            Area a = new Area(getBounds());
+            for (Rectangle clip : clipRects) {
+                a.subtract(new Area(clip));
+            }
+            g2d = new WindowClippedGraphics(g2d, a);
+        }
         return g2d;
     }
 
