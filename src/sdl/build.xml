@@ -45,11 +45,12 @@
 
     <target name="create-headers" depends="compile-java">
         <mkdir dir="${dir.build.sdl.include}" />
-        <javah classpath="${dir.build.sdl.classes}"
+        <javah classpath="${dir.build.shared.classes}:${dir.build.sdl.classes}"
                destdir="${dir.build.sdl.include}"
                class="net.java.openjdk.awt.peer.sdl.SDLGraphicsEnvironment,
                net.java.openjdk.awt.peer.sdl.SDLScreen,
-               net.java.openjdk.awt.peer.sdl.SDLSurfaceData" />
+               net.java.openjdk.awt.peer.sdl.SDLSurfaceData,
+               java.awt.event.MouseEvent" />
     </target>
 
     <target name="clean">
