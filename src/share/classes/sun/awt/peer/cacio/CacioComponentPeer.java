@@ -115,6 +115,8 @@ class CacioComponentPeer<AWTComponentType extends Component,
     private Rectangle paintArea;
     private final Object paintAreaLock = new Object();
 
+    private Rectangle viewRect;
+
     /**
      * Creates a new CacioComponentPeer.
      * 
@@ -203,7 +205,12 @@ class CacioComponentPeer<AWTComponentType extends Component,
     @Override
     public Graphics getGraphics() {
 
-        return platformWindow.getGraphics();
+        Graphics g = platformWindow.getGraphics();
+        if (viewRect != null) {
+            g.clipRect(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+            g.translate(viewRect.x, viewRect.y);
+        }
+        return g;
     }
 
     @Override
@@ -527,16 +534,28 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     }
 
-    public void setBounds(int x, int y, int width, int height, int op) {
+    private void setBoundsImpl(int x, int y, int width, int height, int op) {
 
         platformWindow.setBounds(x, y, width, height, op);
+
+    }
+
+    void setViewport(int vx, int vy, int vw, int vh) {
+        setBoundsImpl(vx, vy, vw, vh, SET_BOUNDS);
+        viewRect = new Rectangle(vx, vy, vw, vh);
+    }
+
+    public void setBounds(int x, int y, int width, int height, int op) {
+
+        setBoundsImpl(x, y, width, height, op);
 
         if (proxy != null) {
             // Use the updated bounds from the awtCompnent here. The new bounds
             // may be different from the given paramenters if 'op' was SET_CLIENT_SIZE
             // or if this is a top level window and the system has forced some
             // different bounds.
-            proxy.setBounds(awtComponent.getX(), awtComponent.getY(), awtComponent.getWidth(), awtComponent.getHeight());
+            proxy.setBounds(awtComponent.getX(), awtComponent.getY(),
+                            awtComponent.getWidth(), awtComponent.getHeight());
             proxy.validate();
         }
     }
