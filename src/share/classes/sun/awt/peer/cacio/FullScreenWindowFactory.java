@@ -59,11 +59,20 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     }
 
     /**
-     *
+     * We need a selector to select the actual screen in case
+     * of multiple screens. A default selector implementation
+     * is given if only one screen is available.
+     * the selector is used in createPlatformToplevelWindow
+     * to define
      */
     private PlatformScreenSelector selector;
 
-    private Map<PlatformScreen,ScreenManagedWindowContainer> screenMap;
+    /**
+     * This allows the mappings between PlatformScreen and
+     * ScreenManagedWindowContainer, and is needed to re-source events
+     * from PlatformScreen to ManagedWindowContainer.
+     */
+    private Map<PlatformScreen, ScreenManagedWindowContainer> screenMap;
 
     /**
      * The event source that generates the basic events.
@@ -106,7 +115,6 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         this.eventSource = s;
         screenMap = new HashMap<PlatformScreen,ScreenManagedWindowContainer>();
     }
-
 
     /**
      * Creates a {@link PlatformWindow} instance.
