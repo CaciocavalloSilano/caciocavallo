@@ -26,18 +26,19 @@
 package sun.awt.peer.x11;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
-import java.security.AccessController;
 import java.util.List;
+
 import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.EventData;
+import sun.awt.peer.cacio.FullScreenWindowFactory;
 import sun.awt.peer.cacio.PlatformScreen;
 import sun.java2d.SunGraphics2D;
-import sun.security.action.GetPropertyAction;
 
 class X11PlatformScreen implements PlatformScreen, CacioEventSource {
 
@@ -60,11 +61,9 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
     private native void nativeGetEvent(long display, EventData ed);
 
     X11PlatformScreen() {
-        String size = AccessController.doPrivileged(
-                new GetPropertyAction("cacio.x11.screensize", "1024x800"));
-        int x = size.indexOf('x');
-        width = Integer.parseInt(size.substring(0, x));
-        height = Integer.parseInt(size.substring(x + 1));
+        Dimension dim = FullScreenWindowFactory.getScreenDimension();
+        this.width = dim.width;
+        this.height = dim.height;
         window = nativeInitScreen(X11GraphicsEnvironment.getDisplay(),
                                   width, height);
     }
