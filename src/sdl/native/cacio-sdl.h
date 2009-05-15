@@ -22,17 +22,26 @@
  * CA 95054 USA or visit www.sun.com if you need additional information or
  * have any questions.
  */
+#ifndef _CACIO_SDL_H
+#define	_CACIO_SDL_H
 
-package sun.awt.peer.cacio.managed;
+#include <jni.h>
+#include "SurfaceData.h"
 
-import java.awt.GraphicsConfiguration;
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
-/**
- *
- *
- * @author Mario Torre <neugens.limasoftware@gmail.com>
- */
-public interface PlatformScreenSelector {
-    
-    PlatformScreen getPlatformScreen(GraphicsConfiguration config);
+typedef struct {
+
+  SurfaceDataOps sdOps;
+  SDL_Surface *surface;
+  jint x, y, width, height;
+} SDLSurfaceDataOps;
+
+#ifdef	__cplusplus
 }
+#endif
+
+#endif	/* _CACIO_SDL_H */
+

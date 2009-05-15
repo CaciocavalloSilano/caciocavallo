@@ -22,17 +22,43 @@
  * CA 95054 USA or visit www.sun.com if you need additional information or
  * have any questions.
  */
-
-package sun.awt.peer.cacio.managed;
+package net.java.openjdk.awt.peer.sdl;
 
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 
 /**
- *
- *
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
-public interface PlatformScreenSelector {
-    
-    PlatformScreen getPlatformScreen(GraphicsConfiguration config);
+class SDLGraphicsDevice extends GraphicsDevice {
+
+    private SDLGraphicsConfiguration defaultConfig = null;
+
+    @Override
+    public int getType() {
+
+        return GraphicsDevice.TYPE_RASTER_SCREEN;
+    }
+
+    @Override
+    public String getIDstring() {
+
+        return "SDL Cacio Device";
+    }
+
+    @Override
+    public GraphicsConfiguration[] getConfigurations() {
+
+        return new GraphicsConfiguration[] { getDefaultConfiguration() };
+    }
+
+    @Override
+    public synchronized GraphicsConfiguration getDefaultConfiguration() {
+
+        if (this.defaultConfig == null) {
+            this.defaultConfig = new SDLGraphicsConfiguration(this);
+        }
+        return this.defaultConfig;
+    }
+
 }

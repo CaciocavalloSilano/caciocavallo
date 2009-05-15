@@ -22,17 +22,32 @@
  * CA 95054 USA or visit www.sun.com if you need additional information or
  * have any questions.
  */
+package net.java.openjdk.awt.peer.sdl;
 
-package sun.awt.peer.cacio.managed;
-
-import java.awt.GraphicsConfiguration;
+import sun.awt.image.SunVolatileImage;
+import sun.awt.image.VolatileSurfaceManager;
+import sun.java2d.SurfaceData;
 
 /**
- *
- *
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
-public interface PlatformScreenSelector {
-    
-    PlatformScreen getPlatformScreen(GraphicsConfiguration config);
+class SDLVolativeSurfaceManager extends VolatileSurfaceManager {
+
+    SDLVolativeSurfaceManager(SunVolatileImage image, Object context) {
+
+        super(image, context);
+    }
+
+    @Override
+    protected boolean isAccelerationEnabled() {
+
+        return false;
+    }
+
+    @Override
+    protected SurfaceData initAcceleratedSurface() {
+        
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

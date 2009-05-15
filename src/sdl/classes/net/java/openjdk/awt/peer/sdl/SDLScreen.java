@@ -22,8 +22,7 @@
  * CA 95054 USA or visit www.sun.com if you need additional information or
  * have any questions.
  */
-
-package sun.awt.peer.x11;
+package net.java.openjdk.awt.peer.sdl;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -35,63 +34,56 @@ import java.awt.image.ColorModel;
 import java.util.List;
 
 import sun.awt.peer.cacio.CacioEventSource;
-import sun.awt.peer.cacio.managed.EventData;
-import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
-import sun.awt.peer.cacio.managed.PlatformScreen;
+import sun.awt.peer.cacio.EventData;
+import sun.awt.peer.cacio.FullScreenWindowFactory;
+import sun.awt.peer.cacio.PlatformScreen;
 import sun.java2d.SunGraphics2D;
 
-class X11PlatformScreen implements PlatformScreen, CacioEventSource {
+/**
+ *
+ * @author Mario Torre <neugens@limasoftware.net>
+ */
+class SDLScreen implements PlatformScreen, CacioEventSource {
+
+    private static final int width;
+    private static final int height;
 
     static {
         initIDs();
+        
+        Dimension dim = FullScreenWindowFactory.getScreenDimension();
+        width = dim.width;
+        height = dim.height;
     }
 
-    private X11SurfaceData surfaceData;
+    private long nativeSDLdata = 0L;
+    private EventData eventData = null;
+    private SDLSurfaceData surfaceData = null;
 
-    private int width, height;
-
-    private long window;
-
-    private EventData eventData;
-
-    private native static void initIDs();
-
-    private native long nativeInitScreen(long display, int width, int height);
-
-    private native void nativeGetEvent(long display, EventData ed);
-
-    X11PlatformScreen() {
-        Dimension dim = FullScreenWindowFactory.getScreenDimension();
-        this.width = dim.width;
-        this.height = dim.height;
-        window = nativeInitScreen(X11GraphicsEnvironment.getDisplay(),
-                                  width, height);
+    SDLScreen() {
+        nativeSDLdata = nativeInitScreen(width, height);
     }
 
     public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
-        X11SurfaceData sd = getSurfaceData();
-        Graphics2D g2d = new SunGraphics2D(sd, Color.BLACK, Color.BLACK,
-                                        new Font(Font.DIALOG, Font.PLAIN, 12));
+
+        SDLSurfaceData data = getSurfaceData();
+        Graphics2D g2d = new SunGraphics2D(data,
+                                           Color.BLACK,
+                                           Color.BLACK,
+                                           new Font(Font.DIALOG,
+                                                    Font.PLAIN, 12));
         // TODO: Implement the clipping part.
         return g2d;
     }
 
-    private X11SurfaceData getSurfaceData() {
-        if (surfaceData == null) {
-            surfaceData = new X11SurfaceData(X11SurfaceData.typeDefault,
-                                             getColorModel(), getBounds(),
-                                             getGraphicsConfiguration(), this,
-                                             window);
-        }
-        return surfaceData;
-    }
-
     public ColorModel getColorModel() {
+
         return getGraphicsConfiguration().getColorModel();
     }
 
     public GraphicsConfiguration getGraphicsConfiguration() {
-        return X11GraphicsConfiguration.getDefaultGC();
+
+        return SDLGraphicsConfiguration.getDefaultConfiguration();
     }
 
     public Rectangle getBounds() {
@@ -99,16 +91,36 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
     }
 
     public EventData getNextEvent() {
+
         if (eventData == null) {
             eventData = new EventData();
         }
+
         eventData.clear();
-        nativeGetEvent(X11GraphicsEnvironment.getDisplay(), eventData);
+        
+        nativeGetEvent(eventData);
+
         if (eventData.getId() == 0) {
-            try { Thread.sleep(100); } catch (Exception ex) {}
+            try {
+                Thread.sleep(100);
+            } catch (Exception ex) { /* nothing to do */ }
         }
         eventData.setSource(this);
         return eventData;
     }
 
+    private SDLSurfaceData getSurfaceData() {
+
+        if (surfaceData == null) {
+            surfaceData = new SDLSurfaceData(SDLSurfaceData.typeDefault,
+                                             getColorModel(), getBounds(),
+                                             getGraphicsConfiguration(), this,
+                                             nativeSDLdata);
+        }
+        return surfaceData;
+    }
+
+    private native final void nativeGetEvent(EventData eventData);
+    private native final long nativeInitScreen(int width, int height);
+    private native final static void initIDs();
 }
