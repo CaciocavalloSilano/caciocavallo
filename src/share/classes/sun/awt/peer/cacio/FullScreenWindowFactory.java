@@ -113,7 +113,9 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
 
         this.selector = screenSelector;
         this.eventSource = s;
-        screenMap = new HashMap<PlatformScreen,ScreenManagedWindowContainer>();
+        screenMap =
+                Collections.synchronizedMap(new HashMap<PlatformScreen,
+                                            ScreenManagedWindowContainer>());
     }
 
     /**
