@@ -1,0 +1,58 @@
+<project name="cacio.sdl" basedir="../.."
+         xmlns:cpptasks="antlib:net.sf.antcontrib.cpptasks">
+
+    <property file="${basedir}/user.properties" />
+    <property file="${basedir}/build.properties" />
+
+    <import file="${dir.src.shared}/build.xml" />
+
+    <target name="compile" depends="compile-java,compile-native"
+            description="Compiles Java classes and native libraries." />
+
+    <target name="compile-java" depends="cacio.shared.compile">
+        <mkdir dir="${dir.build.sdl.classes}" />
+        <javac classpath="${dir.build.shared.classes}"
+               bootclasspath="${openjdk}/classes"
+               srcdir="${dir.src.sdl.classes}"
+               destdir="${dir.build.sdl.classes}" />
+    </target>
+
+    <target name="compile-native" depends="create-headers">
+        <mkdir dir="${dir.build.sdl.obj}" />
+        <mkdir dir="${dir.build.sdl.lib}" />
+        <cpptasks:cc objdir="${dir.build.sdl.obj}"
+                     outfile="${dir.build.sdl.lib}/cacio-sdl"
+                     outtype="shared">
+            <fileset dir="${dir.src.sdl.native}"></fileset>
+            <includepath>
+                <pathelement path="${dir.build.sdl.include}" />
+                <pathelement path="${openjdk}/include" />
+                <!-- TODO: Make this linux thingy a property. -->
+                <pathelement path="${openjdk}/include/linux" />
+                <pathelement path="${openjdk.src}/jdk/src/share/native/common" />
+                <pathelement path="${openjdk.src}/jdk/src/share/native/sun/java2d" />
+                <pathelement path="${sdl.include}" />
+                <pathelement path="${openjdk.build.generated.headers}/sun/sun.awt/awt/CClassHeaders" />
+                <pathelement path="${dir.src.sdl.includes}" />
+            </includepath>
+            <libset libs="SDL pthread" />
+            <defineset>
+                <define name="_GNU_SOURCE" value="1" />
+                <define name="_REENTRANT" />
+             </defineset>
+        </cpptasks:cc>
+    </target>
+
+    <target name="create-headers" depends="compile-java">
+        <mkdir dir="${dir.build.sdl.include}" />
+        <javah classpath="${dir.build.sdl.classes}"
+               destdir="${dir.build.sdl.include}"
+               class="net.java.openjdk.awt.peer.sdl.SDLGraphicsEnvironment,
+               net.java.openjdk.awt.peer.sdl.SDLScreen,
+               net.java.openjdk.awt.peer.sdl.SDLSurfaceData" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${dir.build.sdl.classes}" />
+    </target>
+</project>
