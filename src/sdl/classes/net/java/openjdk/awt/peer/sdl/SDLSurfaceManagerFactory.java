@@ -22,17 +22,25 @@
  * CA 95054 USA or visit www.sun.com if you need additional information or
  * have any questions.
  */
+package net.java.openjdk.awt.peer.sdl;
 
-package sun.awt.peer.cacio.managed;
-
-import java.awt.GraphicsConfiguration;
+import sun.awt.image.SunVolatileImage;
+import sun.awt.image.VolatileSurfaceManager;
+import sun.java2d.SurfaceManagerFactory;
 
 /**
- *
- *
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
-public interface PlatformScreenSelector {
-    
-    PlatformScreen getPlatformScreen(GraphicsConfiguration config);
+class SDLSurfaceManagerFactory extends SurfaceManagerFactory {
+
+    public SDLSurfaceManagerFactory() {
+    }
+
+    @Override
+    public VolatileSurfaceManager createVolatileManager(SunVolatileImage image,
+                                                        Object context) {
+
+        return new SDLVolativeSurfaceManager(image, context);
+    }
+
 }

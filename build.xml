@@ -9,11 +9,12 @@
 
     <import file="${dir.src.shared}/build.xml" />
     <import file="${dir.src.x11}/build.xml" />
+    <import file="${dir.src.sdl}/build.xml" />
 
-	<target name="clean" depends="cacio.shared.clean,cacio.x11.clean">
+	<target name="clean" depends="cacio.shared.clean,cacio.x11.clean,cacio.sdl.clean">
 	</target>
 
-	<target name="compile" depends="cacio.shared.compile,cacio.x11.compile" />
+	<target name="compile" depends="cacio.shared.compile,cacio.x11.compile,cacio.sdl.compile" />
 
 	<target name="all" depends="clean,compile" />
 

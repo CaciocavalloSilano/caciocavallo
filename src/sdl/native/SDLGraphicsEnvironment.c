@@ -23,16 +23,19 @@
  * have any questions.
  */
 
-package sun.awt.peer.cacio.managed;
+#include "jni.h"
 
-import java.awt.GraphicsConfiguration;
+#include "SDL.h"
+#include "net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment.h"
 
-/**
- *
- *
- * @author Mario Torre <neugens.limasoftware@gmail.com>
- */
-public interface PlatformScreenSelector {
-    
-    PlatformScreen getPlatformScreen(GraphicsConfiguration config);
+JNIEXPORT jboolean JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment_nativeInit
+  (JNIEnv *env __attribute__((unused)), jclass clazz __attribute__((unused)))
+{
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        fprintf(stderr, "*** Unable to initialize SDL: %s\n", SDL_GetError());
+        return JNI_FALSE;
+    }
+    atexit(SDL_Quit);
+
+    return JNI_TRUE;
 }
