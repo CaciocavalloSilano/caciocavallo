@@ -34,9 +34,9 @@ import java.awt.image.ColorModel;
 import java.util.List;
 
 import sun.awt.peer.cacio.CacioEventSource;
-import sun.awt.peer.cacio.EventData;
-import sun.awt.peer.cacio.FullScreenWindowFactory;
-import sun.awt.peer.cacio.PlatformScreen;
+import sun.awt.peer.cacio.managed.EventData;
+import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
+import sun.awt.peer.cacio.managed.PlatformScreen;
 import sun.java2d.SunGraphics2D;
 
 /**

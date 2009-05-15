@@ -30,7 +30,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
-import sun.awt.peer.cacio.FullScreenWindowFactory;
+import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 
 /**
  * SDL based implementation of the GraphicConfiguration.

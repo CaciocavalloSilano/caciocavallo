@@ -44,7 +44,7 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLScreen_initIDs
   (JNIEnv *env, jclass cls __attribute__((unused)))
 {
     jclass eventDataCls = (*env)->FindClass(env,
-                                            "sun/awt/peer/cacio/EventData");
+                                            "sun/awt/peer/cacio/managed/EventData");
     if ((*env)->ExceptionCheck(env)) return;
 
     eventDataSetIdMID = (*env)->GetMethodID(env, eventDataCls,

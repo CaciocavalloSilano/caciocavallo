@@ -53,7 +53,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.awt.peer.cacio.CacioToolkit;
-import sun.awt.peer.cacio.FullScreenWindowFactory;
+import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
 /**
