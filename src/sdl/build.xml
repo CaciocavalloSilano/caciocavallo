@@ -50,6 +50,7 @@
                class="net.java.openjdk.awt.peer.sdl.SDLGraphicsEnvironment,
                net.java.openjdk.awt.peer.sdl.SDLScreen,
                net.java.openjdk.awt.peer.sdl.SDLSurfaceData,
+               net.java.openjdk.awt.peer.sdl.SDLVolativeSurfaceManager,
                java.awt.event.MouseEvent" />
     </target>
 
