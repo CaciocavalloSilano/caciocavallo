@@ -66,14 +66,14 @@ public class SDLToolkit extends CacioToolkit {
     private static Logger logger =
         Logger.getLogger("net.java.openjdk.awt.peer.sdl.CacioToolkit");
 
-    private PlatformWindowFactory platformWindow;
+    private static PlatformWindowFactory platformWindow;
 
     static {
         System.loadLibrary("cacio-sdl");
     }
 
     @Override
-    public PlatformWindowFactory getPlatformWindowFactory() {
+    public synchronized PlatformWindowFactory getPlatformWindowFactory() {
 
         if (platformWindow == null) {
             SDLScreen screen = new SDLScreen();
