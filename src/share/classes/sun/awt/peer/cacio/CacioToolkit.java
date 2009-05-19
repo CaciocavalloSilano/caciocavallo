@@ -106,8 +106,9 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public CheckboxMenuItemPeer createCheckboxMenuItem(CheckboxMenuItem target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioCheckboxMenuItemPeer peer = new CacioCheckboxMenuItemPeer(target);
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
