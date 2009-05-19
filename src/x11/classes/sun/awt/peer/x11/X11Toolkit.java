@@ -109,12 +109,12 @@ public class X11Toolkit extends CacioToolkit {
 
     @Override
     protected int getScreenWidth() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return X11GraphicsConfiguration.getDefaultGC().getBounds().width;
     }
 
     @Override
     protected int getScreenHeight() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return X11GraphicsConfiguration.getDefaultGC().getBounds().height;
     }
 
     @Override
