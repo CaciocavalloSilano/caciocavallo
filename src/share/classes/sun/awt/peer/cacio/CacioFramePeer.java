@@ -30,6 +30,8 @@ import java.awt.MenuBar;
 import java.awt.Rectangle;
 import java.awt.peer.FramePeer;
 
+import java.awt.peer.MenuBarPeer;
+import javax.swing.JMenuBar;
 import javax.swing.JRootPane;
 
 class CacioFramePeer extends CacioWindowPeer implements FramePeer {
@@ -59,9 +61,15 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     public void setMenuBar(MenuBar mb) {
 
-        // TODO: Implement correctly.
-        System.out.println("IMPLEMENT ME: CacioFramePeer.setMenuBar");
-
+        MenuBarPeer mbp = (MenuBarPeer) mb.getPeer();
+        if (mbp == null) {
+            mb.addNotify();
+            mbp = (MenuBarPeer) mb.getPeer();
+        }
+        assert mbp instanceof CacioMenuBarPeer;
+        JMenuBar jmb = ((CacioMenuBarPeer) mbp).getSwingMenu();
+        JRootPane rp = getSwingComponent();
+        rp.setJMenuBar(jmb);
     }
 
     public void setResizable(boolean resizable) {

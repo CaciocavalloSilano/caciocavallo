@@ -159,21 +159,24 @@ public abstract class CacioToolkit extends SunToolkit {
 
     @Override
     public MenuPeer createMenu(Menu target) throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioMenuPeer peer = new CacioMenuPeer(target);
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
     public MenuBarPeer createMenuBar(MenuBar target) throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioMenuBarPeer peer = new CacioMenuBarPeer(target);
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
     public MenuItemPeer createMenuItem(MenuItem target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioMenuItemPeer peer = new CacioMenuItemPeer(target);
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
