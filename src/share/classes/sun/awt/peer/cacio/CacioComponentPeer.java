@@ -129,11 +129,27 @@ class CacioComponentPeer<AWTComponentType extends Component,
         awtComponent = awtC;
         init(pwf);
         swingComponent = initSwingComponent();
+        privatePostInitSwingComponent();
         initProxy();
         postInitSwingComponent();
         // Initialize basic properties.
         setBounds(awtC.getX(), awtC.getY(), awtC.getWidth(), awtC.getHeight(),
                   ComponentPeer.SET_SIZE);
+    }
+
+    /**
+     * Sets up the Swing component. This sets some basic properties that
+     * are shared by all peers. Subclasses would override
+     * {@link #postInitSwingComponent()} to do some initialization on their
+     * own.
+     */
+    private void privatePostInitSwingComponent() {
+        // All AWT widgets are expected to be 100% opaque, so we force this
+        // on the swing components.
+        swingComponent.setOpaque(true);
+        setBackground(awtComponent.getBackground());
+        setForeground(awtComponent.getForeground());
+        setFont(awtComponent.getFont());
     }
 
     /**
@@ -176,9 +192,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     void postInitSwingComponent() {
         // Nothing to do here. Subclasses override this.
-        setBackground(awtComponent.getBackground());
-        setForeground(awtComponent.getForeground());
-        setFont(awtComponent.getFont());
     }
 
     SwingComponentType initSwingComponent() {
@@ -378,11 +391,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
         try {
             if (swingComponent != null) {
                 JComponent c = swingComponent;
-                // We need to call update here, instead of paint, in order
-                // to paint the background of the component. Some components
-                // (esp. in Nimbus L&F) are otherwise translucent, which is
-                // not what we want
-                c.update(peerG);
+                c.paint(peerG);
             }
         } finally {
             peerG.dispose();
