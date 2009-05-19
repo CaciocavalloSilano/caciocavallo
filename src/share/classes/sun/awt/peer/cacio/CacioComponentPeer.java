@@ -378,7 +378,11 @@ class CacioComponentPeer<AWTComponentType extends Component,
         try {
             if (swingComponent != null) {
                 JComponent c = swingComponent;
-                c.paint(peerG);
+                // We need to call update here, instead of paint, in order
+                // to paint the background of the component. Some components
+                // (esp. in Nimbus L&F) are otherwise translucent, which is
+                // not what we want
+                c.update(peerG);
             }
         } finally {
             peerG.dispose();
