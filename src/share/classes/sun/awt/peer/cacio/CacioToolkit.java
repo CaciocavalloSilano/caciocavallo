@@ -206,8 +206,10 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public ScrollbarPeer createScrollbar(Scrollbar target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioScrollBarPeer peer = new CacioScrollBarPeer(target,
+                                                   getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
