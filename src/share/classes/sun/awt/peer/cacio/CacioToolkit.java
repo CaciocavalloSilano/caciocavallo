@@ -193,8 +193,9 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public PopupMenuPeer createPopupMenu(PopupMenu target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioPopupMenuPeer peer = new CacioPopupMenuPeer(target);
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override
