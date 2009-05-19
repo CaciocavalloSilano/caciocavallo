@@ -66,6 +66,11 @@ public class SDLToolkit extends CacioToolkit {
     private static Logger logger =
         Logger.getLogger("net.java.openjdk.awt.peer.sdl.CacioToolkit");
 
+    /*
+     * set this to null and you are doomed:
+     * there is a circle in the stupid CacioToolkit constructor,
+     * so platformWindow will be initialised in the call to super.
+     */
     private PlatformWindowFactory platformWindow;
 
     static {
@@ -73,7 +78,7 @@ public class SDLToolkit extends CacioToolkit {
     }
 
     @Override
-    public PlatformWindowFactory getPlatformWindowFactory() {
+    public synchronized PlatformWindowFactory getPlatformWindowFactory() {
 
         if (platformWindow == null) {
             SDLScreen screen = new SDLScreen();

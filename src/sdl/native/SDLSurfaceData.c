@@ -74,7 +74,6 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLSurfaceData_initOps
     operations->sdOps.GetRasInfo = &SDLGetRasInfo;
     operations->sdOps.Release = &SDLRelease;
     operations->sdOps.Unlock = &SDLUnlock;
-
     operations->surface = surface;
     operations->width = width;
     operations->height = height;
@@ -94,10 +93,18 @@ static jint SDLLock(JNIEnv* env, SurfaceDataOps* ops,
       rasInfo->bounds.x1 = 0;
     }
 
+    if (rasInfo->bounds.x1 > operations->width) {
+        rasInfo->bounds.x1 = operations->width;
+    }
+
     if (rasInfo->bounds.y1 < 0) {
       rasInfo->bounds.y1 = 0;
     }
-    
+
+    if (rasInfo->bounds.y1 > operations->height) {
+        rasInfo->bounds.y1 = operations->height;
+    }
+
     if (rasInfo->bounds.x2 > operations->width) {
       rasInfo->bounds.x2 = operations->width;
     }
@@ -116,9 +123,9 @@ static jint SDLLock(JNIEnv* env, SurfaceDataOps* ops,
 
     if (SDL_MUSTLOCK(operations->surface) != 0) {
 
-        fprintf(stderr, "SDL_MUSTLOCK::locking\n");
-
         if (SDL_LockSurface(operations->surface) < 0) {
+            (*env)->CallStaticVoidMethod(env, sunToolkitCls,
+                                         sunToolkitUnlockMID);
             JNU_ThrowByName(env, "java/lang/InternalError",
                 "SDLSurfaceData::SDLLock: cannot lock SDL_Surface.");
         }
@@ -160,6 +167,9 @@ static void SDLRelease(JNIEnv* env __attribute__((unused)),
 static void SDLUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasInfo)
 {
     SDLSurfaceDataOps *operations = NULL;
+    int width = 0;
+    int height = 0;
+
     operations = (SDLSurfaceDataOps*) ops;
 
     if (SDL_MUSTLOCK(operations->surface) != 0) {
@@ -167,9 +177,32 @@ static void SDLUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
         SDL_UnlockSurface(operations->surface);
     }
 
-    /*SDL_UpdateRect(operations->surface, rasInfo->bounds.x1, rasInfo->bounds.y1,
-                   rasInfo->bounds.x2, rasInfo->bounds.y2);
+    width = rasInfo->bounds.x2 - rasInfo->bounds.x1;
+    height = rasInfo->bounds.y2 - rasInfo->bounds.y1;
+
+/*
+    fprintf(stderr, "!!!!!!!! width = %d, height = %d\n", width, height);
+    fprintf(stderr, "rasInfo->bounds.x1 = %d, rasInfo->bounds.x2 = %d, rasInfo->bounds.y1 = %d, rasInfo->bounds.y2 = %d\n",
+            rasInfo->bounds.x1,rasInfo->bounds.x2,rasInfo->bounds.y1,rasInfo->bounds.y2);
 */
-    SDL_UpdateRect(operations->surface, 0, 0, 0, 0);
+
+    /*
+     * FIXME: there is some problem, looks like Java passes us the wrong value
+     * of y1 sometimes, causing in an invalid area.
+     * This only seems to occurs with the SDL backend, so it's probably
+     * caused by some mistakes elsewhere, and needs further investigation.
+     */
+    if (width < 0) {
+        width = 0;
+    }
+
+    if (height < 0) {
+        height = 0;
+    }
+
+    
+    SDL_UpdateRect(operations->surface, rasInfo->bounds.x1, rasInfo->bounds.y1,
+                   width, height);
+
     (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
 }
