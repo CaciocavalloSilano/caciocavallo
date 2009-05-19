@@ -156,8 +156,12 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
             if (rp == null) {
                 return new Insets(0, 0, 0, 0);
             }
-            if (! rp.isValid()) {
-                rp.validate();
+            // Need to make the proxy visible, otherwise the root pane is
+            // not laid out. Making the proxy visible has no effect as
+            // as long as the platform window is hidden.
+            ProxyWindow proxy = getProxyWindow();
+            if (! proxy.isVisible()) {
+                proxy.setVisible(true);
             }
             Component cp = rp.getContentPane();
             Rectangle cpBounds = cp.getBounds();
