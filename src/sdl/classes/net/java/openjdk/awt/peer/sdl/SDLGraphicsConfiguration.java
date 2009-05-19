@@ -39,7 +39,7 @@ import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
  */
 class SDLGraphicsConfiguration extends GraphicsConfiguration {
 
-    private SDLGraphicsDevice device = null;
+    private SDLGraphicsDevice device;
 
     SDLGraphicsConfiguration(SDLGraphicsDevice device) {
         this.device = device;

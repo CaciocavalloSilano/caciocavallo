@@ -32,7 +32,7 @@ import java.awt.GraphicsDevice;
  */
 class SDLGraphicsDevice extends GraphicsDevice {
 
-    private SDLGraphicsConfiguration defaultConfig = null;
+    private SDLGraphicsConfiguration defaultConfig;
 
     @Override
     public int getType() {

@@ -46,9 +46,9 @@ class SDLSurfaceData extends SurfaceData {
         initIDs();
     }
 
-    private Rectangle bounds = null;
-    private GraphicsConfiguration configuration = null;
-    private Object destination = null;
+    private Rectangle bounds;
+    private GraphicsConfiguration configuration;
+    private Object destination;
 
     SDLSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b,
                    GraphicsConfiguration gc, Object dest, long drawable) {

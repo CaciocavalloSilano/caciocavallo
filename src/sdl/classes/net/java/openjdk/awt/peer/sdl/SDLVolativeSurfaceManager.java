@@ -24,6 +24,10 @@
  */
 package net.java.openjdk.awt.peer.sdl;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
+import java.awt.Transparency;
+import sun.awt.SunToolkit;
 import sun.awt.image.SunVolatileImage;
 import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceData;
@@ -41,13 +45,32 @@ class SDLVolativeSurfaceManager extends VolatileSurfaceManager {
     @Override
     protected boolean isAccelerationEnabled() {
 
-        return false;
+       return vImg.getTransparency() == Transparency.OPAQUE;
     }
 
     @Override
     protected SurfaceData initAcceleratedSurface() {
-        
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        int width = vImg.getWidth();
+        int height = vImg.getHeight();
+        GraphicsConfiguration gc = vImg.getGraphicsConfig();
+        SunToolkit.awtLock();
+        try {
+
+            long nativeSDLdata = initSurface(width, height);
+            SDLSurfaceData surfaceData =
+                    new SDLSurfaceData(SDLSurfaceData.typeDefault,
+                                       gc.getColorModel(),
+                                       new Rectangle(0, 0, width, height),
+                                       vImg.getGraphicsConfig(), vImg,
+                                       nativeSDLdata);
+
+            return surfaceData;
+
+        } finally {
+            SunToolkit.awtUnlock();
+        }
     }
 
+    private native final long initSurface(int width, int height);
 }
