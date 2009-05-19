@@ -130,8 +130,10 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public FileDialogPeer createFileDialog(FileDialog target)
             throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
+        CacioFileDialogPeer peer = new CacioFileDialogPeer(target,
+                                                   getPlatformWindowFactory());
+        SunToolkit.targetCreatedPeer(target, peer);
+        return peer;
     }
 
     @Override

@@ -59,7 +59,9 @@ class ProxyWindowPeer implements WindowPeer {
     }
 
     public void setModalBlocked(Dialog blocker, boolean blocked) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (target instanceof WindowPeer) {
+            ((WindowPeer) target).setModalBlocked(blocker, blocked);
+        }
     }
 
     public void updateMinimumSize() {
