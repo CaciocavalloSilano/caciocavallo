@@ -1,0 +1,21 @@
+<project name="cacio.test" basedir="../..">
+
+    <property file="${basedir}/user.properties" />
+    <property file="${basedir}/build.properties" />
+
+    <import file="${dir.src.shared}/build.xml" />
+
+    <target name="compile">
+        <mkdir dir="${dir.build.test.classes}" />
+        <javac classpath="${dir.build.test.classes}"
+               bootclasspath="${openjdk}/classes"
+               srcdir="${dir.src.test.classes}"
+               destdir="${dir.build.test.classes}"
+               debug="${compile.debug}"
+        />
+    </target>
+
+    <target name="clean">
+        <!-- TODO: Implement. -->
+    </target>
+</project>

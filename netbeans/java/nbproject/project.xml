@@ -41,7 +41,7 @@
                 <source-folder>
                     <label>Test classes</label>
                     <type>java</type>
-                    <location>${root}/tests</location>
+                    <location>${root}/src/test/classes</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <build-folder>
@@ -52,6 +52,9 @@
                 </build-folder>
                 <build-folder>
                     <location>${root}/build/sdl/classes</location>
+                </build-folder>
+                <build-folder>
+                    <location>${root}/build/test/classes</location>
                 </build-folder>
             </folders>
             <ide-actions>
@@ -83,6 +86,19 @@
                 <action name="debug">
                     <script>nbproject/ide-file-targets.xml</script>
                     <target>debug-nb</target>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-tests</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>${root}/src/test/classes</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
                 </action>
             </ide-actions>
             <export>
@@ -119,7 +135,7 @@
                     </source-folder>
                     <source-folder style="packages">
                         <label>Test classes</label>
-                        <location>${root}/tests</location>
+                        <location>${root}/src/test/classes</location>
                     </source-folder>
                     <source-file>
                         <label>Central build script</label>
@@ -176,8 +192,8 @@
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>${root}/tests</package-root>
-                <unit-tests/>
+                <package-root>${root}/src/test/classes</package-root>
+                <built-to>../../build/test/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
