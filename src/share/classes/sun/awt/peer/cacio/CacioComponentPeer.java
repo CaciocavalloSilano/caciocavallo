@@ -556,7 +556,15 @@ class CacioComponentPeer<AWTComponentType extends Component,
             // different bounds.
             proxy.setBounds(awtComponent.getX(), awtComponent.getY(),
                             awtComponent.getWidth(), awtComponent.getHeight());
-            proxy.validate();
+        }
+        if (swingComponent != null) {
+            // The swing component is laid out relative to the proxy window.
+            // That's why it starts at (0, 0).
+            swingComponent.setBounds(0, 0, width, height);
+            // We need to validate the swing component after resizing,
+            // otherwise complex components (e.g. JScrollPane, etc) are not
+            // laid out correctly.
+            swingComponent.validate();
         }
     }
 
@@ -691,6 +699,10 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     SwingComponentType getSwingComponent() {
         return swingComponent;
+    }
+
+    ProxyWindow getProxyWindow() {
+        return proxy;
     }
 
     @Override
