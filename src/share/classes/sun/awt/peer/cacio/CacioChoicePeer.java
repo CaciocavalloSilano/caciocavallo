@@ -39,13 +39,19 @@ class CacioChoicePeer extends CacioComponentPeer<Choice, JComboBox>
     private class TrampolineListener implements ItemListener {
 
         public void itemStateChanged(ItemEvent e) {
-            ItemListener[] listeners = getAWTComponent().getItemListeners();
-            if (listeners == null) {
+            // It appears that AWT doesn't send DESELECTED events.
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
                 return;
             }
-            for (int i = 0; i < listeners.length; i++) {
-                e.setSource(getAWTComponent());
-                listeners[i].itemStateChanged(e);
+            ItemListener[] listeners = getAWTComponent().getItemListeners();
+            if (listeners != null && listeners.length > 0) {
+                JComboBox cb = getSwingComponent();
+                Choice comp = getAWTComponent();
+                for (int i = 0; i < listeners.length; i++) {
+                    ItemEvent ev = new ItemEvent(comp, e.getID(), cb.getSelectedItem(),
+                                                 e.getStateChange());
+                    listeners[i].itemStateChanged(ev);
+                }
             }
         }
 
