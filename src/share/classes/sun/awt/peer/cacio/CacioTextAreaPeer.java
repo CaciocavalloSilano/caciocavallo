@@ -67,6 +67,7 @@ class CacioTextAreaPeer extends CacioComponentPeer<TextArea, JScrollPane> implem
 
     @Override
     void postInitSwingComponent() {
+        super.postInitSwingComponent();
         setText(getAWTComponent().getText());
     }
 

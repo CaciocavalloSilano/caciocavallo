@@ -28,6 +28,7 @@ package sun.awt.peer.cacio;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -38,12 +39,15 @@ import java.awt.image.BufferedImage;
 import java.awt.peer.WindowPeer;
 
 import javax.swing.JRootPane;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                       implements WindowPeer {
 
     private static boolean decorateWindows = "true".equals(System.getProperty("cacio.decorateWindows", "true"));
+
+    private static final Font defaultFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
     CacioWindowPeer(Window awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
@@ -56,6 +60,22 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         
         platformWindow = pwf.createPlatformToplevelWindow(this);
 
+        Window w = getAWTComponent();
+        if (! w.isForegroundSet()) {
+           // TODO: Use SystemColor here, and load the correct colors in the
+           // Toolkit.
+           w.setForeground(UIManager.getColor("windowText"));
+           // w.setForeground(SystemColor.windowText);
+        }
+       if (! w.isBackgroundSet()) {
+           // TODO: Use SystemColor here, and load the correct colors in the
+           // Toolkit.
+           w.setBackground(UIManager.getColor("window"));
+           // w.setBackground(SystemColor.window);
+       }
+        if (! w.isFontSet()) {
+            w.setFont(defaultFont);
+        }
     }
 
     @Override
@@ -72,6 +92,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     @Override
     void postInitSwingComponent() {
+        super.postInitSwingComponent();
         JRootPane jrootpane = getSwingComponent();
         if (jrootpane != null) {
             int deco = getRootPaneDecorationStyle();

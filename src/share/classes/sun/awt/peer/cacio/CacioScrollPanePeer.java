@@ -65,10 +65,6 @@ class CacioScrollPanePeer extends CacioContainerPeer<ScrollPane, JPanel>
     }
 
     @Override
-    void postInitSwingComponent() {
-    }
-
-    @Override
     public int getHScrollbarHeight() {
         return horizontalSB.getHeight();
     }

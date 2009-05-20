@@ -25,10 +25,15 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Font;
 import java.awt.Insets;
+import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 import javax.swing.JComponent;
+import sun.awt.ComponentAccessor;
 
 abstract class CacioContainerPeer<AWTComponentType extends Component, SwingComponentType extends JComponent>
     extends CacioComponentPeer<AWTComponentType, SwingComponentType>
@@ -85,4 +90,67 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
 
     }
 
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        // The font must propagate through the hierarchy until some component
+        // defines its own font.
+        Container c = (Container) getAWTComponent();
+        int count = c.getComponentCount();
+        for (int i = 0; i < count; i++) {
+            Component comp = c.getComponent(i);
+            if (ComponentAccessor.getFont(comp) == null) {
+                ComponentPeer peer = comp.getPeer();
+                if (peer instanceof CacioComponentPeer) {
+                    CacioComponentPeer ccp = (CacioComponentPeer) peer;
+                    if (ccp.getFont() != font) {
+                        ccp.setFont(font);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setForeground(Color fg) {
+        super.setForeground(fg);
+        // The foreground must propagate through the hierarchy until some
+        // component defines its own font.
+        Container c = (Container) getAWTComponent();
+        int count = c.getComponentCount();
+        for (int i = 0; i < count; i++) {
+            Component comp = c.getComponent(i);
+            if (ComponentAccessor.getForeground(comp) == null) {
+                ComponentPeer peer = comp.getPeer();
+                if (peer instanceof CacioComponentPeer) {
+                    CacioComponentPeer ccp = (CacioComponentPeer) peer;
+                    if (ccp.getForeground() != fg) {
+                        ccp.setForeground(fg);
+                    }
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        // The background must propagate through the hierarchy until some
+        // component defines its own background.
+        Container c = (Container) getAWTComponent();
+        int count = c.getComponentCount();
+        for (int i = 0; i < count; i++) {
+            Component comp = c.getComponent(i);
+            if (ComponentAccessor.getBackground(comp) == null) {
+                ComponentPeer peer = comp.getPeer();
+                if (peer instanceof CacioComponentPeer) {
+                    CacioComponentPeer ccp = (CacioComponentPeer) peer;
+                    if (ccp.getBackground() != bg) {
+                        ccp.setBackground(bg);
+                    }
+                }
+            }
+        }
+    }
 }
