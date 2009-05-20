@@ -68,7 +68,7 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JPanel>
             if (l.length == 0)
                 return;
             ItemEvent ev = new ItemEvent(awtCheckbox,
-                    ItemEvent.ITEM_STATE_CHANGED, awtCheckbox, event
+                    ItemEvent.ITEM_STATE_CHANGED, awtCheckbox.getLabel(), event
                             .getStateChange());
             for (int i = 0; i < l.length; ++i)
                 l[i].itemStateChanged(ev);
