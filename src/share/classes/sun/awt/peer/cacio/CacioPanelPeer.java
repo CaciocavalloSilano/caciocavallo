@@ -21,6 +21,7 @@ class CacioPanelPeer extends CacioContainerPeer<Panel, JPanel>
     @Override
     void init(PlatformWindowFactory pwf) {
         super.init(pwf);
+        /**
         Panel awtComponent = getAWTComponent();
         Color fg = UIManager.getColor("Panel.foreground");
         awtComponent.setForeground(fg);
@@ -28,6 +29,7 @@ class CacioPanelPeer extends CacioContainerPeer<Panel, JPanel>
         awtComponent.setBackground(bg);
         Font font = UIManager.getFont("Panel.font");
         awtComponent.setFont(font);
+         * */
     }
 
     @Override

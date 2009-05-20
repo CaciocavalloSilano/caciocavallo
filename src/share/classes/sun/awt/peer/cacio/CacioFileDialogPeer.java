@@ -63,6 +63,7 @@ class CacioFileDialogPeer extends CacioDialogPeer
 
     @Override
     void postInitSwingComponent() {
+        super.postInitSwingComponent();
         fileChooser = new JFileChooser();
         getSwingComponent().getContentPane().add(fileChooser);
         getSwingComponent().layout();

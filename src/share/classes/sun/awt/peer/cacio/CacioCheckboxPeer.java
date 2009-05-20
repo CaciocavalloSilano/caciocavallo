@@ -42,6 +42,7 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JPanel>
 
     @Override
     void postInitSwingComponent() {
+        super.postInitSwingComponent();
         toggleButton.addItemListener(new SwingCheckboxListener());
 
         Checkbox checkbox = getAWTComponent();
@@ -98,5 +99,9 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JPanel>
 
     public void setState(boolean state) {
         toggleButton.setSelected(state);
+    }
+
+    public void setEnabled(boolean e) {
+        toggleButton.setEnabled(e);
     }
 }

@@ -55,15 +55,13 @@ import java.awt.image.VolatileImage;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
-import java.lang.reflect.Field;
-
 import javax.swing.JComponent;
 
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
+import sun.awt.ComponentAccessor;
 import sun.awt.PaintEventDispatcher;
-import sun.awt.PeerEvent;
 
 import sun.font.FontDesignMetrics;
 
@@ -129,27 +127,11 @@ class CacioComponentPeer<AWTComponentType extends Component,
         awtComponent = awtC;
         init(pwf);
         swingComponent = initSwingComponent();
-        privatePostInitSwingComponent();
         initProxy();
         postInitSwingComponent();
         // Initialize basic properties.
         setBounds(awtC.getX(), awtC.getY(), awtC.getWidth(), awtC.getHeight(),
                   ComponentPeer.SET_SIZE);
-    }
-
-    /**
-     * Sets up the Swing component. This sets some basic properties that
-     * are shared by all peers. Subclasses would override
-     * {@link #postInitSwingComponent()} to do some initialization on their
-     * own.
-     */
-    private void privatePostInitSwingComponent() {
-        // All AWT widgets are expected to be 100% opaque, so we force this
-        // on the swing components.
-        swingComponent.setOpaque(true);
-        setBackground(awtComponent.getBackground());
-        setForeground(awtComponent.getForeground());
-        setFont(awtComponent.getFont());
     }
 
     /**
@@ -191,7 +173,25 @@ class CacioComponentPeer<AWTComponentType extends Component,
     }
 
     void postInitSwingComponent() {
-        // Nothing to do here. Subclasses override this.
+        // All AWT widgets are expected to be 100% opaque, so we force this
+        // on the swing components.
+        swingComponent.setOpaque(true);
+
+        // We use the inherited properties here, not the real one.
+        Color bg = awtComponent.getBackground();
+        if (bg != null) {
+            setBackground(bg);
+        }
+        Color fg = awtComponent.getForeground();
+        if (fg != null) {
+            setForeground(fg);
+        }
+        Font font = awtComponent.getFont();
+        if (font != null) {
+            setFont(font);
+        }
+        boolean enabled = ComponentAccessor.isEnabledImpl(awtComponent);
+        setEnabled(enabled);
     }
 
     SwingComponentType initSwingComponent() {
@@ -528,23 +528,33 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     public void setBackground(Color c) {
 
-        platformWindow.setBackground(c);
         swingComponent.setBackground(c);
 
     }
 
+    Color getBackground() {
+        return swingComponent.getBackground();
+    }
+
+    @Override
     public void setFont(Font f) {
 
-        platformWindow.setFont(f);
         swingComponent.setFont(f);
 
     }
 
+    Font getFont() {
+        return swingComponent.getFont();
+    }
+
     public void setForeground(Color c) {
 
-        platformWindow.setForeground(c);
         swingComponent.setForeground(c);
 
+    }
+
+    Color getForeground() {
+        return swingComponent.getForeground();
     }
 
     private void setBoundsImpl(int x, int y, int width, int height, int op) {

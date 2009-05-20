@@ -32,6 +32,7 @@ final class CacioListPeer extends CacioComponentPeer<List, JScrollPane> implemen
 
     @Override
     void postInitSwingComponent() {
+        super.postInitSwingComponent();
         // Add initial items.
         List theList = getAWTComponent();
         int itemCount = theList.getItemCount();

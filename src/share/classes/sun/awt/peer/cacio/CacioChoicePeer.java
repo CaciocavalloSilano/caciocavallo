@@ -70,6 +70,7 @@ class CacioChoicePeer extends CacioComponentPeer<Choice, JComboBox>
 
     @Override
     void postInitSwingComponent() {
+        super.postInitSwingComponent();
         // Put all pre-existing items of the AWT Choice into the JComboBox.
         Choice c = getAWTComponent();
         int size = c.getItemCount();
