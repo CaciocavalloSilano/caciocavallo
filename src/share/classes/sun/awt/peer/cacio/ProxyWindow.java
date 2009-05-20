@@ -25,10 +25,14 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.AWTEvent;
+import java.awt.Container;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import javax.swing.JComponent;
 
 /**
@@ -69,8 +73,8 @@ public class ProxyWindow extends Window {
                                        e.getXOnScreen(), e.getYOnScreen(),
                                        e.getClickCount(), e.isPopupTrigger(),
                                        e.getButton());
-        dispatchEvent(e);
-        // TODO: maybe processMouseEvent(e); ??
+        // IMPORTANT: See comment on the helper method!
+        doLightweightDispatching(e);
     }
 
     void handleMouseMotionEvent(MouseEvent e) {
@@ -79,8 +83,50 @@ public class ProxyWindow extends Window {
                                        e.getXOnScreen(), e.getYOnScreen(),
                                        e.getClickCount(), e.isPopupTrigger(),
                                        e.getButton());
-        dispatchEvent(e);
-        // TODO: maybe processMouseEvent(e); ??
+        // IMPORTANT: See comment on the helper method!
+        doLightweightDispatching(e);
     }
 
+    private static Field dispatcherField;
+    private static Method dispatchMethod;
+
+    private static void initReflection() {
+        try {
+            dispatcherField = Container.class.getDeclaredField("dispatcher");
+            dispatcherField.setAccessible(true);
+            Class dispatcherCls = Class.forName("java.awt.LightweightDispatcher");
+            dispatchMethod = dispatcherCls.getDeclaredMethod("dispatchEvent", AWTEvent.class);
+            dispatchMethod.setAccessible(true);
+        } catch (Exception ex) {
+            InternalError err = new InternalError();
+            err.initCause(ex);
+            throw err;
+        }
+    }
+
+    /**
+     * Performs lightweight dispatching for the specified event on this window.
+     * This only calls the lightweight dispatcher. We cannot simply
+     * call dispatchEvent() because that would also send the event to the
+     * Toolkit dispatching mechanism (AWTEventListener, etc), which has ugly
+     * side effects, like popups closing too early.
+     *
+     * @param e the event to be dispatched
+     */
+    private void doLightweightDispatching(AWTEvent e) {
+        if (dispatcherField == null) {
+            initReflection();
+        }
+        try {
+            Object dispatcher = dispatcherField.get(this);
+            if (dispatcher != null) {
+                dispatchMethod.invoke(dispatcher, e);
+            }
+        } catch (Exception ex) {
+            InternalError err = new InternalError();
+            err.initCause(ex);
+            throw err;
+        }
+
+    }
 }
