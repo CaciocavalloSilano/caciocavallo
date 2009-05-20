@@ -62,7 +62,12 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JPanel>
          *            the action event
          */
         public void itemStateChanged(ItemEvent event) {
+            // Radiobuttons don't fire DESELECTED events...
             Checkbox awtCheckbox = getAWTComponent();
+            if (event.getStateChange() == ItemEvent.DESELECTED
+                && awtCheckbox.getCheckboxGroup() != null) {
+                return;
+            }
             awtCheckbox.setState(event.getStateChange() == ItemEvent.SELECTED);
             ItemListener[] l = awtCheckbox.getItemListeners();
             if (l.length == 0)
