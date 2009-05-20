@@ -78,4 +78,10 @@ public class X11GraphicsEnvironment extends SunGraphicsEnvironment {
         X11GraphicsEnvironment xge = (X11GraphicsEnvironment) ge;
         return xge.display;
     }
+
+    // Workaround so to not run into Segfault in OpenJDK X11 font code. Should
+    // be solved by the new FontManager that is in the works...
+    protected String getPlatformFontPath(boolean noType1Font) {
+        return "";
+    }
 }
