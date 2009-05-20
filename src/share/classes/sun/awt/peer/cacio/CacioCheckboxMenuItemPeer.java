@@ -27,11 +27,29 @@ package sun.awt.peer.cacio;
 
 import java.awt.CheckboxMenuItem;
 import java.awt.MenuItem;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.peer.CheckboxMenuItemPeer;
 import javax.swing.JCheckBoxMenuItem;
 
 class CacioCheckboxMenuItemPeer extends CacioMenuItemPeer
                                 implements CheckboxMenuItemPeer {
+
+    private class ProxyListener implements ItemListener {
+
+        public void itemStateChanged(ItemEvent e) {
+            CheckboxMenuItem i = ((CheckboxMenuItem) getAWTMenu());
+            ItemListener[] l = i.getItemListeners();
+            if (l != null && l.length > 0) {
+                for (int idx = 0; idx < l.length; idx++) {
+                    ItemEvent ev = new ItemEvent(i, e.getID(), i,
+                                                 e.getStateChange());
+                    l[idx].itemStateChanged(ev);
+                }
+            }
+        }
+
+    }
 
     CacioCheckboxMenuItemPeer(MenuItem i) {
         super(i, new JCheckBoxMenuItem());
@@ -41,7 +59,16 @@ class CacioCheckboxMenuItemPeer extends CacioMenuItemPeer
     void postInitSwingComponent() {
         super.postInitSwingComponent();
         setState(((CheckboxMenuItem) getAWTMenu()).getState());
+        ProxyListener pl = new ProxyListener();
+        getSwingMenu().addItemListener(pl);
     }
+
+    @Override
+    boolean needActionProxy() {
+        return false;
+    }
+
+
     public void setState(boolean t) {
         ((JCheckBoxMenuItem) getSwingMenu()).setState(t);
     }

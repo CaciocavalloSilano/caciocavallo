@@ -49,6 +49,11 @@ class CacioMenuPeer extends CacioMenuItemPeer
         }
     }
 
+    @Override
+    boolean needActionProxy() {
+        return false;
+    }
+
     public void addSeparator() {
         // Seems like this peer method is unused.
         throw new UnsupportedOperationException("Not supported yet.");

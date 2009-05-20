@@ -26,11 +26,29 @@
 package sun.awt.peer.cacio;
 
 import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.peer.MenuItemPeer;
 import javax.swing.JMenuItem;
 
 class CacioMenuItemPeer extends CacioMenuComponentPeer<MenuItem,JMenuItem>
                         implements MenuItemPeer {
+
+    private class ProxyListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            ActionListener[] l = getAWTMenu().getActionListeners();
+            if (l != null && l.length > 0) {
+                MenuItem i = getAWTMenu();
+                for (int idx = 0; idx < l.length; idx++) {
+                    ActionEvent ev = new ActionEvent(i, idx,
+                                                     e.getActionCommand());
+                    l[idx].actionPerformed(ev);
+                }
+            }
+        }
+
+    }
 
     CacioMenuItemPeer(MenuItem i) {
         this(i, new JMenuItem());
@@ -44,6 +62,13 @@ class CacioMenuItemPeer extends CacioMenuComponentPeer<MenuItem,JMenuItem>
     void postInitSwingComponent() {
         setLabel(getAWTMenu().getLabel());
         setEnabled(getAWTMenu().isEnabled());
+        if (needActionProxy()) {
+            getSwingMenu().addActionListener(new ProxyListener());
+        }
+    }
+
+    boolean needActionProxy() {
+        return true;
     }
 
     public void setLabel(String label) {
