@@ -28,8 +28,10 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
+import java.awt.image.DirectColorModel;
 import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 
 /**
@@ -62,16 +64,19 @@ class SDLGraphicsConfiguration extends GraphicsConfiguration {
 
     @Override
     public ColorModel getColorModel() {
-        
-        /* TODO: implement properly */
-        return ColorModel.getRGBdefault();
+
+        return new DirectColorModel(32, 0x00FF0000, 0x0000FF00,
+                                    0x000000FF);
     }
 
     @Override
     public ColorModel getColorModel(int transparency) {
-
-        /* TODO: implement properly */
-        return ColorModel.getRGBdefault();
+    
+        if (transparency == Transparency.OPAQUE) {
+            return getColorModel();
+        } else {
+            return ColorModel.getRGBdefault();
+        }
     }
 
     @Override
