@@ -27,6 +27,7 @@ package net.java.openjdk.awt.peer.sdl;
 import java.awt.AWTException;
 import java.awt.Desktop;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.HeadlessException;
 import java.awt.PrintJob;
@@ -119,12 +120,18 @@ public class SDLToolkit extends CacioToolkit {
 
     @Override
     protected int getScreenWidth() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        GraphicsConfiguration config =
+                SDLGraphicsConfiguration.getDefaultConfiguration();
+        return config.getBounds().width;
     }
 
     @Override
     protected int getScreenHeight() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        GraphicsConfiguration config =
+                SDLGraphicsConfiguration.getDefaultConfiguration();
+        return config.getBounds().height;
     }
 
     @Override
