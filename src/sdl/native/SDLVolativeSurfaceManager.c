@@ -34,25 +34,19 @@ JNIEXPORT jlong JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceMan
   (JNIEnv *env, jobject thiz __attribute__((unused)), jint width, jint height)
 {
     SDL_Surface *surface = NULL;
-    Uint32 rmask = 0;
-    Uint32 gmask = 0;
-    Uint32 bmask = 0;
+
+    /*
+     * FIXME: sync these with the ColorModel
+     * returned by SDLGraphicsEnvironment
+     */
+    Uint32 rmask = 0x00FF0000;
+    Uint32 gmask = 0x0000FF00;
+    Uint32 bmask = 0x000000FF;
     Uint32 amask = 0;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0; /* 0x000000ff; */
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0; /* 0xff000000; */
-#endif
-
+    
     /* TODO: pass the depth we really want for the image. */
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCCOLORKEY,
+    surface = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY |
+                                   SDL_DOUBLEBUF,
                                    width, height, 32,
                                    rmask, gmask, bmask, amask);
     if(surface == NULL) {
