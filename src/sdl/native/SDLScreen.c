@@ -110,12 +110,29 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLScreen_nativeGetEve
         
         case SDL_MOUSEMOTION:
         {
-            (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
-                                   java_awt_event_MouseEvent_MOUSE_MOVED);
-            (*env)->CallVoidMethod(env, eventData, eventDataSetXMID,
+            SDL_PumpEvents();
+            jboolean isDragging = SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1);
+
+            if (isDragging) {
+
+                (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
+                                   java_awt_event_MouseEvent_MOUSE_DRAGGED);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetXMID,
                                    (jint) nextEvent.motion.x);
-            (*env)->CallVoidMethod(env, eventData, eventDataSetYMID,
+                (*env)->CallVoidMethod(env, eventData, eventDataSetYMID,
                                    (jint) nextEvent.motion.y);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetModifiersMID,
+                                   java_awt_event_MouseEvent_BUTTON1_DOWN_MASK);
+            } else {
+
+                (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
+                                   java_awt_event_MouseEvent_MOUSE_MOVED);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetXMID,
+                                   (jint) nextEvent.motion.x);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetYMID,
+                                   (jint) nextEvent.motion.y);
+            }
+
             break;
         }
 
