@@ -51,6 +51,7 @@
                net.java.openjdk.awt.peer.sdl.SDLScreen,
                net.java.openjdk.awt.peer.sdl.SDLSurfaceData,
                net.java.openjdk.awt.peer.sdl.SDLVolativeSurfaceManager,
+               net.java.openjdk.awt.peer.sdl.SDLBlit,
                java.awt.event.MouseEvent" />
     </target>
 
