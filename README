@@ -7,7 +7,7 @@ Introduction
 Caciocavallo - Portable GUI backends is one of the finalists of the
 OpenJDK Innovators Challenge. As of March 17, 2008 (well, more or
 less), Caciocavallo was selected as a finalist to the OpenJDK
-challenge, so we have a cool new website with nothing in it :)
+challenge, so we even have a cool new website with nothing in it :)
 
 http://openjdk.java.net/projects/caciocavallo/
 
@@ -15,87 +15,122 @@ Here is the mail with the original proposal:
 
 http://mail.openjdk.java.net/pipermail/challenge-discuss/2008-March/000082.html
 
+The project classified Bronze at the Challenge, giving us great honours and
+proud :)
+
+http://www.reuters.com/article/pressRelease/idUS134139+29-Sep-2008+BW20080929
+
+You can find the interview with the original developes on this link:
+
+http://mediacast.sun.com/users/robilad/media/daliboropenJDKwinners.ogg
+
+The interview was conducted by a nice guy who's name is known by everyone in
+the Free Java community, Dalibor Topic (robilad on IRC). Visit this link
+for some other cool interviews:
+
+http://robilad.livejournal.com/37607.html
+
+A short presentation about Cacio was shoot at FOSDEM 2009 by Andrew John Hughes.
+You can find it here:
+
+http://www.jroller.com/neugens/entry/cacio_presentation_at_fosdem_2009
+
+Good resource of information are the authors' blogs:
+
+* http://kennke.org/blog/
+* http://www.jroller.com/neugens
+* http://weblogs.java.net/blog/thetan/
+
+Checkout the code
+-----------------
+
+Ok, if you are reading this README chances are that you already got the sources
+so you can skip this section.
+
+In case you found this README somewhere else, the best way to get access
+to the sources is to clone the main repository:
+
+http://hg.openjdk.java.net/caciocavallo/ng/
+
+Cacio used to have two repositories, so called internal (also called NG) and
+external, as well as a number of patches we needed in order to make the project
+work with OpenJDK; luckily these patches are all in the main OpenJDK
+source tree now. All the repositories are not mantained anymore and are there
+only for historical reasons (and because of the Challenge requirement,
+of course).
+
+Caciocavallo is no different than any other project in the OpenJDK forest, and
+used Mercurial to manage it's sources. To get a fresh tree of sources just do:
+
+$ hg clone http://hg.openjdk.java.net/caciocavallo/ng/ caciocavallo
+
+If you don't specify the target directory it will create a default one called
+ng, which is not really nice.
+
+That's all for now, time to move on to...
+
 Build
 -----
 
 To build project Caciocavallo you need first a recent build of OpenJDK
 or IcedTea. Caciocavallo requires the use of Sun internal classes, so
-chances are that it will not even compile. The latest version known to
-work is TIP b7474b739d13. You can clone this tip from the OpenJDK
-website and then apply the needed patches. The patches are not
-included in this source, so you need to get them by cloning this repository:
+chances are that it will not even compile. But as we don't expect many
+changes in the AWT and Java2D code we rely on, you should be able to just
+build and run Cacio without pain.
 
-http://hg.openjdk.java.net/caciocavallo/caciocavallo/
+You can clone the latest code from the OpenJDK website. As of this writing,
+one patch is still required. This is being discussed here:
 
-We maintain a branch of the OpenJDK mercurial forest with patches already
-applied here:
+https://bugs.openjdk.java.net/show_bug.cgi?id=100052
 
-http://kennke.org/~hg/openjdk-tip-b7474b739d13-caciocavallo-branch/
+This patch is needed in order to run the native library code for the
+Caciocavallo backends.
 
 For Caciocavallo, the ant build included should work on Eclipse or
-NetBeans as well, and is provided for your hacking pleasure. We
-maintain it, though we really think that real hackers use butterflies
-(http://xkcd.com/378/)...  Nevertheless, if you don't want to wait for
-a butterfly to come (and if you are in Germany, you could wait a very
-long time...) the ant script should just work.
+NetBeans and on the command line as well.
 
-So long... to compile you can just type "ant jar" on the command line.
+There is a build.properties file that needs tweaking with some paths, but this
+file is tracked by Mercurial, so changing it will call for endless merge or
+merge conflicts. As an alternative, you can create and edit user.properties in
+the root directory of the project. This is handy because it's not tracked by
+Mercurial.
 
-There is a build.properties file that needs tweaking with the same
-path, where you need to pass a couple of options. As an alternative,
-you can create and edit user.properties in the root directory of the
-project. This is handy because it's not tracked by mercurial, so you
-don't need to continually merge it if you frequently try to sync with our
-tree.
+Some of the interesting options are:
 
-This is what is needed by ant:
+openjdk=/path/to/openjdk/build/
+openjdk.src=/path/to/openjdk/sources
+openjdk.build.generated.headers=/path/to/openjdk/generated/includes/
 
-escher=../escher/dist/escher-0.3.jar
-openjdk=../openjdk/build/linux-i586-debug/
+My file looks like:
+
+openjdk=/home/neugens/work_space/netbeans/openjdk/build/linux-i586-debug
+openjdk.src=/home/neugens/work_space/netbeans/openjdk
+openjdk.build.generated.headers=/home/neugens/work_space/netbeans/openjdk/build/linux-i586-debug/tmp/
 
 Just adjust with the correct paths on your configuration.
 
-Escher is used to connect to the XServer.  We are trying hard to make
-Escher and Caciocavallo in sync, so that you can simply grab the
-latest sources from here:
+If you are not running under Linux, or you distribution uses some non
+conventional paths (or for whatever other reason), you may need to change
+this definition too:
 
-http://escher.sourceforge.net/hg/escher-trunk (just clone)
+sdl.include=/usr/include/SDL
 
-For the sake of the project, we maintain a branch of escher too:
+This is needed only if you want to compile the libSDL backend.
 
-http://kennke.org/~hg/escher-trunk/
+To compile the native code, you need to provide ant with access to cpptasks:
 
-Again, tweak the build.properties to point to the correct position of
-the jar files.
+http://ant-contrib.sourceforge.net/cpptasks/index.html
+
+Something like:
+
+CLASSPATH=/home/neugens/work_space/tools/cpptasks.jar ant compile
+
+should do the trick.
 
 Test
 ----
 
-This is an small script that can be used to test the project:
-
---- cut ---
-#!/bin/sh
-# testescher.sh
-OPENJDK_DIR=/path/to/your/openjdk/build/linux-i586/j2sdk-image/
-BOOTCLASSPATH=/path/to/escher.jar:/path/to/caciocavallo/dist/echer-peer.jar
-TOOLKIT=gnu.java.awt.peer.x.XToolkit
-GRAPHICSENV=gnu.java.awt.peer.x.XGraphicsEnvironment
-FONT_MANAGER=gnu.java.awt.peer.x.EscherFontManager
-
-# change to suit your needs, we like to use the classpath code
-CLASSPATH=/opt/classpath/examples/examples.zip
-MAIN=gnu.classpath.examples.swing.Demo
-
-$OPENJDK_DIR/bin/java -Xbootclasspath/a:$BOOTCLASSPATH -Dswing.metalTheme=steel -Dawt.toolkit=$TOOLKIT -Djava.awt.graphicsenv=$GRAPHICSENV -Dsun.font.fontmanager=$FONT_MANAGER -cp $CLASSPATH $MAIN
---- cut ---
-
-if you have your X server setted up to prevent TCP connections (a sane
-thing!) you will get a Connection Refused Exception, at least until we
-finish to port the Unix Domain Socket implementation from Classpath,
-so you may need Xephyr or some other nested XServer.
-
-You may also need issue an xhost + 127.0.0.1 to address a random bug
-in escher.
+[TODO]
 
 It's pretty much everything for now, but stay tuned for other cool
 stuff :)
