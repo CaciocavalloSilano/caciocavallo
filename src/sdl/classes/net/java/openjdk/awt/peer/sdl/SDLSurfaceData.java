@@ -44,6 +44,7 @@ class SDLSurfaceData extends SurfaceData {
 
     static {
         initIDs();
+        SDLBlit.register();
     }
 
     private Rectangle bounds;
