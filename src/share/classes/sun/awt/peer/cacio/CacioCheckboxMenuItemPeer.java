@@ -38,6 +38,10 @@ class CacioCheckboxMenuItemPeer extends CacioMenuItemPeer
     private class ProxyListener implements ItemListener {
 
         public void itemStateChanged(ItemEvent e) {
+            // Update the state of the AWT menu item.
+            ((CheckboxMenuItem) getAWTMenu())
+                    .setState(e.getStateChange() == ItemEvent.SELECTED);
+            // Notify all the AWT listeners.
             CheckboxMenuItem i = ((CheckboxMenuItem) getAWTMenu());
             ItemListener[] l = i.getItemListeners();
             if (l != null && l.length > 0) {
