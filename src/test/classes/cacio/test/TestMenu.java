@@ -41,11 +41,12 @@ public class TestMenu {
         Frame f = new Frame();
         MenuBar mb = new MenuBar();
         Menu m = new Menu("Menu");
-        CheckboxMenuItem i = new CheckboxMenuItem("checkbox item");
+        final CheckboxMenuItem i = new CheckboxMenuItem("checkbox item");
         i.addItemListener(new ItemListener() {
 
             public void itemStateChanged(ItemEvent e) {
                 System.err.println("itemStateChanged: " + e);
+                System.err.println("checkbox state: " + i.getState());
             }
 
         });
