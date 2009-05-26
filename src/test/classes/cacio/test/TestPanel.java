@@ -42,6 +42,17 @@ public class TestPanel {
         p.setForeground(Color.RED);
         p.setBackground(Color.GREEN);
         p.setEnabled(false);
+        System.err.println("panel enabled: " + p.isEnabled());
+        System.err.println("button enabled: " + b.isEnabled());
+        b.setEnabled(true);
+        System.err.println("panel enabled: " + p.isEnabled());
+        System.err.println("button enabled: " + b.isEnabled());
+        b.setEnabled(false);
+        System.err.println("panel enabled: " + p.isEnabled());
+        System.err.println("button enabled: " + b.isEnabled());
+        p.setEnabled(true);
+        System.err.println("panel enabled: " + p.isEnabled());
+        System.err.println("button enabled: " + b.isEnabled());
         p.add(b);
         f.add(p);
         f.setSize(100, 100);
