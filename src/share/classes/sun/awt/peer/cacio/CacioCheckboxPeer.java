@@ -101,7 +101,9 @@ class CacioCheckboxPeer extends CacioComponentPeer<Checkbox, JPanel>
         toggleButton.setSelected(state);
     }
 
-    public void setEnabled(boolean e) {
+    @Override
+    void setEnabledImpl(boolean e) {
+        super.setEnabledImpl(e);
         toggleButton.setEnabled(e);
     }
 }
