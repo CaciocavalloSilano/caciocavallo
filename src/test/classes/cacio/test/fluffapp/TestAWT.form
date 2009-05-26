@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.2" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.FrameFormInfo">
+  <NonVisualComponents>
+    <Component class="java.awt.Label" name="label8">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="label6"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.Label" name="label9">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="label7"/>
+      </Properties>
+    </Component>
+    <Menu class="java.awt.MenuBar" name="menuBar">
+      <SubComponents>
+        <Menu class="java.awt.Menu" name="fileMenu">
+          <Properties>
+            <Property name="label" type="java.lang.String" value="File"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fileMenuActionPerformed"/>
+          </Events>
+          <SubComponents>
+            <MenuItem class="java.awt.MenuItem" name="exitMenuItem">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="Exit"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="java.awt.Menu" name="editMenu">
+          <Properties>
+            <Property name="label" type="java.lang.String" value="Edit"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="java.awt.CheckboxMenuItem" name="enableMenuItem">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="Enable"/>
+              </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="enableMenuItemItemStateChanged"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="enableMenuItemActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="enableMenuItem.setState(true);"/>
+              </AuxValues>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+      </SubComponents>
+    </Menu>
+  </NonVisualComponents>
+  <Properties>
+    <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+      <Color id="Cursore predefinito"/>
+    </Property>
+    <Property name="resizable" type="boolean" value="false"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="menuBar" type="java.lang.String" value="menuBar"/>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="exitForm"/>
+  </Events>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,-56,0,0,1,-111"/>
+  </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="java.awt.Panel" name="topPane">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="North"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+      <SubComponents>
+        <Component class="java.awt.Button" name="textAreaButton">
+          <Properties>
+            <Property name="label" type="java.lang.String" value="Text Area"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textAreaButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="java.awt.Button" name="choiceButton">
+          <Properties>
+            <Property name="label" type="java.lang.String" value="Choice Boxes"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="choiceButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="java.awt.Button" name="widgetsButton">
+          <Properties>
+            <Property name="label" type="java.lang.String" value="Widgets"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="java.awt.Panel" name="bottomPane">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignCardLayout"/>
+      <SubComponents>
+        <Container class="java.awt.Panel" name="textAreaPane">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="card2"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="textArea" pref="381" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="textArea" pref="639" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="java.awt.TextArea" name="textArea">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&quot;Canto quinto, nel quale mostra del secondo cerchio de l&apos;inferno,&#xa;e tratta de la pena del vizio de la lussuria ne la persona&#xa;di pi&#xf9; famosi gentili uomini.&quot;&#xa;&#xa; &#xa;Cos&#xec; discesi del cerchio primaio&#xa;gi&#xf9; nel secondo, che men loco cinghia&#xa;e tanto pi&#xf9; dolor, che punge a guaio.&#xa;&#xa;Stavvi Min&#xf2;s orribilmente, e ringhia:&#xa;essamina le colpe ne l&apos;intrata;&#xa;giudica e manda secondo ch&apos;avvinghia.&#xa;&#xa;Dico che quando l&apos;anima mal nata&#xa;li vien dinanzi, tutta si confessa;&#xa;e quel conoscitor de le peccata&#xa;&#xa;vede qual loco d&apos;inferno &#xe8; da essa;&#xa;cignesi con la coda tante volte&#xa;quantunque gradi vuol che gi&#xf9; sia messa.&#xa;&#xa;Sempre dinanzi a lui ne stanno molte:&#xa;vanno a vicenda ciascuna al giudizio,&#xa;dicono e odono e poi son gi&#xf9; volte.&#xa;&#xa;&quot;O tu che vieni al doloroso ospizio&quot;,&#xa;disse Min&#xf2;s a me quando mi vide,&#xa;lasciando l&apos;atto di cotanto offizio,&#xa;&#xa;&quot;guarda com&apos;entri e di cui tu ti fide;&#xa;non t&apos;inganni l&apos;ampiezza de l&apos;intrare!&quot;.&#xa;E &apos;l duca mio a lui: &quot;Perch&#xe9; pur gride?&#xa;&#xa;Non impedir lo suo fatale andare:&#xa;vuolsi cos&#xec; col&#xe0; dove si puote&#xa;ci&#xf2; che si vuole, e pi&#xf9; non dimandare&quot;.&#xa;&#xa;Or incomincian le dolenti note&#xa;a farmisi sentire; or son venuto&#xa;l&#xe0; dove molto pianto mi percuote.&#xa;&#xa;Io venni in loco d&apos;ogne luce muto,&#xa;che mugghia come fa mar per tempesta,&#xa;se da contrari venti &#xe8; combattuto.&#xa;&#xa;La bufera infernal, che mai non resta,&#xa;mena li spirti con la sua rapina;&#xa;voltando e percotendo li molesta.&#xa;&#xa;Quando giungon davanti a la ruina,&#xa;quivi le strida, il compianto, il lamento;&#xa;bestemmian quivi la virt&#xf9; divina.&#xa;&#xa;Intesi ch&apos;a cos&#xec; fatto tormento&#xa;enno dannati i peccator carnali,&#xa;che la ragion sommettono al talento.&#xa;&#xa;E come li stornei ne portan l&apos;ali&#xa;nel freddo tempo, a schiera larga e piena,&#xa;cos&#xec; quel fiato li spiriti mali&#xa;&#xa;di qua, di l&#xe0;, di gi&#xf9;, di s&#xf9; li mena;&#xa;nulla speranza li conforta mai,&#xa;non che di posa, ma di minor pena.&#xa;&#xa;E come i gru van cantando lor lai,&#xa;faccendo in aere di s&#xe9; lunga riga,&#xa;cos&#xec; vid&apos;io venir, traendo guai,&#xa;&#xa;ombre portate da la detta briga;&#xa;per ch&apos;i&apos; dissi: &quot;Maestro, chi son quelle&#xa;genti che l&apos;aura nera s&#xec; gastiga?&quot;.&#xa;&#xa;&quot;La prima di color di cui novelle&#xa;tu vuo&apos; saper&quot;, mi disse quelli allotta,&#xa;&quot;fu imperadrice di molte favelle.&#xa;&#xa;A vizio di lussuria fu s&#xec; rotta,&#xa;che libito f&#xe9; licito in sua legge,&#xa;per t&#xf2;rre il biasmo in che era condotta.&#xa;&#xa;Ell&apos;&#xe8; Semiram&#xec;s, di cui si legge&#xa;che succedette a Nino e fu sua sposa:&#xa;tenne la terra che &apos;l Soldan corregge.&#xa;&#xa;L&apos;altra &#xe8; colei che s&apos;ancise amorosa,&#xa;e ruppe fede al cener di Sicheo;&#xa;poi &#xe8; Cleopatr&#xe0;s lussur&#xef;osa.&#xa;&#xa;Elena vedi, per cui tanto reo&#xa;tempo si volse, e vedi &apos;l grande Achille,&#xa;che con amore al fine combatteo.&#xa;&#xa;Vedi Par&#xec;s, Tristano&quot;; e pi&#xf9; di mille&#xa;ombre mostrommi e nominommi a dito,&#xa;ch&apos;amor di nostra vita dipartille.&#xa;&#xa;Poscia ch&apos;io ebbi &apos;l mio dottore udito&#xa;nomar le donne antiche e &apos; cavalieri,&#xa;piet&#xe0; mi giunse, e fui quasi smarrito.&#xa;&#xa;I&apos; cominciai: &quot;Poeta, volontieri&#xa;parlerei a quei due che &apos;nsieme vanno,&#xa;e paion s&#xec; al vento esser leggeri&quot;.&#xa;&#xa;Ed elli a me: &quot;Vedrai quando saranno&#xa;pi&#xf9; presso a noi; e tu allor li priega&#xa;per quello amor che i mena, ed ei verranno&quot;.&#xa;&#xa;S&#xec; tosto come il vento a noi li piega,&#xa;mossi la voce: &quot;O anime affannate,&#xa;venite a noi parlar, s&apos;altri nol niega!&quot;.&#xa;&#xa;Quali colombe dal disio chiamate&#xa;con l&apos;ali alzate e ferme al dolce nido&#xa;vegnon per l&apos;aere, dal voler portate;&#xa;&#xa;cotali uscir de la schiera ov&apos;&#xe8; Dido,&#xa;a noi venendo per l&apos;aere maligno,&#xa;s&#xec; forte fu l&apos;affett&#xfc;oso grido.&#xa;&#xa;&quot;O animal graz&#xef;oso e benigno&#xa;che visitando vai per l&apos;aere perso&#xa;noi che tignemmo il mondo di sanguigno,&#xa;&#xa;se fosse amico il re de l&apos;universo,&#xa;noi pregheremmo lui de la tua pace,&#xa;poi c&apos; hai piet&#xe0; del nostro mal perverso.&#xa;&#xa;Di quel che udire e che parlar vi piace,&#xa;noi udiremo e parleremo a voi,&#xa;mentre che &apos;l vento, come fa, ci tace.&#xa;&#xa;Siede la terra dove nata fui&#xa;su la marina dove &apos;l Po discende&#xa;per aver pace co&apos; seguaci sui.&#xa;&#xa;Amor, ch&apos;al cor gentil ratto s&apos;apprende,&#xa;prese costui de la bella persona&#xa;che mi fu tolta; e &apos;l modo ancor m&apos;offende.&#xa;&#xa;Amor, ch&apos;a nullo amato amar perdona,&#xa;mi prese del costui piacer s&#xec; forte,&#xa;che, come vedi, ancor non m&apos;abbandona.&#xa;&#xa;Amor condusse noi ad una morte.&#xa;Caina attende chi a vita ci spense&quot;.&#xa;Queste parole da lor ci fuor porte.&#xa;&#xa;Quand&apos;io intesi quell&apos;anime offense,&#xa;china&apos; il viso, e tanto il tenni basso,&#xa;fin che &apos;l poeta mi disse: &quot;Che pense?&quot;.&#xa;&#xa;Quando rispuosi, cominciai: &quot;Oh lasso,&#xa;quanti dolci pensier, quanto disio&#xa;men&#xf2; costoro al doloroso passo!&quot;.&#xa;&#xa;Poi mi rivolsi a loro e parla&apos; io,&#xa;e cominciai: &quot;Francesca, i tuoi mart&#xec;ri&#xa;a lagrimar mi fanno tristo e pio.&#xa;&#xa;Ma dimmi: al tempo d&apos;i dolci sospiri,&#xa;a che e come concedette amore&#xa;che conosceste i dubbiosi disiri?&quot;.&#xa;&#xa;E quella a me: &quot;Nessun maggior dolore&#xa;che ricordarsi del tempo felice&#xa;ne la miseria; e ci&#xf2; sa &apos;l tuo dottore.&#xa;&#xa;Ma s&apos;a conoscer la prima radice&#xa;del nostro amor tu hai cotanto affetto,&#xa;dir&#xf2; come colui che piange e dice.&#xa;&#xa;Noi leggiavamo un giorno per diletto&#xa;di Lancialotto come amor lo strinse;&#xa;soli eravamo e sanza alcun sospetto.&#xa;&#xa;Per pi&#xf9; f&#xef;ate li occhi ci sospinse&#xa;quella lettura, e scolorocci il viso;&#xa;ma solo un punto fu quel che ci vinse.&#xa;&#xa;Quando leggemmo il dis&#xef;ato riso&#xa;esser basciato da cotanto amante,&#xa;questi, che mai da me non fia diviso,&#xa;&#xa;la bocca mi basci&#xf2; tutto tremante.&#xa;Galeotto fu &apos;l libro e chi lo scrisse:&#xa;quel giorno pi&#xf9; non vi leggemmo avante&quot;.&#xa;&#xa;Mentre che l&apos;uno spirto questo disse,&#xa;l&apos;altro piang&#xeb;a; s&#xec; che di pietade&#xa;io venni men cos&#xec; com&apos;io morisse.&#xa;&#xa;E caddi come corpo morto cade."/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="java.awt.Panel" name="buttonPane">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="card3"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="textArea1" alignment="1" pref="381" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="label1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="choice1" pref="232" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="label5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="checkbox5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="checkbox1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="checkbox4" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="label4" alignment="0" min="-2" pref="110" max="-2" attributes="0"/>
+                          <Component id="list1" alignment="0" pref="381" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="label3" min="-2" max="-2" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="checkbox3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="checkbox6" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="label2" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="label1" min="-2" max="-2" attributes="0"/>
+                          <Component id="choice1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="label5" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkbox5" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkbox1" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkbox4" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label4" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="list1" min="-2" pref="215" max="-2" attributes="1"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="label3" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkbox3" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkbox6" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="textArea1" pref="274" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="java.awt.Label" name="label1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Number of girlfriends:"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Choice" name="choice1">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="1-13" noResource="true"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="choice1.add(&quot;Not so many...&quot;); &#xa;choice1.add(&quot;Quite a lot!&quot;); &#xa;choice1.add(&quot;A huge number!&quot;);"/>
+              </AuxValues>
+            </Component>
+            <Component class="java.awt.List" name="list1">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new java.awt.List(20, true)"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="list1.add(&quot;Dedicated to&quot;);&#xa;list1.add(&quot;all the friends&quot;);&#xa;list1.add(&quot;that made this possible&quot;);&#xa;list1.add(&quot;to our families&quot;);&#xa;list1.add(&quot;our dogs&quot;);&#xa;list1.add(&quot;Madeleine,&quot;);&#xa;list1.add(&quot;who spent countless&quot;);&#xa;list1.add(&quot;hours waiting for us&quot;);&#xa;list1.add(&quot;and to Marlise,&quot;);&#xa;list1.add(&quot;my sweet girlfriend&quot;);&#xa;list1.add(&quot;because I love her so much!&quot;);&#xa;list1.add(&quot;---&quot;);&#xa;list1.add(&quot;this does nothing too&quot;);&#xa;list1.add(&quot;just to show&quot;);&#xa;list1.add(&quot;the scroll bars&quot;);&#xa;list1.add(&quot;because the ninbus laf&quot;);&#xa;list1.add(&quot;is soo cool!&quot;);&#xa;list1.add(&quot;really!&quot;);&#xa;list1.add(&quot;Come on, &quot;);&#xa;list1.add(&quot;trust me!&quot;);"/>
+              </AuxValues>
+            </Component>
+            <Component class="java.awt.Checkbox" name="checkbox3">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="yes"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new java.awt.Checkbox(&quot;yes&quot;, doYouLikeJ1, true)"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="CheckboxGroup doYouLikeJ1 = new CheckboxGroup();"/>
+              </AuxValues>
+            </Component>
+            <Component class="java.awt.Checkbox" name="checkbox6">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="no"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new java.awt.Checkbox(&quot;no&quot;, doYouLikeJ1, false)"/>
+              </AuxValues>
+            </Component>
+            <Component class="java.awt.Checkbox" name="checkbox4">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="to see"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Label" name="label2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Add your comments below:"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Label" name="label3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Do you like Java One?"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.TextArea" name="textArea1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy&#xa;All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Label" name="label4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Dedicated to:"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Label" name="label5">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Broken UI:"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Checkbox" name="checkbox1">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="but is nice"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Checkbox" name="checkbox5">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="Does nothing"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Label" name="label6">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="label6"/>
+              </Properties>
+            </Component>
+            <Component class="java.awt.Label" name="label7">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="label7"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="java.awt.Panel" name="widgetPane">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="card4"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="401" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="659" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
