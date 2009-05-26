@@ -140,4 +140,10 @@ class CacioTextAreaPeer extends CacioComponentPeer<TextArea, JScrollPane> implem
     private JTextArea getTextArea() {
         return textArea;
     }
+
+    @Override
+    void setEnabledImpl(boolean enable) {
+        super.setEnabledImpl(enable);
+        getTextArea().setEnabled(enable);
+    }
 }
