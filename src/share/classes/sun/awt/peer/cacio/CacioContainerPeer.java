@@ -153,4 +153,38 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
             }
         }
     }
+
+    @Override
+    public void setEnabled(boolean enable) {
+        System.out.println("setEnabled called: " + enable + ", component: " + getAWTComponent());
+        // Check ancestors and only enable subtree if all the ancestors are
+        // enabled.
+        if (enable && ! isParentsEnabled()) {
+            System.err.println("do not enable.. disabled parent");
+            return;
+        }
+        setEnabledImpl(enable);
+    }
+
+    @Override
+    void setEnabledImpl(boolean enable) {
+        super.setEnabledImpl(enable);
+        // The property must propagate through the hierarchy until some
+        // component defines its own font.
+        Container c = (Container) getAWTComponent();
+        int count = c.getComponentCount();
+        for (int i = 0; i < count; i++) {
+            Component comp = c.getComponent(i);
+            if ((! enable) || ComponentAccessor.isEnabledImpl(comp)) {
+                ComponentPeer peer = comp.getPeer();
+                if (peer instanceof CacioComponentPeer) {
+                    CacioComponentPeer ccp = (CacioComponentPeer) peer;
+                    if (ccp.isEnabled() != enable) {
+                        ccp.setEnabledImpl(enable);
+                    }
+                }
+            }
+        }
+    }
+
 }

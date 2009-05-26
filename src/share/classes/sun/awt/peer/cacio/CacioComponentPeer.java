@@ -30,6 +30,7 @@ import java.awt.AWTException;
 import java.awt.BufferCapabilities;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -591,12 +592,37 @@ class CacioComponentPeer<AWTComponentType extends Component,
         }
     }
 
-    public void setEnabled(boolean b) {
+    public void setEnabled(boolean enable) {
+
+        setEnabledImpl(enable);
+    }
+
+    void setEnabledImpl(boolean enable) {
 
         if (swingComponent != null) {
-            swingComponent.setEnabled(b);
+            swingComponent.setEnabled(enable);
         }
+    }
 
+    boolean isEnabled() {
+
+        return swingComponent.isEnabled();
+    }
+
+    boolean isParentsEnabled() {
+        Component c = getAWTComponent();
+        boolean parentsEnabled = c.isEnabled();
+        if (parentsEnabled) {
+            Container parent = c.getParent();
+            if (parent != null) {
+                ComponentPeer peer = parent.getPeer();
+                if (peer instanceof CacioComponentPeer) {
+                    parentsEnabled =
+                            ((CacioComponentPeer) peer).isParentsEnabled();
+                }
+            }
+        }
+        return parentsEnabled;
     }
 
     public void setVisible(boolean b) {
