@@ -40,33 +40,48 @@ class CacioMenuBarPeer extends CacioMenuComponentPeer<MenuBar,JMenuBar>
 
     CacioMenuBarPeer(MenuBar mb) {
         super(mb, new JMenuBar());
-        helpMenu = mb.getHelpMenu();
     }
 
     @Override
     void postInitSwingComponent() {
 
-        if (helpMenu != null) {
-            addHelpMenu(helpMenu);
-        }
-
         MenuBar mb = getAWTMenu();
         int menuCount = mb.getMenuCount();
         for (int i = 0; i < menuCount; i++) {
             Menu m = mb.getMenu(i);
-            if (m != helpMenu) {
-                addMenu(mb.getMenu(i));
-            }
+            addMenu(mb.getMenu(i));
+        }
+        Menu helpMenu = mb.getHelpMenu();
+        if (helpMenu != null) {
+            addHelpMenu(helpMenu);
         }
     }
 
     public void addMenu(Menu m) {
         JMenuBar jmb = getSwingMenu();
+        // If we have a help menu, add new menus add the last - 1 position,
+        // otherwise we append at the end.
         if (helpMenu != null) {
-            jmb.add(getSwingMenu(m));
-        } else {
             jmb.add(getSwingMenu(m), jmb.getComponentCount() - 1);
+        } else {
+            jmb.add(getSwingMenu(m));
         }
+        // Force re-layout.
+        jmb.revalidate();
+    }
+
+    public void addHelpMenu(Menu m) {
+        // Remove old help menu, if there is one.
+        JMenuBar jmb = getSwingMenu();
+        if (helpMenu != null) {
+            jmb.remove(getSwingMenu(helpMenu));
+        }
+
+        // Add new help menu.
+        helpMenu = m;
+        jmb.add(getSwingMenu(m));
+        // Force re-layout.
+        jmb.revalidate();
     }
 
     private JMenu getSwingMenu(Menu m) {
@@ -81,10 +96,6 @@ class CacioMenuBarPeer extends CacioMenuComponentPeer<MenuBar,JMenuBar>
 
     public void delMenu(int index) {
         getSwingMenu().remove(index);
-    }
-
-    public void addHelpMenu(Menu m) {
-        getSwingMenu().setHelpMenu(getSwingMenu(m));
     }
 
 }

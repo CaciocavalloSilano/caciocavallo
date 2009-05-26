@@ -76,8 +76,26 @@ public class TestMenu {
 
         });
         m.add(i2);
+
         f.setMenuBar(mb);
         f.setSize(400, 300);
         f.setVisible(true);
+
+        Menu helpMenu = new Menu("Help");
+        mb.setHelpMenu(helpMenu);
+
+        Menu m3 = new Menu("Menu2");
+        mb.add(m3);
+
+        Menu m4 = new Menu("Menu3");
+        mb.add(m4);
+
+        Menu m5 = new Menu("Menu4");
+        mb.add(m5);
+
+        Menu m6 = new Menu("Menu5");
+        mb.add(m6);
+
+
     }
 }
