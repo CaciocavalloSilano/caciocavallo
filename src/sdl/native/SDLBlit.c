@@ -28,32 +28,40 @@
 #include "SDL.h"
 #include "cacio-sdl.h"
 
-#include "net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager.h"
+#include "net_java_openjdk_awt_peer_sdl_SDLBlit.h"
 
-JNIEXPORT jlong JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager_initSurface
-  (JNIEnv *env, jobject thiz __attribute__((unused)), jint width, jint height)
+JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLBlit_nativeBlit
+  (JNIEnv *env, jobject thiz, jobject src, jobject dest,
+   jint sx, jint sy, jint dx, jint dy, jint w, jint h)
 {
-    SDL_Surface *surface = NULL;
+   SDLSurfaceDataOps *srcOperations = NULL;
+   SDLSurfaceDataOps *destOperations = NULL;
+   SDL_Rect blitSrcRect;
+   SDL_Rect blitDestRect;
 
-    /*
-     * FIXME: sync these with the ColorModel
-     * returned by SDLGraphicsEnvironment
-     */
-    Uint32 rmask = 0x00FF0000;
-    Uint32 gmask = 0x0000FF00;
-    Uint32 bmask = 0x000000FF;
-    Uint32 amask = 0;
-    
-    /* TODO: pass the depth we really want for the image. */
-    surface = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY |
-                                   SDL_DOUBLEBUF,
-                                   width, height, 32,
-                                   rmask, gmask, bmask, amask);
-    if(surface == NULL) {
-        fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+   int res = -1;
+
+   srcOperations = (SDLSurfaceDataOps *) SurfaceData_GetOps(env, src);
+   destOperations = (SDLSurfaceDataOps *) SurfaceData_GetOps(env, dest);
+
+   blitSrcRect.x = sx;
+   blitSrcRect.y = sy;
+   blitSrcRect.w = w;
+   blitSrcRect.h = h;
+
+   blitDestRect.x = dx;
+   blitDestRect.y = dy;
+   blitDestRect.w = w;
+   blitDestRect.h = h;
+
+   res = SDL_BlitSurface(srcOperations->surface, &blitSrcRect,
+                         destOperations->surface, &blitDestRect);
+   if (res < 0) {
+        fprintf(stderr, "Unable to blit surfaces: %s\n", SDL_GetError());
         JNU_ThrowByName(env, "java/lang/InternalError",
-                        "SDLVolativeSurfaceManager::initSurface failed");
-    }
+                "SDLBlit::nativeBlit: cannot blit surfaces");
+        return;
+   }
 
-    return surface;
+   SDL_Flip(destOperations->surface);
 }
