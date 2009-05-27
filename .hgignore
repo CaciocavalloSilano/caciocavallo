@@ -5,3 +5,4 @@ syntax: regexp
 .orig$
 ^netbeans/native/build
 ^netbeans/native/dist
+^netbeans/tests/build/*
