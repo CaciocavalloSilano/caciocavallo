@@ -9,14 +9,18 @@
                    displayName="SDL Header Files"
                    projectFiles="true">
       <itemPath>../../src/sdl/native/cacio-sdl.h</itemPath>
+      <itemPath>../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLBlit.h</itemPath>
       <itemPath>../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment.h</itemPath>
       <itemPath>../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLScreen.h</itemPath>
       <itemPath>../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLSurfaceData.h</itemPath>
+      <itemPath>../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f1" displayName="SDL SourceFiles" projectFiles="true">
+      <itemPath>../../src/sdl/native/SDLBlit.c</itemPath>
       <itemPath>../../src/sdl/native/SDLGraphicsEnvironment.c</itemPath>
       <itemPath>../../src/sdl/native/SDLScreen.c</itemPath>
       <itemPath>../../src/sdl/native/SDLSurfaceData.c</itemPath>
+      <itemPath>../../src/sdl/native/SDLVolativeSurfaceManager.c</itemPath>
     </logicalFolder>
     <logicalFolder name="f2" displayName="X11 Header Files" projectFiles="true">
       <itemPath>../../src/x11/native/cacio-x11.h</itemPath>
@@ -72,6 +76,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLBlit.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment.h">
         <itemTool>3</itemTool>
       </item>
@@ -79,6 +86,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLSurfaceData.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11GraphicsEnvironment.h">
@@ -90,6 +100,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/sdl/native/SDLBlit.c">
+        <itemTool>0</itemTool>
+      </item>
       <item path="../../src/sdl/native/SDLGraphicsEnvironment.c">
         <itemTool>0</itemTool>
       </item>
@@ -97,6 +110,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/SDLSurfaceData.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/sdl/native/SDLVolativeSurfaceManager.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/cacio-sdl.h">
@@ -152,6 +168,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLBlit.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment.h">
         <itemTool>3</itemTool>
       </item>
@@ -159,6 +178,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLSurfaceData.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11GraphicsEnvironment.h">
@@ -170,6 +192,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/sdl/native/SDLBlit.c">
+        <itemTool>0</itemTool>
+      </item>
       <item path="../../src/sdl/native/SDLGraphicsEnvironment.c">
         <itemTool>0</itemTool>
       </item>
@@ -177,6 +202,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/SDLSurfaceData.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/sdl/native/SDLVolativeSurfaceManager.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/cacio-sdl.h">
@@ -226,6 +254,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLBlit.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment.h">
         <itemTool>3</itemTool>
       </item>
@@ -233,6 +264,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLSurfaceData.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11GraphicsEnvironment.h">
@@ -244,6 +278,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/sdl/native/SDLBlit.c">
+        <itemTool>0</itemTool>
+      </item>
       <item path="../../src/sdl/native/SDLGraphicsEnvironment.c">
         <itemTool>0</itemTool>
       </item>
@@ -251,6 +288,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/SDLSurfaceData.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/sdl/native/SDLVolativeSurfaceManager.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/cacio-sdl.h">
@@ -307,6 +347,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLBlit.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLGraphicsEnvironment.h">
         <itemTool>3</itemTool>
       </item>
@@ -314,6 +357,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLSurfaceData.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../build/sdl/include/net_java_openjdk_awt_peer_sdl_SDLVolativeSurfaceManager.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11GraphicsEnvironment.h">
@@ -325,6 +371,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/sdl/native/SDLBlit.c">
+        <itemTool>0</itemTool>
+      </item>
       <item path="../../src/sdl/native/SDLGraphicsEnvironment.c">
         <itemTool>0</itemTool>
       </item>
@@ -332,6 +381,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/SDLSurfaceData.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/sdl/native/SDLVolativeSurfaceManager.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/sdl/native/cacio-sdl.h">
