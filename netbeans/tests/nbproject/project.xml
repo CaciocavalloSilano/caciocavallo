@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.java.j2seproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
+            <name>Caciocavallo Tests</name>
+            <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
+            <source-roots>
+                <root id="src.dir"/>
+            </source-roots>
+            <test-roots/>
+        </data>
+        <references xmlns="http://www.netbeans.org/ns/ant-project-references/2">
+            <reference>
+                <foreign-project>Caciocavallo</foreign-project>
+                <artifact-type>folder</artifact-type>
+                <script>${project.Caciocavallo}/nbproject/nbjdk.xml</script>
+                <target>compile</target>
+                <clean-target>clean</clean-target>
+                <id>compile</id>
+            </reference>
+        </references>
+    </configuration>
+</project>
