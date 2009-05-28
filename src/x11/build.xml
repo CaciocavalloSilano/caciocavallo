@@ -45,6 +45,7 @@
                class="sun.awt.peer.x11.X11SurfaceData,
                       sun.awt.peer.x11.X11GraphicsEnvironment,
                       sun.awt.peer.x11.X11PlatformScreen,
+                      sun.awt.peer.x11.X11PlatformWindow,
                       sun.awt.peer.x11.X11Blit,
                       sun.awt.peer.x11.X11VolatileSurfaceManager,
                       java.awt.event.MouseEvent" />
