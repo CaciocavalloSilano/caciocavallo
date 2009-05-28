@@ -22,6 +22,7 @@
       <itemPath>../../src/x11/native/cacio-x11.h</itemPath>
       <itemPath>../../build/x11/include/sun_awt_peer_x11_X11GraphicsEnvironment.h</itemPath>
       <itemPath>../../build/x11/include/sun_awt_peer_x11_X11PlatformScreen.h</itemPath>
+      <itemPath>../../build/x11/include/sun_awt_peer_x11_X11PlatformWindow.h</itemPath>
       <itemPath>../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -30,6 +31,7 @@
       <itemPath>../../src/x11/native/X11Blit.c</itemPath>
       <itemPath>../../src/x11/native/X11GraphicsEnvironment.c</itemPath>
       <itemPath>../../src/x11/native/X11PlatformScreen.c</itemPath>
+      <itemPath>../../src/x11/native/X11PlatformWindow.c</itemPath>
       <itemPath>../../src/x11/native/X11SurfaceData.c</itemPath>
       <itemPath>../../src/x11/native/X11VolatileSurfaceManager.c</itemPath>
     </logicalFolder>
@@ -87,6 +89,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformScreen.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformWindow.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
@@ -109,6 +114,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11PlatformScreen.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11PlatformWindow.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11SurfaceData.c">
@@ -167,6 +175,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformScreen.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformWindow.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
@@ -189,6 +200,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11PlatformScreen.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11PlatformWindow.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11SurfaceData.c">
@@ -241,6 +255,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformScreen.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformWindow.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
@@ -263,6 +280,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11PlatformScreen.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11PlatformWindow.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11SurfaceData.c">
@@ -294,6 +314,7 @@
             <directoryPath>../../../openjdk/jdk/src/share/native/common</directoryPath>
             <directoryPath>../../../openjdk/jdk/src/share/native/sun/java2d/</directoryPath>
             <directoryPath>../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders</directoryPath>
+            <directoryPath>../../build/x11/include</directoryPath>
           </includeDirectories>
           <preprocessorList>
             <Elem>_GNU_SOURCE=1</Elem>
@@ -322,6 +343,9 @@
       <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformScreen.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../build/x11/include/sun_awt_peer_x11_X11PlatformWindow.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../build/x11/include/sun_awt_peer_x11_X11SurfaceData.h">
         <itemTool>3</itemTool>
       </item>
@@ -344,6 +368,9 @@
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11PlatformScreen.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11PlatformWindow.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11SurfaceData.c">
