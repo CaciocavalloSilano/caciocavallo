@@ -156,11 +156,10 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
 
     @Override
     public void setEnabled(boolean enable) {
-        System.out.println("setEnabled called: " + enable + ", component: " + getAWTComponent());
+
         // Check ancestors and only enable subtree if all the ancestors are
         // enabled.
         if (enable && ! isParentsEnabled()) {
-            System.err.println("do not enable.. disabled parent");
             return;
         }
         setEnabledImpl(enable);
