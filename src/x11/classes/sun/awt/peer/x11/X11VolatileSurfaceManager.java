@@ -56,8 +56,7 @@ class X11VolatileSurfaceManager extends VolatileSurfaceManager {
             long drawable = initPixmap(X11GraphicsEnvironment.getDisplay(),
                                        width, height);
             X11SurfaceData sd = new X11SurfaceData(X11SurfaceData.typeDefault,
-                                          gc.getColorModel(),
-                                          new Rectangle(0, 0, width, height),
+                                          gc.getColorModel(), width, height,
                                           vImg.getGraphicsConfig(), vImg,
                                           drawable);
             return sd;
