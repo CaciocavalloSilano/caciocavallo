@@ -29,12 +29,15 @@ OBJECTDIR=build/Debug/${PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11GraphicsEnvironment.o \
+	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11EventPump.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11PlatformWindow.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11VolatileSurfaceManager.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLScreen.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLSurfaceData.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11Blit.o \
+	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLVolativeSurfaceManager.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11SurfaceData.o \
+	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLBlit.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11PlatformScreen.o \
 	${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLGraphicsEnvironment.o
 
@@ -64,6 +67,11 @@ ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x1
 	${RM} $@.d
 	$(COMPILE.c) -g -I../../build/x11/include -I${openjdk.build}/include -I${openjdk.build}/include/linux -I${openjdk.src}/jdk/src/share/native/sun/java2d -I../../../openjdk/openjdk7/build/linux-amd64/include -I../../../openjdk/openjdk7/build/linux-amd64/include/linux -I../../../openjdk/jdk/src/share/native/common/ -I../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11GraphicsEnvironment.o ../../src/x11/native/X11GraphicsEnvironment.c
 
+${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11EventPump.o: ../../src/x11/native/X11EventPump.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native
+	${RM} $@.d
+	$(COMPILE.c) -g -I../../build/x11/include -I${openjdk.build}/include -I${openjdk.build}/include/linux -I${openjdk.src}/jdk/src/share/native/sun/java2d -I../../../openjdk/openjdk7/build/linux-amd64/include -I../../../openjdk/openjdk7/build/linux-amd64/include/linux -I../../../openjdk/jdk/src/share/native/common/ -I../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11EventPump.o ../../src/x11/native/X11EventPump.c
+
 ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11PlatformWindow.o: ../../src/x11/native/X11PlatformWindow.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native
 	${RM} $@.d
@@ -89,10 +97,20 @@ ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x1
 	${RM} $@.d
 	$(COMPILE.c) -g -I../../build/x11/include -I${openjdk.build}/include -I${openjdk.build}/include/linux -I${openjdk.src}/jdk/src/share/native/sun/java2d -I../../../openjdk/openjdk7/build/linux-amd64/include -I../../../openjdk/openjdk7/build/linux-amd64/include/linux -I../../../openjdk/jdk/src/share/native/common/ -I../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11Blit.o ../../src/x11/native/X11Blit.c
 
+${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLVolativeSurfaceManager.o: ../../src/sdl/native/SDLVolativeSurfaceManager.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native
+	${RM} $@.d
+	$(COMPILE.c) -g -I../../build/x11/include -I${openjdk.build}/include -I${openjdk.build}/include/linux -I${openjdk.src}/jdk/src/share/native/sun/java2d -I../../../openjdk/openjdk7/build/linux-amd64/include -I../../../openjdk/openjdk7/build/linux-amd64/include/linux -I../../../openjdk/jdk/src/share/native/common/ -I../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLVolativeSurfaceManager.o ../../src/sdl/native/SDLVolativeSurfaceManager.c
+
 ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11SurfaceData.o: ../../src/x11/native/X11SurfaceData.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native
 	${RM} $@.d
 	$(COMPILE.c) -g -I../../build/x11/include -I${openjdk.build}/include -I${openjdk.build}/include/linux -I${openjdk.src}/jdk/src/share/native/sun/java2d -I../../../openjdk/openjdk7/build/linux-amd64/include -I../../../openjdk/openjdk7/build/linux-amd64/include/linux -I../../../openjdk/jdk/src/share/native/common/ -I../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11SurfaceData.o ../../src/x11/native/X11SurfaceData.c
+
+${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLBlit.o: ../../src/sdl/native/SDLBlit.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native
+	${RM} $@.d
+	$(COMPILE.c) -g -I../../build/x11/include -I${openjdk.build}/include -I${openjdk.build}/include/linux -I${openjdk.src}/jdk/src/share/native/sun/java2d -I../../../openjdk/openjdk7/build/linux-amd64/include -I../../../openjdk/openjdk7/build/linux-amd64/include/linux -I../../../openjdk/jdk/src/share/native/common/ -I../../../openjdk/build/linux-i586-debug/tmp/sun/sun.awt/awt/CClassHeaders -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/sdl/native/SDLBlit.o ../../src/sdl/native/SDLBlit.c
 
 ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native/X11PlatformScreen.o: ../../src/x11/native/X11PlatformScreen.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/home/roman/src/hg/caciocavallo-ng/netbeans/native/../../src/x11/native

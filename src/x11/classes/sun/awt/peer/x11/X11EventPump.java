@@ -26,6 +26,7 @@
 package sun.awt.peer.x11;
 
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import sun.awt.SunToolkit;
 import sun.awt.peer.cacio.CacioComponent;
@@ -72,12 +73,38 @@ class X11EventPump extends CacioEventPump<X11EventData> {
                 break;
             case X11EventData.MAP_NOTIFY:
                 break;
-            case X11EventData.EXPOSE:
+            case X11EventData.EXPOSE: {
                 X11PlatformWindow w = windowMap.get(Long.valueOf(nativeEvent.getWindow()));
                 CacioComponent source = w.getCacioComponent();
                 Component c = source.getAWTComponent();
                 postPaintEvent(source, 0, 0, c.getWidth(), c.getHeight());
                 break;
+            }
+            case X11EventData.MOTION: {
+                X11PlatformWindow w = windowMap.get(Long.valueOf(nativeEvent.getWindow()));
+                CacioComponent source = w.getCacioComponent();
+                Component c = source.getAWTComponent();
+                postMouseEvent(source, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, nativeEvent.getX(), nativeEvent.getY(), 0, false);
+                break;
+            }
+            case X11EventData.BUTTON_PRESS: {
+                X11PlatformWindow w = windowMap.get(Long.valueOf(nativeEvent.getWindow()));
+                CacioComponent source = w.getCacioComponent();
+                Component c = source.getAWTComponent();
+                /* TODO: Fix mods. */
+                System.err.println("BUTTON_PRESS");
+                postMouseEvent(source, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), MouseEvent.BUTTON1_DOWN_MASK, nativeEvent.getX(), nativeEvent.getY(), 0, false);
+                break;
+            }
+            case X11EventData.BUTTON_RELEASE: {
+                X11PlatformWindow w = windowMap.get(Long.valueOf(nativeEvent.getWindow()));
+                CacioComponent source = w.getCacioComponent();
+                Component c = source.getAWTComponent();
+                /* TODO: Fix mods. */
+                System.err.println("BUTTON_RELEASE");
+                postMouseEvent(source, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, nativeEvent.getX(), nativeEvent.getY(), 0, false);
+                break;
+            }
             default:
                 System.err.println("unhandled event type: " + nativeEvent.getType());
         }

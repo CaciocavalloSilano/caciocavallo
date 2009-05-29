@@ -33,6 +33,7 @@
                    displayName="X11 Source Files"
                    projectFiles="true">
       <itemPath>../../src/x11/native/X11Blit.c</itemPath>
+      <itemPath>../../src/x11/native/X11EventPump.c</itemPath>
       <itemPath>../../src/x11/native/X11GraphicsEnvironment.c</itemPath>
       <itemPath>../../src/x11/native/X11PlatformScreen.c</itemPath>
       <itemPath>../../src/x11/native/X11PlatformWindow.c</itemPath>
@@ -124,6 +125,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/x11/native/X11Blit.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11EventPump.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11GraphicsEnvironment.c">
@@ -224,6 +228,9 @@
       <item path="../../src/x11/native/X11Blit.c">
         <itemTool>0</itemTool>
       </item>
+      <item path="../../src/x11/native/X11EventPump.c">
+        <itemTool>0</itemTool>
+      </item>
       <item path="../../src/x11/native/X11GraphicsEnvironment.c">
         <itemTool>0</itemTool>
       </item>
@@ -314,6 +321,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/x11/native/X11Blit.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11EventPump.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11GraphicsEnvironment.c">
@@ -414,6 +424,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/x11/native/X11Blit.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="../../src/x11/native/X11EventPump.c">
         <itemTool>0</itemTool>
       </item>
       <item path="../../src/x11/native/X11GraphicsEnvironment.c">

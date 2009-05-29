@@ -48,6 +48,10 @@ import sun.java2d.pipe.Region;
 
 class X11PlatformWindow implements PlatformToplevelWindow {
 
+    static {
+        initIDs();
+    }
+
     private long nativeWindow;
 
     private boolean toplevel;
@@ -58,11 +62,17 @@ class X11PlatformWindow implements PlatformToplevelWindow {
 
     private CacioComponent cacioComponent;
 
+    private X11PlatformWindow parent;
+
+    private static native void initIDs();
+
     private native long nativeInit(long dpy, long parent, int x, int y, int w, int h);
 
     private native void nativeSetBounds(long dpy, long nw, int x, int y, int w, int h);
 
     private native void nativeSetVisible(long dpy, long nw, boolean v);
+
+    private native void nativeGetLocation(long dpy, long nw, Point p);
 
     /**
      * Creates a window without parent, i.e. a toplevel window.
@@ -78,21 +88,23 @@ class X11PlatformWindow implements PlatformToplevelWindow {
         toplevel = true;
         cacioComponent = comp;
         pump.registerWindow(nativeWindow, this);
+
     }
 
     /**
      * Creates a window with parent, i.e. a nested window.
      */
-    X11PlatformWindow(X11EventPump pump, CacioComponent comp, X11PlatformWindow parent, int x, int y, int w, int h) {
+    X11PlatformWindow(X11EventPump pump, CacioComponent comp, X11PlatformWindow p, int x, int y, int w, int h) {
         SunToolkit.awtLock();
         try {
             nativeWindow = nativeInit(X11GraphicsEnvironment.getDisplay(),
-                                      parent.nativeWindow, x, y, w, h);
+                                      p.nativeWindow, x, y, w, h);
         } finally {
             SunToolkit.awtUnlock();
         }
         toplevel = false;
         cacioComponent = comp;
+        parent = p;
         pump.registerWindow(nativeWindow, this);
     }
 
@@ -158,7 +170,19 @@ class X11PlatformWindow implements PlatformToplevelWindow {
     }
 
     public Point getLocationOnScreen() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Point ownLoc = getLocation();
+        if (parent != null) {
+            Point parentLoc = parent.getLocationOnScreen();
+            ownLoc.x += parentLoc.x;
+            ownLoc.y += parentLoc.y;
+        }
+        return ownLoc;
+    }
+
+    private Point getLocation() {
+        Point p = new Point();
+        nativeGetLocation(X11GraphicsEnvironment.getDisplay(), nativeWindow, p);
+        return p;
     }
 
     public boolean canDetermineObscurity() {
