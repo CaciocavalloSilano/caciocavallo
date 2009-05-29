@@ -54,12 +54,12 @@ class CacioButtonPeer extends CacioComponentPeer<Button, JButton>
         public void actionPerformed(ActionEvent event) {
             Button b = getAWTComponent();
             ActionListener[] l = b.getActionListeners();
-            if (l.length == 0)
-                return;
             ActionEvent ev = new ActionEvent(b, ActionEvent.ACTION_PERFORMED, b
                     .getActionCommand());
             for (int i = 0; i < l.length; ++i)
                 l[i].actionPerformed(ev);
+            // Notify AWT 1.0 style listeners...
+            b.dispatchEvent(ev);
         }
       
     }

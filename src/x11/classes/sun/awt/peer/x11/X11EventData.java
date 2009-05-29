@@ -25,37 +25,24 @@
 
 package sun.awt.peer.x11;
 
-import java.awt.Component;
-import sun.awt.peer.cacio.CacioComponent;
-import sun.awt.peer.cacio.CacioEventPump;
-import sun.awt.peer.cacio.PlatformWindow;
-import sun.awt.peer.cacio.PlatformWindowFactory;
+class X11EventData {
 
-public class X11PlatformWindowFactory implements PlatformWindowFactory {
+    static final int NONE = 0;
+    static final int MAP_NOTIFY = 1;
+    static final int EXPOSE = 2;
 
-    private X11EventPump eventPump;
+    private int type;
+    private long window;
 
-    public PlatformWindow createPlatformWindow(CacioComponent component, PlatformWindow parent) {
-        Component awtC = component.getAWTComponent();
-        return new X11PlatformWindow(getEventPump(), component, (X11PlatformWindow) parent,
-                                     awtC.getX(), awtC.getY(), awtC.getWidth(),
-                                     awtC.getHeight());
+    void clear() {
+        type = NONE;
     }
 
-    public PlatformWindow createPlatformToplevelWindow(CacioComponent component) {
-        Component awtC = component.getAWTComponent();
-        return new X11PlatformWindow(getEventPump(), component, awtC.getX(), awtC.getY(), awtC.getWidth(),
-                                     awtC.getHeight());
+    int getType() {
+        return type;
     }
 
-    public CacioEventPump<?> createEventPump() {
-        return getEventPump();
-    }
-
-    private X11EventPump getEventPump() {
-        if (eventPump == null) {
-            eventPump = new X11EventPump();
-        }
-        return eventPump;
+    long getWindow() {
+        return window;
     }
 }

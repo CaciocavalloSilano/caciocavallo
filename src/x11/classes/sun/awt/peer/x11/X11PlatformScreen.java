@@ -87,7 +87,7 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
     private X11SurfaceData getSurfaceData() {
         if (surfaceData == null) {
             surfaceData = new X11SurfaceData(X11SurfaceData.typeDefault,
-                                             getColorModel(), getBounds(),
+                                             getColorModel(), width, height,
                                              getGraphicsConfiguration(), this,
                                              window);
         }

@@ -26,6 +26,8 @@
 #include <X11/Xlib.h> 
 #include "sun_awt_peer_x11_X11GraphicsEnvironment.h"
 
+/*extern int _XDebug;*/
+
 /*
  * Class:     sun_awt_peer_x11_X11GraphicsEnvironment
  * Method:    initDisplay
@@ -36,6 +38,7 @@ JNIEXPORT jlong JNICALL Java_sun_awt_peer_x11_X11GraphicsEnvironment_initDisplay
 {
   Display *display;
 
+  _Xdebug = 1; // Synchronous mode for debugging.
   display = XOpenDisplay(NULL);
   return (jlong) display;
 }

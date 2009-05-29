@@ -72,7 +72,7 @@ static jint X11Lock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasInf
       rasInfo->bounds.x2 = xops->width;
     }
     if (rasInfo->bounds.y2 > xops->height) {
-      rasInfo->bounds.y2 = xops->height;
+      rasInfo->bounds.y2 = xops->height ;
     }
     if (lockFlags & SD_LOCK_FASTEST) {
         ret = SD_SLOWLOCK;
@@ -100,7 +100,7 @@ static void X11GetRasInfo(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* 
 
   xops->img = XGetImage(display, drawable,
                         x, y, w, h,
-                        -1, ZPixmap);
+                        XAllPlanes(), ZPixmap);
 
   if (xops->img) {
     int scan = xops->img->bytes_per_line;

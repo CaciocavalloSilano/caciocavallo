@@ -129,4 +129,12 @@ public class ProxyWindow extends Window {
         }
 
     }
+
+    /**
+     * We need to override isShowing() and proxy it to the real AWT component,
+     * otherwise we end up and try to draw on non-showing components...
+     */
+    public boolean isShowing() {
+        return target.getAWTComponent().isShowing();
+    }
 }
