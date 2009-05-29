@@ -256,7 +256,7 @@ class X11PlatformWindow implements PlatformToplevelWindow {
     }
 
     public void requestFocus() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.err.println("IMPLEMENT: X11PlatformWindow.requestFocus()");
     }
 
     public int getState() {
