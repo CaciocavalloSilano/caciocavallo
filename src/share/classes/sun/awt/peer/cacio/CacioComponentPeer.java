@@ -64,6 +64,8 @@ import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.ComponentAccessor;
 import sun.awt.PaintEventDispatcher;
 
+import sun.awt.RepaintArea;
+import sun.awt.event.IgnorePaintEvent;
 import sun.font.FontDesignMetrics;
 
 import sun.java2d.pipe.Region;
@@ -111,8 +113,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
     /**
      * The current repaint area.
      */
-    private Rectangle paintArea;
-    private final Object paintAreaLock = new Object();
+    private RepaintArea paintArea;
 
     private Rectangle viewRect;
 
@@ -133,6 +134,18 @@ class CacioComponentPeer<AWTComponentType extends Component,
         // Initialize basic properties.
         setBounds(awtC.getX(), awtC.getY(), awtC.getWidth(), awtC.getHeight(),
                   ComponentPeer.SET_SIZE);
+        paintArea = new RepaintArea() {
+            @Override
+            protected void updateComponent(Component comp, Graphics g) {
+                peerPaint(g, true);
+                super.updateComponent(comp, g);
+            }
+            @Override
+            protected void paintComponent(Component comp, Graphics g) {
+                peerPaint(g, false);
+                super.updateComponent(comp, g);
+            }
+        };
     }
 
     /**
@@ -278,30 +291,13 @@ class CacioComponentPeer<AWTComponentType extends Component,
     @Override
     public void handleEvent(AWTEvent e) {
 
+        boolean update = false;
         switch (e.getID())
         {
         case PaintEvent.UPDATE:
+            update = true;
         case PaintEvent.PAINT:
-          if (awtComponent.isShowing())
-            {
-              Rectangle clip ;
-              synchronized (paintAreaLock)
-                {
-                  clip = paintArea;
-                  paintArea = null;
-                }
-              if (clip == null || clip.isEmpty()) return;
-              Graphics g = awtComponent.getGraphics();
-              try
-                {
-                  g.clipRect(clip.x, clip.y, clip.width, clip.height);
-                  peerPaint(g, e.getID() == PaintEvent.UPDATE);
-                }
-              finally
-                {
-                  g.dispose();
-                }
-            }
+            paintArea.paint(getAWTComponent(), update);
           break;
         case MouseEvent.MOUSE_PRESSED:
         case MouseEvent.MOUSE_RELEASED:
@@ -380,14 +376,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     protected void peerPaint(Graphics g, boolean update) {
 
-        // There is a pending paint event for this area that is contained
-        // in the curren clip we cancle that event.
-        Rectangle clip = g.getClipBounds();
-        synchronized(paintAreaLock){
-            if (paintArea != null && clip.contains(paintArea))
-                paintArea = null;
-        }
-
         Graphics peerG = g.create();
         try {
             if (swingComponent != null) {
@@ -398,22 +386,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
             peerG.dispose();
         }
 
-        Graphics userGraphics = g.create();
-        try {
-            Insets i = getInsets();
-            int cx = i.left;
-            int cy = i.top;
-            int cw = getAWTComponent().getWidth() - i.left - i.right;
-            int ch = getAWTComponent().getHeight() - i.top - i.bottom;
-            userGraphics.clipRect(cx, cy, cw, ch);
-            if (update) {
-                awtComponent.update(userGraphics);
-            } else {
-                awtComponent.paint(userGraphics);
-            }
-        } finally {
-            userGraphics.dispose();
-        }
     }
 
     protected void peerRepaint(int x, int y, int width, int height) {
@@ -698,14 +670,9 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     public void coalescePaintEvent(PaintEvent e) {
 
-        synchronized (paintAreaLock) {
-            Rectangle newRect = e.getUpdateRect();
-            if (paintArea == null)
-                paintArea = newRect;
-            else
-                Rectangle.union(paintArea, newRect, paintArea);
+        if (!(e instanceof IgnorePaintEvent)) {
+            paintArea.add(e.getUpdateRect(), e.getID());
         }
-
     }
 
     public void applyShape(Region shape) {
