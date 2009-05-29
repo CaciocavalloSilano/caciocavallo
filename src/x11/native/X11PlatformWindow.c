@@ -26,6 +26,25 @@
 #include <X11/Xlib.h>
 #include "sun_awt_peer_x11_X11PlatformWindow.h"
 
+static jfieldID pointXFID;
+static jfieldID pointYFID;
+
+/*
+ * Class:     sun_awt_peer_x11_X11PlatformWindow
+ * Method:    initIDs
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_initIDs
+  (JNIEnv *env, jclass cls)
+{
+
+    jclass pointCls = (*env)->FindClass(env, "java/awt/Point");
+    if ((*env)->ExceptionCheck(env)) return;
+    pointXFID = (*env)->GetFieldID(env, pointCls, "x", "I");
+    if ((*env)->ExceptionCheck(env)) return;
+    pointYFID = (*env)->GetFieldID(env, pointCls, "y", "I");
+}
+
 /*
  * Class:     sun_awt_peer_x11_X11PlatformWindow
  * Method:    nativeInit
@@ -47,7 +66,9 @@ JNIEXPORT jlong JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_nativeInit
     if (w <= 0) w = 1;
     if (h <= 0) h = 1;
     window = XCreateSimpleWindow(display, parent, x, y, w, h, 0, 0, 0);
-    XSelectInput(display, window, StructureNotifyMask | ExposureMask);
+    XSelectInput(display, window, StructureNotifyMask | ExposureMask
+                                  | PointerMotionMask |ButtonPressMask
+                                  | ButtonReleaseMask);
     XSync(display, False);
     XFlush(display);
     return window;
@@ -92,4 +113,25 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_nativeSetVisible
         XUnmapWindow(display, window);
     }
     XSync(display, False);
+}
+
+/*
+ * Class:     sun_awt_peer_x11_X11PlatformWindow
+ * Method:    nativeGetLocationOnScreen
+ * Signature: (JJLjava/awt/Point;)V
+ */
+JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_nativeGetLocation
+  (JNIEnv *env, jobject thiz, jlong dpyPtr, jlong nw, jobject p)
+{
+    Display *display;
+    Window window;
+    Window root;
+    int x, y, w, h, bw, d;
+
+    display = (Display*) dpyPtr;
+    window = (Window) nw;
+
+    XGetGeometry(display, window, &root, &x, &y, &w, &h, &bw, &d);
+    (*env)->SetIntField(env, p, pointXFID, x);
+    (*env)->SetIntField(env, p, pointYFID, y);
 }

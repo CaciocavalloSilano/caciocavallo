@@ -30,9 +30,14 @@ class X11EventData {
     static final int NONE = 0;
     static final int MAP_NOTIFY = 1;
     static final int EXPOSE = 2;
+    static final int MOTION = 3;
+    static final int BUTTON_PRESS = 4;
+    static final int BUTTON_RELEASE = 5;
 
     private int type;
     private long window;
+    private int x;
+    private int y;
 
     void clear() {
         type = NONE;
@@ -44,5 +49,13 @@ class X11EventData {
 
     long getWindow() {
         return window;
+    }
+
+    int getX() {
+        return x;
+    }
+
+    int getY() {
+        return y;
     }
 }

@@ -29,6 +29,8 @@
 
 static jfieldID typeFID;
 static jfieldID windowFID;
+static jfieldID xFID;
+static jfieldID yFID;
 
 /*
  * Class:     sun_awt_peer_x11_X11EventPump
@@ -43,6 +45,10 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11EventPump_initIDs
     typeFID = (*env)->GetFieldID(env, eventDataCls, "type", "I");
     if ((*env)->ExceptionCheck(env)) return;
     windowFID = (*env)->GetFieldID(env, eventDataCls, "window", "J");
+    if ((*env)->ExceptionCheck(env)) return;
+    xFID = (*env)->GetFieldID(env, eventDataCls, "x", "I");
+    if ((*env)->ExceptionCheck(env)) return;
+    yFID = (*env)->GetFieldID(env, eventDataCls, "y", "I");
 }
 
 /*
@@ -74,6 +80,36 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11EventPump_nativeFetchEvent
             (*env)->SetIntField(env, eventData, typeFID, sun_awt_peer_x11_X11EventData_EXPOSE);
             if ((*env)->ExceptionCheck(env)) return;
             (*env)->SetLongField(env, eventData, windowFID, (jlong) event.xexpose.window);
+            if ((*env)->ExceptionCheck(env)) return;
+            break;
+        case MotionNotify:
+            (*env)->SetIntField(env, eventData, typeFID, sun_awt_peer_x11_X11EventData_MOTION);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetLongField(env, eventData, windowFID, (jlong) event.xmotion.window);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetIntField(env, eventData, xFID, (jint) event.xmotion.x);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetIntField(env, eventData, yFID, (jint) event.xmotion.y);
+            if ((*env)->ExceptionCheck(env)) return;
+            break;
+        case ButtonPress:
+            (*env)->SetIntField(env, eventData, typeFID, sun_awt_peer_x11_X11EventData_BUTTON_PRESS);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetLongField(env, eventData, windowFID, (jlong) event.xmotion.window);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetIntField(env, eventData, xFID, (jint) event.xmotion.x);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetIntField(env, eventData, yFID, (jint) event.xmotion.y);
+            if ((*env)->ExceptionCheck(env)) return;
+            break;
+        case ButtonRelease:
+            (*env)->SetIntField(env, eventData, typeFID, sun_awt_peer_x11_X11EventData_BUTTON_RELEASE);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetLongField(env, eventData, windowFID, (jlong) event.xmotion.window);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetIntField(env, eventData, xFID, (jint) event.xmotion.x);
+            if ((*env)->ExceptionCheck(env)) return;
+            (*env)->SetIntField(env, eventData, yFID, (jint) event.xmotion.y);
             if ((*env)->ExceptionCheck(env)) return;
             break;
         default:
