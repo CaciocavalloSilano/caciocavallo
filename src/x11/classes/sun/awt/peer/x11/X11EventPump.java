@@ -25,23 +25,69 @@
 
 package sun.awt.peer.x11;
 
+import java.awt.Component;
+import java.util.HashMap;
+import sun.awt.SunToolkit;
+import sun.awt.peer.cacio.CacioComponent;
 import sun.awt.peer.cacio.CacioEventPump;
 
-class X11EventPump extends CacioEventPump<Object> {
+class X11EventPump extends CacioEventPump<X11EventData> {
+
+    static {
+        initIDs();
+    }
+
+    private X11EventData eventData;
+
+    private HashMap<Long,X11PlatformWindow> windowMap;
+
+    private static native void initIDs();
+
+    private native void nativeFetchEvent(long dpy, X11EventData ed);
 
     X11EventPump() {
+        eventData = new X11EventData();
+        windowMap = new HashMap<Long,X11PlatformWindow>();
     }
 
     @Override
-    protected Object fetchNativeEvent() {
-        // TODO: Implement.
-        try { Thread.sleep(1000); } catch (Exception ex) {}
-        return null;
+    protected X11EventData fetchNativeEvent() {
+        eventData.clear();
+        SunToolkit.awtLock();
+        try {
+            nativeFetchEvent(X11GraphicsEnvironment.getDisplay(), eventData);
+        } finally {
+            SunToolkit.awtUnlock();
+        }
+        if (eventData.getType() == X11EventData.NONE) {
+            try { Thread.sleep(10); } catch (InterruptedException ex) { }
+        }
+        return eventData;
     }
 
     @Override
-    protected void dispatchNativeEvent(Object nativeEvent) {
-        // TODO: Implement.
+    protected void dispatchNativeEvent(X11EventData nativeEvent) {
+        switch (nativeEvent.getType()) {
+            case X11EventData.NONE:
+                break;
+            case X11EventData.MAP_NOTIFY:
+                break;
+            case X11EventData.EXPOSE:
+                X11PlatformWindow w = windowMap.get(Long.valueOf(nativeEvent.getWindow()));
+                CacioComponent source = w.getCacioComponent();
+                Component c = source.getAWTComponent();
+                postPaintEvent(source, 0, 0, c.getWidth(), c.getHeight());
+                break;
+            default:
+                System.err.println("unhandled event type: " + nativeEvent.getType());
+        }
     }
 
+    void registerWindow(long windowId, X11PlatformWindow w) {
+        windowMap.put(Long.valueOf(windowId), w);
+    }
+
+    void deregisterWindow(long windowId) {
+        windowMap.remove(Long.valueOf(windowId));
+    }
 }

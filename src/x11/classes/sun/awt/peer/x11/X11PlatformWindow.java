@@ -41,6 +41,7 @@ import java.awt.image.ColorModel;
 import java.awt.peer.ContainerPeer;
 import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.SunToolkit;
+import sun.awt.peer.cacio.CacioComponent;
 import sun.awt.peer.cacio.PlatformToplevelWindow;
 import sun.java2d.SunGraphics2D;
 import sun.java2d.pipe.Region;
@@ -49,7 +50,13 @@ class X11PlatformWindow implements PlatformToplevelWindow {
 
     private long nativeWindow;
 
+    private boolean toplevel;
+
+    private boolean visible;
+
     private X11SurfaceData surfaceData;
+
+    private CacioComponent cacioComponent;
 
     private native long nativeInit(long dpy, long parent, int x, int y, int w, int h);
 
@@ -60,7 +67,7 @@ class X11PlatformWindow implements PlatformToplevelWindow {
     /**
      * Creates a window without parent, i.e. a toplevel window.
      */
-    X11PlatformWindow(int x, int y, int w, int h) {
+    X11PlatformWindow(X11EventPump pump, CacioComponent comp, int x, int y, int w, int h) {
         SunToolkit.awtLock();
         try {
             nativeWindow = nativeInit(X11GraphicsEnvironment.getDisplay(), 0L,
@@ -68,12 +75,15 @@ class X11PlatformWindow implements PlatformToplevelWindow {
         } finally {
             SunToolkit.awtUnlock();
         }
+        toplevel = true;
+        cacioComponent = comp;
+        pump.registerWindow(nativeWindow, this);
     }
 
     /**
      * Creates a window with parent, i.e. a nested window.
      */
-    X11PlatformWindow(X11PlatformWindow parent, int x, int y, int w, int h) {
+    X11PlatformWindow(X11EventPump pump, CacioComponent comp, X11PlatformWindow parent, int x, int y, int w, int h) {
         SunToolkit.awtLock();
         try {
             nativeWindow = nativeInit(X11GraphicsEnvironment.getDisplay(),
@@ -81,6 +91,13 @@ class X11PlatformWindow implements PlatformToplevelWindow {
         } finally {
             SunToolkit.awtUnlock();
         }
+        toplevel = false;
+        cacioComponent = comp;
+        pump.registerWindow(nativeWindow, this);
+    }
+
+    CacioComponent getCacioComponent() {
+        return cacioComponent;
     }
 
     public ColorModel getColorModel() {
@@ -108,9 +125,13 @@ class X11PlatformWindow implements PlatformToplevelWindow {
     }
 
     private X11SurfaceData getSurfaceData() {
+        if (! visible) {
+            System.err.println("STUPID");
+            System.exit(0);
+        }
         if (surfaceData == null) {
             surfaceData = new X11SurfaceData(X11SurfaceData.typeDefault,
-                                             getColorModel(), getBounds(),
+                                             getColorModel(), bounds.width, bounds.height,
                                              getGraphicsConfiguration(), this,
                                              nativeWindow);
         }
@@ -169,7 +190,13 @@ class X11PlatformWindow implements PlatformToplevelWindow {
     }
 
     public void setVisible(boolean b) {
+        SunToolkit.awtLock();
+        try {
         nativeSetVisible(X11GraphicsEnvironment.getDisplay(), nativeWindow, b);
+        } finally {
+            SunToolkit.awtUnlock();
+        }
+        visible = b;
     }
 
     public boolean requestFocus(Component lightweightChild, boolean temporary, boolean focusedWindowChangeAllowed, long time, Cause cause) {

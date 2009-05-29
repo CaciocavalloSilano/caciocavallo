@@ -48,6 +48,8 @@
                       sun.awt.peer.x11.X11PlatformWindow,
                       sun.awt.peer.x11.X11Blit,
                       sun.awt.peer.x11.X11VolatileSurfaceManager,
+                      sun.awt.peer.x11.X11EventPump,
+                      sun.awt.peer.x11.X11EventData,
                       java.awt.event.MouseEvent" />
     </target>
 
