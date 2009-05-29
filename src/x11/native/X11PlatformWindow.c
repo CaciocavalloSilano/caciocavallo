@@ -47,6 +47,10 @@ JNIEXPORT jlong JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_nativeInit
     if (w <= 0) w = 1;
     if (h <= 0) h = 1;
     window = XCreateSimpleWindow(display, parent, x, y, w, h, 0, 0, 0);
+    XSelectInput(display, window, StructureNotifyMask | ExposureMask);
+    XSync(display, False);
+    XFlush(display);
+    return window;
 }
 
 /*
@@ -63,9 +67,9 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_nativeSetBounds
     display = (Display*) dpyPtr;
     window = (Window) nw;
 
-    if (w <= 0) w = 1;
-    if (h <= 0) h = 1;
+    if (w <= 0 || h <= 0) return;
     XMoveResizeWindow(display, window, x, y, w, h);
+    XFlush(display);
 }
 
 /*
@@ -87,5 +91,5 @@ JNIEXPORT void JNICALL Java_sun_awt_peer_x11_X11PlatformWindow_nativeSetVisible
     } else {
         XUnmapWindow(display, window);
     }
-    XFlush(display);
+    XSync(display, False);
 }

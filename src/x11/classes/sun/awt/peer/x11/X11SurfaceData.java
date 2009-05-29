@@ -43,7 +43,7 @@ class X11SurfaceData extends SurfaceData {
         X11Blit.register();
     }
 
-    private Rectangle bounds;
+    private int width, height;
 
     private GraphicsConfiguration configuration;
 
@@ -53,14 +53,15 @@ class X11SurfaceData extends SurfaceData {
 
     private native void initOps(long display, long drawable, int w, int h);
 
-    X11SurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b,
+    X11SurfaceData(SurfaceType surfaceType, ColorModel cm, int w, int h,
                    GraphicsConfiguration gc, Object dest, long drawable) {
 
         super(surfaceType, cm);
-        bounds = b;
         configuration = gc;
         destination = dest;
-        initOps(X11GraphicsEnvironment.getDisplay(), drawable, b.width, b.height);
+        width = w;
+        height = h;
+        initOps(X11GraphicsEnvironment.getDisplay(), drawable, width, height);
 
     }
 
@@ -81,7 +82,7 @@ class X11SurfaceData extends SurfaceData {
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(bounds);
+        return new Rectangle(0, 0, width, height);
     }
 
     @Override
