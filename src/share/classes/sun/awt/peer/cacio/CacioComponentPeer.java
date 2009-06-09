@@ -706,7 +706,8 @@ class CacioComponentPeer<AWTComponentType extends Component,
     }
 
     private void postEvent(AWTEvent event) {
-        SunToolkit.postEvent(AppContext.getAppContext(), event);
+        SunToolkit.postEvent(SunToolkit.targetToAppContext(event.getSource()),
+                             event);
     }
 
     public Insets getInsets() {
