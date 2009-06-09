@@ -26,6 +26,8 @@
 package sun.awt.peer.cacio;
 
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.TextArea;
 import java.awt.im.InputMethodRequests;
 import java.awt.peer.TextAreaPeer;
@@ -73,12 +75,19 @@ class CacioTextAreaPeer extends CacioComponentPeer<TextArea, JScrollPane> implem
 
     @Override
     public Dimension getMinimumSize(int rows, int columns) {
-        return super.getMinimumSize();
+        return getPreferredSize(rows, columns);
     }
 
     @Override
     public Dimension getPreferredSize(int rows, int columns) {
-        return super.getPreferredSize();
+        Font f = textArea.getFont();
+        FontMetrics fm = textArea.getFontMetrics(f);
+        int w = fm.charWidth('m') * columns;
+        int h = fm.getHeight() * rows;
+        Dimension spSize = getSwingComponent().getMinimumSize();
+        spSize.width += w;
+        spSize.height += h;
+        return spSize;
     }
 
     @Override
