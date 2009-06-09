@@ -135,18 +135,25 @@ static void fetchEvent(JNIEnv *env, Display *display, jobject eventData) {
           }
           break;
         case MotionNotify: {
-            XButtonEvent bp = event.xbutton;
-            (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
-                                   java_awt_event_MouseEvent_MOUSE_MOVED);
-            (*env)->CallVoidMethod(env, eventData, eventDataSetXMID,
-                                   (jint) bp.x);
-            (*env)->CallVoidMethod(env, eventData, eventDataSetYMID,
-                                   (jint) bp.y);
+            XMotionEvent me = event.xmotion;
+            if (me.state == 0) {
+                (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
+                        java_awt_event_MouseEvent_MOUSE_MOVED);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetXMID,
+                        (jint) me.x);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetYMID,
+                        (jint) me.y);
+              } else {
+                (*env)->CallVoidMethod(env, eventData, eventDataSetIdMID,
+                        java_awt_event_MouseEvent_MOUSE_DRAGGED);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetXMID,
+                        (jint) me.x);
+                (*env)->CallVoidMethod(env, eventData, eventDataSetYMID,
+                        (jint) me.y);
             /* TODO: Map the masks. */
-            /*
             (*env)->CallVoidMethod(env, eventData, eventDataSetModifiersMID,
                                    java_awt_event_MouseEvent_BUTTON1_DOWN_MASK);
-             **/
+              }
           }
           break;
         case Expose:
