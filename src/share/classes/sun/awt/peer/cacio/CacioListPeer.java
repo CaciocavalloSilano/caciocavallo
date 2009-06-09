@@ -135,6 +135,11 @@ final class CacioListPeer extends CacioComponentPeer<List, JScrollPane> implemen
         }
     }
 
+    public void setEnabled(boolean e) {
+        super.setEnabled(e);
+        list.setEnabled(e);
+    }
+
     class SelectionListener implements ListSelectionListener {
 
         @Override
