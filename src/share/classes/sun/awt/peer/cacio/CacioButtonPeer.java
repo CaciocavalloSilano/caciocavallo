@@ -56,10 +56,8 @@ class CacioButtonPeer extends CacioComponentPeer<Button, JButton>
             ActionListener[] l = b.getActionListeners();
             ActionEvent ev = new ActionEvent(b, ActionEvent.ACTION_PERFORMED, b
                     .getActionCommand());
-            for (int i = 0; i < l.length; ++i)
-                l[i].actionPerformed(ev);
-            // Notify AWT 1.0 style listeners...
-            b.dispatchEvent(ev);
+            // This sends both the new and old style events correctly.
+            handlePeerEvent(ev);
         }
       
     }
