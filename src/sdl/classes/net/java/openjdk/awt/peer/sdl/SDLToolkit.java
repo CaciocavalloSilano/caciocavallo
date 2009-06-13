@@ -176,7 +176,7 @@ public class SDLToolkit extends CacioToolkit {
 
     @Override
     public void sync() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        /* not needed for SDL */
     }
 
     @Override
