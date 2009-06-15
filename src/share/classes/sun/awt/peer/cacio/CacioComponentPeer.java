@@ -36,6 +36,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Insets;
@@ -62,6 +63,7 @@ import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.ComponentAccessor;
+import sun.awt.ConstrainableGraphics;
 import sun.awt.PaintEventDispatcher;
 
 import sun.awt.RepaintArea;
@@ -137,12 +139,16 @@ class CacioComponentPeer<AWTComponentType extends Component,
         paintArea = new RepaintArea() {
             @Override
             protected void updateComponent(Component comp, Graphics g) {
-                peerPaint(g, true);
+                Graphics g2 = getGraphicsImpl();
+                peerPaint(g2, true);
+                g2.dispose();
                 super.updateComponent(comp, g);
             }
             @Override
             protected void paintComponent(Component comp, Graphics g) {
-                peerPaint(g, false);
+                Graphics g2 = getGraphicsImpl();
+                peerPaint(g2, false);
+                g2.dispose();
                 super.updateComponent(comp, g);
             }
         };
@@ -170,9 +176,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
             }
         }
         platformWindow = pwf.createPlatformWindow(this, parent);
-        if (awtComponent.isVisible()) {
-            platformWindow.setVisible(true);
-        }
     }
 
     private void initProxy() {
@@ -229,15 +232,57 @@ class CacioComponentPeer<AWTComponentType extends Component,
         return platformWindow.getColorModel();
     }
 
-    @Override
-    public Graphics getGraphics() {
+    /**
+     * Creates and returns a graphics object that is used for painting.
+     * The difference between this and {@link #getGraphics()} is that
+     * this one returns a graphics that can be used to paint on the whole
+     * component, while {@link #getGraphics()} clips away the insets. (The
+     * public AWT must never ever paint over the insets of a component, e.g.
+     * the menu + decorations of a window.)
+     *
+     * @return a prepared graphics object for painting on the component
+     */
+    private Graphics2D getGraphicsImpl() {
 
-        Graphics g = platformWindow.getGraphics();
+        Color bg = getBackground();
+        Color fg = getForeground();
+        Font font = getFont();
+        Graphics2D g = platformWindow.getGraphics(fg, bg, font);
         if (viewRect != null) {
             g.clipRect(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
             g.translate(viewRect.x, viewRect.y);
         }
+
         return g;
+    }
+
+    @Override
+    public Graphics getGraphics() {
+        Graphics2D g = getGraphicsImpl();
+        if (hasInsets()) {
+            Insets i = getInsets();
+            Component c = getAWTComponent();
+            int w = c.getWidth();
+            int h = c.getHeight();
+            // ConstrainableGraphics is the only way to ensure that the clip
+            // that we set is not revertible by setClip(null).
+            ((ConstrainableGraphics) g).constrain(i.left, i.top,
+                                                  w - i.left - i.right,
+                                                  h - i.top - i.bottom);
+            g.translate(-i.left, -i.top);
+        }
+        return g;
+    }
+
+    /**
+     * Returns {@code true} when this component has insets, {@code false}
+     * otherwise. This allows for optimizations in {@link #getGraphics() }.
+     *
+     * @return {@code true} when this component has insets, {@code false}
+     *         otherwise
+     */
+    boolean hasInsets() {
+        return false;
     }
 
     @Override

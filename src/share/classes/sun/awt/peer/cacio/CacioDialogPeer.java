@@ -56,7 +56,8 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     @Override
     protected int getRootPaneDecorationStyle() {
-        if (((Dialog) getAWTComponent()).isUndecorated()) {
+        if ((! isDecorateWindows())
+            || ((Dialog) getAWTComponent()).isUndecorated()) {
             return JRootPane.NONE;
         } else {
             return JRootPane.PLAIN_DIALOG;

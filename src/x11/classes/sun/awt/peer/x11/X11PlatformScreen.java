@@ -70,10 +70,11 @@ class X11PlatformScreen implements PlatformScreen, CacioEventSource {
                                   width, height);
     }
 
-    public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
+    @Override
+    public Graphics2D getClippedGraphics(Color fg, Color bg, Font font,
+                                         List<Rectangle> clipRects) {
         X11SurfaceData sd = getSurfaceData();
-        Graphics2D g2d = new SunGraphics2D(sd, Color.BLACK, Color.BLACK,
-                                        new Font(Font.DIALOG, Font.PLAIN, 12));
+        Graphics2D g2d = new SunGraphics2D(sd, fg, bg, font);
         if (clipRects != null && clipRects.size() > 0) {
             Area a = new Area(getBounds());
             for (Rectangle clip : clipRects) {

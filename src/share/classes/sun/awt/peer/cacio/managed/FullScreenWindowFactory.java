@@ -138,7 +138,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     }
 
     @Override
-    public final PlatformWindow createPlatformToplevelWindow(CacioComponent comp) {
+    public final PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent comp) {
 
         GraphicsConfiguration gc = comp.getAWTComponent().getGraphicsConfiguration();
         PlatformScreen screen = selector.getPlatformScreen(gc);

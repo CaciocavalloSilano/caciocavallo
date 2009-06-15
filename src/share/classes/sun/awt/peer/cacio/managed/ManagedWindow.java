@@ -118,7 +118,8 @@ class ManagedWindow
     }
 
     @Override
-    public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
+    public Graphics2D getClippedGraphics(Color bg, Color fg, Font font,
+                                         List<Rectangle> clipRects) {
         // Translate all clip rectangles to parent's coordinate system.
         if (clipRects != null) {
             for (Rectangle r : clipRects) {
@@ -126,11 +127,11 @@ class ManagedWindow
                 r.y += y;
             }
         }
-        return prepareClippedGraphics(clipRects);
+        return prepareClippedGraphics(bg, fg, font, clipRects);
     }
 
     @Override
-    public Graphics2D getGraphics() {
+    public Graphics2D getGraphics(Color fg, Color bg, Font font) {
         // Our children obscure the container. Clip them.
         LinkedList<Rectangle> clips;
         LinkedList<ManagedWindow> children = getChildren();
@@ -147,18 +148,16 @@ class ManagedWindow
 
         // Check if we have obscuring siblings and add their clip
         // rectangles to the list.
-        Graphics2D g2d = getClippedGraphics(clips);
-        g2d.setColor(foreground);
-        g2d.setFont(font);
-        g2d.setBackground(background);
+        Graphics2D g2d = getClippedGraphics(fg, bg, font, clips);
         return g2d;
     }
 
-    private Graphics2D prepareClippedGraphics(List<Rectangle> clipRects) {
+    private Graphics2D prepareClippedGraphics(Color fg, Color bg, Font font,
+                                              List<Rectangle> clipRects) {
         // Add clip rectangles of any siblings.
         clipRects = addClipRects(clipRects);
         // Ask parent for clipped graphics.
-        Graphics2D pg = parent.getClippedGraphics(clipRects);
+        Graphics2D pg = parent.getClippedGraphics(fg, bg, font, clipRects);
         // Translate and clip to our own coordinate system.
         if (pg instanceof ConstrainableGraphics)  {
             ((ConstrainableGraphics) pg).constrain(x, y, width, height);
@@ -447,21 +446,6 @@ class ManagedWindow
     }
 
     @Override
-    public void setBackground(Color c) {
-        background = c;
-    }
-
-    @Override
-    public void setFont(Font f) {
-        font = f;
-    }
-
-    @Override
-    public void setForeground(Color c) {
-        foreground = c;
-    }
-
-    @Override
     public void createBuffers(int numBuffers, BufferCapabilities caps)
         throws AWTException {
 
@@ -495,7 +479,7 @@ class ManagedWindow
         Component awtComp = cacioComp.getAWTComponent();
         // We need to be relative to the target.
         Rectangle area = new Rectangle(x, y, w, h);
-        PaintEvent ev = new PaintEvent(awtComp, PaintEvent.PAINT, area);
+        PaintEvent ev = new PaintEvent(awtComp, PaintEvent.UPDATE, area);
         cacioComp.handlePeerEvent(ev);
         super.repaint(x, y, w, h);
     }

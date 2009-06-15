@@ -25,6 +25,8 @@
 
 package sun.awt.peer.cacio.managed;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
@@ -98,7 +100,8 @@ interface ManagedWindowContainer {
      *
      * @return a Graphics2D object with the specified default clips applied
      */
-    Graphics2D getClippedGraphics(List<Rectangle> clipRects);
+    Graphics2D getClippedGraphics(Color fg, Color bg, Font font,
+                                  List<Rectangle> clipRects);
 
     /**
      * Triggers repainting of the specified area in this container. This

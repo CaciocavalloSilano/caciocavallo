@@ -63,7 +63,7 @@ public class X11Toolkit extends CacioToolkit {
     private PlatformWindowFactory platformWindowFactory;
 
     @Override
-    public PlatformWindowFactory getPlatformWindowFactory() {
+    public synchronized PlatformWindowFactory getPlatformWindowFactory() {
         if (platformWindowFactory == null) {
             platformWindowFactory = createPlatformWindowFactory();
         }
@@ -73,11 +73,11 @@ public class X11Toolkit extends CacioToolkit {
     private PlatformWindowFactory createPlatformWindowFactory() {
         PlatformWindowFactory factory;
         if (useManagedWindows()) {
-            System.setProperty("cacio.decorateWindows", "true");
+            setDecorateWindows(true);
             X11PlatformScreen screen = new X11PlatformScreen();
             factory = new FullScreenWindowFactory(screen, screen);
         } else {
-            System.setProperty("cacio.decorateWindows", "false");
+            setDecorateWindows(false);
             factory = new X11PlatformWindowFactory();
         }
         return factory;

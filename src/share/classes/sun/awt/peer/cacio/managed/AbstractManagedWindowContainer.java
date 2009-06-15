@@ -25,6 +25,8 @@
 
 package sun.awt.peer.cacio.managed;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -187,7 +189,9 @@ abstract class AbstractManagedWindowContainer
                 }
             }
         }
-        Graphics2D g = getClippedGraphics(rects);
+        Graphics2D g = getClippedGraphics(Color.BLACK, Color.BLACK,
+                                          new Font(Font.DIALOG, Font.BOLD, 12),
+                                          rects);
         g.clearRect(x, y, w, h);
     }
 }

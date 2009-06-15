@@ -28,6 +28,7 @@ package sun.awt.peer.x11;
 import java.awt.Component;
 import sun.awt.peer.cacio.CacioComponent;
 import sun.awt.peer.cacio.CacioEventPump;
+import sun.awt.peer.cacio.PlatformToplevelWindow;
 import sun.awt.peer.cacio.PlatformWindow;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
@@ -42,7 +43,7 @@ public class X11PlatformWindowFactory implements PlatformWindowFactory {
                                      awtC.getHeight());
     }
 
-    public PlatformWindow createPlatformToplevelWindow(CacioComponent component) {
+    public PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent component) {
         Component awtC = component.getAWTComponent();
         return new X11PlatformWindow(getEventPump(), component, awtC.getX(), awtC.getY(), awtC.getWidth(),
                                      awtC.getHeight());

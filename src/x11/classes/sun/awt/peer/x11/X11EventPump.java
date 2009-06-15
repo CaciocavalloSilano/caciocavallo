@@ -77,6 +77,7 @@ class X11EventPump extends CacioEventPump<X11EventData> {
                 X11PlatformWindow w = windowMap.get(Long.valueOf(nativeEvent.getWindow()));
                 CacioComponent source = w.getCacioComponent();
                 Component c = source.getAWTComponent();
+                System.err.println("exposing: " + c);
                 postPaintEvent(source, 0, 0, c.getWidth(), c.getHeight());
                 break;
             }

@@ -43,7 +43,9 @@ import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.SunToolkit;
 import sun.awt.peer.cacio.CacioComponent;
 import sun.awt.peer.cacio.PlatformToplevelWindow;
+import sun.java2d.NullSurfaceData;
 import sun.java2d.SunGraphics2D;
+import sun.java2d.SurfaceData;
 import sun.java2d.pipe.Region;
 
 class X11PlatformWindow implements PlatformToplevelWindow {
@@ -99,6 +101,9 @@ class X11PlatformWindow implements PlatformToplevelWindow {
         try {
             nativeWindow = nativeInit(X11GraphicsEnvironment.getDisplay(),
                                       p.nativeWindow, x, y, w, h);
+            // We need to set the visibility here, otherwise subwindows
+            // will not be mapped when the parent gets mapped.
+            setVisible(comp.getAWTComponent().isVisible());
         } finally {
             SunToolkit.awtUnlock();
         }
@@ -129,17 +134,15 @@ class X11PlatformWindow implements PlatformToplevelWindow {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Graphics2D getGraphics() {
-        X11SurfaceData sd = getSurfaceData();
-        Graphics2D g2d = new SunGraphics2D(sd, Color.BLACK, Color.BLACK,
-                                        new Font(Font.DIALOG, Font.PLAIN, 12));
+    public Graphics2D getGraphics(Color fg, Color bg, Font font) {
+        SurfaceData sd = getSurfaceData();
+        Graphics2D g2d = new SunGraphics2D(sd, fg, bg, font);
         return g2d;
     }
 
-    private X11SurfaceData getSurfaceData() {
+    private SurfaceData getSurfaceData() {
         if (! visible) {
-            System.err.println("STUPID");
-            System.exit(0);
+            return NullSurfaceData.theInstance;
         }
         if (surfaceData == null) {
             surfaceData = new X11SurfaceData(X11SurfaceData.typeDefault,
@@ -181,7 +184,13 @@ class X11PlatformWindow implements PlatformToplevelWindow {
 
     private Point getLocation() {
         Point p = new Point();
-        nativeGetLocation(X11GraphicsEnvironment.getDisplay(), nativeWindow, p);
+        SunToolkit.awtLock();
+        try {
+            nativeGetLocation(X11GraphicsEnvironment.getDisplay(),
+                              nativeWindow, p);
+        } finally {
+            SunToolkit.awtUnlock();
+        }
         return p;
     }
 
@@ -216,7 +225,8 @@ class X11PlatformWindow implements PlatformToplevelWindow {
     public void setVisible(boolean b) {
         SunToolkit.awtLock();
         try {
-        nativeSetVisible(X11GraphicsEnvironment.getDisplay(), nativeWindow, b);
+            nativeSetVisible(X11GraphicsEnvironment.getDisplay(), nativeWindow,
+                             b);
         } finally {
             SunToolkit.awtUnlock();
         }

@@ -101,7 +101,8 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     @Override
     protected int getRootPaneDecorationStyle() {
-        if (((Frame) getAWTComponent()).isUndecorated()) {
+        if ((! isDecorateWindows())
+            || ((Frame) getAWTComponent()).isUndecorated()) {
             return JRootPane.NONE;
         } else {
             return JRootPane.FRAME;
