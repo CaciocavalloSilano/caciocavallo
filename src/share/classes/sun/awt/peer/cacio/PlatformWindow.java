@@ -81,9 +81,13 @@ public interface PlatformWindow {
     /**
      * Returns a Graphics2D object for drawing on this window.
      *
+     * @param foreground the foreground to be set
+     * @param background the background to be set
+     * @param font the font to be set
+     *
      * @return  a Graphics2D object for drawing on this window
      */
-    Graphics2D getGraphics();
+    Graphics2D getGraphics(Color foreground, Color background, Font font);
 
     /**
      * Sets the bounds of this native window. The X and Y coordinates are
@@ -217,27 +221,6 @@ public interface PlatformWindow {
                          boolean focusedWindowChangeAllowed, long time,
                          Cause cause);
 
-
-    /**
-     * Sets the background color of the component window.
-     *
-     * @param c the background color to set
-     */
-    void setBackground(Color c);
-
-    /**
-     * Sets the foreground color of the component window.
-     *
-     * @param c the foreground color to set
-     */
-    void setForeground(Color c);
-
-    /**
-     * Sets the font of the component window.
-     *
-     * @param c the font to set
-     */
-    void setFont(Font f);
 
     /**
      * Creates back buffers for flipping. This method may throw an AWTException

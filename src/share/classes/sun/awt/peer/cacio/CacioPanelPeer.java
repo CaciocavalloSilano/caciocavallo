@@ -18,34 +18,9 @@ class CacioPanelPeer extends CacioContainerPeer<Panel, JPanel>
         super(awtC, pwf);
     }
 
-    @Override
-    void init(PlatformWindowFactory pwf) {
-        super.init(pwf);
-        /**
-        Panel awtComponent = getAWTComponent();
-        Color fg = UIManager.getColor("Panel.foreground");
-        awtComponent.setForeground(fg);
-        Color bg = UIManager.getColor("Panel.background");
-        awtComponent.setBackground(bg);
-        Font font = UIManager.getFont("Panel.font");
-        awtComponent.setFont(font);
-         * */
-    }
 
     @Override
-    protected void peerPaint(Graphics g, boolean update) {
-        // We need to clear the background, because we have no Swing component
-        // to do it for us.
-        Insets i = getInsets();
-        int cx = i.left;
-        int cy = i.top;
-        int cw = getAWTComponent().getWidth() - i.left - i.right;
-        int ch = getAWTComponent().getHeight() - i.top - i.bottom;
-        Color bg = UIManager.getColor("Panel.background");
-        Color old = g.getColor();
-        g.setColor(bg);
-        g.clearRect(cx, cy, cw, ch);
-        g.setColor(old);
-        super.peerPaint(g, update);
+    JPanel initSwingComponent() {
+        return new JPanel();
     }
 }

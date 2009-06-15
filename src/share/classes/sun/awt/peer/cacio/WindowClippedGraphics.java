@@ -53,8 +53,10 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
+import sun.awt.ConstrainableGraphics;
 
-public class WindowClippedGraphics extends Graphics2D {
+public class WindowClippedGraphics extends Graphics2D
+                                   implements ConstrainableGraphics {
 
     private Graphics2D wrapped;
 
@@ -123,7 +125,13 @@ public class WindowClippedGraphics extends Graphics2D {
 
     @Override
     public Rectangle getClipBounds() {
-        return userClip.getBounds();
+        Rectangle clipBounds;
+        if (userClip == null) {
+            clipBounds = null;
+        } else {
+            clipBounds = userClip.getBounds();
+        }
+        return clipBounds;
     }
 
     @Override
@@ -650,6 +658,34 @@ public class WindowClippedGraphics extends Graphics2D {
     @Override
     public void setXORMode(Color c1) {
         wrapped.setXORMode(c1);
+    }
+
+    public void constrain(int x, int y, int w, int h) {
+        if (wrapped instanceof ConstrainableGraphics) {
+
+            // Update our understanding of the transform.
+            AffineTransform t = AffineTransform.getTranslateInstance(-x, -y);
+            if (userClip != null && userClip instanceof Rectangle) {
+                // Common case.
+                Rectangle r = (Rectangle) userClip;
+                r.x -= x;
+                r.y -= y;
+            } else {
+                userClip = transformShape(userClip, t);
+            }
+            // No need to optimize baseClip: common case is Area.
+            baseClip = transformShape(baseClip, t);
+
+            // Update base clip.
+            Area newBase = new Area(baseClip);
+            newBase.intersect(new Area(new Rectangle(0, 0, w, h)));
+            baseClip = newBase;
+
+            ConstrainableGraphics cg = (ConstrainableGraphics) wrapped;
+            cg.constrain(x, y, w, h);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

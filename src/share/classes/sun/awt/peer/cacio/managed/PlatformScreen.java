@@ -25,6 +25,8 @@
 
 package sun.awt.peer.cacio.managed;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
@@ -58,6 +60,7 @@ public interface PlatformScreen {
      */
     Rectangle getBounds();
 
-    abstract Graphics2D getClippedGraphics(List<Rectangle> clipRects);
+    abstract Graphics2D getClippedGraphics(Color fg, Color bg, Font f,
+                                           List<Rectangle> clipRects);
 
 }

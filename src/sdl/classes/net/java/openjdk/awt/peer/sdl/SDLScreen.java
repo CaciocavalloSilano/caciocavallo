@@ -64,14 +64,11 @@ class SDLScreen implements PlatformScreen, CacioEventSource {
         nativeSDLdata = nativeInitScreen(width, height);
     }
 
-    public Graphics2D getClippedGraphics(List<Rectangle> clipRects) {
+    public Graphics2D getClippedGraphics(Color fg, Color bg, Font font,
+                                         List<Rectangle> clipRects) {
 
         SDLSurfaceData data = getSurfaceData();
-        Graphics2D g2d = new SunGraphics2D(data,
-                                           Color.BLACK,
-                                           Color.BLACK,
-                                           new Font(Font.DIALOG,
-                                                    Font.PLAIN, 12));
+        Graphics2D g2d = new SunGraphics2D(data, fg, bg, font);
         // TODO: Implement the clipping part.
         return g2d;
     }

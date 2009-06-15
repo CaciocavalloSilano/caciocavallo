@@ -256,6 +256,22 @@ public abstract class CacioToolkit extends SunToolkit {
         SunToolkit.targetDisposedPeer(target, peer);
     }
 
+    /**
+     * Sets whether Cacio should decorate windows by itself or not. The
+     * default is to not decorate windows. Set this to true if your
+     * backend doesn't support window decorations by itself. In this case,
+     * Cacio will use Swing window decorations.
+     *
+     * This method must be called before creating any window, usually just
+     * before creating your {@link PlatformWindowFactory}.
+     *
+     * @param decorate {@code true} for Cacio-decorated windows, {@code false}
+     *        otherwise
+     */
+    protected void setDecorateWindows(boolean decorate) {
+        CacioWindowPeer.setDecorateWindows(decorate);
+    }
+
     public abstract PlatformWindowFactory getPlatformWindowFactory();
 
 }

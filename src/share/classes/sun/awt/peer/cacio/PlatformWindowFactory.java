@@ -48,7 +48,7 @@ public interface PlatformWindowFactory {
      *
      * @return the created toplevel window
      */
-    PlatformWindow createPlatformToplevelWindow(CacioComponent component);
+    PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent component);
 
     /**
      * Creates and returns the event pump to be used for getting the platform

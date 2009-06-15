@@ -28,7 +28,9 @@ package sun.awt.peer.cacio;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -38,6 +40,8 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.peer.WindowPeer;
 
+import javax.swing.JComponent;
+import javax.swing.JMenuBar;
 import javax.swing.JRootPane;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -45,9 +49,17 @@ import javax.swing.border.Border;
 class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                       implements WindowPeer {
 
-    private static boolean decorateWindows = "true".equals(System.getProperty("cacio.decorateWindows", "true"));
+    private static boolean decorateWindows = false;
 
     private static final Font defaultFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+
+    static void setDecorateWindows(boolean decorate) {
+        decorateWindows = decorate;
+    }
+
+    static boolean isDecorateWindows() {
+        return decorateWindows;
+    }
 
     CacioWindowPeer(Window awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
@@ -168,8 +180,15 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     }
 
     @Override
+    boolean hasInsets() {
+        return true;
+    }
+
+    @Override
     public Insets getInsets() {
-        if (decorateWindows) {
+        Insets insets;
+
+        if (isDecorateWindows()) {
             JRootPane rp = getSwingComponent();
             if (rp == null) {
                 return new Insets(0, 0, 0, 0);
@@ -198,11 +217,16 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                 bottom = 0;
                 right = 0;
             }
-            Insets insets = new Insets(top, left, bottom, right);
-            return insets;
+            insets = new Insets(top, left, bottom, right);
         } else {
-            return platformWindow.getInsets();
+            insets = platformWindow.getInsets();
+            // here, We need to hande the menu bar height...
+            JMenuBar jmb = getSwingComponent().getJMenuBar();
+            if (jmb != null) {
+                insets.top += jmb.getPreferredSize().height;
+            }
         }
+        return insets;
     }
 
     @Override
@@ -224,4 +248,24 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     public void repositionSecurityWarning() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
+    @Override
+    protected void peerPaint(Graphics g, boolean update) {
+
+        // TODO: We should paint the menu and decorations w/o clearing
+        // the background of the main view.
+        Graphics peerG = g.create();
+        try {
+            JComponent swingComponent = getSwingComponent();
+            if (swingComponent != null) {
+                JComponent c = swingComponent;
+                c.paint(peerG);
+            }
+        } finally {
+            peerG.dispose();
+        }
+
+    }
+
 }

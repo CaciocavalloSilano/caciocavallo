@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
@@ -183,6 +184,13 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    protected void peerPaint(Graphics g, boolean update) {
+        if (! update) {
+            super.peerPaint(g, update);
         }
     }
 
