@@ -31,6 +31,8 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.PaintEvent;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 import javax.swing.JComponent;
@@ -40,22 +42,37 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
     extends CacioComponentPeer<AWTComponentType, SwingComponentType>
     implements ContainerPeer {
 
+    /**
+     * Indicates if this component is currently layouted or not.
+     */
+    private boolean isLayouting;
+
     public CacioContainerPeer(AWTComponentType awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
     }
 
+    @Override
+    boolean isLayouting() {
+        return isLayouting;
+    }
+
     public void beginLayout() {
 
-        // This can be used for optimization (e.g. defer painting while
-        // layouting). Nothing to do here for now.
+        // Skip all painting till endLayout().
+        isLayouting = true;
 
     }
 
     public void endLayout() {
+        
+        if (! getPaintArea().isEmpty()
+            && !ComponentAccessor.getIgnoreRepaint(getAWTComponent())) {
 
-        // This can be used for optimization (e.g. defer painting while
-        // layouting). Nothing to do here for now.
-
+            // If not waiting for native painting repaint damaged area.
+            handlePeerEvent(new PaintEvent(getAWTComponent(), PaintEvent.PAINT,
+                                           new Rectangle()));
+        }
+        isLayouting = false;
     }
 
     public void beginValidate() {

@@ -340,7 +340,9 @@ class CacioComponentPeer<AWTComponentType extends Component,
         {
         case PaintEvent.UPDATE:
         case PaintEvent.PAINT:
-            paintArea.paint(getAWTComponent(), false);
+            if (! isLayouting()) {
+                paintArea.paint(getAWTComponent(), false);
+            }
           break;
         case MouseEvent.MOUSE_PRESSED:
         case MouseEvent.MOUSE_RELEASED:
@@ -774,5 +776,13 @@ class CacioComponentPeer<AWTComponentType extends Component,
     @Override
     public void updateGraphicsData(GraphicsConfiguration gc) {
         System.err.println("CacioComponentPeer::updateGraphicsData: NOT YET IMPLEMENTED");
+    }
+
+    RepaintArea getPaintArea() {
+        return paintArea;
+    }
+
+    boolean isLayouting() {
+        return false;
     }
 }
