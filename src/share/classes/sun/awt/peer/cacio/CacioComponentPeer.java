@@ -336,13 +336,11 @@ class CacioComponentPeer<AWTComponentType extends Component,
     @Override
     public void handleEvent(AWTEvent e) {
 
-        boolean update = false;
         switch (e.getID())
         {
         case PaintEvent.UPDATE:
-            update = true;
         case PaintEvent.PAINT:
-            paintArea.paint(getAWTComponent(), update);
+            paintArea.paint(getAWTComponent(), false);
           break;
         case MouseEvent.MOUSE_PRESSED:
         case MouseEvent.MOUSE_RELEASED:
