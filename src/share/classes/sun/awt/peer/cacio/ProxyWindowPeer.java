@@ -43,6 +43,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.PaintEvent;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ImageObserver;
@@ -149,7 +150,10 @@ class ProxyWindowPeer implements WindowPeer {
     }
 
     public void handleEvent(AWTEvent e) {
-        // Nothing to do here.
+
+        if (e instanceof WindowEvent) {
+            target.getAWTComponent().dispatchEvent(e);
+        }
     }
 
     public void coalescePaintEvent(PaintEvent e) {
