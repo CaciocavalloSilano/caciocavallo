@@ -28,6 +28,8 @@
 #include <jni.h>
 #include "SurfaceData.h"
 
+#include "SDL.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
