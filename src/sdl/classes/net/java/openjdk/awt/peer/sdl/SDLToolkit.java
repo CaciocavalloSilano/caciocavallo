@@ -78,6 +78,11 @@ public class SDLToolkit extends CacioToolkit {
         System.loadLibrary("cacio-sdl");
     }
 
+    public SDLToolkit() {
+        super();
+        setDecorateWindows(true);
+    }
+
     @Override
     public synchronized PlatformWindowFactory getPlatformWindowFactory() {
 
