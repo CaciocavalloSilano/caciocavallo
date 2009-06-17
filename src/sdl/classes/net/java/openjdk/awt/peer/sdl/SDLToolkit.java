@@ -86,6 +86,7 @@ public class SDLToolkit extends CacioToolkit {
     @Override
     public synchronized PlatformWindowFactory getPlatformWindowFactory() {
 
+        /* SDL doesn't support multiple windows yet */
         if (platformWindow == null) {
             SDLScreen screen = new SDLScreen();
             platformWindow = new FullScreenWindowFactory(screen, screen);
