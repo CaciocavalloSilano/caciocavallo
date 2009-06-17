@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -254,6 +254,20 @@ public abstract class CacioToolkit extends SunToolkit {
 
     static void disposePeer(Object target, Object peer) {
         SunToolkit.targetDisposedPeer(target, peer);
+    }
+
+    /*
+     * For implementation that provide both ManagedWindows and direct
+     * PlatformWindow support, this method returns an hint about the preferred
+     * type to use. Implementation are not required to provide support for both
+     * types and may ignore this hint.
+     *
+     * The hint is set by checking the value of the {@code cacio.usemanaged}
+     * property, and is {@code false} by default.
+     */
+    protected static boolean useManagedWindows() {
+
+        return Boolean.getBoolean("cacio.usemanaged");
     }
 
     /**

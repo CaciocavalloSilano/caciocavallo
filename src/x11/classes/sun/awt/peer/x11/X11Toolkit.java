@@ -83,10 +83,6 @@ public class X11Toolkit extends CacioToolkit {
         return factory;
     }
 
-    static boolean useManagedWindows() {
-        return Boolean.getBoolean("cacio.x11.usemanaged");
-    }
-
     @Override
     public DragSourceContextPeer createDragSourceContextPeer(DragGestureEvent arg0) throws InvalidDnDOperationException {
         throw new UnsupportedOperationException("Not supported yet.");
