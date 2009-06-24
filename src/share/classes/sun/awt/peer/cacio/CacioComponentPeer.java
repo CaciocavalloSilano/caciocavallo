@@ -756,7 +756,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
     }
 
     public Insets getInsets() {
-        return platformWindow.getInsets();
+        return (Insets) platformWindow.getInsets().clone();
     }
 
     SwingComponentType getSwingComponent() {
