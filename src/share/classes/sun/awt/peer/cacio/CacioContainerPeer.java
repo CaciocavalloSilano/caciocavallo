@@ -92,7 +92,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
     @Override
     public Insets getInsets() {
 
-        return platformWindow.getInsets();
+        return (Insets) platformWindow.getInsets().clone();
 
     }
 
