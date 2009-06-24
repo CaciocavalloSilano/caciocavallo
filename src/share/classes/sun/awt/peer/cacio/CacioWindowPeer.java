@@ -219,7 +219,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
             }
             insets = new Insets(top, left, bottom, right);
         } else {
-            insets = platformWindow.getInsets();
+            insets = (Insets) platformWindow.getInsets().clone();
             // here, We need to hande the menu bar height...
             JMenuBar jmb = getSwingComponent().getJMenuBar();
             if (jmb != null) {

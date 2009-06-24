@@ -108,7 +108,8 @@ public interface PlatformWindow {
     /**
      * Returns the insets of this native window. Undecorated windows usually
      * don't have insets. For decorated windows, the insets are the border
-     * widths of the window decoration.
+     * widths of the window decoration. The PlatformWindow implementation is
+     * encouraged to cache the insets.
      *
      * @return the insets of this native window
      */
