@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -26,18 +26,20 @@
 package sun.awt.peer.cacio;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.peer.WindowPeer;
 
 import javax.swing.JComponent;
@@ -69,7 +71,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     @Override
     void init(PlatformWindowFactory pwf) {
-        
+
         platformWindow = pwf.createPlatformToplevelWindow(this);
 
         Window w = getAWTComponent();
@@ -240,12 +242,12 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     }
 
     @Override
-    public void updateWindow(BufferedImage backBuffer) {
+    public void repositionSecurityWarning() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void repositionSecurityWarning() {
+    public void updateWindow() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
