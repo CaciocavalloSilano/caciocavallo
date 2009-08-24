@@ -71,8 +71,15 @@ abstract class AbstractManagedWindowContainer
     @Override
     public final void add(ManagedWindow child) {
         children.add(child);
-        // TODO: This needs to do a little more in reality (repaint, etc).
-        // Fix it.
+
+        Iterator<ManagedWindow> i = children.descendingIterator();
+        while (i.hasNext()) {
+            ManagedWindow _child = i.next();
+            if (_child.isVisible()) {
+                CacioComponent component = _child.getCacioComponent();
+                component.getAWTComponent().repaint();
+            }
+        }
     }
 
     /**
@@ -83,8 +90,15 @@ abstract class AbstractManagedWindowContainer
     @Override
     public final void remove(ManagedWindow child) {
         children.remove(child);
-        // TODO: This needs to do a little more in reality (repaint, etc).
-        // Fix it.
+
+        Iterator<ManagedWindow> i = children.descendingIterator();
+        while (i.hasNext()) {
+            ManagedWindow _child = i.next();
+            if (_child.isVisible()) {
+                CacioComponent component = _child.getCacioComponent();
+                component.getAWTComponent().repaint();
+            }
+        }
     }
 
     @Override
