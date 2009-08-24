@@ -25,11 +25,16 @@
 
 package sun.awt.peer.cacio;
 
+import java.awt.AWTEvent;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Paint;
 import java.awt.TextArea;
+import java.awt.event.PaintEvent;
 import java.awt.im.InputMethodRequests;
+import java.awt.peer.ContainerPeer;
 import java.awt.peer.TextAreaPeer;
 
 import javax.swing.JScrollPane;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -30,7 +30,6 @@ import java.awt.BufferCapabilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;

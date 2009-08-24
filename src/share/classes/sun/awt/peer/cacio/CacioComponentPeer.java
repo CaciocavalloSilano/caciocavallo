@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2009 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -59,7 +59,6 @@ import java.awt.peer.ContainerPeer;
 
 import javax.swing.JComponent;
 
-import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.ComponentAccessor;
@@ -774,8 +773,9 @@ class CacioComponentPeer<AWTComponentType extends Component,
     }
 
     @Override
-    public void updateGraphicsData(GraphicsConfiguration gc) {
+    public boolean updateGraphicsData(GraphicsConfiguration gc) {
         System.err.println("CacioComponentPeer::updateGraphicsData: NOT YET IMPLEMENTED");
+        return false;
     }
 
     RepaintArea getPaintArea() {
