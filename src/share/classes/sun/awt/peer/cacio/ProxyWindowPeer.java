@@ -123,9 +123,6 @@ class ProxyWindowPeer implements WindowPeer {
         // Nothing to do here yet.
     }
 
-    public void restack() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public boolean isObscured() {

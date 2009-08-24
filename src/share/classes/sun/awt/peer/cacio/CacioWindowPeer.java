@@ -81,12 +81,17 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
            w.setForeground(UIManager.getColor("windowText"));
            // w.setForeground(SystemColor.windowText);
         }
-       if (! w.isBackgroundSet()) {
-           // TODO: Use SystemColor here, and load the correct colors in the
-           // Toolkit.
-           w.setBackground(UIManager.getColor("window"));
-           // w.setBackground(SystemColor.window);
-       }
+        if (! w.isBackgroundSet()) {
+            // TODO: as above. The color thingy is a bit weird, because if we
+            // use Panel.background we get an ugly white color for some
+            // components and the nice swing color for other.
+            Color c = UIManager.getColor("window");
+            if (c != null) {
+                c = UIManager.getColor("Panel.background");
+            }
+            w.setBackground(c);
+        }
+
         if (! w.isFontSet()) {
             w.setFont(defaultFont);
         }
@@ -228,6 +233,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                 insets.top += jmb.getPreferredSize().height;
             }
         }
+        
         return insets;
     }
 
@@ -255,19 +261,29 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     @Override
     protected void peerPaint(Graphics g, boolean update) {
 
-        // TODO: We should paint the menu and decorations w/o clearing
-        // the background of the main view.
-        Graphics peerG = g.create();
-        try {
-            JComponent swingComponent = getSwingComponent();
-            if (swingComponent != null) {
-                JComponent c = swingComponent;
+        /*
+         * Don't paint the whole area, we only need to paint the frame
+         * borders
+         */
+        JComponent swingComponent = getSwingComponent();
+        if (swingComponent != null) {
+            JComponent c = swingComponent;
+            Insets insets = getInsets();
+
+            Area clip = new Area(c.getBounds());
+            Rectangle clip2 =
+                    new Rectangle(insets.left,
+                                  insets.top,
+                                  c.getWidth() - insets.left - insets.right,
+                                  c.getHeight() - insets.bottom - insets.top);
+            clip.subtract(new Area(clip2));
+
+            Graphics peerG = new WindowClippedGraphics((Graphics2D) g, clip);
+            try {
                 c.paint(peerG);
+            } finally {
+                peerG.dispose();
             }
-        } finally {
-            peerG.dispose();
         }
-
     }
-
 }
