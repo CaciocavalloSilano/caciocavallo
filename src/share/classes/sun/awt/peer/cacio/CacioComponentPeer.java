@@ -139,6 +139,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
             @Override
             protected void updateComponent(Component comp, Graphics g) {
                 Graphics g2 = getGraphicsImpl();
+                g2.setClip(g.getClip());
                 peerPaint(g2, true);
                 g2.dispose();
                 super.updateComponent(comp, g);
@@ -146,6 +147,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
             @Override
             protected void paintComponent(Component comp, Graphics g) {
                 Graphics g2 = getGraphicsImpl();
+                g2.setClip(g.getClip());
                 peerPaint(g2, false);
                 g2.dispose();
                 super.updateComponent(comp, g);
@@ -220,7 +222,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
      */
     @Override
     public void dispose() {
-
+        
         platformWindow.dispose();
 	CacioToolkit.disposePeer(awtComponent, this);
     }
