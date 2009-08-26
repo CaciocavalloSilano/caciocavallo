@@ -64,7 +64,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
     }
 
     public void endLayout() {
-        
+
         if (! getPaintArea().isEmpty()
             && !ComponentAccessor.getIgnoreRepaint(getAWTComponent())) {
 

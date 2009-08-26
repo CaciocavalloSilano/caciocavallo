@@ -156,8 +156,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     @Override
     public void handlePeerEvent(AWTEvent ev) {
-
-
+        
         Window w = (Window) getAWTComponent();
         switch (ev.getID()) {
 
@@ -257,7 +256,6 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
     @Override
     protected void peerPaint(Graphics g, boolean update) {
 
@@ -265,9 +263,8 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
          * Don't paint the whole area, we only need to paint the frame
          * borders
          */
-        JComponent swingComponent = getSwingComponent();
-        if (swingComponent != null) {
-            JComponent c = swingComponent;
+        JComponent c = getSwingComponent();
+        if (c != null) {
             Insets insets = getInsets();
 
             Area clip = new Area(c.getBounds());
