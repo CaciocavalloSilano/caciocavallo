@@ -24,7 +24,9 @@
                 </source-folder>
                 <source-folder>
                     <label>SDL classes</label>
+		    <type>java</type>
                     <location>${root}/src/sdl/classes</location>
+		    <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
                     <label>Shared classes</label>

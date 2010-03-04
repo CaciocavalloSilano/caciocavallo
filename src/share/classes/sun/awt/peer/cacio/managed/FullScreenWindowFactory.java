@@ -138,9 +138,12 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     }
 
     @Override
-    public final PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent comp) {
+    public final
+    PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent comp) {
 
-        GraphicsConfiguration gc = comp.getAWTComponent().getGraphicsConfiguration();
+        GraphicsConfiguration gc =
+            comp.getAWTComponent().getGraphicsConfiguration();
+
         PlatformScreen screen = selector.getPlatformScreen(gc);
         ScreenManagedWindowContainer smwc = screenMap.get(screen);
         if (smwc == null) {
@@ -149,6 +152,19 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         }
 
         return new ManagedWindow(smwc, comp);
+    }
+
+    /**
+     * {@inheritDoc }
+     * <br /><br />
+     * <strong>Note</strong>: owners are currently ignored in fully managed
+     * windows.
+     */
+    @Override
+    public PlatformWindow createPlatformToplevelWindow(CacioComponent component,
+                                                       PlatformWindow notUsed) {
+
+        return createPlatformToplevelWindow(component);
     }
 
     @Override

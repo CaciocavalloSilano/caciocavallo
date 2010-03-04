@@ -36,6 +36,6 @@ JNIEXPORT jboolean JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLGraphicsEnviron
         return JNI_FALSE;
     }
     atexit(SDL_Quit);
-
+ 
     return JNI_TRUE;
 }

@@ -115,7 +115,7 @@ public class TestAWT extends java.awt.Frame {
             textAreaPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(textAreaPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(textArea, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
+                .addComponent(textArea, javax.swing.GroupLayout.DEFAULT_SIZE, 696, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -243,7 +243,7 @@ public class TestAWT extends java.awt.Frame {
         );
         widgetPaneLayout.setVerticalGroup(
             widgetPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 659, Short.MAX_VALUE)
+            .addGap(0, 716, Short.MAX_VALUE)
         );
 
         bottomPane.add(widgetPane, "card4");
