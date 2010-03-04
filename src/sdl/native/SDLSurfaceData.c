@@ -113,6 +113,21 @@ static jint SDLLock(JNIEnv* env, SurfaceDataOps* ops,
       rasInfo->bounds.y2 = operations->height;
     }
 
+/*
+    if (rasInfo->bounds.y1 >= 1600) {
+        (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
+        JNU_ThrowByName(env, "java/lang/InternalError",
+                "SDLScreen::SDLLock: fluff!!!!!!!!");
+        return ret;
+    }
+*/
+/*
+    fprintf(stderr,
+     "***** width = %d, height = %d, x1 = %d, x2 = %d, y1 = %d, y2 = %d\n",
+            operations->width, operations->height,
+            rasInfo->bounds.x1, rasInfo->bounds.x2,
+            rasInfo->bounds.y1, rasInfo->bounds.y2);
+*/
     if (lockFlags & SD_LOCK_FASTEST &&
         (SDL_MUSTLOCK(operations->surface) != 0)) {
         
@@ -200,9 +215,8 @@ static void SDLUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
         height = 0;
     }
 
-    
     SDL_UpdateRect(operations->surface, rasInfo->bounds.x1, rasInfo->bounds.y1,
                    width, height);
-
+    
     (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
 }

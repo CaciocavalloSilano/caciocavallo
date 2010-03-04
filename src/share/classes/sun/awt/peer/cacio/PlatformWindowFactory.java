@@ -58,4 +58,15 @@ public interface PlatformWindowFactory {
      */
     CacioEventPump<?> createEventPump();
 
+    /**
+     * Creates and returns a toplevel window with the specified window as
+     * owner.
+     *
+     * @param cacioWindowPeer the toplevel component
+     *
+     * @return the created toplevel window
+     */
+    public PlatformWindow createPlatformToplevelWindow(CacioComponent component,
+                                                       PlatformWindow owner);
+
 }

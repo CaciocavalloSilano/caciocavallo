@@ -24,7 +24,7 @@
  */
 #include <jni.h>
 
-#include "SDL.h"
+#include "cacio-sdl.h"
 
 #include "java_awt_event_MouseEvent.h"
 #include "net_java_openjdk_awt_peer_sdl_SDLScreen.h"
@@ -85,14 +85,14 @@ JNIEXPORT jlong JNICALL Java_net_java_openjdk_awt_peer_sdl_SDLScreen_nativeInitS
     (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
 
     /* passing 0 for bpp takes the current display video depth */
-    surface = SDL_SetVideoMode(width, height, 0, SDL_DOUBLEBUF | SDL_HWPALETTE);
+    surface = SDL_SetVideoMode(width, height, 0, SDL_DOUBLEBUF | SDL_HWPALETTE | SDL_HWACCEL | SDL_HWACCEL);
     if (surface == NULL) {
         fprintf(stderr, "Unable to set video mode: %s\n", SDL_GetError());
         JNU_ThrowByName(env, "java/lang/InternalError",
                 "SDLScreen::nativeInitScreen: cannot create SDL_Surface.");
         return 0L;
     }
-
+    
     (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
 
     return (jlong) surface;

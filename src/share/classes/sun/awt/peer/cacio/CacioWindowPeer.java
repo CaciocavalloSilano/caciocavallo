@@ -72,9 +72,22 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     @Override
     void init(PlatformWindowFactory pwf) {
 
-        platformWindow = pwf.createPlatformToplevelWindow(this);
-
         Window w = getAWTComponent();
+        Component parentComp = w.getParent();
+
+        if (parentComp != null) {
+
+            CacioComponentPeer parentPeer =
+                    (CacioComponentPeer) parentComp.getPeer();
+
+            PlatformWindow owner = parentPeer.platformWindow;
+            platformWindow = pwf.createPlatformToplevelWindow(this, owner);
+            
+        } else {
+
+            platformWindow = pwf.createPlatformToplevelWindow(this);
+        }
+
         if (! w.isForegroundSet()) {
            // TODO: Use SystemColor here, and load the correct colors in the
            // Toolkit.
