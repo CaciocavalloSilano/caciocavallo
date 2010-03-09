@@ -77,8 +77,20 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
         if (parentComp != null) {
 
-            CacioComponentPeer parentPeer =
-                    (CacioComponentPeer) parentComp.getPeer();
+            CacioComponentPeer parentPeer = null;
+
+            ComponentPeer parentComponentPeer = parentComp.getPeer();
+            if (parentComponentPeer instanceof CacioComponentPeer) {
+                parentPeer = (CacioComponentPeer) parentComponentPeer;
+
+            } else if (parentComponentPeer instanceof ProxyWindowPeer) {
+                parentPeer =
+                    ((ProxyWindowPeer) parentComponentPeer).getTarget();
+                
+            } else {
+                throw new InternalError("Invalid component type: " +
+                                        parentComponentPeer.getClass());
+            }
 
             PlatformWindow owner = parentPeer.platformWindow;
             platformWindow = pwf.createPlatformToplevelWindow(this, owner);

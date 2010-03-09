@@ -61,6 +61,10 @@ class ProxyWindowPeer implements WindowPeer {
         target = pw.getTargetPeer();
     }
 
+    CacioComponentPeer getTarget() {
+        return this.target;
+    }
+
     @Override
     public void toFront() {
         // TODO: Maybe call target.toFront() here?
