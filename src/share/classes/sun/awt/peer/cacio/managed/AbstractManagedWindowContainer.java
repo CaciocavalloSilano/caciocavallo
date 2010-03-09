@@ -130,7 +130,23 @@ abstract class AbstractManagedWindowContainer
                 Rectangle b = source.getBounds();
                 event.setX(event.getX() - b.x);
                 event.setY(event.getY() - b.y);
+
+                /*
+                 * FIXME: This is a work around the FocusManager code, where
+                 * we need to update the focus window for some selected events,
+                 * a bug that shows up when mixing heavy wait and light wait
+                 * components.
+                 * This should be valid until the FocusManager and the focus
+                 * handling code are rewritten.
+                 */
+                if (id == MouseEvent.MOUSE_CLICKED ||
+                    id == MouseEvent.MOUSE_PRESSED)
+                {
+                    FocusManager.getInstance().setFocusedWindowNoEvent(source);
+                }
+
                 return source.dispatchEventImpl(event);
+
             } else {
                 return false;
             }
