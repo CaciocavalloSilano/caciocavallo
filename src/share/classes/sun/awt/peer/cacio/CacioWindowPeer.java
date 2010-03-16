@@ -52,15 +52,35 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                       implements WindowPeer {
 
     private static boolean decorateWindows = false;
+    private static boolean decorateDialogs = false;
 
-    private static final Font defaultFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+    private static final Font defaultFont =
+        new Font(Font.DIALOG, Font.PLAIN, 12);
 
+    /**
+     * Ask Cacio to decorate the windows. This method sets the decoration
+     * for both dialogs and windows.
+     */
     static void setDecorateWindows(boolean decorate) {
         decorateWindows = decorate;
+        decorateDialogs = decorate;
     }
 
     static boolean isDecorateWindows() {
         return decorateWindows;
+    }
+
+    /**
+     * Ask Cacio to decorate the dialog windows.
+     * <strong>Note</strong>:A call to {@link #setDecorateWindows } overrides
+     * the state set by this method.
+     */
+    static void setDecorateDialogs(boolean decorate) {
+        decorateDialogs = decorate;
+    }
+
+    static boolean isDecorateDialogs() {
+        return decorateDialogs;
     }
 
     CacioWindowPeer(Window awtC, PlatformWindowFactory pwf) {
@@ -215,11 +235,22 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         return true;
     }
 
+    /**
+     * Return {@code true } if {@link #isDecorateWindows } is {@code true } or
+     * we are an instance of {@link CacioDialogPeer } and
+     * {@link #isDecorateDialogs } is {@code true }.
+     */
+    protected boolean shouldDecorate() {
+        return (isDecorateWindows() ||
+                ((this instanceof CacioDialogPeer) && isDecorateDialogs()));
+    }
+
     @Override
     public Insets getInsets() {
         Insets insets;
 
-        if (isDecorateWindows()) {
+        if (shouldDecorate()) {
+            
             JRootPane rp = getSwingComponent();
             if (rp == null) {
                 return new Insets(0, 0, 0, 0);
