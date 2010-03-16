@@ -39,7 +39,7 @@ import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
+import java.awt.peer.ComponentPeer;
 import java.awt.peer.WindowPeer;
 
 import javax.swing.JComponent;
