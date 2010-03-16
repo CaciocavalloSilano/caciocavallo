@@ -286,6 +286,28 @@ public abstract class CacioToolkit extends SunToolkit {
         CacioWindowPeer.setDecorateWindows(decorate);
     }
 
+    /**
+     * Sets whether Cacio should decorate windows by itself or not. The
+     * default is to not decorate dialog windows. Set this to true if your
+     * backend doesn't support window decorations by itself, or when
+     * you disable window decoration but still want to decorate dialogs.
+     * 
+     * Cacio will use Swing window decorations to simulate the decoration.
+     *
+     * This method must be called before creating any window, usually just
+     * before creating your {@link PlatformWindowFactory}.
+     *
+     * <strong>Note</strong>: {@link #setDecorateWindows(boolean) } changes the
+     * default set by this method, so this method must be executed after
+     * {@link #setDecorateWindows(boolean) } in order to have effect.
+     *
+     * @param decorate {@code true} for Cacio-decorated dialogs, {@code false}
+     *        otherwise
+     */
+    protected void setDecorateDialogs(boolean decorate) {
+        CacioWindowPeer.setDecorateDialogs(decorate);
+    }
+
     public abstract PlatformWindowFactory getPlatformWindowFactory();
 
 }
