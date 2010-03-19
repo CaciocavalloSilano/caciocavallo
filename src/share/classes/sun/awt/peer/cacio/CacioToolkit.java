@@ -308,6 +308,19 @@ public abstract class CacioToolkit extends SunToolkit {
         CacioWindowPeer.setDecorateDialogs(decorate);
     }
 
+    @Override
+    protected Object lazilyLoadDesktopProperty(String propName) {
+
+        if (propName.equals(SunToolkit.DESKTOPFONTHINTS)) {
+            if (desktopProperties.get(SunToolkit.DESKTOPFONTHINTS) == null) {
+                desktopProperties.put(SunToolkit.DESKTOPFONTHINTS,
+                                      SunToolkit.getDesktopFontHints());
+            }
+        }
+
+        return desktopProperties.get(propName);
+    }
+
     public abstract PlatformWindowFactory getPlatformWindowFactory();
 
 }
