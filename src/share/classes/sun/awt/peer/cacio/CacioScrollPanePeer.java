@@ -117,6 +117,22 @@ class CacioScrollPanePeer extends CacioContainerPeer<ScrollPane, JPanel>
         getSwingComponent().validate();
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+
+        Dimension preferredSize = null;
+        JPanel component = getSwingComponent();
+
+        if (component != null) {
+            preferredSize = getSwingComponent().getSize();
+
+        } else {
+            preferredSize = super.getPreferredSize();
+        }
+        
+        return preferredSize;
+    }
+
     private int layoutVerticalScrollbar() {
         int vw;
         if (needVerticalScrollbar()) {
