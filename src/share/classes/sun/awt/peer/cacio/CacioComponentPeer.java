@@ -153,7 +153,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
                 g2.setClip(g.getClip());
                 peerPaint(g2, false);
                 g2.dispose();
-                super.updateComponent(comp, g);
+                super.paintComponent(comp, g);
             }
         };
     }
