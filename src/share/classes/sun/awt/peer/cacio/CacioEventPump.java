@@ -174,7 +174,8 @@ public abstract class CacioEventPump<ET> implements Runnable {
 
     }
 
-    protected final void postPaintEvent(CacioComponent source, int x, int y, int width, int height) {
+    protected final void postPaintEvent(CacioComponent source, int x, int y,
+                                        int width, int height) {
 
         PaintEvent ev = PaintEventDispatcher.getPaintEventDispatcher()
               .createPaintEvent(source.getAWTComponent(), x, y, width, height);
@@ -185,11 +186,14 @@ public abstract class CacioEventPump<ET> implements Runnable {
     protected final void postFocusEvent(CacioComponent source, int id,
                                         boolean temporary,
                                         CacioComponent opposite) {
+        Component awtComponent = null;
+        if (opposite != null) {
+            awtComponent = opposite.getAWTComponent();
+        }
 
         FocusEvent ev = new FocusEvent(source.getAWTComponent(), id, temporary,
-                                       opposite.getAWTComponent());
+                                       awtComponent);
         postEvent(source, ev);
-
     }
 
     protected final void postWindwoEvent(CacioComponent source, int id,
