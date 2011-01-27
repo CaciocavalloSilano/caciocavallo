@@ -24,9 +24,9 @@
                 </source-folder>
                 <source-folder>
                     <label>SDL classes</label>
-		    <type>java</type>
+                    <type>java</type>
                     <location>${root}/src/sdl/classes</location>
-		    <encoding>UTF-8</encoding>
+                    <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
                     <label>Shared classes</label>
@@ -47,17 +47,14 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <build-folder>
-                    <location>${root}/build/shared/classes</location>
+                    <location>../../build/shared/classes</location>
                 </build-folder>
-                <build-folder>
-                    <location>${root}/build/x11/classes</location>
-                </build-folder>
-                <build-folder>
-                    <location>${root}/build/sdl/classes</location>
-                </build-folder>
-                <build-folder>
-                    <location>${root}/build/test/classes</location>
-                </build-folder>
+                <build-file>
+                    <location>../../build/x11/classes</location>
+                </build-file>
+                <build-file>
+                    <location>../../build/test/classes</location>
+                </build-file>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -118,24 +115,28 @@
             </ide-actions>
             <export>
                 <type>folder</type>
-                <location>${root}/build/shared/classes</location>
+                <location>../../build/shared/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>${root}/build/x11/classes</location>
+                <location>../../build/x11/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>${root}/build/sdl/classes</location>
+                <location>../../build/test/classes</location>
                 <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <view>
                 <items>
+                    <source-folder style="packages">
+                        <label>SDL classes</label>
+                        <location>${root}/src/sdl/classes</location>
+                    </source-folder>
                     <source-folder style="packages">
                         <label>Shared classes</label>
                         <location>${root}/src/share/classes</location>
@@ -143,10 +144,6 @@
                     <source-folder style="packages">
                         <label>X11 classes</label>
                         <location>${root}/src/x11/classes</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>SDL classes</label>
-                        <location>${root}/src/sdl/classes</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>Test classes</label>
@@ -189,27 +186,27 @@
             </view>
             <subprojects/>
         </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
             <compilation-unit>
                 <package-root>${root}/src/share/classes</package-root>
                 <built-to>../../build/shared/classes</built-to>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>${root}/src/x11/classes</package-root>
                 <classpath mode="compile">${root}/src/share/classes</classpath>
                 <built-to>../../build/x11/classes</built-to>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>${root}/src/sdl/classes</package-root>
                 <classpath mode="compile">${root}/src/share/classes</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>${root}/src/test/classes</package-root>
                 <built-to>../../build/test/classes</built-to>
-                <source-level>1.5</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
         </java-data>
         <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
