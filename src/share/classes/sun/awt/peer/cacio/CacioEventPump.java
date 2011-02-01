@@ -28,6 +28,7 @@ package sun.awt.peer.cacio;
 import java.awt.AWTEvent;
 
 import java.awt.Window;
+import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
