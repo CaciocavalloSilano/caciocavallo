@@ -207,6 +207,8 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
         case FocusEvent.FOCUS_GAINED:
             {
+                // Simulate what the native system thinks is the currently focused window.
+                CacioKeyboardFocusManagerPeer.getInstance().setCurrentFocusedWindow(w);
                 WindowEvent we =
                     new WindowEvent(w, WindowEvent.WINDOW_GAINED_FOCUS);
                 super.handlePeerEvent(we);
@@ -215,6 +217,8 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
             break;
         case FocusEvent.FOCUS_LOST:
             {
+                // Simulate what the native system thinks is the currently focused window.
+                CacioKeyboardFocusManagerPeer.getInstance().setCurrentFocusedWindow(null);
                 super.handlePeerEvent(ev);
                 WindowEvent we =
                     new WindowEvent(w, WindowEvent.WINDOW_LOST_FOCUS);

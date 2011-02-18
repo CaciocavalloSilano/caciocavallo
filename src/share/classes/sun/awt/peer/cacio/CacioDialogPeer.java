@@ -36,6 +36,8 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     public CacioDialogPeer(Dialog awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
+        setResizable(awtC.isResizable());
+        setTitle(awtC.getTitle());
     }
 
     public void setResizable(boolean resizable) {
