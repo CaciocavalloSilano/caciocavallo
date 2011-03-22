@@ -25,15 +25,19 @@
 
 package sun.awt.peer.cacio;
 
+
 import java.awt.Button;
 import java.awt.Canvas;
 import java.awt.Checkbox;
 import java.awt.CheckboxMenuItem;
 import java.awt.Choice;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.KeyboardFocusManager;
 import java.awt.Label;
 import java.awt.List;
@@ -46,7 +50,10 @@ import java.awt.ScrollPane;
 import java.awt.Scrollbar;
 import java.awt.TextArea;
 import java.awt.TextField;
+import java.awt.Transparency;
 import java.awt.Window;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.awt.peer.ButtonPeer;
 import java.awt.peer.CanvasPeer;
 import java.awt.peer.CheckboxMenuItemPeer;
@@ -70,6 +77,7 @@ import java.awt.peer.TextFieldPeer;
 import java.awt.peer.WindowPeer;
 
 import sun.awt.SunToolkit;
+import sun.awt.image.OffScreenImage;
 
 public abstract class CacioToolkit extends SunToolkit {
 
@@ -323,4 +331,21 @@ public abstract class CacioToolkit extends SunToolkit {
 
     public abstract PlatformWindowFactory getPlatformWindowFactory();
 
+    /**
+     * Create an off-screen image base on the given component.
+     *
+     * @param component The component to base the off-screen image on.
+     * @param width The width of the image.
+     * @param hight The height of the image.
+     *
+     * @return New off-screen image.
+    public Image createOffScreenImage(Component component, int width, int height) {
+        GraphicsConfiguration gc = component.getGraphicsConfiguration();
+        ColorModel model = gc.getColorModel(Transparency.OPAQUE);
+        WritableRaster wr =
+            model.createCompatibleWritableRaster(width, height);
+        return new OffScreenImage(component, model, wr,
+                                  model.isAlphaPremultiplied());
+
+    }
 }

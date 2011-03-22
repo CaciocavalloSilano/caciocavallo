@@ -120,6 +120,12 @@ class CacioComponentPeer<AWTComponentType extends Component,
     private RepaintArea paintArea;
 
     private Rectangle viewRect;
+    
+    /**
+     * Flag to indicate that a change requires a repaint 
+     * of the background.
+     */
+    private boolean needsClearBackground = false;
 
     /**
      * Creates a new CacioComponentPeer.
@@ -345,7 +351,9 @@ class CacioComponentPeer<AWTComponentType extends Component,
         case PaintEvent.UPDATE:
         case PaintEvent.PAINT:
             if (! isLayouting()) {
-                paintArea.paint(getAWTComponent(), false);
+                boolean tmp = needsClearBackground;
+                needsClearBackground = false;
+                paintArea.paint(getAWTComponent(), tmp);
             }
           break;
         case MouseEvent.MOUSE_PRESSED:
@@ -611,6 +619,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
             // laid out correctly.
             swingComponent.validate();
         }
+        needsClearBackground = true;
     }
 
     public void setEnabled(boolean enable) {
@@ -647,7 +656,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
     }
 
     public void setVisible(boolean b) {
-
+        needsClearBackground = b;
         if (proxy != null) {
             proxy.setVisible(b);
         }
@@ -680,13 +689,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     public Image createImage(int width, int height) {
 
-        GraphicsConfiguration gc = getGraphicsConfiguration();
-        ColorModel model = gc.getColorModel(Transparency.OPAQUE);
-        WritableRaster wr =
-            model.createCompatibleWritableRaster(width, height);
-        return new OffScreenImage(awtComponent, model, wr,
-                                  model.isAlphaPremultiplied());
-
+    return ((CacioToolkit)Toolkit.getDefaultToolkit()).createOffScreenImage(awtComponent,width,height);
     }
 
     public VolatileImage createVolatileImage(int width, int height) {
