@@ -339,6 +339,7 @@ public abstract class CacioToolkit extends SunToolkit {
      * @param hight The height of the image.
      *
      * @return New off-screen image.
+     */
     public Image createOffScreenImage(Component component, int width, int height) {
         GraphicsConfiguration gc = component.getGraphicsConfiguration();
         ColorModel model = gc.getColorModel(Transparency.OPAQUE);
