@@ -87,9 +87,7 @@ class ProxyWindowPeer implements WindowPeer {
 
     @Override
     public void setModalBlocked(Dialog blocker, boolean blocked) {
-        if (target instanceof WindowPeer) {
-            ((WindowPeer) target).setModalBlocked(blocker, blocked);
-        }
+        // Nothing to do here yet.
     }
 
     @Override

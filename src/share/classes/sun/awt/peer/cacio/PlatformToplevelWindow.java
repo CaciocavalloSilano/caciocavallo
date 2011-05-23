@@ -90,4 +90,15 @@ public interface PlatformToplevelWindow extends PlatformWindow {
      */
     void setTitle(String title);
 
+    /**
+     * Blocks or unblocks the native window.
+     * This is only called for toplevel frames and dialogs.
+     *
+     * @param blocked true if set to blocked
+     *
+     * @see DialogPeer#blockWindows(List<Window>)
+     * @see WindowPeer#setModalBlocked(Dialog, boolean)
+     */
+    void setBlocked(boolean blocked);
+
 }

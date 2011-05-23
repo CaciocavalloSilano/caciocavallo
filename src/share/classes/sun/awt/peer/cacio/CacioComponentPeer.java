@@ -44,6 +44,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Transparency;
+import java.awt.Window;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -190,7 +191,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     private void initProxy() {
         if (swingComponent != null) {
-
             // Setup the proxy window.
             proxy = new ProxyWindow(this, swingComponent);
             proxy.setBounds(awtComponent.getX(), awtComponent.getY(),
@@ -619,7 +619,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
             // laid out correctly.
             swingComponent.validate();
         }
-        needsClearBackground = true;
     }
 
     public void setEnabled(boolean enable) {
@@ -797,4 +796,13 @@ class CacioComponentPeer<AWTComponentType extends Component,
     boolean isLayouting() {
         return false;
     }
+
+    /**
+     * Mark this peer so that the next paint event clears the background.
+     */
+    public void clearBackground()
+    {
+      needsClearBackground = true;
+    }
+
 }

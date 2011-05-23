@@ -409,6 +409,11 @@ class ManagedWindow
     }
 
     @Override
+    public void setBlocked(boolean blocked) {
+        // TODO: Implement this.
+    }
+
+    @Override
     public boolean requestFocus(Component lightweightChild, boolean temporary,
                                 boolean focusedWindowChangeAllowed, long time,
                                 Cause cause) {
