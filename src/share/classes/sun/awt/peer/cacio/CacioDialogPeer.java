@@ -28,9 +28,12 @@ package sun.awt.peer.cacio;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.peer.DialogPeer;
+import java.awt.peer.WindowPeer;
 import java.util.List;
 
 import javax.swing.JRootPane;
+
+import sun.awt.ComponentAccessor;
 
 class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
@@ -53,8 +56,13 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
     }
 
     public void blockWindows(List<Window> windows) {
+        for (Window window : windows) {
+            WindowPeer peer = (WindowPeer)ComponentAccessor.getPeer(window);
+            if (peer != null) {
+              peer.setModalBlocked((Dialog)getAWTComponent(), true);
+            }
+        }
     }
-
 
     @Override
     protected int getRootPaneDecorationStyle() {

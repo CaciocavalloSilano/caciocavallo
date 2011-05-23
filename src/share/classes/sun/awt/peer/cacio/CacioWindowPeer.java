@@ -48,6 +48,8 @@ import javax.swing.JRootPane;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+import sun.awt.ComponentAccessor;
+
 class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                       implements WindowPeer {
 
@@ -56,6 +58,8 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     private static final Font defaultFont =
         new Font(Font.DIALOG, Font.PLAIN, 12);
+
+    protected boolean blocked;
 
     /**
      * Ask Cacio to decorate the windows. This method sets the decoration
@@ -148,6 +152,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         // we cannot have menu support...
         Window window = (Window) getAWTComponent();
         JRootPane jrootpane = new JRootPane();
+        jrootpane.setDoubleBuffered(false);
         return jrootpane;
     }
 
@@ -171,7 +176,19 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     }
 
     public void setModalBlocked(Dialog blocker, boolean blocked) {
-        // TODO Auto-generated method stub
+        if (this.blocked == blocked) {
+            return;
+        }
+
+        if (blocker != null) {
+            CacioWindowPeer dialogPeer = (CacioDialogPeer)ComponentAccessor.getPeer(blocker);
+            if (dialogPeer != null) {
+              dialogPeer.setModalBlocked(null, !blocked);
+            }
+        }
+
+        getToplevelWindow().setBlocked(blocked);
+        this.blocked = blocked;
 
     }
 
@@ -319,27 +336,28 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
     @Override
     protected void peerPaint(Graphics g, boolean update) {
 
-        /*
-         * Don't paint the whole area, we only need to paint the frame
-         * borders
-         */
-        JComponent c = getSwingComponent();
-        if (c != null) {
-            Insets insets = getInsets();
-
-            Area clip = new Area(c.getBounds());
-            Rectangle clip2 =
-                    new Rectangle(insets.left,
-                                  insets.top,
-                                  c.getWidth() - insets.left - insets.right,
-                                  c.getHeight() - insets.bottom - insets.top);
-            clip.subtract(new Area(clip2));
-
-            Graphics peerG = new WindowClippedGraphics((Graphics2D) g, clip);
-            try {
-                c.paint(peerG);
-            } finally {
-                peerG.dispose();
+        if (shouldDecorate() || getSwingComponent().getJMenuBar() != null) {
+            /*
+             * Don't paint the whole area, we only need to paint the frame
+             * borders
+             */
+            JComponent c = getSwingComponent();
+            if (c != null) {
+                Insets insets = getInsets();
+                Area clip = new Area(c.getBounds());
+                Rectangle clip2 =
+                        new Rectangle(insets.left,
+                                      insets.top,
+                                      c.getWidth() - insets.left - insets.right,
+                                      c.getHeight() - insets.bottom - insets.top);
+                clip.subtract(new Area(clip2));
+            
+                Graphics peerG = new WindowClippedGraphics((Graphics2D) g, clip);
+                try {
+                    c.paint(peerG);
+                } finally {
+                    peerG.dispose();
+                }
             }
         }
     }

@@ -174,16 +174,25 @@ public abstract class CacioEventPump<ET> implements Runnable {
         postEvent(source, ev);
 
     }
-
+    
     protected final void postPaintEvent(CacioComponent source, int x, int y,
-                                        int width, int height) {
-
+                                        int width, int height, boolean paintBackground) {
+        if (paintBackground)
+        {
+          ((CacioComponentPeer) source).clearBackground();
+        }
+        
         PaintEvent ev = PaintEventDispatcher.getPaintEventDispatcher()
               .createPaintEvent(source.getAWTComponent(), x, y, width, height);
         postEvent(source, ev);
 
     }
-
+    
+    protected final void postPaintEvent(CacioComponent source, int x, int y,
+                                        int width, int height) {
+        postPaintEvent(source, x, y, width, height, false);
+    }
+    
     protected final void postFocusEvent(CacioComponent source, int id,
                                         boolean temporary,
                                         CacioComponent opposite) {
