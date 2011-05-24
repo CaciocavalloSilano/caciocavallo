@@ -64,9 +64,7 @@ import javax.swing.JComponent;
 
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
-import sun.awt.ComponentAccessor;
-import sun.awt.ConstrainableGraphics;
-import sun.awt.PaintEventDispatcher;
+import sun.awt.*;
 
 import sun.awt.RepaintArea;
 import sun.awt.event.IgnorePaintEvent;
@@ -217,7 +215,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
         if (font != null) {
             setFont(font);
         }
-        boolean enabled = ComponentAccessor.isEnabledImpl(awtComponent);
+        boolean enabled = AWTAccessor.getComponentAccessor().isEnabled(awtComponent);
         setEnabled(enabled);
     }
 
