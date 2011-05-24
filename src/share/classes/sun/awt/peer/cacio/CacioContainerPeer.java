@@ -36,7 +36,8 @@ import java.awt.event.PaintEvent;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 import javax.swing.JComponent;
-import sun.awt.ComponentAccessor;
+
+import sun.awt.*;
 
 abstract class CacioContainerPeer<AWTComponentType extends Component, SwingComponentType extends JComponent>
     extends CacioComponentPeer<AWTComponentType, SwingComponentType>
@@ -66,7 +67,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
     public void endLayout() {
 
         if (! getPaintArea().isEmpty()
-            && !ComponentAccessor.getIgnoreRepaint(getAWTComponent())) {
+            && !AWTAccessor.getComponentAccessor().getIgnoreRepaint(getAWTComponent())) {
 
             // If not waiting for native painting repaint damaged area.
             handlePeerEvent(new PaintEvent(getAWTComponent(), PaintEvent.PAINT,
@@ -116,7 +117,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
         int count = c.getComponentCount();
         for (int i = 0; i < count; i++) {
             Component comp = c.getComponent(i);
-            if (ComponentAccessor.getFont(comp) == null) {
+            if (AWTAccessor.getComponentAccessor().getFont(comp) == null) {
                 ComponentPeer peer = comp.getPeer();
                 if (peer instanceof CacioComponentPeer) {
                     CacioComponentPeer ccp = (CacioComponentPeer) peer;
@@ -137,7 +138,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
         int count = c.getComponentCount();
         for (int i = 0; i < count; i++) {
             Component comp = c.getComponent(i);
-            if (ComponentAccessor.getForeground(comp) == null) {
+            if (AWTAccessor.getComponentAccessor().getForeground(comp) == null) {
                 ComponentPeer peer = comp.getPeer();
                 if (peer instanceof CacioComponentPeer) {
                     CacioComponentPeer ccp = (CacioComponentPeer) peer;
@@ -159,7 +160,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
         int count = c.getComponentCount();
         for (int i = 0; i < count; i++) {
             Component comp = c.getComponent(i);
-            if (ComponentAccessor.getBackground(comp) == null) {
+            if (AWTAccessor.getComponentAccessor().getBackground(comp) == null) {
                 ComponentPeer peer = comp.getPeer();
                 if (peer instanceof CacioComponentPeer) {
                     CacioComponentPeer ccp = (CacioComponentPeer) peer;
@@ -191,7 +192,7 @@ abstract class CacioContainerPeer<AWTComponentType extends Component, SwingCompo
         int count = c.getComponentCount();
         for (int i = 0; i < count; i++) {
             Component comp = c.getComponent(i);
-            if ((! enable) || ComponentAccessor.isEnabledImpl(comp)) {
+            if ((! enable) || AWTAccessor.getComponentAccessor().isEnabled(comp)) {
                 ComponentPeer peer = comp.getPeer();
                 if (peer instanceof CacioComponentPeer) {
                     CacioComponentPeer ccp = (CacioComponentPeer) peer;

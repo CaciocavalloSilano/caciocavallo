@@ -33,7 +33,7 @@ import java.util.List;
 
 import javax.swing.JRootPane;
 
-import sun.awt.ComponentAccessor;
+import sun.awt.*;
 
 class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
@@ -57,7 +57,7 @@ class CacioDialogPeer extends CacioWindowPeer implements DialogPeer {
 
     public void blockWindows(List<Window> windows) {
         for (Window window : windows) {
-            WindowPeer peer = (WindowPeer)ComponentAccessor.getPeer(window);
+            WindowPeer peer = (WindowPeer)AWTAccessor.getComponentAccessor().getPeer(window);
             if (peer != null) {
               peer.setModalBlocked((Dialog)getAWTComponent(), true);
             }

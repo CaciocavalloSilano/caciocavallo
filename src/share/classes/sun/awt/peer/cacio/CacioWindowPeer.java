@@ -48,7 +48,7 @@ import javax.swing.JRootPane;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import sun.awt.ComponentAccessor;
+import sun.awt.*;
 
 class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
                       implements WindowPeer {
@@ -181,7 +181,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         }
 
         if (blocker != null) {
-            CacioWindowPeer dialogPeer = (CacioDialogPeer)ComponentAccessor.getPeer(blocker);
+            CacioWindowPeer dialogPeer = (CacioDialogPeer)AWTAccessor.getComponentAccessor().getPeer(blocker);
             if (dialogPeer != null) {
               dialogPeer.setModalBlocked(null, !blocked);
             }

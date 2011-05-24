@@ -35,7 +35,8 @@ import java.awt.peer.ScrollPanePeer;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import sun.awt.ComponentAccessor;
+
+import sun.awt.*;
 
 class CacioScrollPanePeer extends CacioContainerPeer<ScrollPane, JPanel>
                           implements ScrollPanePeer {
@@ -108,7 +109,7 @@ class CacioScrollPanePeer extends CacioContainerPeer<ScrollPane, JPanel>
 
         if (sp.getComponentCount() > 0) {
             Component view = sp.getComponent(0);
-            ComponentPeer peer = ComponentAccessor.getPeer(view);
+            ComponentPeer peer = AWTAccessor.getComponentAccessor().getPeer(view);
             if (peer instanceof CacioComponentPeer) {
                 CacioComponentPeer ccp = (CacioComponentPeer) peer;
                 ccp.setViewport(viewX, viewY, viewWidth, viewHeight);
