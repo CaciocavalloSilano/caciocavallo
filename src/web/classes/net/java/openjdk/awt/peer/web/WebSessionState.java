@@ -5,8 +5,6 @@ import java.util.concurrent.locks.*;
 
 import javax.servlet.http.*;
 
-import net.java.openjdk.awt.peer.sdl.*;
-
 public class WebSessionState {
     static final String SESSION_KEY = "SDLSessionState";
     static ThreadLocal<WebSessionState> stateStore = new ThreadLocal<WebSessionState>();

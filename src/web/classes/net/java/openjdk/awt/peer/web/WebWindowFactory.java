@@ -1,14 +1,10 @@
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
-import java.sql.*;
 import java.util.*;
-
-import net.java.openjdk.awt.peer.sdl.*;
 
 import sun.awt.peer.cacio.*;
 import sun.awt.peer.cacio.managed.*;
-import sun.awt.peer.cacio.managed.FullScreenWindowFactory.*;
 
 public class WebWindowFactory extends FullScreenWindowFactory {
 

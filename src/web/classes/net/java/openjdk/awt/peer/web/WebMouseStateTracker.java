@@ -3,8 +3,6 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.event.*;
 import java.util.*;
 
-import net.java.openjdk.awt.peer.sdl.*;
-
 import sun.awt.peer.cacio.managed.*;
 
 public class WebMouseStateTracker {

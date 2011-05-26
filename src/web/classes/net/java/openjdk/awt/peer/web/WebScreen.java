@@ -30,12 +30,9 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
-import java.awt.event.*;
 import java.awt.geom.Area;
 import java.awt.image.ColorModel;
 import java.util.*;
-
-import net.java.openjdk.awt.peer.sdl.*;
 
 import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.WindowClippedGraphics;

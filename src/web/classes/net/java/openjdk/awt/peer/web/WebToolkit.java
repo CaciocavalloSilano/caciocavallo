@@ -54,9 +54,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.java.openjdk.awt.peer.sdl.*;
 import sun.awt.peer.cacio.CacioToolkit;
-import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
 /**
@@ -67,7 +65,7 @@ import sun.awt.peer.cacio.PlatformWindowFactory;
 public class WebToolkit extends CacioToolkit {
 
     private static Logger logger =
-        Logger.getLogger("net.java.openjdk.awt.peer.sdl.CacioToolkit");
+        Logger.getLogger("net.java.openjdk.awt.peer.web.CacioToolkit");
 
     /*
      * set this to null and you are doomed:

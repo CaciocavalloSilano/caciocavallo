@@ -2,8 +2,6 @@ package net.java.openjdk.awt.peer.web;
 
 import java.awt.event.*;
 
-import net.java.openjdk.awt.peer.sdl.*;
-
 import sun.awt.peer.cacio.managed.*;
 import static java.awt.event.KeyEvent.*;
 
