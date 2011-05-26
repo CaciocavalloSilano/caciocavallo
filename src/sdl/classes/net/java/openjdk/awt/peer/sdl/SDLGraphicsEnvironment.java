@@ -65,24 +65,5 @@ public class SDLGraphicsEnvironment extends SunGraphicsEnvironment {
         return true;
     }
 
-    @Override
-    protected FontConfiguration createFontConfiguration() {
-
-        return new FcFontConfiguration(this);
-    }
-
-    @Override
-    public FontConfiguration createFontConfiguration(boolean preferLocale,
-                                                     boolean preferProp) {
-
-        return new FcFontConfiguration(this, preferLocale, preferProp);
-    }
-
-    // Workaround so to not run into Segfault in OpenJDK X11 font code. Should
-    // be solved by the new FontManager that is in the works...
-    protected String getPlatformFontPath(boolean noType1Font) {
-        return "";
-    }
-
     private static final native boolean nativeInit();
 }
