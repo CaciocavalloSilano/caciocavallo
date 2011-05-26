@@ -1,0 +1,60 @@
+<project name="cacio.web" basedir="../.."
+         xmlns:cpptasks="antlib:net.sf.antcontrib.cpptasks">
+
+    <property file="${basedir}/user.properties" />
+    <property file="${basedir}/build.properties" />
+
+    <import file="${dir.src.shared}/build.xml" />
+
+    <target name="compile" depends="compile-java,compile-native"
+            description="Compiles Java classes and native libraries." />
+
+    <target name="compile-java" depends="cacio.shared.compile">
+        <mkdir dir="${dir.build.web.classes}" />
+        <javac classpath="${dir.build.shared.classes}:${web.servlet-api}"
+               bootclasspath="${openjdk}/classes"
+               srcdir="${dir.src.web.classes}"
+               destdir="${dir.build.web.classes}" />
+    </target>
+
+    <target name="compile-native" depends="create-headers">
+        <mkdir dir="${dir.build.web.obj}" />
+        <mkdir dir="${dir.build.web.lib}" />
+        <cpptasks:cc objdir="${dir.build.web.obj}"
+                     outfile="${dir.build.web.lib}/cacio-web"
+                     outtype="shared">
+            <fileset dir="${dir.src.web.native}"></fileset>
+            <includepath>
+                <pathelement path="${dir.build.web.include}" />
+                <pathelement path="${openjdk}/include" />
+                <!-- TODO: Make this linux thingy a property. -->
+                <pathelement path="${openjdk}/include/linux" />
+		<pathelement path="${openjdk.src}/jdk/src/share/native/common" />
+		<pathelement path="${openjdk.src}/jdk/src/share/native/sun/java2d" />
+                <pathelement path="${openjdk.build.generated.headers}/sun/sun.awt/awt/CClassHeaders" />
+                <pathelement path="${dir.src.web.includes}" />
+            </includepath>
+            <libset libs="pthread" />
+            <defineset>
+                <define name="_GNU_SOURCE" value="1" />
+                <define name="_REENTRANT" />
+             </defineset>
+        </cpptasks:cc>
+    </target>
+
+    <target name="create-headers">
+        <mkdir dir="${dir.build.web.include}" />
+	<!--TODO: refactor static classpath setting -->
+	<javah classpath="${dir.build.shared.classes}:${dir.build.web.classes}:/home/ce/workspace/Cacio7/bin/"
+               destdir="${dir.build.web.include}"
+               class="net.java.openjdk.awt.peer.web.WebGraphicsEnvironment,
+               net.java.openjdk.awt.peer.web.WebScreen,
+               net.java.openjdk.awt.peer.web.WebSurfaceData,
+               net.java.openjdk.awt.peer.web.WebVolativeSurfaceManager,
+               java.awt.event.MouseEvent" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${dir.build.web.classes}" />
+    </target>
+</project>

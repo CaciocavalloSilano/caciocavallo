@@ -32,8 +32,6 @@ import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
-
-import net.java.openjdk.awt.peer.sdl.*;
 import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 
 /**

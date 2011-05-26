@@ -27,8 +27,6 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 
-import net.java.openjdk.awt.peer.sdl.*;
-
 /**
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */

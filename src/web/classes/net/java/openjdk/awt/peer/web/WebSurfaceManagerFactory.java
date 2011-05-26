@@ -24,7 +24,6 @@
  */
 package net.java.openjdk.awt.peer.web;
 
-import net.java.openjdk.awt.peer.sdl.*;
 import sun.awt.image.SunVolatileImage;
 import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceManagerFactory;

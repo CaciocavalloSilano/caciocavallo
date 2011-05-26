@@ -22,40 +22,26 @@
  * CA 95054 USA or visit www.sun.com if you need additional information or
  * have any questions.
  */
-package net.java.openjdk.awt.peer.web;
+#ifndef _CACIO_WEB_H
+#define	_CACIO_WEB_H
 
-import java.awt.GraphicsDevice;
-import sun.java2d.SunGraphicsEnvironment;
-import sun.java2d.SurfaceManagerFactory;
+#include <jni.h>
+#include "SurfaceData.h"
 
-/**
- * Graphics Environment implementation based on libSDL.
- *
- * @author Mario Torre <neugens.liamsoftware@gmail.com>
- */
-public class WebGraphicsEnvironment extends SunGraphicsEnvironment {
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
-    static {
-        System.loadLibrary("cacio-web");
-//        boolean initialised = nativeInit();
-//        if (!initialised) {
-//            throw new ExceptionInInitializerError("Cannot initiliase libSDL!");
-//        }
-        SurfaceManagerFactory.setInstance(new WebSurfaceManagerFactory());
-    }
+typedef struct {
+  SurfaceDataOps sdOps;
+  jintArray imgBuffer;
+  jint x, y, width, height, stride;
+  jint lockFlags;
+} WebSurfaceDataOps;
 
-    @Override
-    protected int getNumScreens() {
-        return 1;
-    }
-
-    @Override
-    protected GraphicsDevice makeScreenDevice(int screennum) {
-        return new WebGraphicsDevice();
-    }
-
-    @Override
-    public boolean isDisplayLocal() {
-        return true;
-    }
+#ifdef	__cplusplus
 }
+#endif
+
+#endif	/* _CACIO_WEB_H */
+
