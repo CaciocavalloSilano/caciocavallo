@@ -25,7 +25,6 @@
 #include <jni.h>
 
 #include "cacio-web.h"
-#include "net_java_openjdk_awt_peer_web_WebSurfaceData.h"
 
 extern void JNU_ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
@@ -125,27 +124,6 @@ static jint WebLock(JNIEnv* env, SurfaceDataOps* ops,
     if (rasInfo->bounds.y2 > operations->height) {
       rasInfo->bounds.y2 = operations->height;
     }
-
-   /* if (lockFlags & SD_LOCK_FASTEST &&
-        (Web_MUSTLOCK(operations->surface) != 0)) {
-        
-        ret = SD_SLOWLOCK;
-    } else {
-        ret = SD_SUCCESS;
-    }
-
-    if (Web_MUSTLOCK(operations->surface) != 0) {
-
-        if (Web_LockSurface(operations->surface) < 0) {
-            (*env)->CallStaticVoidMethod(env, sunToolkitCls,
-                                         sunToolkitUnlockMID);
-            JNU_ThrowByName(env, "java/lang/InternalError",
-                "WebSurfaceData::WebLock: cannot lock Web_Surface.");
-        }
-    }*/
-   
-  // printf("Surface locked!\n");
-  // fflush(stdout);
    
     return SD_SUCCESS;
 }
@@ -182,23 +160,9 @@ static void WebUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
     int height = 0;
 
     operations = (WebSurfaceDataOps*) ops;
- 
-
-   /* if (Web_MUSTLOCK(operations->surface) != 0) {
-        fprintf(stderr, "Web_MUSTLOCK::unlocking\n");
-        Web_UnlockSurface(operations->surface);
-    }*/
-   
-   //TODO: Release critical Section
 
     width = rasInfo->bounds.x2 - rasInfo->bounds.x1;
     height = rasInfo->bounds.y2 - rasInfo->bounds.y1;
-    
-/*
-    fprintf(stderr, "!!!!!!!! width = %d, height = %d\n", width, height);
-    fprintf(stderr, "rasInfo->bounds.x1 = %d, rasInfo->bounds.x2 = %d, rasInfo->bounds.y1 = %d, rasInfo->bounds.y2 = %d\n",
-            rasInfo->bounds.x1,rasInfo->bounds.x2,rasInfo->bounds.y1,rasInfo->bounds.y2);
-*/
 
     /*
      * FIXME: there is some problem, looks like Java passes us the wrong value
@@ -213,16 +177,9 @@ static void WebUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
     if (height < 0) {
         height = 0;
     }
-
-   /* SDL_UpdateRect(operations->surface, rasInfo->bounds.x1, rasInfo->bounds.y1,
-                   width, height);*/
-    
-     // printf("Surface unlocked!\n");
-   //fflush(stdout);
    
    if(operations->lockFlags > SD_LOCK_READ && !(*env)->IsSameObject(env, ops->sdObject, NULL)) {
     //Dirty Rect tracking
-    //sdObject
     (*env)->CallVoidMethod(env, ops->sdObject, dirtyRectMID, rasInfo->bounds.x1, rasInfo->bounds.x1 + width, rasInfo->bounds.y1, rasInfo->bounds.y1 + height);
    }
    
