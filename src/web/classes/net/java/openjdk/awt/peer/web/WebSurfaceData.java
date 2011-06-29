@@ -26,9 +26,13 @@ package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.io.*;
 import java.util.*;
 
-import sun.java2d.SurfaceData;
+import javax.management.openmbean.*;
+
+import sun.awt.*;
+import sun.java2d.*;
 import sun.java2d.loops.SurfaceType;
 
 /**
@@ -44,13 +48,14 @@ public class WebSurfaceData extends SurfaceData {
 	initIDs();
     }
 
-    //TODO: Nicht mehr static!!!
     public ArrayList<Rectangle> dirtyRects = new ArrayList<Rectangle>();
     public BufferedImage imgBuffer;
-    
+    Graphics bufferGraphics;
+
     private Rectangle bounds;
     private GraphicsConfiguration configuration;
     private Object destination;
+    int[] data;
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
@@ -61,10 +66,10 @@ public class WebSurfaceData extends SurfaceData {
 	destination = dest;
 
 	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
-	Graphics g = imgBuffer.getGraphics();
-	g.setColor(Color.WHITE);
-	g.fillRect(0, 0, b.width, b.height);
-	int[] data = ((DataBufferInt) imgBuffer.getRaster().getDataBuffer()).getData();
+	bufferGraphics = imgBuffer.getGraphics();
+	bufferGraphics.setColor(Color.WHITE);
+	bufferGraphics.fillRect(0, 0, b.width, b.height);
+	data = ((DataBufferInt) imgBuffer.getRaster().getDataBuffer()).getData();
 
 	initOps(data, b.width, b.height, 0);
     }
@@ -105,13 +110,24 @@ public class WebSurfaceData extends SurfaceData {
 	}
     }
 
-    // if(dirtyRects.size() >= 100) {
-    // Rectangle unionRect = dirtyRects.get(0);
-    // for(Rectangle rect : dirtyRects) {
-    // unionRect = unionRect.union(rect);
-    // }
-    //
-    // dirtyRects.clear();
-    // System.out.println("Union-Dirty-Rect was: "+unionRect);
-    // }
+//    @Override
+//    public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
+//	x += sg2d.transX;
+//	y += sg2d.transY;
+//	SunToolkit.awtLock();
+//	try {
+//	    System.out.println("x: " + x + " y:" + y + " w:" + w + " h:" + h + " dx:" + dx + " dy:" + dy);
+//	    synchronized (dirtyRects) {
+//		bufferGraphics.copyArea(x, y, w, h, dx, dy);
+//
+//		int xdx = x + dx;
+//		int ydy = y + dy;
+//		addDirtyRect(xdx, ydy, xdx + w, ydy + h);
+//	    }
+//	} finally {
+//	    SunToolkit.awtUnlock();
+//	}
+//
+//	return true;
+//    }
 }

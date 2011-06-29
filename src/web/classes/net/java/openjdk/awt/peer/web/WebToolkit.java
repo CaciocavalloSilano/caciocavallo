@@ -1,27 +1,3 @@
-/*
- * Copyright 2009 Sun Microsystems, Inc.  All Rights Reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Sun designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Sun in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
- * CA 95054 USA or visit www.sun.com if you need additional information or
- * have any questions.
- */
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.AWTException;
@@ -57,25 +33,15 @@ import java.util.logging.Logger;
 import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
-/**
- * SDL based backend for CacioCavallo.
- *
- * @author Mario Torre <neugens.limasoftware@gmail.com>
- */
 public class WebToolkit extends CacioToolkit {
 
     private static Logger logger =
         Logger.getLogger("net.java.openjdk.awt.peer.web.CacioToolkit");
 
-    /*
-     * set this to null and you are doomed:
-     * there is a circle in the stupid CacioToolkit constructor,
-     * so platformWindow will be initialised in the call to super.
-     */
     private PlatformWindowFactory platformWindow;
 
     static {
-        System.loadLibrary("cacio-sdl");
+        System.loadLibrary("cacio-web");
     }
 
     public WebToolkit() {
@@ -145,14 +111,12 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public void grab(Window w) {
-
-        logger.log(Level.WARNING, "SDLToolkit::grab not implemented");
+	System.out.println("Grabbing not implemented: grab");
     }
 
     @Override
     public void ungrab(Window w) {
-
-        logger.log(Level.WARNING, "SDLToolkit::ungrab not implemented");
+	System.out.println("Grabbing not implemented: ungrab");
     }
 
     @Override

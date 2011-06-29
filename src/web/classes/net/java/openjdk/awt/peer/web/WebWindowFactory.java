@@ -21,14 +21,12 @@ public class WebWindowFactory extends FullScreenWindowFactory {
     EventData unsetEventData = new EventData();
     private class SDLFullScreenEventSource implements CacioEventSource {
         public EventData getNextEvent() {
-            
-            //TODO: Synchronize
+        
             Set<PlatformScreen> screenSet = getScreenMap().keySet();
             
             for(PlatformScreen screen : screenSet) {
         	if(screen instanceof WebScreen) {
         	    WebScreen sdlScreen = (WebScreen) screen;
-        	            	    
         	    EventData d = sdlScreen.getNextEvent();
         	    if(d != null) {
         		d.setSource(getScreenMap().get(sdlScreen));

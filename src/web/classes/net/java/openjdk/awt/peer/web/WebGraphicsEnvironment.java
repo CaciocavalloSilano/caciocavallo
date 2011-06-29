@@ -37,10 +37,6 @@ public class WebGraphicsEnvironment extends SunGraphicsEnvironment {
 
     static {
         System.loadLibrary("cacio-web");
-//        boolean initialised = nativeInit();
-//        if (!initialised) {
-//            throw new ExceptionInInitializerError("Cannot initiliase libSDL!");
-//        }
         SurfaceManagerFactory.setInstance(new WebSurfaceManagerFactory());
     }
 

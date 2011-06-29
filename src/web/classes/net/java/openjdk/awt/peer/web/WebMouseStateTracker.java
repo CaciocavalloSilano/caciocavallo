@@ -42,11 +42,11 @@ public class WebMouseStateTracker {
 	data.setModifiers(jsButtonMaskToJavaMask(buttonMask));
 	data.setTime(System.currentTimeMillis());
 
-	if (lastClickedEvent != null && (System.currentTimeMillis() - lastClickedEvent.getTime()) <= 200) {
-	    data.setClickCount(2);
-	} else {
-	    data.setClickCount(1);
-	}
+//	if (lastClickedEvent != null && (System.currentTimeMillis() - lastClickedEvent.getTime()) <= 200) {
+//	    data.setClickCount(2);
+//	} else {
+//	    data.setClickCount(1);
+//	}
 
 	screen.addEvent(data);
 
