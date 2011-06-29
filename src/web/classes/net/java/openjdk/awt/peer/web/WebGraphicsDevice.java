@@ -32,8 +32,6 @@ import java.awt.GraphicsDevice;
  */
 class WebGraphicsDevice extends GraphicsDevice {
 
-    // private SDLGraphicsConfiguration defaultConfig;
-
     @Override
     public int getType() {
 	return GraphicsDevice.TYPE_RASTER_SCREEN;
@@ -51,16 +49,18 @@ class WebGraphicsDevice extends GraphicsDevice {
 
     @Override
     public synchronized GraphicsConfiguration getDefaultConfiguration() {
-	WebSessionState state = WebSessionState.getCurrentState();
-	if (state != null) {
-	    if (state.getGraphicsConfiguration() == null) {
-		state.setGraphicsConfiguration(new WebGraphicsConfiguration(this));
-	    }
-	    return state.getGraphicsConfiguration();
-	} else {
-	    //provide Dummy GraphicsConfiguration for repaint-manager
+	WebSessionState state = WebSessionState.getCurrentStateAWT();
+
+	if (state == null) {
+	    System.out.println("Mist!");
+	    WebSessionState.getCurrentStateAWT();
 	    return new WebGraphicsConfiguration();
 	}
+
+	if (state.getGraphicsConfiguration() == null) {
+	    state.setGraphicsConfiguration(new WebGraphicsConfiguration(this));
+	}
+	return state.getGraphicsConfiguration();
     }
 
 }
