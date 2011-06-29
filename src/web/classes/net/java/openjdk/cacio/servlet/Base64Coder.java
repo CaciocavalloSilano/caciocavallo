@@ -1,4 +1,8 @@
 package net.java.openjdk.cacio.servlet;
+
+/*
+ * Public Domain, modified to fit JavaScript's BASE64 notation
+ */
 public class Base64Coder {
 	// The line separator string of the operating system.
 	private static final String systemLineSeparator = System.getProperty("line.separator");
