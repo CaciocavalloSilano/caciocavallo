@@ -39,20 +39,13 @@ public class ImageStreamer extends HttpServlet {
 	    throw new RuntimeException("Should not reach");
 	}
 
-	WebSessionState.register(session, Integer.parseInt(subSessionID));
-	try {
+	ScreenUpdate update = getDirtyRectangle(session, Integer.parseInt(subSessionID));
+
+	if (update != null) {
+	    OutputStream str = response.getOutputStream();
 	    response.setContentType("text/plain");
-
-	    ScreenUpdate update = getDirtyRectangle(session, Integer.parseInt(subSessionID));
-
-	    if (update != null) {
-		OutputStream str = response.getOutputStream();
-		str.write((update.getX() + ":" + update.getY() + ":").getBytes("UTF-8"));
-		str.write(update.getImageData());
-	    }
-
-	} finally {
-	    WebSessionState.unregister();
+	    str.write((update.getX() + ":" + update.getY() + ":").getBytes("UTF-8"));
+	    str.write(update.getImageData());
 	}
     }
 
@@ -66,7 +59,7 @@ public class ImageStreamer extends HttpServlet {
 	    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
 	    WebSessionState state = WebSessionState.getCurrentState(session, subSessionID);
-	    SunToolkit.awtLock();
+//	    SunToolkit.awtLock();
 
 	    state.lockSession();
 
@@ -117,7 +110,7 @@ public class ImageStreamer extends HttpServlet {
 		}
 
 		state.unlockSession();
-		SunToolkit.awtUnlock();
+//		SunToolkit.awtUnlock();
 
 		// g.drawImage(WebSurfaceData.imgBuffer, 0, 0, null);
 
@@ -134,14 +127,15 @@ public class ImageStreamer extends HttpServlet {
 
 		    // bData = bos.toByteArray();
 
-//		    try {
-//			FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + imgCnt + ".png");
-//			fos.write(bData);
-//			fos.close();
-//			imgCnt++;
-//		    } catch (Exception ex) {
-//			ex.printStackTrace();
-//		    }
+		    // try {
+		    // FileOutputStream fos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + imgCnt + ".png");
+		    // fos.write(bData);
+		    // fos.close();
+		    // imgCnt++;
+		    // } catch (Exception ex) {
+		    // ex.printStackTrace();
+		    // }
 
 		    byte[] data = Base64Coder.encode(bData);
 		    return new ScreenUpdate(unionRect.x, unionRect.y, data);
