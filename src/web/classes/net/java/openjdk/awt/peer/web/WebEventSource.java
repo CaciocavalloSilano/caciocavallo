@@ -12,7 +12,7 @@ public class WebEventSource implements CacioEventSource {
 	return null;
     }
 
-    public synchronized static WebEventSource getINstance() {
+    public synchronized static WebEventSource getInstance() {
 	if(instance == null) {
 	    instance = new WebEventSource();
 	}
