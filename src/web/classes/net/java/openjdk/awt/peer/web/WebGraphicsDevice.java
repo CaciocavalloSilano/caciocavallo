@@ -27,6 +27,8 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 
+import net.java.openjdk.cacio.servlet.*;
+
 /**
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
@@ -49,11 +51,11 @@ class WebGraphicsDevice extends GraphicsDevice {
 
     @Override
     public synchronized GraphicsConfiguration getDefaultConfiguration() {
-	WebSessionState state = WebSessionState.getCurrentStateAWT();
+	WebSessionState state = WebSessionManager.getInstance().getCurrentStateAWT();
 
 	if (state == null) {
-	    System.out.println("Mist!");
-	    WebSessionState.getCurrentStateAWT();
+	    System.err.println("Crap, how can that be");
+	    Thread.dumpStack();
 	    return new WebGraphicsConfiguration();
 	}
 

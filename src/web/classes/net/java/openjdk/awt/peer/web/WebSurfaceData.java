@@ -112,6 +112,8 @@ public class WebSurfaceData extends SurfaceData {
 
 //    @Override
 //    public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
+//	Thread.dumpStack();
+//	
 //	x += sg2d.transX;
 //	y += sg2d.transY;
 //	SunToolkit.awtLock();
