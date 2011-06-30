@@ -1,6 +1,5 @@
 package net.java.openjdk.cacio.servlet;
 
-
 import java.io.IOException;
 import java.util.*;
 
@@ -27,7 +26,7 @@ public class EventReceiver extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected  void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 	String parameters = request.getParameter("events");
 	HttpSession session = request.getSession(false);
@@ -36,17 +35,16 @@ public class EventReceiver extends HttpServlet {
 	if (session == null || subSessionID == null) {
 	    throw new RuntimeException("Should not reach");
 	}
-	WebSessionState.register(session, Integer.parseInt(subSessionID));
 
-	WebSessionState currentState = WebSessionState.getCurrentState(session, Integer.parseInt(subSessionID));
-	currentState.lockSession();
+	WebSessionState currentState = WebSessionManager.getInstance().getCurrentState(session, Integer.parseInt(subSessionID));
+	try {
+	    currentState.lockSession();
 
-	WebScreen screen = currentState.getGraphicsConfiguration().getScreen();
-
-	parseEventData(parameters, currentState, screen);
-
-	currentState.unlockSession();
-	WebSessionState.unregister();
+	    WebScreen screen = currentState.getGraphicsConfiguration().getScreen();
+	    parseEventData(parameters, currentState, screen);
+	} finally {
+	    currentState.unlockSession();
+	}
     }
 
     protected void parseEventData(String paramStr, WebSessionState state, WebScreen screen) {
@@ -63,8 +61,7 @@ public class EventReceiver extends HttpServlet {
 		    processMouseEvent(state, eventDataList);
 		} else if (command.equals("MM")) {
 		    processMouseMotionEvent(state, eventDataList);
-		} else 
-		if(command.equals("K")) {
+		} else if (command.equals("K")) {
 		    processKeyEvent(state, eventDataList);
 		}
 	    }
@@ -93,7 +90,7 @@ public class EventReceiver extends HttpServlet {
 	int y = Integer.parseInt(params.removeFirst());
 	boolean down = Integer.parseInt(params.removeFirst()) > 0;
 	int buttonMask = Integer.parseInt(params.removeFirst());
-	
+
 	state.getMouseTracker().trackMouseEvent(down, buttonMask, x, y);
     }
 

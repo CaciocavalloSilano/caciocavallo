@@ -19,6 +19,7 @@ import net.java.openjdk.awt.peer.web.*;
 public class AppStarter extends HttpServlet {
 
     public String startHtml = null;
+    private WebSessionState sessionState;
 
     public AppStarter() {
 	loadStartHTML();
@@ -30,24 +31,20 @@ public class AppStarter extends HttpServlet {
 	System.out.println("Starter-Session: " + session.getId());
 	System.out.println("Loading Application Class: " + className);
 
-
-	startAppInNewAppContext(session, className);
-
-
+	WebSessionState state = startAppInNewAppContext(session, className);
 	response.setContentType("text/html");
-	response.getWriter().write(startHtml.replaceAll("SSID", String.valueOf(WebSessionState.getSubSessionID(session))));
+	response.getWriter().write(startHtml.replaceAll("SSID", String.valueOf(state.getSubSessionID())));
     }
     
-    protected void startAppInNewAppContext(final HttpSession session, final String className) {
+    protected WebSessionState startAppInNewAppContext(final HttpSession session, final String className) {
 	ThreadGroup appGroup = new ThreadGroup(String.valueOf(new Random().nextLong()));
-	
+
 	Thread t = new Thread(appGroup, "AppInitThread") {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
 		
-		Integer subsessionID = WebSessionState.register(session, null);
-		WebSessionState state = WebSessionState.getCurrentStateAWT();
-
+		WebSessionState state = WebSessionManager.getInstance().register(session);
+		sessionState = state;
 		try {
 		    state.lockSession();
 
@@ -67,12 +64,16 @@ public class AppStarter extends HttpServlet {
 	
 	try {
 	    t.start();
+	    
+	    /* Wait for initialization before allowing the servlet to send down its JS
+	     *	and trigger polling 
+	     */
 	    t.join();
 	} catch (InterruptedException e) {
 	    e.printStackTrace();
 	}
 	
-	WebSessionState.unregister();
+	return sessionState;
     }
 
     protected void loadStartHTML() {
