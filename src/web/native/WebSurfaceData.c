@@ -43,6 +43,8 @@ static void WebRelease(JNIEnv* env, SurfaceDataOps* ops,
                        SurfaceDataRasInfo* rasInfo);
 static void WebUnlock(JNIEnv* env, SurfaceDataOps* ops,
                       SurfaceDataRasInfo* rasInfo);
+static void WebDispose(JNIEnv *env, SurfaceDataOps *ops);
+                      
 
 JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initIDs
   (JNIEnv *env, jclass cls __attribute__((unused)))
@@ -60,9 +62,7 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initIDs
                                                     "awtUnlock", "()V");
     if ((*env)->ExceptionCheck(env)) return;
     
-    
-    //TODO: Mit globaler Referenz arbeiten, diese in Dispose wieder freigeben.
-    webSurfaceClsLocal = (*env)->FindClass(env, "net/java/openjdk/awt/peer/web/WebSurfaceData"); //Classen nicht cachen!
+    webSurfaceClsLocal = (*env)->FindClass(env, "net/java/openjdk/awt/peer/web/WebSurfaceData");
     webSurfaceCls = (*env)->NewGlobalRef(env, webSurfaceClsLocal);
     
     dirtyRectMID = (*env)->GetMethodID(env, webSurfaceCls,
@@ -72,24 +72,37 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initIDs
 JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initOps
   (JNIEnv *env, jobject thiz, jintArray imgBuffer, jint width, jint height, jint stride)
 {
-    WebSurfaceDataOps *operations = NULL;
-
-    operations = (WebSurfaceDataOps *)
+    WebSurfaceDataOps *operations = (WebSurfaceDataOps *)
         SurfaceData_InitOps(env, thiz, sizeof(WebSurfaceDataOps));
 
     operations->sdOps.Lock = &WebLock;
     operations->sdOps.GetRasInfo = &WebGetRasInfo;
     operations->sdOps.Release = &WebRelease;
     operations->sdOps.Unlock = &WebUnlock;
-    operations->imgBuffer = (*env)->NewWeakGlobalRef(env, imgBuffer);
+    operations->sdOps.Dispose = &WebDispose;
+    operations->imgBuffer = (*env)->NewGlobalRef(env, imgBuffer);
     operations->width = width;
     operations->height = height;
     operations->stride = width*4; //TODO stride und offset setzen!!
 }
 
+static void
+WebDispose(JNIEnv *env, SurfaceDataOps *ops) {
+	WebSurfaceDataOps *wops = (WebSurfaceDataOps*) ops;
+    
+	(*env)->DeleteGlobalRef(env, webSurfaceCls);
+	
+	if(wops->imgBuffer &&  !(*env)->IsSameObject(env, wops->imgBuffer, NULL)) {
+		(*env)->DeleteGlobalRef(env, wops->imgBuffer);
+		wops->imgBuffer = NULL;
+    }
+}
+
 static void WebRelease(JNIEnv *env, SurfaceDataOps *ops, SurfaceDataRasInfo *rasInfo) {	
+	jintArray imgBufferLocal;
     WebSurfaceDataOps *operations = (WebSurfaceDataOps*) ops;
     
+    //TODO: First create a local reference
     if(operations->imgBuffer && !(*env)->IsSameObject(env, operations->imgBuffer, NULL)) {
      (*env)->ReleasePrimitiveArrayCritical(env, operations->imgBuffer, rasInfo->rasBase, JNI_ABORT);
     }
