@@ -59,23 +59,17 @@ public class ImageStreamer extends HttpServlet {
 	    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
 	    WebSessionState state = WebSessionManager.getInstance().getCurrentState(session, subSessionID);
-//	    SunToolkit.awtLock();
-
-	    state.lockSession();
-
 	    WebGraphicsConfiguration config = state.getGraphicsConfiguration();
-	    // System.out.println("Config: "+config);
+
 	    if (config != null) {
 		WebScreen screen = config.getScreen();
 		WebSurfaceData screenSurface = screen.getSurfaceData();
 		synchronized (screenSurface.dirtyRects) {
 
 		    ArrayList<Rectangle> dirtyRectList = screenSurface.dirtyRects;
-		    // System.out.println("Dirty-Rect-Size: "+dirtyRectList.size());
 
 		    // Zusammenhaengenden bereich finden
 		    if (dirtyRectList.size() > 0) {
-			System.out.println("Dirty rects: "+dirtyRectList.size());
 			unionRect = dirtyRectList.get(0);
 			for (Rectangle rect : dirtyRectList) {
 			    unionRect = unionRect.union(rect);
@@ -109,11 +103,6 @@ public class ImageStreamer extends HttpServlet {
 
 		    g.drawImage(screenSurface.imgBuffer, 0, 0, unionRect.width, unionRect.height, x1, y1, x2, y2, null);
 		}
-
-		state.unlockSession();
-//		SunToolkit.awtUnlock();
-
-		// g.drawImage(WebSurfaceData.imgBuffer, 0, 0, null);
 
 		if (bImg != null) {
 		    byte[] bData = null;
