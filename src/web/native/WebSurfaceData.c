@@ -47,6 +47,8 @@ static void WebUnlock(JNIEnv* env, SurfaceDataOps* ops,
 JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initIDs
   (JNIEnv *env, jclass cls __attribute__((unused)))
 {
+	jclass webSurfaceClsLocal;
+	
     sunToolkitCls = (*env)->FindClass(env, "sun/awt/SunToolkit");
     if ((*env)->ExceptionCheck(env)) return;
 
@@ -58,8 +60,11 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initIDs
                                                     "awtUnlock", "()V");
     if ((*env)->ExceptionCheck(env)) return;
     
+    
     //TODO: Mit globaler Referenz arbeiten, diese in Dispose wieder freigeben.
-    webSurfaceCls = (*env)->FindClass(env, "net/java/openjdk/awt/peer/web/WebSurfaceData"); //Classen nicht cachen!
+    webSurfaceClsLocal = (*env)->FindClass(env, "net/java/openjdk/awt/peer/web/WebSurfaceData"); //Classen nicht cachen!
+    webSurfaceCls = (*env)->NewGlobalRef(env, webSurfaceClsLocal);
+    
     dirtyRectMID = (*env)->GetMethodID(env, webSurfaceCls,
                                                     "addDirtyRect", "(IIII)V");
 }
@@ -137,7 +142,7 @@ static void WebGetRasInfo(JNIEnv* env __attribute__((unused)),
     jint *imgPtr = NULL;
 	
     if(ops->imgBuffer &&  !(*env)->IsSameObject(env, ops->imgBuffer, NULL)) {
-	imgPtr = (jint *) (*env)->GetPrimitiveArrayCritical(env, ops->imgBuffer, NULL);
+	   imgPtr = (jint *) (*env)->GetPrimitiveArrayCritical(env, ops->imgBuffer, NULL);
     }
     
     if (imgPtr != NULL || 1) {
@@ -183,6 +188,14 @@ static void WebUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
     (*env)->CallVoidMethod(env, ops->sdObject, dirtyRectMID, rasInfo->bounds.x1, rasInfo->bounds.x1 + width, rasInfo->bounds.y1, rasInfo->bounds.y1 + height);
    }
    
+   /* TODO: Di we really need to lock the surface?
+	* We actually need to protect against the case where the surface is modified,
+    * but read-out is not locked (because only damage tracking is locked, modification not)
+    * On the contra side, at the next read-out the whole bogus area will be marked modified anyway,
+    * and the current content will be returned. 
+    * Re-investigate when implementing like copyArea optimization - order will be more important then.
+    */
+     
     //Release AWT Lock
-    (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
+    //(*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
 }
