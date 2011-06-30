@@ -58,7 +58,7 @@ public class ImageStreamer extends HttpServlet {
 	    BufferedImage bImg = null;
 	    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
-	    WebSessionState state = WebSessionState.getCurrentState(session, subSessionID);
+	    WebSessionState state = WebSessionManager.getInstance().getCurrentState(session, subSessionID);
 //	    SunToolkit.awtLock();
 
 	    state.lockSession();
@@ -75,6 +75,7 @@ public class ImageStreamer extends HttpServlet {
 
 		    // Zusammenhaengenden bereich finden
 		    if (dirtyRectList.size() > 0) {
+			System.out.println("Dirty rects: "+dirtyRectList.size());
 			unionRect = dirtyRectList.get(0);
 			for (Rectangle rect : dirtyRectList) {
 			    unionRect = unionRect.union(rect);
