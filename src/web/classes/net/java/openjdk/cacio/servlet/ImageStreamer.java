@@ -115,17 +115,16 @@ public class ImageStreamer extends HttpServlet {
 			e.printStackTrace();
 		    }
 
-		    // bData = bos.toByteArray();
-
-		    // try {
-		    // FileOutputStream fos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + imgCnt + ".png");
-		    // fos.write(bData);
-		    // fos.close();
-		    // imgCnt++;
-		    // } catch (Exception ex) {
-		    // ex.printStackTrace();
-		    // }
+//
+//		     try {
+//		     FileOutputStream fos = new
+//		     FileOutputStream("/home/ce/imgFiles/" + imgCnt + ".png");
+//		     fos.write(bData);
+//		     fos.close();
+//		     imgCnt++;
+//		     } catch (Exception ex) {
+//		     ex.printStackTrace();
+//		     }
 
 		    byte[] data = Base64Coder.encode(bData);
 		    return new ScreenUpdate(unionRect.x, unionRect.y, data);
