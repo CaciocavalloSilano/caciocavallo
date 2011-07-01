@@ -25,15 +25,14 @@
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
+
 import java.awt.image.*;
-import java.io.*;
 import java.util.*;
+import java.util.concurrent.locks.*;
 
-import javax.management.openmbean.*;
-
-import sun.awt.*;
 import sun.java2d.*;
-import sun.java2d.loops.SurfaceType;
+import sun.java2d.loops.*;
+import sun.java2d.pipe.*;
 
 /**
  * SurfaceData implementation based on libSDL.
@@ -42,7 +41,7 @@ import sun.java2d.loops.SurfaceType;
  */
 public class WebSurfaceData extends SurfaceData {
 
-    static SurfaceType typeDefault = SurfaceType.IntRgb.deriveSubType("Cacio SDL default");
+    static SurfaceType typeDefault = SurfaceType.IntRgb.deriveSubType("Cacio Web default");
 
     static {
 	initIDs();
@@ -56,6 +55,8 @@ public class WebSurfaceData extends SurfaceData {
     private GraphicsConfiguration configuration;
     private Object destination;
     int[] data;
+
+    ReentrantLock surfaceLock = new ReentrantLock();
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
@@ -103,6 +104,10 @@ public class WebSurfaceData extends SurfaceData {
 
     private static final native void initIDs();
 
+    public void lockSurface() {
+	// surfaceLock.lock();
+    }
+
     public void addDirtyRect(int x1, int x2, int y1, int y2) {
 	synchronized (dirtyRects) {
 	    Rectangle dirtyRect = new Rectangle(x1, y1, (x2 - x1), (y2 - y1));
@@ -110,26 +115,37 @@ public class WebSurfaceData extends SurfaceData {
 	}
     }
 
-//    @Override
-//    public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
-//	Thread.dumpStack();
-//	
-//	x += sg2d.transX;
-//	y += sg2d.transY;
-//	SunToolkit.awtLock();
-//	try {
-//	    System.out.println("x: " + x + " y:" + y + " w:" + w + " h:" + h + " dx:" + dx + " dy:" + dy);
-//	    synchronized (dirtyRects) {
-//		bufferGraphics.copyArea(x, y, w, h, dx, dy);
-//
-//		int xdx = x + dx;
-//		int ydy = y + dy;
-//		addDirtyRect(xdx, ydy, xdx + w, ydy + h);
-//	    }
-//	} finally {
-//	    SunToolkit.awtUnlock();
-//	}
-//
-//	return true;
-//    }
+    @Override
+    public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
+	Region clipRect = sg2d.getCompClip();
+	CompositeType comptype = sg2d.imageComp;
+	
+	if (clipRect.isRectangular() && sg2d.transformState < sg2d.TRANSFORM_TRANSLATESCALE
+		&& (CompositeType.SrcOverNoEa.equals(comptype) || CompositeType.SrcNoEa.equals(comptype))) {
+
+	    x += sg2d.transX;
+	    y += sg2d.transY;
+
+	    BufferedImage tmpImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+	    Graphics tmpG = tmpImg.getGraphics();
+	    tmpG.drawImage(imgBuffer, 0, 0, w, h, x, y, x + w, y + h, null);
+
+	    synchronized (dirtyRects) {
+		Graphics g = imgBuffer.getGraphics();
+
+		if (clipRect != null) {
+		    g.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
+		}
+		g.drawImage(tmpImg, x + dx, y + dy, null);
+
+		int xdx = x + dx;
+		int ydy = y + dy;
+		addDirtyRect(xdx, xdx + w, ydy, ydy + h);
+	    }
+
+	    return true;
+	}
+
+	return false;
+    }
 }
