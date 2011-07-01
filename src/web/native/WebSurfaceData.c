@@ -102,7 +102,6 @@ static void WebRelease(JNIEnv *env, SurfaceDataOps *ops, SurfaceDataRasInfo *ras
 	jintArray imgBufferLocal;
     WebSurfaceDataOps *operations = (WebSurfaceDataOps*) ops;
     
-    //TODO: First create a local reference
     if(operations->imgBuffer && !(*env)->IsSameObject(env, operations->imgBuffer, NULL)) {
      (*env)->ReleasePrimitiveArrayCritical(env, operations->imgBuffer, rasInfo->rasBase, JNI_ABORT);
     }
@@ -117,7 +116,7 @@ static jint WebLock(JNIEnv* env, SurfaceDataOps* ops,
     operations = (WebSurfaceDataOps*) ops;
 
     operations->lockFlags = lockFlags;
-    (*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
+    //(*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
 
     if (rasInfo->bounds.x1 < 0) {
       rasInfo->bounds.x1 = 0;
