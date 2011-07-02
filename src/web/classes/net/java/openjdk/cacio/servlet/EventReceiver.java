@@ -30,13 +30,14 @@ public class EventReceiver extends HttpServlet {
 
 	String parameters = request.getParameter("events");
 	HttpSession session = request.getSession(false);
-	String subSessionID = request.getParameter("subsessionid");
+	String subSessionIDString = request.getParameter("subsessionid");
 
-	if (session == null || subSessionID == null) {
+	if (session == null || subSessionIDString == null) {
 	    throw new RuntimeException("Should not reach");
 	}
 
-	WebSessionState currentState = WebSessionManager.getInstance().getCurrentState(session, Integer.parseInt(subSessionID));
+	int subSessionID = Integer.parseInt(subSessionIDString);
+	WebSessionState currentState = WebSessionManager.getInstance().getCurrentState(session, subSessionID);
 	try {
 	    currentState.lockSession();
 
