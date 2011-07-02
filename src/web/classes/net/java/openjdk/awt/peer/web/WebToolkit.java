@@ -134,7 +134,7 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public int getScreenResolution() throws HeadlessException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 72;
     }
 
     @Override

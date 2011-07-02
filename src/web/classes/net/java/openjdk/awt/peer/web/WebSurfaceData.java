@@ -27,8 +27,12 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.*;
 
 import java.awt.image.*;
+import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.locks.*;
+
+import net.java.openjdk.cacio.servlet.*;
 
 import sun.java2d.*;
 import sun.java2d.loops.*;
@@ -47,7 +51,6 @@ public class WebSurfaceData extends SurfaceData {
 	initIDs();
     }
 
-    public ArrayList<Rectangle> dirtyRects = new ArrayList<Rectangle>();
     public BufferedImage imgBuffer;
     Graphics bufferGraphics;
 
@@ -57,6 +60,9 @@ public class WebSurfaceData extends SurfaceData {
     int[] data;
 
     ReentrantLock surfaceLock = new ReentrantLock();
+    ArrayList<Rectangle> damageList = new ArrayList<Rectangle>();
+
+    ArrayList<ScreenUpdate> pendingUpdateList = new ArrayList<ScreenUpdate>();
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
@@ -104,48 +110,148 @@ public class WebSurfaceData extends SurfaceData {
 
     private static final native void initIDs();
 
+    int cnt = 0;
+
     public void lockSurface() {
-	// surfaceLock.lock();
+	surfaceLock.lock();
+	cnt++;
+	if (cnt % 1000 == 0) {
+	    System.out.println("Lockcnt: " + cnt);
+	}
     }
 
-    public void addDirtyRect(int x1, int x2, int y1, int y2) {
-	synchronized (dirtyRects) {
-	    Rectangle dirtyRect = new Rectangle(x1, y1, (x2 - x1), (y2 - y1));
-	    dirtyRects.add(dirtyRect);
-	}
+    public void unlockSurface() {
+	surfaceLock.unlock();
+    }
+
+    public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
+	damageList.add(new Rectangle(x1, y1, x2 - x1, y2 - y1));
+	surfaceLock.unlock();
     }
 
     @Override
     public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
 	Region clipRect = sg2d.getCompClip();
 	CompositeType comptype = sg2d.imageComp;
-	
+
 	if (clipRect.isRectangular() && sg2d.transformState < sg2d.TRANSFORM_TRANSLATESCALE
 		&& (CompositeType.SrcOverNoEa.equals(comptype) || CompositeType.SrcNoEa.equals(comptype))) {
 
 	    x += sg2d.transX;
 	    y += sg2d.transY;
 
+	    //TODO: For now we use a temporary Buffer, improve it
 	    BufferedImage tmpImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 	    Graphics tmpG = tmpImg.getGraphics();
 	    tmpG.drawImage(imgBuffer, 0, 0, w, h, x, y, x + w, y + h, null);
+	    Graphics g = imgBuffer.getGraphics();
+	    if (clipRect != null) {
+		g.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
+	    }
 
-	    synchronized (dirtyRects) {
-		Graphics g = imgBuffer.getGraphics();
-
-		if (clipRect != null) {
-		    g.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
-		}
-		g.drawImage(tmpImg, x + dx, y + dy, null);
-
+	    try {
+		lockSurface();
 		int xdx = x + dx;
 		int ydy = y + dy;
-		addDirtyRect(xdx, xdx + w, ydy, ydy + h);
+		
+		g.drawImage(tmpImg, xdx, ydy, null);
+		damageList.add(new Rectangle(xdx, ydy, w, h));
+//		persistDamagedAreas();
+//		pendingUpdateList.add(new CopyAreaScreenUpdate(xdx, ydy, w, h, dx, dy));
+	    } finally {
+		unlockSurface();
 	    }
 
 	    return true;
 	}
 
 	return false;
+    }
+
+    protected void persistDamagedAreas() {
+	BufferedImage bImg = null;
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	Rectangle unionRect = null;
+	try {
+	    lockSurface();
+	    if (damageList.size() > 0) {
+
+		unionRect = damageList.get(0);
+		for (Rectangle rop : damageList) {
+		    unionRect = unionRect.union(rop);
+		}
+		damageList.clear();
+
+		if (unionRect != null && unionRect.width > 0 && unionRect.height > 0) {
+		    bImg = new BufferedImage(unionRect.width, unionRect.height, BufferedImage.TYPE_INT_RGB);
+		    Graphics g = bImg.getGraphics();
+
+		    x1 = unionRect.x;
+		    y1 = unionRect.y;
+		    x2 = unionRect.x + unionRect.width;
+		    y2 = unionRect.y + unionRect.height;
+
+		    /*
+		     * dx1 - the x coordinate of the first corner of the
+		     * destination rectangle. dy1 - the y coordinate of the
+		     * first corner of the destination rectangle. dx2 - the x
+		     * coordinate of the second corner of the destination
+		     * rectangle. dy2 - the y coordinate of the second corner of
+		     * the destination rectangle. sx1 - the x coordinate of the
+		     * first corner of the source rectangle. sy1 - the y
+		     * coordinate of the first corner of the source rectangle.
+		     * sx2 - the x coordinate of the second corner of the source
+		     * rectangle. sy2 - the y coordinate of the second corner of
+		     * the source rectangle.
+		     */
+
+		    g.drawImage(imgBuffer, 0, 0, unionRect.width, unionRect.height, x1, y1, x2, y2, null);
+		}
+	    }
+
+	    if (bImg != null) {
+		byte[] bData = null;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(8192);
+		try {
+		    // ImageIO.write(bImg, "png", bos);
+		    bData = new PngEncoderB(bImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+
+		// try {
+		// FileOutputStream fos = new
+		// FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
+		// fos.write(bData);
+		// fos.close();
+		// } catch (Exception ex) {
+		// ex.printStackTrace();
+		// }
+
+		byte[] data = Base64Coder.encode(bData);
+		ScreenUpdate update = new ScreenUpdate(unionRect.x, unionRect.y, data);
+		pendingUpdateList.add(update);
+	    }
+	} finally {
+	    unlockSurface();
+	}
+    }
+
+    public List<ScreenUpdate> getScreenUpdates() {
+	try {
+	    lockSurface();
+	    persistDamagedAreas();
+		
+	    if(pendingUpdateList.size() > 0) {
+		List<ScreenUpdate> pendingList = pendingUpdateList;
+		pendingUpdateList = new ArrayList<ScreenUpdate>();
+		return pendingList;
+	    }
+	}finally {
+	    unlockSurface();
+	}
+	
+	return null;
     }
 }

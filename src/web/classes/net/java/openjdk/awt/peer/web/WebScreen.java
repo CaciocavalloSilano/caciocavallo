@@ -64,6 +64,7 @@ public class WebScreen implements PlatformScreen, CacioEventSource {
 
     protected WebScreen(WebGraphicsConfiguration config) {
 	this.config = config;
+	
 	this.eventList = new LinkedList<EventData>();
     }
 
@@ -96,8 +97,6 @@ public class WebScreen implements PlatformScreen, CacioEventSource {
         return new Rectangle(0, 0, width, height);
     }
     
-
-    
     EventData lastEvent;
     public synchronized void addEvent(EventData data) {
 	this.lastEvent = data;
@@ -105,7 +104,6 @@ public class WebScreen implements PlatformScreen, CacioEventSource {
     }
     
     public synchronized EventData getNextEvent() {
-
             if(eventList.size() > 0) {
         	eventData = eventList.remove(0);
                 eventData.setSource(this);
