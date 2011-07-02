@@ -95,7 +95,6 @@ public class WebGraphicsConfiguration extends GraphicsConfiguration {
 
     @Override
     public Rectangle getBounds() {
-
         /* TODO: implement properly */
         return new Rectangle(FullScreenWindowFactory.getScreenDimension());
     }
