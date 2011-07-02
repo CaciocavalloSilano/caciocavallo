@@ -3,9 +3,9 @@
 <head>
 <meta charset='UTF-8'>
 <title>Insert title here</title>
-<!--<script type="text/javascript" src="Input.js"></script>
-<script type="text/javascript" src="JSMutex.js"></script> -->
 <script type='text/javascript'>
+
+
 
 //Event registration. Based on: http://www.scottandrew.com/weblog/articles/cbs-events
 pAddEvent = function (obj, evType, fn){
@@ -219,23 +219,45 @@ function StartRequest() {
  
 function handle_response() {
   if (xmlhttpreq.readyState==4 && xmlhttpreq.status==200) {
-	    var ctx = document.getElementById('blackboard').getContext('2d');
+	    var canvas = document.getElementById('blackboard');
+	    var ctx = canvas.getContext('2d');
 	    
-	    /* TODO: Implement multipart-messages - only go on in the onload-handler
-	     */
-	    var parts = xmlhttpreq.responseText.split(':');
-	    if(parts.length >= 3) {
-		    var x = parseInt(parts[0]);
-		    var y = parseInt(parts[1]);
-		    var imgData = parts[2];
-		    
-		    //Response is URLEncoded, some browsers are disturbed by the slash used by base64
-		    imgData = 'data:image/png;base64,' + imgData; 
-		    
-		    var newImg = new Image();
-				newImg.onload = function() { ctx.drawImage(newImg, x, y);}
-				newImg.src = imgData;	 	 
-	    }
+		var parNum = 0;
+		var parts = xmlhttpreq.responseText.split(':');
+	    
+	    if(parts.length >= 4) {
+				    
+			while(parNum < parts.length) {
+				var type = parts[parNum++];
+									
+				if(type == "i") {
+					var x = parseInt(parts[parNum++]);
+					var y = parseInt(parts[parNum++]);
+					var imgData = parts[parNum++];
+					console.log("drawImage x: "+x+" y:+"+y);
+					
+					//Response is URLEncoded, some browsers are disturbed by the slash used by base64
+					imgData = 'data:image/png;base64,' + imgData; 
+					
+					var newImg = new Image();
+					//TODO: Honor order
+					newImg.onload = function() { ctx.drawImage(newImg, x, y);}
+					newImg.src = imgData;	
+				} else 
+				if(type == "c") {
+					var x = parseInt(parts[parNum++]);
+					var y = parseInt(parts[parNum++]);
+					var w = parseInt(parts[parNum++]);
+					var h = parseInt(parts[parNum++]);
+					var dx = parseInt(parts[parNum++]);
+					var dy = parseInt(parts[parNum++]);
+					
+					//context.drawImage(img_elem, sx, sy, sw, sh, dx, dy, dw, dh);
+					//alert("copyarea x: "+x+" y:"+y+" w:"+w+" h:"+h+" dx:"+dx+" dy:"+dy);
+					ctx.drawImage(canvas, x - dx, y - dy, w, h, x, y, w, h);
+				}
+		  }
+		}
   	}
   
   // Bei Verbindungsabbruch gleich neu initialisieren
