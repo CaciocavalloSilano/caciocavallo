@@ -11,9 +11,9 @@ import net.java.openjdk.awt.peer.web.*;
 public class AppContextCreator {
     private WebSessionState sessionState;
     
-    protected WebSessionState startAppInNewAppContext(final HttpSession session, final String className) {
-	ThreadGroup appGroup = new ThreadGroup(String.valueOf(new Random().nextLong()));
-
+    protected WebSessionState startAppInNewAppContext(final HttpSession session, final String className, final String[] parameters) {
+	
+	ThreadGroup appGroup = new ThreadGroup("AppThreadGroup "+String.valueOf(new Random().nextLong()));
 	Thread t = new Thread(appGroup, "AppInitThread") {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
@@ -27,8 +27,7 @@ public class AppContextCreator {
 		    Class cls = loader.loadClass(className);
 		    Method mainMethod = cls.getMethod("main", String[].class);
 		    mainMethod.setAccessible(true);
-		    // TODO: Handle parameters
-		    mainMethod.invoke(cls, (Object) new String[] {});
+		    mainMethod.invoke(cls, (Object) parameters);
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		} finally {
@@ -40,9 +39,7 @@ public class AppContextCreator {
 	try {
 	    t.start();
 	    
-	    /* Wait for initialization before allowing the servlet to send down its JS
-	     *	and trigger polling 
-	     */
+	    //Wait for initialization to finish
 	    t.join();
 	} catch (InterruptedException e) {
 	    e.printStackTrace();

@@ -1,9 +1,12 @@
 package net.java.openjdk.cacio.servlet;
 
+import java.io.*;
+
 public class ScreenUpdate {
     int x, y;
     byte[] imageData;
-  
+ 
+
     public ScreenUpdate(int x, int y, byte[] imageData) {
 	this.x = x;
 	this.y = y;
@@ -11,14 +14,20 @@ public class ScreenUpdate {
     }
 
     public int getX() {
-        return x;
+	return x;
     }
 
     public int getY() {
-        return y;
+	return y;
     }
 
     public byte[] getImageData() {
-        return imageData;
+	return imageData;
+    }
+
+    public void writeToStream(OutputStream str) throws IOException {
+	str.write(("i:" + x + ":" + y + ":").getBytes("UTF-8"));
+	str.write(getImageData());
+	str.write(':');
     }
 }
