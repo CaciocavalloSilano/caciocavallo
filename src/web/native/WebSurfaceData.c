@@ -32,6 +32,9 @@ jclass sunToolkitCls;
 jmethodID sunToolkitLockMID;
 jmethodID sunToolkitUnlockMID;
 
+jmethodID lockSurfaceMID;
+jmethodID unlockSurfaceMID;
+
 jclass webSurfaceCls;
 jmethodID dirtyRectMID;
 
@@ -66,7 +69,13 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initIDs
     webSurfaceCls = (*env)->NewGlobalRef(env, webSurfaceClsLocal);
     
     dirtyRectMID = (*env)->GetMethodID(env, webSurfaceCls,
-                                                    "addDirtyRect", "(IIII)V");
+                                                    "addDirtyRectAndUnlock", "(IIII)V");
+                                                    
+    lockSurfaceMID = (*env)->GetMethodID(env, webSurfaceCls,
+                                                    "lockSurface", "()V");
+                                                    
+    unlockSurfaceMID = (*env)->GetMethodID(env, webSurfaceCls,
+                                                    "unlockSurface", "()V");
 }
 
 JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initOps
@@ -110,13 +119,14 @@ static void WebRelease(JNIEnv *env, SurfaceDataOps *ops, SurfaceDataRasInfo *ras
 static jint WebLock(JNIEnv* env, SurfaceDataOps* ops,
                     SurfaceDataRasInfo* rasInfo, jint lockFlags)
 {	
-    WebSurfaceDataOps *operations = NULL;
-    int ret = -1;
-
-    operations = (WebSurfaceDataOps*) ops;
-
+    WebSurfaceDataOps *operations = (WebSurfaceDataOps*) ops;
     operations->lockFlags = lockFlags;
-    //(*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitLockMID);
+    
+    if((*env)->IsSameObject(env, ops->sdObject, NULL)) {
+		return SD_FAILURE;
+	}
+	
+	(*env)->CallVoidMethod(env, ops->sdObject, lockSurfaceMID);
 
     if (rasInfo->bounds.x1 < 0) {
       rasInfo->bounds.x1 = 0;
@@ -195,19 +205,11 @@ static void WebUnlock(JNIEnv* env, SurfaceDataOps* ops, SurfaceDataRasInfo* rasI
         height = 0;
     }
    
-   if(operations->lockFlags > SD_LOCK_READ && !(*env)->IsSameObject(env, ops->sdObject, NULL)) {
-    //Dirty Rect tracking
-    (*env)->CallVoidMethod(env, ops->sdObject, dirtyRectMID, rasInfo->bounds.x1, rasInfo->bounds.x1 + width, rasInfo->bounds.y1, rasInfo->bounds.y1 + height);
-   }
-   
-   /* TODO: Di we really need to lock the surface?
-	* We actually need to protect against the case where the surface is modified,
-    * but read-out is not locked (because only damage tracking is locked, modification not)
-    * On the contra side, at the next read-out the whole bogus area will be marked modified anyway,
-    * and the current content will be returned. 
-    * Re-investigate when implementing like copyArea optimization - order will be more important then.
-    */
-     
-    //Release AWT Lock
-    //(*env)->CallStaticVoidMethod(env, sunToolkitCls, sunToolkitUnlockMID);
+   if(!(*env)->IsSameObject(env, ops->sdObject, NULL)) {
+	    if(operations->lockFlags > SD_LOCK_READ) {
+		  (*env)->CallVoidMethod(env, ops->sdObject, dirtyRectMID, rasInfo->bounds.x1, rasInfo->bounds.x1 + width, rasInfo->bounds.y1, rasInfo->bounds.y1 + height);
+		} else {
+		  (*env)->CallVoidMethod(env, ops->sdObject, unlockSurfaceMID);
+		}
+	}
 }
