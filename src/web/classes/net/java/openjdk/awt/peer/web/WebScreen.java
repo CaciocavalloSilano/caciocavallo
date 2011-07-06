@@ -36,22 +36,19 @@ import java.util.*;
 
 import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.WindowClippedGraphics;
-import sun.awt.peer.cacio.managed.EventData;
-import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
-import sun.awt.peer.cacio.managed.PlatformScreen;
+import sun.awt.peer.cacio.managed.*;
 import sun.java2d.SunGraphics2D;
 
 /**
  *
  * @author Mario Torre <neugens@limasoftware.net>
  */
-public class WebScreen implements PlatformScreen, CacioEventSource {
+public class WebScreen implements PlatformScreen {
 
     private static final int width;
     private static final int height;
    
     WebGraphicsConfiguration config;
-    LinkedList<EventData> eventList;
     
     static {
         Dimension dim = FullScreenWindowFactory.getScreenDimension();
@@ -64,8 +61,6 @@ public class WebScreen implements PlatformScreen, CacioEventSource {
 
     protected WebScreen(WebGraphicsConfiguration config) {
 	this.config = config;
-	
-	this.eventList = new LinkedList<EventData>();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font,
@@ -89,7 +84,6 @@ public class WebScreen implements PlatformScreen, CacioEventSource {
     }
 
     public GraphicsConfiguration getGraphicsConfiguration() {
-	//TODO: Default Configuration je nach Session anpassen
         return config;
     }
 
@@ -97,20 +91,12 @@ public class WebScreen implements PlatformScreen, CacioEventSource {
         return new Rectangle(0, 0, width, height);
     }
     
-    EventData lastEvent;
     public synchronized void addEvent(EventData data) {
-	this.lastEvent = data;
-	eventList.add(data);
-    }
-    
-    public synchronized EventData getNextEvent() {
-            if(eventList.size() > 0) {
-        	eventData = eventList.remove(0);
-                eventData.setSource(this);
-        	return eventData;
-            }
-
-        return null;
+	WebToolkit toolkit = ((WebToolkit) WebToolkit.getDefaultToolkit());
+	WebWindowFactory factory = (WebWindowFactory) toolkit.getPlatformWindowFactory();
+	ScreenManagedWindowContainer windowContainer = factory.getScreenManagedWindowContainer(this);
+	data.setSource(windowContainer);
+	windowContainer.dispatchEvent(data);
     }
 
     public WebSurfaceData getSurfaceData() {
