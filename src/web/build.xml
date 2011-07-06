@@ -5,16 +5,33 @@
     <property file="${basedir}/build.properties" />
 
     <import file="${dir.src.shared}/build.xml" />
+    
+      <!-- Automatically generate classpath-string from files included in the lib dir -->
+  <path id="build.classpath">
+    <fileset dir=".">
+     <include name="${web.jetty_lib_dir}/*.jar"/>
+    </fileset>
+  </path>
+  <pathconvert property="gen.classpath" pathsep=":">
+    <path refid="build.classpath"/>
+      <mapper>
+        <chainedmapper>
+          <flattenmapper/>
+          <globmapper from="*.jar" to="${web.jetty_lib_dir}/*.jar"/>
+        </chainedmapper>
+      </mapper>
+  </pathconvert>
 
     <target name="compile" depends="compile-java,compile-native"
             description="Compiles Java classes and native libraries." />
 
     <target name="compile-java" depends="cacio.shared.compile">
         <mkdir dir="${dir.build.web.classes}" />
-        <javac classpath="${dir.build.shared.classes}:${web.servlet-api}"
+        <javac classpath="${dir.build.shared.classes}:${web.servlet-api}:${gen.classpath}:${web.dependency_jar}"
                bootclasspath="${openjdk}/classes"
                srcdir="${dir.src.web.classes}"
-               destdir="${dir.build.web.classes}" />
+               destdir="${dir.build.web.classes}"
+               debug="true" />
     </target>
 
     <target name="compile-native" depends="create-headers">
@@ -53,8 +70,46 @@
                net.java.openjdk.awt.peer.web.WebVolativeSurfaceManager,
                java.awt.event.MouseEvent" />
     </target>
+    
+   <!-- <target name="war">
+		<copy todir="${dir.build.web.classes}">
+			<fileset file="${web.servlet_content}/StreamBase.html"/>
+		</copy>
+		
+	  <unzip dest="${dir.build.web.classes}">       
+        <fileset dir="${web.appdir}">
+          <include name="*.jar"/>
+        </fileset>
+     </unzip> 
+	</target> -->
+    
+    <target name="srv-runtime" depends="compile-java">
+		
+	<mkdir dir="${dir.build.web.lib_classes}" />
+		
+	<unzip dest="${dir.build.web.lib_classes}">       
+      <fileset dir="${web.jetty_lib_dir}">
+        <include name="*.jar"/>
+      </fileset>
+     </unzip>
+      
+     <delete dir="${dir.build.web.lib_classes}/META-INF" />
+     
+     		<copy todir="${dir.build.web.classes}">
+			<fileset file="${web.servlet_content}/StreamBase.html"/>
+		</copy>
+		
+		<jar destfile="${web.jar_runtime_file}">
+			<fileset dir="${dir.build.web.classes}"/>
+			<fileset dir="${dir.build.web.lib_classes}"/>
+			<fileset dir="${dir.build.shared.classes}"/>
+		</jar>
+    </target>
+    
+
 
     <target name="clean">
         <delete dir="${dir.build.web.classes}" />
+        <delete dir="${dir.build.web.lib_classes}" />
     </target>
 </project>
