@@ -51,14 +51,24 @@ public class WebKeyboardStateTracker {
 
     protected char getCharForKeyCode(int keySym, boolean shift) {
 
+	System.out.println("KeySym: "+keySym);
+	
 	switch (keySym) {
 	
 	case 32: 
 	    return ' ';
+	case 33:
+	    return '!';
 	case 59:
 	    return ';';
 	case 61:
 	    return '=';
+	case 38:
+	    return '&';
+	case 40:
+	    return '(';
+	case 41:
+	    return ')';
 	case 44:
 	    return ',';
 	case 45:
@@ -86,6 +96,18 @@ public class WebKeyboardStateTracker {
 	    return '8';
 	case 57:
 	    return '9';
+	case 58: 
+	    return ':';
+	case 63:
+	    return '?';
+	case 92:
+	    return 'ü';
+	case 124:
+	    return 'Ü';
+	case 214:
+	    return 'ö';
+	case 196: 
+	    return 'ä';
 	}
 
 	if ((keySym >= 97) && (keySym <= 122) || ((keySym >= 65) && (keySym <= 90))) {

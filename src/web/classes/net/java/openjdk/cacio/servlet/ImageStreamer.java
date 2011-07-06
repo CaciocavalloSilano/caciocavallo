@@ -46,10 +46,10 @@ public class ImageStreamer extends HttpServlet {
 	if (updateList != null) {
 	    OutputStream str = response.getOutputStream();
 	    response.setContentType("text/plain");
-	    for(ScreenUpdate update : updateList) {
+	    for (ScreenUpdate update : updateList) {
 		update.writeToStream(str);
 	    }
-//	    System.out.println();
+	    // System.out.println();
 	}
     }
 
@@ -57,8 +57,14 @@ public class ImageStreamer extends HttpServlet {
 
     protected List<ScreenUpdate> getDirtyRectangle(HttpSession session, int subSessionID) {
 	int cnt = 0;
-	while (cnt < 1000) {
 
+	try {
+	    Thread.sleep(50);
+	} catch (InterruptedException e1) {
+	    e1.printStackTrace();
+	}
+
+	while (cnt < 1000) {
 	    WebSessionState state = WebSessionManager.getInstance().getCurrentState(session, subSessionID);
 	    WebGraphicsConfiguration config = state.getGraphicsConfiguration();
 
