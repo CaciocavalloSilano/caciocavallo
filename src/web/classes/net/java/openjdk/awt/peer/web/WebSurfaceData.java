@@ -32,6 +32,10 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.locks.*;
 
+import biz.source_code.base64Coder.*;
+
+import com.keypoint.*;
+
 import net.java.openjdk.cacio.servlet.*;
 
 import sun.java2d.*;
@@ -60,9 +64,10 @@ public class WebSurfaceData extends SurfaceData {
     int[] data;
 
     ReentrantLock surfaceLock = new ReentrantLock();
-    ArrayList<Rectangle> damageList = new ArrayList<Rectangle>();
+    ArrayList<DamageRect> damageList = new ArrayList<DamageRect>();
 
     ArrayList<ScreenUpdate> pendingUpdateList = new ArrayList<ScreenUpdate>();
+    GridDamageTracker damageTracker;
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
@@ -72,6 +77,7 @@ public class WebSurfaceData extends SurfaceData {
 	configuration = gc;
 	destination = dest;
 
+	damageTracker = new GridDamageTracker(b.width, b.height);
 	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
 	bufferGraphics = imgBuffer.getGraphics();
 	bufferGraphics.setColor(Color.WHITE);
@@ -115,8 +121,8 @@ public class WebSurfaceData extends SurfaceData {
     public void lockSurface() {
 	surfaceLock.lock();
 	cnt++;
-	if (cnt % 1000 == 0) {
-	    System.out.println("Lockcnt: " + cnt);
+	if (cnt % 100 == 0) {
+//	    System.out.println("Lockcnt: " + cnt);
 	}
     }
 
@@ -124,8 +130,12 @@ public class WebSurfaceData extends SurfaceData {
 	surfaceLock.unlock();
     }
 
+    Rectangle lastRect = null;
+    
     public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
-	damageList.add(new Rectangle(x1, y1, x2 - x1, y2 - y1));
+	DamageRect rect = new DamageRect(x1, y1, x2, y2);
+	damageTracker.trackDamageRect(rect);
+	damageList.add(rect);
 	surfaceLock.unlock();
     }
 
@@ -155,7 +165,7 @@ public class WebSurfaceData extends SurfaceData {
 		int ydy = y + dy;
 		
 		g.drawImage(tmpImg, xdx, ydy, null);
-		damageList.add(new Rectangle(xdx, ydy, w, h));
+		damageList.add(new DamageRect(xdx, ydy, xdx + w, ydy + h));
 //		persistDamagedAreas();
 //		pendingUpdateList.add(new CopyAreaScreenUpdate(xdx, ydy, w, h, dx, dy));
 	    } finally {
@@ -170,26 +180,24 @@ public class WebSurfaceData extends SurfaceData {
 
     protected void persistDamagedAreas() {
 	BufferedImage bImg = null;
-	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-	Rectangle unionRect = null;
+	
+	DamageRect unionRect = null;
 	try {
 	    lockSurface();
 	    if (damageList.size() > 0) {
-
+		lastRect = null;
+		
+		damageTracker.calculateDamagedAreas();
+		
 		unionRect = damageList.get(0);
-		for (Rectangle rop : damageList) {
-		    unionRect = unionRect.union(rop);
+		for (DamageRect rect : damageList) {
+		    unionRect.union(rect);
 		}
 		damageList.clear();
 
-		if (unionRect != null && unionRect.width > 0 && unionRect.height > 0) {
-		    bImg = new BufferedImage(unionRect.width, unionRect.height, BufferedImage.TYPE_INT_RGB);
+		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
+		    bImg = new BufferedImage(unionRect.getWidth(), unionRect.getHeight(), BufferedImage.TYPE_INT_RGB);
 		    Graphics g = bImg.getGraphics();
-
-		    x1 = unionRect.x;
-		    y1 = unionRect.y;
-		    x2 = unionRect.x + unionRect.width;
-		    y2 = unionRect.y + unionRect.height;
 
 		    /*
 		     * dx1 - the x coordinate of the first corner of the
@@ -205,7 +213,7 @@ public class WebSurfaceData extends SurfaceData {
 		     * the source rectangle.
 		     */
 
-		    g.drawImage(imgBuffer, 0, 0, unionRect.width, unionRect.height, x1, y1, x2, y2, null);
+		    g.drawImage(imgBuffer, 0, 0, unionRect.getWidth(), unionRect.getHeight(), unionRect.getX1(), unionRect.getY1(), unionRect.getX2(), unionRect.getY2(), null);
 		}
 	    }
 
@@ -230,7 +238,7 @@ public class WebSurfaceData extends SurfaceData {
 		// }
 
 		byte[] data = Base64Coder.encode(bData);
-		ScreenUpdate update = new ScreenUpdate(unionRect.x, unionRect.y, data);
+		ScreenUpdate update = new ScreenUpdate(unionRect.getX1(), unionRect.getY1(), data);
 		pendingUpdateList.add(update);
 	    }
 	} finally {
