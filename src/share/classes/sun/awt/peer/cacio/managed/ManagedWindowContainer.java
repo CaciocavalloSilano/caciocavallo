@@ -42,7 +42,7 @@ import java.util.List;
  * (windows can be nested), or a top level container, which is usually
  * implemented by client code.
  */
-interface ManagedWindowContainer {
+public interface ManagedWindowContainer {
 
     /**
      * Adds a child window to this container. This will be the topmost

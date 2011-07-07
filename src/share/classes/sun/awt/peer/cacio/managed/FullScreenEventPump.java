@@ -27,11 +27,11 @@ package sun.awt.peer.cacio.managed;
 
 import sun.awt.peer.cacio.*;
 
-class FullScreenEventPump extends CacioEventPump<EventData> {
+public class FullScreenEventPump extends CacioEventPump<EventData> {
 
     private CacioEventSource source;
 
-    FullScreenEventPump(CacioEventSource s) {
+    public FullScreenEventPump(CacioEventSource s) {
         source = s;
     }
 

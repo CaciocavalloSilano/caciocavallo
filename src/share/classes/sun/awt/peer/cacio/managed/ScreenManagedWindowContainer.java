@@ -33,7 +33,7 @@ import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.util.List;
 
-class ScreenManagedWindowContainer extends AbstractManagedWindowContainer {
+public class ScreenManagedWindowContainer extends AbstractManagedWindowContainer {
 
     private PlatformScreen screen;
 
