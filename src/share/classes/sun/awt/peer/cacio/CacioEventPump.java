@@ -66,7 +66,7 @@ public abstract class CacioEventPump<ET> implements Runnable {
         // Nothing to do here.
     }
 
-    void start() {
+    protected void start() {
         Thread t = new Thread(this, "CacioEventPump");
         t.setDaemon(true);
         t.start();
