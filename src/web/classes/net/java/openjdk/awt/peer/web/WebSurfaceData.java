@@ -67,7 +67,7 @@ public class WebSurfaceData extends SurfaceData {
     ArrayList<DamageRect> damageList = new ArrayList<DamageRect>();
 
     ArrayList<ScreenUpdate> pendingUpdateList = new ArrayList<ScreenUpdate>();
-    GridDamageTracker damageTracker;
+//    GridDamageTracker damageTracker;
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
@@ -77,7 +77,7 @@ public class WebSurfaceData extends SurfaceData {
 	configuration = gc;
 	destination = dest;
 
-	damageTracker = new GridDamageTracker(b.width, b.height);
+//	damageTracker = new GridDamageTracker(b.width, b.height);
 	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
 	bufferGraphics = imgBuffer.getGraphics();
 	bufferGraphics.setColor(Color.WHITE);
@@ -117,13 +117,9 @@ public class WebSurfaceData extends SurfaceData {
     private static final native void initIDs();
 
     int cnt = 0;
-
     public void lockSurface() {
 	surfaceLock.lock();
 	cnt++;
-	if (cnt % 100 == 0) {
-//	    System.out.println("Lockcnt: " + cnt);
-	}
     }
 
     public void unlockSurface() {
@@ -134,7 +130,7 @@ public class WebSurfaceData extends SurfaceData {
     
     public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
 	DamageRect rect = new DamageRect(x1, y1, x2, y2);
-	damageTracker.trackDamageRect(rect);
+//	damageTracker.trackDamageRect(rect);
 	damageList.add(rect);
 	surfaceLock.unlock();
     }
@@ -187,7 +183,7 @@ public class WebSurfaceData extends SurfaceData {
 	    if (damageList.size() > 0) {
 		lastRect = null;
 		
-		damageTracker.calculateDamagedAreas();
+//		damageTracker.calculateDamagedAreas();
 		
 		unionRect = damageList.get(0);
 		for (DamageRect rect : damageList) {
