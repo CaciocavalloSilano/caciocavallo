@@ -168,7 +168,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     }
 
     @Override
-    public final CacioEventPump<?> createEventPump() {
+    public CacioEventPump<?> createEventPump() {
         FullScreenEventSource s = new FullScreenEventSource();
         return new FullScreenEventPump(s);
     }
@@ -196,5 +196,9 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
 
             return this.screen;
         }
+    }
+    
+    public ScreenManagedWindowContainer getScreenManagedWindowContainer(PlatformScreen screen) {
+	return screenMap.get(screen);
     }
 }
