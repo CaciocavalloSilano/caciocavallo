@@ -3,7 +3,7 @@ package sun.awt.peer.x11;
 import sun.awt.*;
 import sun.font.*;
 
-public class EscherFontManager extends X11FontManager {
+public class XFontManager extends X11FontManager {
     
     @Override
     protected FontConfiguration createFontConfiguration() {
