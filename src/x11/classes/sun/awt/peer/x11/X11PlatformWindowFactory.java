@@ -59,4 +59,9 @@ public class X11PlatformWindowFactory implements PlatformWindowFactory {
         }
         return eventPump;
     }
+
+    @Override
+    public PlatformWindow createPlatformToplevelWindow(CacioComponent component, PlatformWindow owner) {
+	throw new RuntimeException("Not Implemented");
+    }
 }

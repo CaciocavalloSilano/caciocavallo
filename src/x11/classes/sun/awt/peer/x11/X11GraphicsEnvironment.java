@@ -56,17 +56,6 @@ public class X11GraphicsEnvironment extends SunGraphicsEnvironment {
     }
 
     @Override
-    protected FontConfiguration createFontConfiguration() {
-        return new FcFontConfiguration(this);
-    }
-
-    @Override
-    public FontConfiguration createFontConfiguration(boolean preferLocale,
-                                                     boolean preferProp) {
-        return new FcFontConfiguration(this, preferLocale, preferProp);
-    }
-
-    @Override
     public boolean isDisplayLocal() {
         // TODO: Implement.
         return true;
