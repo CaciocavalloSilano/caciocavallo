@@ -131,6 +131,29 @@ should do the trick.
 Caciocavallo-Web
 ----
 
+For now the Web-Backend has a dependencies to LGPL utility code,
+which can't be part of the repo.
+Because of classloader/visibility problems, for now an integrated
+http server is used, which uses Jetty.
+
+The following dependencies are required:
+http://download.eclipse.org/jetty/  (stable Jetty-7)
+http://93.83.133.214/cacioweb/cacio_dependencies.jar (source available under cacio_dependencies_src.tar.gz)
+
+Unzip jetty, and adjust the following paths in user.properties:
+> web.dependency_jar=/home/ce/cacio_dependencies.jar
+> web.jetty_lib_dir=/home/ce/Development/libs/jetty
+> web.servlet-api=/home/ce/Development/libs/jetty/servlet-api-2.5.jar
+
+Use the following ant-task to build the server runtime: cacio.web.srv-runtime
+Also make sure build/web/lib/libcacio-web.so is in your library path.
+
+To start the application, simply add the application you would like to run
+to the classpath and start the server runtime:
+java -cp cacio-web-runtime.jar:SwingSet2.jar net.java.openjdk.cacio.server.CacioServer
+
+and open the ApplicationStarter-Servlet using your Browser:
+http://localhost:8080/AppStarter?cls=SwingSet2
 
 
 
