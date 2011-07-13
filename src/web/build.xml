@@ -63,7 +63,7 @@
     <target name="create-headers">
         <mkdir dir="${dir.build.web.include}" />
 	<!--TODO: refactor static classpath setting -->
-	<javah classpath="${dir.build.shared.classes}:${dir.build.web.classes}:/home/ce/workspace/Cacio7/bin/"
+	<javah classpath="${dir.build.shared.classes}:${dir.build.web.classes}"
                destdir="${dir.build.web.include}"
                class="net.java.openjdk.awt.peer.web.WebGraphicsEnvironment,
                net.java.openjdk.awt.peer.web.WebScreen,
@@ -82,10 +82,12 @@
         <include name="*.jar"/>
       </fileset>
      </unzip>
+     
+     <unzip dest="${dir.build.web.lib_classes}" src="${web.dependency_jar}"/>       
       
      <delete dir="${dir.build.web.lib_classes}/META-INF" />
      
-     		<copy todir="${dir.build.web.classes}">
+		<copy todir="${dir.build.web.classes}">
 			<fileset file="${web.servlet_content}/StreamBase.html"/>
 		</copy>
 		
