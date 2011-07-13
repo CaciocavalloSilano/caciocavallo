@@ -2,16 +2,13 @@ package net.java.openjdk.cacio.servlet;
 
 import java.io.IOException;
 import java.util.*;
-
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
  * Servlet implementation class EventReceiver
  */
-@WebServlet("/EventReceiver")
 public class EventReceiver extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

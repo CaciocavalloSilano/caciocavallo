@@ -1,12 +1,9 @@
 package net.java.openjdk.cacio.servlet;
 
 import java.io.*;
-
 import javax.servlet.*;
-import javax.servlet.annotation.*;
 import javax.servlet.http.*;
 
-@WebServlet("/ResourceLoader")
 public class ResourceLoaderServlet extends HttpServlet {
 
     String startHtml = null;

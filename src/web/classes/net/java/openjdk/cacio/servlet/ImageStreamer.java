@@ -1,23 +1,15 @@
 package net.java.openjdk.cacio.servlet;
 
-import java.awt.*;
 
-import java.awt.image.*;
 import java.io.*;
-import java.util.*;
 import java.util.List;
-
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-
-import sun.awt.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
  * Servlet implementation class ImageStreamer
  */
-@WebServlet("/ImageStreamer")
 public class ImageStreamer extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

@@ -1,21 +1,14 @@
 package net.java.openjdk.cacio.servlet;
 
 import java.io.*;
-import java.lang.reflect.*;
 import java.util.*;
-
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import javax.swing.text.html.parser.*;
-
-import sun.awt.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
  * Servlet implementation class AppStarter
  */
-@WebServlet("/AppStarter")
 public class AppStarter extends HttpServlet {
 
     String startHtml = null;
