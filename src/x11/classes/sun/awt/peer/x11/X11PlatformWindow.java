@@ -289,4 +289,9 @@ class X11PlatformWindow implements PlatformToplevelWindow {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void setBlocked(boolean blocked) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
