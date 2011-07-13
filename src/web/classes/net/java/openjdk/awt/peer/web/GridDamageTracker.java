@@ -1,5 +1,6 @@
 package net.java.openjdk.awt.peer.web;
 
+import java.awt.image.*;
 import java.util.*;
 
 public class GridDamageTracker {
@@ -7,11 +8,13 @@ public class GridDamageTracker {
     public static int GRID_SIZE = 16;
 
     DamageGridElement[][] grid;
+    List<DamageRect> rectList;
+    BufferedImage combinedAreas;
 
     public GridDamageTracker(int width, int height) {
 	int cellsX = (int) Math.ceil(((double) width) / GRID_SIZE);
 	int cellsY = (int) Math.ceil(((double) height) / GRID_SIZE);
-
+	
 	grid = new DamageGridElement[cellsY][cellsX];
 	for (int y = 0; y < cellsY; y++) {
 	    for (int x = 0; x < cellsX; x++) {
@@ -32,9 +35,14 @@ public class GridDamageTracker {
 	    }
 	}
     }
+    
+    protected void packDamagedAreas() {
+	
+    }
 
-    public void calculateDamagedAreas() {
+    protected List<DamageRect> createDamagedRegionList() {
 	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
+	rectList = new ArrayList<DamageRect>();
 
 	long start = System.currentTimeMillis();
 	
@@ -57,15 +65,15 @@ public class GridDamageTracker {
 	long end = System.currentTimeMillis();
 	System.out.println("Took: "+(end-start));
 	
-//	for (int y = 0; y < grid.length; y++) {
-//	    for (int x = 0; x < grid[0].length; x++) {
-//		if (unions[y][x] != null) {
-//		    System.out.println(unions[y][x]);
-//		}
-//	    }
-//	}
-//	    
-	System.out.println();
+	for (int y = 0; y < grid.length; y++) {
+	    for (int x = 0; x < grid[0].length; x++) {
+		if (unions[y][x] != null) {
+		    rectList.add(unions[y][x]);
+		}
+	    }
+	}	    
+	
+	return rectList;
     }
 
     protected int countUnions(DamageRect[][] unions) {
