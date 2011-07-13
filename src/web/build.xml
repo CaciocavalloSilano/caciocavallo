@@ -22,7 +22,7 @@
 		  </mapper>
 	  </pathconvert>
 
-    <target name="compile" depends="compile-java,compile-native"
+    <target name="compile" depends="cacio.web.compile-java,cacio.web.compile-native"
             description="Compiles Java classes and native libraries." />
 
     <target name="compile-java" depends="cacio.shared.compile">
@@ -35,7 +35,7 @@
                verbose="false"/>
     </target>
 
-    <target name="compile-native" depends="create-headers">
+    <target name="compile-native" depends="cacio.web.create-headers">
         <mkdir dir="${dir.build.web.obj}" />
         <mkdir dir="${dir.build.web.lib}" />
         <cpptasks:cc objdir="${dir.build.web.obj}"
@@ -73,7 +73,7 @@
     </target>
     
     
-    <target name="srv-runtime" depends="compile-java">
+    <target name="srv-runtime" depends="cacio.web.compile-java,cacio.web.compile-native">
 		
 	<mkdir dir="${dir.build.web.lib_classes}" />
 		
