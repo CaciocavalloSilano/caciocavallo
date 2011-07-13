@@ -6,21 +6,21 @@
 
     <import file="${dir.src.shared}/build.xml" />
     
-      <!-- Automatically generate classpath-string from files included in the lib dir -->
-  <path id="build.classpath">
-    <fileset dir=".">
-     <include name="${web.jetty_lib_dir}/*.jar"/>
-    </fileset>
-  </path>
-  <pathconvert property="gen.classpath" pathsep=":">
-    <path refid="build.classpath"/>
-      <mapper>
-        <chainedmapper>
-          <flattenmapper/>
-          <globmapper from="*.jar" to="${web.jetty_lib_dir}/*.jar"/>
-        </chainedmapper>
-      </mapper>
-  </pathconvert>
+	  <!-- Automatically generate classpath-string from files included in the lib dir -->
+	  <path id="build.classpath">
+		<fileset dir="${web.jetty_lib_dir}">
+		 <include name="*.jar"/>
+		</fileset>
+	  </path>
+	  <pathconvert property="gen.classpath" pathsep=":">
+		<path refid="build.classpath"/>
+		  <mapper>
+			<chainedmapper>
+			  <flattenmapper/>
+			  <globmapper from="*.jar" to="${web.jetty_lib_dir}/*.jar"/>
+			</chainedmapper>
+		  </mapper>
+	  </pathconvert>
 
     <target name="compile" depends="compile-java,compile-native"
             description="Compiles Java classes and native libraries." />
@@ -31,7 +31,8 @@
                bootclasspath="${openjdk}/classes"
                srcdir="${dir.src.web.classes}"
                destdir="${dir.build.web.classes}"
-               debug="true" />
+               debug="true" 
+               verbose="false"/>
     </target>
 
     <target name="compile-native" depends="create-headers">
@@ -71,17 +72,6 @@
                java.awt.event.MouseEvent" />
     </target>
     
-   <!-- <target name="war">
-		<copy todir="${dir.build.web.classes}">
-			<fileset file="${web.servlet_content}/StreamBase.html"/>
-		</copy>
-		
-	  <unzip dest="${dir.build.web.classes}">       
-        <fileset dir="${web.appdir}">
-          <include name="*.jar"/>
-        </fileset>
-     </unzip> 
-	</target> -->
     
     <target name="srv-runtime" depends="compile-java">
 		
@@ -111,5 +101,7 @@
     <target name="clean">
         <delete dir="${dir.build.web.classes}" />
         <delete dir="${dir.build.web.lib_classes}" />
+        <delete dir="${dir.build.web.obj}" />
+        <delete dir="${dir.build.web.lib}" />
     </target>
 </project>
