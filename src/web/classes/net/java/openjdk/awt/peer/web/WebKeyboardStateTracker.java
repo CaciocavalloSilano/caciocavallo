@@ -51,7 +51,7 @@ public class WebKeyboardStateTracker {
 
     protected char getCharForKeyCode(int keySym, boolean shift) {
 
-	System.out.println("KeySym: "+keySym);
+	//System.out.println("KeySym: "+keySym);
 	
 	switch (keySym) {
 	
