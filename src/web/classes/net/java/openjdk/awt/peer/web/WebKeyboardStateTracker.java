@@ -16,11 +16,10 @@ public class WebKeyboardStateTracker {
 
     public void trackKeyEvent(boolean down, int keySym, char keyChar, boolean ctrl, boolean shift, boolean alt) {
 	EventData data = new EventData();
-	screen.addEvent(data);
 	data.setTime(System.currentTimeMillis());
 	data.setSource(screen);
 
-	System.out.println("Keyboard: "+getCharForKeyCode(keySym, shift));
+//	System.out.println("Keyboard: "+getCharForKeyCode(keySym, shift));
 	
 	if (down) {
 	    data.setId(KeyEvent.KEY_PRESSED);
@@ -32,6 +31,7 @@ public class WebKeyboardStateTracker {
 	}
 
 	lastEvent = data;
+	screen.addEvent(data);
     }
 
     protected void generateTypedEvent(EventData pressedEvent, int keySym, char keyChar, boolean shift) {
