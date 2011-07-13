@@ -10,6 +10,7 @@
     <import file="${dir.src.shared}/build.xml" />
     <import file="${dir.src.x11}/build.xml" />
     <import file="${dir.src.sdl}/build.xml" />
+    <import file="${dir.src.web}/build.xml" />
     <import file="${dir.src.test}/build.xml" />
 
 	<target name="clean" depends="cacio.shared.clean,cacio.x11.clean,cacio.sdl.clean,cacio.test.clean">
