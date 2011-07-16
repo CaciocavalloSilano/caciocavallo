@@ -8,14 +8,16 @@ public class GridDamageTracker {
     public static int GRID_SIZE = 16;
 
     DamageGridElement[][] grid;
-    List<DamageRect> rectList;
     BufferedImage combinedAreas;
+    ArrayList<DamageRect> rectList;
 
     public GridDamageTracker(int width, int height) {
+	rectList = new ArrayList<DamageRect>();
+	
 	int cellsX = (int) Math.ceil(((double) width) / GRID_SIZE);
 	int cellsY = (int) Math.ceil(((double) height) / GRID_SIZE);
-	
 	grid = new DamageGridElement[cellsY][cellsX];
+	
 	for (int y = 0; y < cellsY; y++) {
 	    for (int x = 0; x < cellsX; x++) {
 		grid[y][x] = new DamageGridElement(x * GRID_SIZE, y * GRID_SIZE);
@@ -23,6 +25,14 @@ public class GridDamageTracker {
 	}
     }
 
+    public DamageRect getUnionRectangle() {
+	if(rectList.size() == 0) {
+	    return null;
+	}
+	
+	return new DamageRect().union(rectList);
+    }
+    
     public void trackDamageRect(DamageRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
@@ -34,16 +44,23 @@ public class GridDamageTracker {
 		grid[y][x].addDamageRect(rect);
 	    }
 	}
+	
+	rectList.add(rect);
     }
     
-    protected void packDamagedAreas() {
+    public void reset() {
+	for (int y = 0; y < grid.length; y++) {
+	    for (int x = 0; x < grid[0].length; x++) {
+		grid[y][x].reset();
+	    }
+	}
 	
+	rectList.clear();
     }
-
+    
     protected List<DamageRect> createDamagedRegionList() {
 	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
-	rectList = new ArrayList<DamageRect>();
-
+	List<DamageRect> rectList = new ArrayList<DamageRect>();
 	long start = System.currentTimeMillis();
 	
 	/* Calculate damaged region for each Cell */
@@ -51,7 +68,6 @@ public class GridDamageTracker {
 	    for (int x = 0; x < grid[0].length; x++) {
 		DamageGridElement elem = grid[y][x];
 		unions[y][x] = elem.calculateDamageUnion();
-		elem.reset();
 	    }
 	}
 
@@ -159,6 +175,10 @@ class DamageGridElement {
 	int x2 = x + GridDamageTracker.GRID_SIZE - 1;
 	int y2 = y + GridDamageTracker.GRID_SIZE - 1;
 	damageRect.restrictToArea(x, y, x2, y2);
+	
+	if(damageRect.getWidth() == 0 || damageRect.getHeight() == 0) {
+	    return null;
+	}
 
 	return damageRect;
     }

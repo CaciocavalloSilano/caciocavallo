@@ -1,5 +1,7 @@
 package net.java.openjdk.awt.peer.web;
 
+import java.util.*;
+
 public class DamageRect {
     int x1, y1, x2, y2;
 
@@ -49,6 +51,18 @@ public class DamageRect {
     public void setY2(int y2) {
 	this.y2 = y2;
     }
+    
+    public DamageRect union(List<DamageRect> rectList) {
+	if(rectList.size() == 0) {
+	    return null;
+	}
+	
+	DamageRect unionRect = new DamageRect(rectList.get(0));
+	for (DamageRect rect : rectList) {
+	    unionRect.union(rect);
+	}
+	return unionRect;
+    }
 
     public void union(DamageRect rect2) {
 	x1 = Math.min(x1, rect2.x1);
@@ -64,6 +78,13 @@ public class DamageRect {
 	y2 = Math.min(y2, ry2);
     }
     
+    public boolean intersects(DamageRect r) {
+        return (r.getX2() > getX1()) &&
+                (r.getY2() > getY1()) &&
+                (getX2() > r.getX1()) &&
+                (getY2() > r.getY1());
+    }
+    
     
     public int getWidth() {
 	return x2 - x1;
@@ -75,5 +96,36 @@ public class DamageRect {
     
     public String toString() {
 	return "x1:"+x1+" y1:"+y1+" x2:"+x2+" y2:"+y2+"   w:"+getWidth()+" h:"+getHeight();
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + x1;
+	result = prime * result + x2;
+	result = prime * result + y1;
+	result = prime * result + y2;
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	DamageRect other = (DamageRect) obj;
+	if (x1 != other.x1)
+	    return false;
+	if (x2 != other.x2)
+	    return false;
+	if (y1 != other.y1)
+	    return false;
+	if (y2 != other.y2)
+	    return false;
+	return true;
     }
 }
