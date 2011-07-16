@@ -183,12 +183,14 @@ public class WebSurfaceData extends SurfaceData {
 	    DamageRect unionRect = damageTracker.getUnionRectangle();
 	    if (unionRect != null) {
 		List<DamageRect> regionList = damageTracker.createDamagedRegionList();
-		TreeImagePacker treePacker = new TreeImagePacker(regionList);
-		DamageRect packedRegionBox = treePacker.getBoundingBox();
+		
+		//TreeImagePacker treePacker = new TreeImagePacker(regionList);
+		SimpleImagePacker packer = new SimpleImagePacker(regionList);
+		DamageRect packedRegionBox = packer.getBoundingBox();
 
 		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0 && packedRegionBox != null) {
 
-		    if (true || treePacker.isPackingEfficient(packedRegionBox, unionRect)) {
+		    if (false || !packer.isPackingEfficient(packedRegionBox, unionRect)) {
 			pendingUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
 				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
 		    } else {
@@ -236,16 +238,21 @@ public class WebSurfaceData extends SurfaceData {
     protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
 	Graphics g = packedImage.getGraphics();
 
+	int cnt = 0;
 	for (ScreenUpdate update : pendingUpdateList) {
 	    if (update instanceof BlitScreenUpdate) {
 		BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
 
 		int width = bsUpdate.getUpdateArea().getWidth();
 		int height = bsUpdate.getUpdateArea().getHeight();
-		g.drawImage(bsUpdate.getImage(), bsUpdate.getSrcX(), bsUpdate.getSrcY() + packedAreaHeight, width, height + packedAreaHeight, 0, 0,
+//		g.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer)
+		g.drawImage(bsUpdate.getImage(), bsUpdate.getSrcX(), bsUpdate.getSrcY() + packedAreaHeight, bsUpdate.getSrcX() + width, bsUpdate.getSrcY()+ height + packedAreaHeight, 0, 0,
 			width, height, null);
+		cnt++;
 	    }
 	}
+	
+	System.out.println("Packed "+cnt+" areas into image");
     }
 
     public byte[] getScreenUpdates() {
@@ -260,7 +267,8 @@ public class WebSurfaceData extends SurfaceData {
 
 		// TODO: Optimize for the case where only one BlitScreenUpdate
 		// is pending
-		TreeImagePacker packer = new TreeImagePacker();
+		//TreeImagePacker packer = new TreeImagePacker();
+		SimpleImagePacker packer = new SimpleImagePacker();
 		for (ScreenUpdate update : pendingUpdateList) {
 		    if (update instanceof BlitScreenUpdate) {
 			BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;

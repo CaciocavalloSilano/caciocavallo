@@ -20,6 +20,7 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	
 	image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 	Graphics g = image.getGraphics();
+//	g.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer)
 	g.drawImage(src, 0, 0, w, h, srcX, srcY, srcX + w, srcY + h, null);
     }
     
