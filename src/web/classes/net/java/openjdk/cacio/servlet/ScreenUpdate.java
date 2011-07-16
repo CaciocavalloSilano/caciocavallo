@@ -2,32 +2,22 @@ package net.java.openjdk.cacio.servlet;
 
 import java.io.*;
 
-public class ScreenUpdate {
-    int x, y;
-    byte[] imageData;
- 
+import net.java.openjdk.awt.peer.web.*;
 
-    public ScreenUpdate(int x, int y, byte[] imageData) {
-	this.x = x;
-	this.y = y;
-	this.imageData = imageData;
+public abstract class ScreenUpdate {
+    DamageRect updateArea;
+
+    public ScreenUpdate(DamageRect updateArea) {
+	this.updateArea = updateArea;
     }
 
-    public int getX() {
-	return x;
+    public DamageRect getUpdateArea() {
+        return updateArea;
     }
 
-    public int getY() {
-	return y;
+    public void setUpdateArea(DamageRect updateArea) {
+        this.updateArea = updateArea;
     }
-
-    public byte[] getImageData() {
-	return imageData;
-    }
-
-    public void writeToStream(OutputStream str) throws IOException {
-	str.write(("i:" + x + ":" + y + ":").getBytes("UTF-8"));
-	str.write(getImageData());
-	str.write(':');
-    }
+    
+    public abstract void writeCmdStream(DataOutputStream dos);
 }

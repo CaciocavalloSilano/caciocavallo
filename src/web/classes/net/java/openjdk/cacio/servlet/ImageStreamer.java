@@ -33,21 +33,26 @@ public class ImageStreamer extends HttpServlet {
 	    throw new RuntimeException("Should not reach");
 	}
 
-	List<ScreenUpdate> updateList = getDirtyRectangle(session, Integer.parseInt(subSessionID));
-
-	if (updateList != null) {
-	    OutputStream str = response.getOutputStream();
-	    response.setContentType("text/plain");
-	    for (ScreenUpdate update : updateList) {
-		update.writeToStream(str);
-	    }
-	    // System.out.println();
+	//TODO: Send an 1x1 PNG, encoding cmdLength=0 when no new data is available
+	byte[] updateData = getDirtyRectangle(session,  Integer.parseInt(subSessionID));
+	if(updateData != null) {
+	  response.getOutputStream().write(updateData);  
 	}
+//	List<ScreenUpdate> updateList = getDirtyRectangle(session, Integer.parseInt(subSessionID));
+//
+//	if (updateList != null) {
+//	    OutputStream str = response.getOutputStream();
+//	    response.setContentType("text/plain");
+//	    for (ScreenUpdate update : updateList) {
+////		update.writeToStream(str);
+//	    }
+//	    // System.out.println();
+//	}
     }
 
     int imgCnt = 0;
 
-    protected List<ScreenUpdate> getDirtyRectangle(HttpSession session, int subSessionID) {
+    protected byte[] getDirtyRectangle(HttpSession session, int subSessionID) {
 	int cnt = 0;
 
 	try {
@@ -64,9 +69,12 @@ public class ImageStreamer extends HttpServlet {
 		WebScreen screen = config.getScreen();
 		WebSurfaceData screenSurface = screen.getSurfaceData();
 
-		List<ScreenUpdate> updates = screenSurface.getScreenUpdates();
-		if (updates != null)
-		    return updates;
+		byte[] updateData = screenSurface.getScreenUpdates();
+		if (updateData != null)
+		    return updateData;
+//		List<ScreenUpdate> updates = screenSurface.getScreenUpdates();
+//		if (updates != null)
+//		    return updates;
 	    }
 
 	    cnt++;

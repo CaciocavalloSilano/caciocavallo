@@ -2,20 +2,17 @@ package net.java.openjdk.cacio.servlet;
 
 import java.io.*;
 
+import net.java.openjdk.awt.peer.web.*;
+
 public class CopyAreaScreenUpdate extends ScreenUpdate {
 
-    int w, h, dx, dy;
+    int dx, dy;
     
-    public CopyAreaScreenUpdate(int x, int y, int w, int h, int dx, int dy) {
-	super(x, y, null);
-	
-	this.w = w;
-	this.h = h;
-	this.dx = dx;
-	this.dy = dy;
+    public CopyAreaScreenUpdate(int dstX, int dstY, int srcX, int srcY, int w, int h) {
+	super(new DamageRect(dstX, dstY, w, h));
     }
 
-    public void writeToStream(OutputStream str) throws IOException {
-	str.write(("c:" + x + ":" + y + ":" + w + ":" + h + ":" + dx +":" + dy + ":").getBytes("UTF-8"));
+    public void writeCmdStream(DataOutputStream dos) {
+	
     }
 }
