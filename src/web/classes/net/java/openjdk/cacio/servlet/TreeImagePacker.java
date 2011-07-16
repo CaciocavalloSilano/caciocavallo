@@ -33,10 +33,6 @@ public class TreeImagePacker {
 	update.setSrcX(insertNode.rect.getX1());
 	update.setSrcY(insertNode.rect.getY1());
     }
-    
-    public PackNode getNodeForRect(DamageRect rect) {
-	return null;
-    }
    
     public DamageRect getBoundingBox() {
 	return rootNode.getBoundingBox();
