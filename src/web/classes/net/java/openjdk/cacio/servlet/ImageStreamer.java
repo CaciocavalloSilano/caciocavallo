@@ -1,9 +1,13 @@
 package net.java.openjdk.cacio.servlet;
 
+import java.awt.image.*;
 import java.io.*;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
+
+import com.keypoint.*;
+
 import net.java.openjdk.awt.peer.web.*;
 
 /**
@@ -12,17 +16,18 @@ import net.java.openjdk.awt.peer.web.*;
 public class ImageStreamer extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    byte[] emptyImageData;
+    
     public ImageStreamer() {
-	super();
+	generateEmptyImageData();
     }
-
-    /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
-     */
+    
+    protected void generateEmptyImageData() {
+	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+	emptyImg.setRGB(0, 0, 0);
+	emptyImageData = new PngEncoderB(emptyImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+    }
+   
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 	HttpSession session = request.getSession(false);
@@ -34,23 +39,12 @@ public class ImageStreamer extends HttpServlet {
 
 	disableCaching(response);
 
-	// TODO: Send an 1x1 PNG, encoding cmdLength=0 when no new data is
-	// available
 	byte[] updateData = getDirtyRectangle(session, Integer.parseInt(subSessionID));
 	if (updateData != null) {
 	    response.getOutputStream().write(updateData);
+	}else {
+	    response.getOutputStream().write(emptyImageData);
 	}
-	// List<ScreenUpdate> updateList = getDirtyRectangle(session,
-	// Integer.parseInt(subSessionID));
-	//
-	// if (updateList != null) {
-	// OutputStream str = response.getOutputStream();
-	// response.setContentType("text/plain");
-	// for (ScreenUpdate update : updateList) {
-	// // update.writeToStream(str);
-	// }
-	// // System.out.println();
-	// }
     }
     
     protected void disableCaching(HttpServletResponse response) {
