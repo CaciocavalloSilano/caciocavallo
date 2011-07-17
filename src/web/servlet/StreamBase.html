@@ -31,7 +31,7 @@ function readImgData(height) {
 	return cmdCtx.getImageData(0, 0, cmdCanvas.width, height);
 }
 
-function readCommandStream() {
+/*function readCommandStream() {
 	var imgData = readImgData(1); //Optimize to be higher by default for small images
     var imgDataArray = imgData.data;
     var cmdLength = (imgDataArray[0] << 16) + (imgDataArray[1] << 8) + (imgDataArray[2]);
@@ -58,21 +58,20 @@ function readCommandStream() {
 	
 		shortBuffer[i] = value;
 	}
-	
 	//alert(shortBuffer);
 	
 	return shortBuffer;
-}
-
-/*function readCommandStream() {
-	var cmdLengt = imgDataArray[0] << 16) + (imgDataArray[1] << 8) + (imgDataArray[2]);
-	var shortBuffer = new Array(cmdLength / 2);
-	for(var i=0; i < cmdLength / 2; i++) {
-		var highByte = byteBuffer[i*2];
-		var lowByte = byteBuffer[i*2 + 1];
-		shortBuffer[i] = (highByte << 8) + lowByte;
-	}
 }*/
+
+function readCommandStream() {
+	var cmdLength = parseInt(parts[0]);
+	var shortBuffer = new Array(cmdLength);
+	for(var i=0; i < cmdLength; i++) {
+		shortBuffer[i] = parseInt(parts[i+1]);
+	}
+	
+	return shortBuffer;
+}
  
 function handleResponse() {		
 	var canvas = document.getElementById('blackboard');
@@ -106,17 +105,20 @@ function handleResponse() {
 }
 
 
-/*var xmlhttpreq = new XMLHttpRequest();
+var xmlhttpreq = new XMLHttpRequest();
 
 function handleXHRResponse() {
 
   if (xmlhttpreq.readyState==4) {
 	  if(xmlhttpreq.status==200) {
 		  parts = xmlhttpreq.responseText.split(':');
-		  handleResponse();
+		  				
+		  img = new Image();
+		  img.onload = function() { handleResponse(); }
+		  img.src = 'data:image/png;base64,' + parts[parts.length-1]; ;	
+	  } else {
+		  StartRequest(); 
 	  }
-	  
-	  StartRequest();
   }
 }
 
@@ -125,17 +127,17 @@ function StartRequest() {
   xmlhttpreq.open('GET', 'ImageStreamer?subsessionid=SSID', true);
   xmlhttpreq.onreadystatechange = handleXHRResponse;
   xmlhttpreq.send(null);
-}*/
+}
 
 
 
-function StartRequest() {
+/*function StartRequest() {
   var randParam = parseInt(Math.random() * 99999999);
   
   img = new Image();  
   img.src = 'ImageStreamer?subsessionid=SSID&rand='+randParam;
   img.onload = handleResponse;
-}
+}*/
 
 
 function isImageDataSupported() {
