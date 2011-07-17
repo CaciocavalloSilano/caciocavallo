@@ -29,8 +29,8 @@ public class SimpleImagePacker {
     }
     
     public void insert(BlitScreenUpdate update) {
-	update.setSrcY(curHeight);
-	update.setSrcX(0);
+	update.setPackedY(curHeight);
+	update.setPackedX(0);
 	
 	insert(update.getUpdateArea());
     }
