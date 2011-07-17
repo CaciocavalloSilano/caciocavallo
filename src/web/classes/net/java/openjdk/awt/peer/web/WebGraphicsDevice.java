@@ -54,8 +54,8 @@ class WebGraphicsDevice extends GraphicsDevice {
 	WebSessionState state = WebSessionManager.getInstance().getCurrentStateAWT();
 
 	if (state == null) {
-	    System.err.println("Crap, how can that be"); //Ok its the strike cache disposer, which is not in our threadgroup
-	    Thread.dumpStack();
+	    //System.err.println("Crap, how can that be"); //Ok its the strike cache disposer, which is not in our threadgroup
+	    //Thread.dumpStack();
 	    return new WebGraphicsConfiguration();
 	}
 
