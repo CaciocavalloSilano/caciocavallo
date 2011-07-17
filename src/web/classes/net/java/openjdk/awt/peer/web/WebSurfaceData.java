@@ -142,6 +142,9 @@ public class WebSurfaceData extends SurfaceData {
     // sg2d.TRANSFORM_TRANSLATESCALE
     // && (CompositeType.SrcOverNoEa.equals(comptype) ||
     // CompositeType.SrcNoEa.equals(comptype))) {
+    
+//    evacuateDamagedAreas(); 
+    
     //
     // x += sg2d.transX;
     // y += sg2d.transY;
@@ -175,7 +178,7 @@ public class WebSurfaceData extends SurfaceData {
     //
     // return false;
     // }
-
+    
     protected void persistDamagedAreas() {
 	try {
 	    lockSurface();
@@ -184,8 +187,8 @@ public class WebSurfaceData extends SurfaceData {
 	    if (unionRect != null) {
 		List<DamageRect> regionList = damageTracker.createDamagedRegionList();
 		
-		//TreeImagePacker treePacker = new TreeImagePacker(regionList);
-		SimpleImagePacker packer = new SimpleImagePacker(regionList);
+		TreeImagePacker packer = new TreeImagePacker(regionList);
+		//SimpleImagePacker packer = new SimpleImagePacker(regionList);
 		DamageRect packedRegionBox = packer.getBoundingBox();
 
 		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0 && packedRegionBox != null) {
@@ -207,68 +210,30 @@ public class WebSurfaceData extends SurfaceData {
 	    unlockSurface();
 	}
     }
-
-    protected int uByteToInt(byte signed) {
-	int unsigned = signed;
-	if (signed < 0) {
-	    unsigned = ((int) signed) + (((int) Byte.MAX_VALUE) - ((int) Byte.MIN_VALUE) + 1);
-	}
-
-	return unsigned;
-    }
-
-    protected void encodeImageCmdStream(BufferedImage bImg, byte[] stream) {
-	bImg.setRGB(0, 0, stream.length);
-	int i = 0;
-	while (i < stream.length) {
-	    int pixelCnt = (i / 3) + 1;
-	    int yPos = pixelCnt / bImg.getWidth();
-	    int xPos = pixelCnt % bImg.getWidth();
-
-	    int r = i < stream.length ? uByteToInt(stream[i++]) << 16 : 0;
-	    int g = i < stream.length ? uByteToInt(stream[i++]) << 8 : 0;
-	    int b = i < stream.length ? uByteToInt(stream[i++]) : 0;
-
-	    int rgbValue = r | g | b;
-
-	    bImg.setRGB(xPos, yPos, rgbValue);
-	}
-    }
-
-    protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
-	Graphics g = packedImage.getGraphics();
-
-	int cnt = 0;
+    
+    protected void evacuateDamagedAreas() {
 	for (ScreenUpdate update : pendingUpdateList) {
 	    if (update instanceof BlitScreenUpdate) {
-		BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
-
-		int width = bsUpdate.getUpdateArea().getWidth();
-		int height = bsUpdate.getUpdateArea().getHeight();
-//		g.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer)
-		g.drawImage(bsUpdate.getImage(), bsUpdate.getSrcX(), bsUpdate.getSrcY() + packedAreaHeight, bsUpdate.getSrcX() + width, bsUpdate.getSrcY()+ height + packedAreaHeight, 0, 0,
-			width, height, null);
-		cnt++;
+		((BlitScreenUpdate) update).evacuate();
 	    }
 	}
-	
-	System.out.println("Packed "+cnt+" areas into image");
     }
 
     public byte[] getScreenUpdates() {
+	long start = System.currentTimeMillis();
+	
 	// Merge all ScreenUpdates into one texture & encode command stream
 	try {
 	    lockSurface();
 	    persistDamagedAreas();
+	  
 
 	    if (pendingUpdateList.size() > 0) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 
-		// TODO: Optimize for the case where only one BlitScreenUpdate
-		// is pending
-		//TreeImagePacker packer = new TreeImagePacker();
-		SimpleImagePacker packer = new SimpleImagePacker();
+		TreeImagePacker packer = new TreeImagePacker();
+		//SimpleImagePacker packer = new SimpleImagePacker();
 		for (ScreenUpdate update : pendingUpdateList) {
 		    if (update instanceof BlitScreenUpdate) {
 			BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
@@ -279,20 +244,20 @@ public class WebSurfaceData extends SurfaceData {
 		}
 
 		byte[] cmdData = bos.toByteArray();
-		DamageRect packedRegionBox = packer.getBoundingBox();
 
-		int cmdAreaHeight = (int) Math.ceil(((double) cmdData.length + 3) / (packedRegionBox.getWidth() * 3));
-		System.out.println("cmdarea: "+cmdAreaHeight);
-		BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight() + cmdAreaHeight,
-			BufferedImage.TYPE_INT_RGB);
-		encodeImageCmdStream(packedImage, cmdData);
 
-		copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
+		ImageCmdStreamEncoder cmdEncoder =  new ImageCmdStreamEncoder();
+		byte[] bData =cmdEncoder.getEncodedData(pendingUpdateList, packer, cmdData);
 
 		pendingUpdateList.clear();
+		
 
-		byte[] bData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
 
+
+		long end = System.currentTimeMillis();
+		System.out.println("Took: "+(end-start));
+
+		
 		try {
 		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
 		    fos.write(bData);
@@ -300,6 +265,8 @@ public class WebSurfaceData extends SurfaceData {
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		}
+		
+
 
 		return bData;
 	    }
