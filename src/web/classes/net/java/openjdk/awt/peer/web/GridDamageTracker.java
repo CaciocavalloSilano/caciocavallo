@@ -62,7 +62,7 @@ public class GridDamageTracker {
     protected List<DamageRect> createDamagedRegionList() {
 	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
 	List<DamageRect> rectList = new ArrayList<DamageRect>();
-	long start = System.currentTimeMillis();
+
 	
 	/* Calculate damaged region for each Cell */
 	for (int y = 0; y < grid.length; y++) {
@@ -78,9 +78,6 @@ public class GridDamageTracker {
 	mergeCellsVertical(unions);
 
 	System.out.println("Count after merging: " + countUnions(unions));
-	
-	long end = System.currentTimeMillis();
-	System.out.println("Took: "+(end-start));
 	
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
