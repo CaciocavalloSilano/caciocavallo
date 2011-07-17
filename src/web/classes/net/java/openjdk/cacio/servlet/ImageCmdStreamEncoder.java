@@ -8,16 +8,7 @@ import com.keypoint.*;
 
 import net.java.openjdk.awt.peer.web.*;
 
-public class ImageCmdStreamEncoder {
-
-    protected int uByteToInt(byte signed) {
-	int unsigned = signed;
-	if (signed < 0) {
-	    unsigned = ((int) signed) + (((int) Byte.MAX_VALUE) - ((int) Byte.MIN_VALUE) + 1);
-	}
-
-	return unsigned;
-    }
+public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 
     protected void encodeImageCmdStream(BufferedImage bImg, byte[] stream) {
 	bImg.setRGB(0, 0, stream.length);
@@ -35,26 +26,6 @@ public class ImageCmdStreamEncoder {
 
 	    bImg.setRGB(xPos, yPos, rgbValue);
 	}
-    }
-    
-    protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
-	Graphics g = packedImage.getGraphics();
-
-	int cnt = 0;
-	for (ScreenUpdate update : updateList) {
-	    if (update instanceof BlitScreenUpdate) {
-		BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
-
-		int width = bsUpdate.getUpdateArea().getWidth();
-		int height = bsUpdate.getUpdateArea().getHeight();
-
-		g.drawImage(bsUpdate.getImage(), bsUpdate.getPackedX(), bsUpdate.getPackedY() + packedAreaHeight, bsUpdate.getPackedX() + width, bsUpdate.getPackedY()+ height + packedAreaHeight, bsUpdate.getSrcX(), bsUpdate.getSrcY(),
-			bsUpdate.getSrcX() + width, bsUpdate.getSrcY() + height, null);
-		cnt++;
-	    }
-	}
-	
-	System.out.println("Packed "+cnt+" areas into image");
     }
     
     public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, byte[] cmdData) {
