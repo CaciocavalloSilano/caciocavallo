@@ -1,41 +1,37 @@
 package net.java.openjdk.cacio.servlet;
 
-import java.awt.*;
 import java.awt.image.*;
 import java.util.List;
-
 import com.keypoint.*;
-
 import net.java.openjdk.awt.peer.web.*;
 
 public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 
-    protected void encodeImageCmdStream(BufferedImage bImg, byte[] stream) {
-	bImg.setRGB(0, 0, stream.length);
-	int i = 0;
-	while (i < stream.length) {
-	    int pixelCnt = (i / 3) + 1;
+    protected void encodeImageCmdStream(BufferedImage bImg, List<Integer> cmdList) {
+	bImg.setRGB(0, 0, cmdList.size());
+	
+	for(int i=0; i < cmdList.size(); i++) {
+	    int pixelCnt = i+1;
 	    int yPos = pixelCnt / bImg.getWidth();
 	    int xPos = pixelCnt % bImg.getWidth();
-
-	    int r = i < stream.length ? uByteToInt(stream[i++]) << 16 : 0;
-	    int g = i < stream.length ? uByteToInt(stream[i++]) << 8 : 0;
-	    int b = i < stream.length ? uByteToInt(stream[i++]) : 0;
-
-	    int rgbValue = r | g | b;
-
-	    bImg.setRGB(xPos, yPos, rgbValue);
+	    
+	    int intValue = cmdList.get(i);
+	    int r = intValue < 0 ? 1 : 0; //sign
+	    int gb = intValue & 0x0000FFFF;
+	    
+	    int rgb = r | gb;
+	    bImg.setRGB(xPos, yPos, rgb);
 	}
     }
     
-    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, byte[] cmdData) {
+    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	int regionWidth = packedRegionBox.getWidth();
 	int regionHeight = packedRegionBox.getHeight();
-	int cmdAreaHeight = (int) Math.ceil(((double) cmdData.length + 3) / (regionWidth * 3));
+	int cmdAreaHeight = (int) Math.ceil(((double) cmdList.size() + 1) / (regionWidth));
 	
 	BufferedImage packedImage = new BufferedImage(regionWidth, regionHeight + cmdAreaHeight, BufferedImage.TYPE_INT_RGB);
-	encodeImageCmdStream(packedImage, cmdData);
+	encodeImageCmdStream(packedImage, cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
 	
 	return new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();

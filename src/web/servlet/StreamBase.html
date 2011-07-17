@@ -9,6 +9,8 @@
 var img;
 var cmdStreamHeight = 0;
 
+var parts;
+
 function init() {
 	if(isImageDataSupported()) {
 		StartRequest();
@@ -34,9 +36,7 @@ function readCommandStream() {
     var imgDataArray = imgData.data;
     var cmdLength = (imgDataArray[0] << 16) + (imgDataArray[1] << 8) + (imgDataArray[2]);
     
-    cmdStreamHeight = Math.ceil((cmdLength+3) / (img.width*3.0));
-        
-   // alert("length: "+cmdLength+" height: "+cmdStreamHeight);
+    cmdStreamHeight = Math.ceil((cmdLength+1) / (img.width));
     
     if(cmdStreamHeight > 1) {
 	   //alert("re-reading image data: "+cmdAreaHeight);
@@ -44,26 +44,35 @@ function readCommandStream() {
 	   imgDataArray = imgData.data;
 	}
 	
-	var byteBuffer = new Array(cmdLength);
-	var cmdPixelLength = Math.ceil(cmdLength / 3.0);
-	for(var i=0; i < cmdPixelLength; i++) {
-		var bytePos = i*3;
-		if(bytePos < cmdLength) byteBuffer[bytePos++] = imgDataArray[(i+1)*4 + 0];
-		if(bytePos < cmdLength) byteBuffer[bytePos++] = imgDataArray[(i+1)*4 + 1];
-		if(bytePos < cmdLength) byteBuffer[bytePos++] = imgDataArray[(i+1)*4 + 2];
-	}
+	var shortBuffer = new Array(cmdLength);
+	for(var i=0; i < cmdLength; i++) {
+		var pixelIndex = (i+1)*4;
+		var sign = imgDataArray[pixelIndex];         //R
+		var highByte = imgDataArray[pixelIndex + 1];  //G 
+		var lowByte = imgDataArray[pixelIndex + 2]; //B
+		var value = (highByte << 8) + lowByte;
+		
+		if(sign == 1) {
+			value *= -1;
+		}		
 	
-	var shortBuffer = new Array(cmdLength / 2);
-	for(var i=0; i < cmdLength / 2; i++) {
-		var highByte = byteBuffer[i*2];
-		var lowByte = byteBuffer[i*2 + 1];
-		shortBuffer[i] = (highByte << 8) + lowByte;
+		shortBuffer[i] = value;
 	}
 	
 	//alert(shortBuffer);
 	
 	return shortBuffer;
 }
+
+/*function readCommandStream() {
+	var cmdLengt = imgDataArray[0] << 16) + (imgDataArray[1] << 8) + (imgDataArray[2]);
+	var shortBuffer = new Array(cmdLength / 2);
+	for(var i=0; i < cmdLength / 2; i++) {
+		var highByte = byteBuffer[i*2];
+		var lowByte = byteBuffer[i*2 + 1];
+		shortBuffer[i] = (highByte << 8) + lowByte;
+	}
+}*/
  
 function handleResponse() {		
 	var canvas = document.getElementById('blackboard');
@@ -95,6 +104,30 @@ function handleResponse() {
  
 	StartRequest();
 }
+
+
+/*var xmlhttpreq = new XMLHttpRequest();
+
+function handleXHRResponse() {
+
+  if (xmlhttpreq.readyState==4) {
+	  if(xmlhttpreq.status==200) {
+		  parts = xmlhttpreq.responseText.split(':');
+		  handleResponse();
+	  }
+	  
+	  StartRequest();
+  }
+}
+
+
+function StartRequest() {
+  xmlhttpreq.open('GET', 'ImageStreamer?subsessionid=SSID', true);
+  xmlhttpreq.onreadystatechange = handleXHRResponse;
+  xmlhttpreq.send(null);
+}*/
+
+
 
 function StartRequest() {
   var randParam = parseInt(Math.random() * 99999999);
