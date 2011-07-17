@@ -6,7 +6,6 @@ import java.util.*;
 public class GridDamageTracker {
 
     public static int GRID_SIZE = 16;
-    public static int MAX_MARGE_CNT = 6;
 
     DamageGridElement[][] grid;
     BufferedImage combinedAreas;
@@ -59,7 +58,7 @@ public class GridDamageTracker {
 	rectList.clear();
     }
     
-    protected List<DamageRect> createDamagedRegionList() {
+    public List<DamageRect> createDamagedRegionList(int mergeLimit) {
 	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
 	List<DamageRect> rectList = new ArrayList<DamageRect>();
 
@@ -74,8 +73,8 @@ public class GridDamageTracker {
 
 	System.out.println("Count before merging: " + countUnions(unions));
 
-	mergeCellsHorizontal(unions);
-	mergeCellsVertical(unions);
+	mergeCellsHorizontal(unions, mergeLimit);
+	mergeCellsVertical(unions, mergeLimit);
 
 	System.out.println("Count after merging: " + countUnions(unions));
 	
@@ -102,14 +101,14 @@ public class GridDamageTracker {
 	return unionCnt;
     }
 
-    protected void mergeCellsHorizontal(DamageRect[][] unions) {
+    protected void mergeCellsHorizontal(DamageRect[][] unions, int mergeLimit) {
 	// Try to reduce regions by extending horizontally
 	for (int y = 0; y < unions.length; y++) {
 	    for (int x = 0; x < unions[0].length - 1; x++) {
 		DamageRect cellRect = unions[y][x];
 
 		int firstedMerged = x;
-		for (x++; x < unions[0].length && cellRect != null && (x - firstedMerged) < MAX_MARGE_CNT; x++) {
+		for (x++; x < unions[0].length && cellRect != null && (x - firstedMerged) < mergeLimit; x++) {
 		    DamageRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.y1 == cellRect.y1 && extensionRect.getHeight() == cellRect.getHeight()
@@ -122,14 +121,14 @@ public class GridDamageTracker {
 	}
     }
 
-    protected void mergeCellsVertical(DamageRect[][] unions) {
+    protected void mergeCellsVertical(DamageRect[][] unions, int mergeLimit) {
 	// Try to reduce regions by extending horizontally
 	for (int x = 0; x < unions[0].length; x++) {
 	    for (int y = 0; y < unions.length - 1; y++) {
 		DamageRect cellRect = unions[y][x];
 
 		int firstMergedCell = y;
-		for (y++; y < unions.length && cellRect != null && (y - firstMergedCell) < MAX_MARGE_CNT; y++) {
+		for (y++; y < unions.length && cellRect != null && (y - firstMergedCell) < mergeLimit; y++) {
 		    DamageRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.x1 == cellRect.x1 && extensionRect.getWidth() == cellRect.getWidth()
@@ -172,7 +171,6 @@ class DamageGridElement {
 	    damageRect.union(rect);
 	}
 
-	//TODO: Why -1??
 	int x2 = x + GridDamageTracker.GRID_SIZE;
 	int y2 = y + GridDamageTracker.GRID_SIZE;
 	damageRect.restrictToArea(x, y, x2, y2);
