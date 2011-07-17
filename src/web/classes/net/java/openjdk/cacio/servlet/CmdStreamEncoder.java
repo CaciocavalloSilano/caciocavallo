@@ -4,16 +4,9 @@ import java.awt.*;
 import java.awt.image.*;
 import java.util.List;
 
+import net.java.openjdk.awt.peer.web.*;
+
 public abstract class CmdStreamEncoder {
-
-    protected int uByteToInt(byte signed) {
-	int unsigned = signed;
-	if (signed < 0) {
-	    unsigned = ((int) signed) + (((int) Byte.MAX_VALUE) - ((int) Byte.MIN_VALUE) + 1);
-	}
-
-	return unsigned;
-    }
     
     protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
 	Graphics g = packedImage.getGraphics();
