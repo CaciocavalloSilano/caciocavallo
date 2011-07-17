@@ -30,8 +30,8 @@ public class TreeImagePacker {
     
     public void insert(BlitScreenUpdate update) {	
 	PackNode insertNode = insert(update.getUpdateArea());
-	update.setSrcX(insertNode.rect.getX1());
-	update.setSrcY(insertNode.rect.getY1());
+	update.setPackedX(insertNode.rect.getX1());
+	update.setPackedY(insertNode.rect.getY1());
     }
    
     public DamageRect getBoundingBox() {
