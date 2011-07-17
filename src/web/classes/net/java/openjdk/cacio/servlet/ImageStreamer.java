@@ -37,8 +37,8 @@ public class ImageStreamer extends HttpServlet {
 	    throw new RuntimeException("Should not reach");
 	}
 	
-	response.setContentType("image/png");
-//	response.setContentType("text/plain");
+//	response.setContentType("image/png");
+	response.setContentType("text/plain");
 	disableCaching(response);
 
 	byte[] updateData = getDirtyRectangle(session, Integer.parseInt(subSessionID));
