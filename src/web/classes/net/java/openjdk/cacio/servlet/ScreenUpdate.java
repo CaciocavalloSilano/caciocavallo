@@ -1,6 +1,7 @@
 package net.java.openjdk.cacio.servlet;
 
 import java.io.*;
+import java.util.*;
 
 import net.java.openjdk.awt.peer.web.*;
 
@@ -19,5 +20,5 @@ public abstract class ScreenUpdate {
         this.updateArea = updateArea;
     }
     
-    public abstract void writeCmdStream(DataOutputStream dos);
+    public abstract void writeCmdStream(List<Integer> cmdList);
 }

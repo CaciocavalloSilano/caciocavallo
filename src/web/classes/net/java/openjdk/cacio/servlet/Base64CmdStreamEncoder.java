@@ -12,12 +12,12 @@ import com.keypoint.*;
 
 public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 
-    protected String encodeImageCmdStream(byte[] stream) {
-	StringBuilder cmdBuilder = new StringBuilder(stream.length * 4);
-	cmdBuilder.append(stream.length);
-	for(int i=0; i < stream.length; i++) {
+    protected String encodeImageCmdStream(List<Integer> cmdList) {
+	StringBuilder cmdBuilder = new StringBuilder(cmdList.size() * 4);
+	cmdBuilder.append(cmdList.size());
+	for(int i=0; i < cmdList.size(); i++) {
 	    cmdBuilder.append(':');
-	    cmdBuilder.append(uByteToInt(stream[i]));
+	    cmdBuilder.append(cmdList.get(i));
 	}
 	
 	//Delimeter for following image data
@@ -26,11 +26,11 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 	return cmdBuilder.toString();
     }
     
-    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, byte[] cmdData) {
+    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	
 	BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
-	String cmdString = encodeImageCmdStream(cmdData);
+	String cmdString = ""; //encodeImageCmdStream(cmdData);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
 	
 	byte[] bData = null;
@@ -52,8 +52,6 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 	    e.printStackTrace();
 	}
 	
-	byte[] combinedData = bos.toByteArray();
-	
-	return combinedData;
+	return bos.toByteArray();
     }
 }

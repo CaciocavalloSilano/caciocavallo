@@ -229,8 +229,7 @@ public class WebSurfaceData extends SurfaceData {
 	  
 
 	    if (pendingUpdateList.size() > 0) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		DataOutputStream dos = new DataOutputStream(bos);
+		ArrayList<Integer> cmdList = new ArrayList<Integer>(pendingUpdateList.size()*7);
 
 		TreeImagePacker packer = new TreeImagePacker();
 		//SimpleImagePacker packer = new SimpleImagePacker();
@@ -240,14 +239,11 @@ public class WebSurfaceData extends SurfaceData {
 			packer.insert(bsUpdate);
 		    }
 
-		    update.writeCmdStream(dos);
+		    update.writeCmdStream(cmdList);
 		}
 
-		byte[] cmdData = bos.toByteArray();
-
-
-		ImageCmdStreamEncoder cmdEncoder =  new ImageCmdStreamEncoder();
-		byte[] bData =cmdEncoder.getEncodedData(pendingUpdateList, packer, cmdData);
+		CmdStreamEncoder cmdEncoder =  new Base64CmdStreamEncoder();
+		byte[] bData =cmdEncoder.getEncodedData(pendingUpdateList, packer, cmdList);
 
 		pendingUpdateList.clear();
 		

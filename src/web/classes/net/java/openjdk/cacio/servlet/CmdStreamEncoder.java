@@ -35,5 +35,5 @@ public abstract class CmdStreamEncoder {
 	System.out.println("Packed "+cnt+" areas into image");
     }
     
-    public abstract byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, byte[] cmdData);
+    public abstract byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData);
 }

@@ -3,6 +3,7 @@ package net.java.openjdk.cacio.servlet;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.util.List;
 
 import net.java.openjdk.awt.peer.web.*;
 
@@ -41,18 +42,14 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	}
     }
 
-    public void writeCmdStream(DataOutputStream dos) {
-	try {
-	    dos.writeShort(0);
-	    dos.writeShort((short) updateArea.getX1());
-	    dos.writeShort((short) updateArea.getY1());
-	    dos.writeShort((short) updateArea.getX2());
-	    dos.writeShort((short) updateArea.getY2());
-	    dos.writeShort((short) packedX);
-	    dos.writeShort((short) packedY);
-	} catch (IOException e) {
-	    throw new RuntimeException(e);
-	}
+    public void writeCmdStream(List<Integer> cmdList) {
+	cmdList.add(0);
+	cmdList.add(updateArea.getX1());
+	cmdList.add(updateArea.getY1());
+	cmdList.add(updateArea.getX2());
+	cmdList.add(updateArea.getY2());
+	cmdList.add(packedX);
+	cmdList.add(packedY);
     }
 
     public BufferedImage getImage() {
