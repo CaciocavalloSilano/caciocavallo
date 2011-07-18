@@ -1,7 +1,8 @@
 package net.java.openjdk.cacio.servlet;
 
 import java.awt.image.*;
-import java.util.List;
+import java.util.*;
+
 import com.keypoint.*;
 import net.java.openjdk.awt.peer.web.*;
 
@@ -35,6 +36,5 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
 	
 	return new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
-    }
-    
+    }    
 }

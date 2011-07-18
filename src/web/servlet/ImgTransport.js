@@ -61,7 +61,7 @@ function readImageCommandStream() {
 	   imgDataArray = imgData.data;
 	}
 	
-	var shortBuffer = new Array(cmdLength);
+	var shortBuffer = new Array();
 	for(var i=0; i < cmdLength; i++) {
 		var pixelIndex = (i+1)*4;
 		var sign = imgDataArray[pixelIndex];         //R
