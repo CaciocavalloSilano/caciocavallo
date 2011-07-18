@@ -39,6 +39,7 @@ public class ImageStreamer extends HttpServlet {
 	
 //	response.setContentType("image/png");
 	response.setContentType("text/plain");
+//	response.setContentType("application/binary");
 	disableCaching(response);
 
 	byte[] updateData = getDirtyRectangle(session, Integer.parseInt(subSessionID));

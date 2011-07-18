@@ -1,6 +1,7 @@
 function readXHRCommandStream() {
 	var cmdLength = parseInt(parts[0]);
-	var shortBuffer = new Array(cmdLength);
+	
+	var shortBuffer = new Array();
 	for(var i=0; i < cmdLength; i++) {
 		shortBuffer[i] = parseInt(parts[i+1]);
 	}

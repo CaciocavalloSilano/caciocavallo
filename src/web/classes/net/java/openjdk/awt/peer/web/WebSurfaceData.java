@@ -185,10 +185,9 @@ public class WebSurfaceData extends SurfaceData {
 
 	    DamageRect unionRect = damageTracker.getUnionRectangle();
 	    if (unionRect != null) {
-		List<DamageRect> regionList = damageTracker.createDamagedRegionList();
+		List<DamageRect> regionList = damageTracker.createDamagedRegionList(3);
 		
 		TreeImagePacker packer = new TreeImagePacker(regionList);
-		//SimpleImagePacker packer = new SimpleImagePacker(regionList);
 		DamageRect packedRegionBox = packer.getBoundingBox();
 
 		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0 && packedRegionBox != null) {
@@ -242,27 +241,35 @@ public class WebSurfaceData extends SurfaceData {
 		    update.writeCmdStream(cmdList);
 		}
 
-		CmdStreamEncoder cmdEncoder =  new Base64CmdStreamEncoder();
-		byte[] bData =cmdEncoder.getEncodedData(pendingUpdateList, packer, cmdList);
+		CmdStreamEncoder base64Encoder =  new Base64CmdStreamEncoder();
 
-		pendingUpdateList.clear();
+		byte[] bData =base64Encoder.getEncodedData(pendingUpdateList, packer, cmdList);
 		
-
+//		ImageCmdStreamEncoder imgEncoder = new ImageCmdStreamEncoder();
+//		byte[] imgData =imgEncoder.getEncodedData(pendingUpdateList, packer, cmdList);
+		
+//		BinaryCmdStreamEncoder binaryEncoder = new BinaryCmdStreamEncoder();
+//		byte[] binData = binaryEncoder.getEncodedData(pendingUpdateList, packer, cmdList);
+		    
+		pendingUpdateList.clear();
 
 
 		long end = System.currentTimeMillis();
 		System.out.println("Took: "+(end-start));
 
 		
-		try {
-		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
-		    fos.write(bData);
-		    fos.close();
-		} catch (Exception ex) {
-		    ex.printStackTrace();
-		}
-		
-
+//		try {
+//		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+//		    fos.write(bData);
+//		    fos.close();
+//
+////		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
+////		    bos.write(imgData);
+////		    bos.close();
+//		} catch (Exception ex) {
+//		    ex.printStackTrace();
+//		}
+	
 
 		return bData;
 	    }

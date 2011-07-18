@@ -5,6 +5,7 @@
 <title>Insert title here</title>
 <script src="ResourceLoader?res=input.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=XHRTransport.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=XHR2Transport.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=ImgTransport.js" type="text/javascript"></script>
 <script type='text/javascript'>
 
@@ -17,6 +18,9 @@ var startRequestFunc;
 var subSessionID = SSID;
 
 function init() {
+	
+	//alert(isXHR2Supported());
+	
 	if(false && isImageDataSupported()) {
 		startRequestFunc = StartImageRequest;
 		readCmdStreamFunc = readImageCommandStream;
@@ -24,6 +28,9 @@ function init() {
 		startRequestFunc = StartXHRRequest;
 		readCmdStreamFunc = readXHRCommandStream;
 	}
+	
+	//	startRequestFunc = StartXHR2Request;
+	//	readCmdStreamFunc = readXHR2CommandStream;
 	
     startRequestFunc(subSessionID);
 	registerEventHandlers();
