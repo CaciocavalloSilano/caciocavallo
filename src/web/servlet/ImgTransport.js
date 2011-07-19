@@ -1,4 +1,6 @@
 var parts;
+var cmdCanvas;
+
 
 function StartImageRequest(subSessionID) {
   var randParam = parseInt(Math.random() * 99999999);
@@ -39,14 +41,16 @@ function isImageDataSupported() {
 }
 
 function readImgData(height) {
-	var cmdCanvas = document.createElement('canvas');
-	cmdCanvas.setAttribute('width', img.width);
-	cmdCanvas.setAttribute('height', height);
+	if(!cmdCanvas || cmdCanvas.getAttribute('width') < img.width || cmdCanvas.getAttribute('height') < height) {
+	   cmdCanvas = document.createElement('canvas');
+	   cmdCanvas.setAttribute('width', img.width);
+	   cmdCanvas.setAttribute('height', height);
+    }
 	
 	var cmdCtx = cmdCanvas.getContext('2d');
-	cmdCtx.drawImage(img, 0, 0);
+	cmdCtx.drawImage(img, 0, 0, img.width, height, 0, 0, img.width, height);
 	 
-	return cmdCtx.getImageData(0, 0, cmdCanvas.width, height);
+	return cmdCtx.getImageData(0, 0, img.width, height);
 }
 
 function readImageCommandStream() {
