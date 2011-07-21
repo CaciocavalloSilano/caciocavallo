@@ -13,7 +13,12 @@ function isXHR2Supported() {
 
 function readShort(array, pos) {
 	//TODO: Negative Werte behandeln
-	return ((array[pos*2] << 8) + array[pos*2 + 1]);
+	return ((array[pos] << 8) + array[pos + 1]);
+}
+
+function readInt(array, pos) {
+	//TODO: Negative Werte behandeln
+	return ((array[pos] << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]);
 }
 
 function readXHR2CommandStream() {
@@ -22,7 +27,7 @@ function readXHR2CommandStream() {
 	
 	var shortBuffer = new Array();
 	for(var i=0; i < cmdLength; i++) {
-		shortBuffer[i] = readShort(intArray, i+1);
+		shortBuffer[i] = readShort(intArray, (i+1)*2);
 	}
 	
 	var result = new Object();
@@ -31,6 +36,68 @@ function readXHR2CommandStream() {
 	
 	return result;
 }
+
+function decodeRLEImageData() {
+	var intArray = new Uint8Array(buffer);
+	var cmdLength = readShort(intArray, 0);
+	var imgDataStartPos = 2 * (cmdLength + 1);
+	
+	var w = readShort(intArray, imgDataStartPos);
+	var h = readShort(intArray, imgDataStartPos + 2);
+
+	if(!img || img.getAttribute('width') < w || img.getAttribute('height') < h) {
+	   img = document.createElement('canvas');
+	   img.setAttribute('width', w);
+	   img.setAttribute('height', h);
+    }
+
+    var ctx = img.getContext('2d');
+    var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size
+	var imgDataArray = imgData.data;
+   
+    var runDataLength = readInt(intArray, imgDataStartPos + 4);
+   	var runLengthDataOffset = imgDataStartPos + 8;
+	var pixelDataOffset = runLengthDataOffset + runDataLength;
+ 
+	var imgDataOffset = 0;
+	var lastRed = 0, lastGreen = 0, lastBlue = 0;
+    for(var i= 0; i < runDataLength; i++) {
+		var cmd = intArray[runLengthDataOffset + i];
+		var length = cmd & 127;
+		
+		if(cmd < 128) {
+			for (var x = 0; x < length; x++) {
+				imgDataArray[imgDataOffset++] = lastRed;
+				imgDataArray[imgDataOffset++] = lastGreen;
+				imgDataArray[imgDataOffset++] = lastBlue;
+				imgDataArray[imgDataOffset++] = 255;
+			}
+		}else {
+			for (var x = 0; x < length; x++) {		
+				imgDataArray[imgDataOffset++] = lastRed =  intArray[pixelDataOffset++];
+				imgDataArray[imgDataOffset++] = lastGreen = intArray[pixelDataOffset++];
+				imgDataArray[imgDataOffset++] = lastBlue = intArray[pixelDataOffset++];
+				imgDataArray[imgDataOffset++] = 255;
+			}
+		}
+	}
+	
+	ctx.putImageData(imgData, 0, 0);
+}
+
+function handleXHR2RLEResponse() {
+	if (xmlhttpreq.readyState==4) {
+	  if(xmlhttpreq.status==200) {
+		  buffer = xmlhttpreq.response;
+		  
+		  decodeRLEImageData();
+		  handleResponse();
+	  } else {
+		  StartRequest(); 
+	  }
+  }
+}
+
 
 function encodeImageData() {
 	var intArray = new Uint8Array(buffer);
@@ -41,7 +108,7 @@ function encodeImageData() {
 }
 
 
-function handleXHR2Response() {
+function handleXHR2PngResponse() {
   if (xmlhttpreq.readyState==4) {
 	  if(xmlhttpreq.status==200) {
 		  buffer = xmlhttpreq.response;
@@ -60,7 +127,7 @@ function StartXHR2Request(subSessionID) {
   xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
   xmlhttpreq.responseType = 'arraybuffer';
 
-  xmlhttpreq.onreadystatechange = handleXHR2Response;
+  xmlhttpreq.onreadystatechange = handleXHR2RLEResponse;
   xmlhttpreq.send(null);
 }
 
