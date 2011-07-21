@@ -69,7 +69,7 @@ public class WebSurfaceData extends SurfaceData {
 
     ArrayList<ScreenUpdate> pendingUpdateList = new ArrayList<ScreenUpdate>();
     GridDamageTracker damageTracker;
-    
+
     CmdStreamEncoder encoder;
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
@@ -147,9 +147,9 @@ public class WebSurfaceData extends SurfaceData {
     // sg2d.TRANSFORM_TRANSLATESCALE
     // && (CompositeType.SrcOverNoEa.equals(comptype) ||
     // CompositeType.SrcNoEa.equals(comptype))) {
-    
-//    evacuateDamagedAreas(); 
-    
+
+    // evacuateDamagedAreas();
+
     //
     // x += sg2d.transX;
     // y += sg2d.transY;
@@ -183,7 +183,7 @@ public class WebSurfaceData extends SurfaceData {
     //
     // return false;
     // }
-    
+
     protected void persistDamagedAreas() {
 	try {
 	    lockSurface();
@@ -191,7 +191,7 @@ public class WebSurfaceData extends SurfaceData {
 	    DamageRect unionRect = damageTracker.getUnionRectangle();
 	    if (unionRect != null) {
 		List<DamageRect> regionList = damageTracker.createDamagedRegionList(3);
-		
+
 		TreeImagePacker packer = new TreeImagePacker(regionList);
 		DamageRect packedRegionBox = packer.getBoundingBox();
 
@@ -214,7 +214,7 @@ public class WebSurfaceData extends SurfaceData {
 	    unlockSurface();
 	}
     }
-    
+
     protected void evacuateDamagedAreas() {
 	for (ScreenUpdate update : pendingUpdateList) {
 	    if (update instanceof BlitScreenUpdate) {
@@ -222,45 +222,48 @@ public class WebSurfaceData extends SurfaceData {
 	    }
 	}
     }
-    
+
     public boolean pollForScreenUpdates(HttpServletResponse response, int timeout, int pollPause) throws IOException {
-	
-	int pollCnt = timeout / pollPause; 
+
+	int pollCnt = timeout / pollPause;
 	boolean updatesWritten = false;
 
+	response.setContentType(encoder.getContentType());
+	OutputStream os = response.getOutputStream();
+
 	try {
-		Thread.sleep(25);
-		
-        	while (pollCnt >= 0 && !updatesWritten) {
-        	    updatesWritten = writeScreenUpdates(response);
-        	    if(!updatesWritten) {
-        		    cnt++;
-        		    Thread.sleep(pollPause);
-        	    }
-        	}
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
+	    Thread.sleep(10);
+
+	    while (pollCnt >= 0 && !updatesWritten) {
+		updatesWritten = writeScreenUpdates(os);
+		if (!updatesWritten) {
+		    cnt++;
+		    Thread.sleep(pollPause);
+		}
 	    }
-	
-	if(!updatesWritten) {
-	    encoder.writeEmptyData(response);
+	} catch (InterruptedException e) {
+	    e.printStackTrace();
 	}
-	
+
+	if (!updatesWritten) {
+	    encoder.writeEmptyData(os);
+	}
+
 	return updatesWritten;
     }
 
-    public boolean writeScreenUpdates(HttpServletResponse response) throws IOException {
+    public boolean writeScreenUpdates(OutputStream os) throws IOException {
 	long start = System.currentTimeMillis();
-	
+
 	// Merge all ScreenUpdates into one texture & encode command stream
 	try {
 	    lockSurface();
 	    persistDamagedAreas();
-	  
-	    if (pendingUpdateList.size() > 0) {
-		ArrayList<Integer> cmdList = new ArrayList<Integer>(pendingUpdateList.size()*7);
 
-		//Refactor
+	    if (pendingUpdateList.size() > 0) {
+		ArrayList<Integer> cmdList = new ArrayList<Integer>(pendingUpdateList.size() * 7);
+
+		// Refactor
 		TreeImagePacker packer = new TreeImagePacker();
 		for (ScreenUpdate update : pendingUpdateList) {
 		    if (update instanceof BlitScreenUpdate) {
@@ -271,15 +274,39 @@ public class WebSurfaceData extends SurfaceData {
 		    update.writeCmdStream(cmdList);
 		}
 
-		encoder.writeEnocdedData(response, pendingUpdateList, packer, cmdList);
-		//Write updates here
-		    
+//		try {
+//		    BinaryRLEStreamEncoder rleEncoder = new BinaryRLEStreamEncoder();
+//		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
+//		    rleEncoder.writeEnocdedData(fos, pendingUpdateList, packer, cmdList);
+//		    fos.close();
+//
+//		    BinaryCmdStreamEncoder binEncoder = new BinaryPngStreamEncoder();
+//		    FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
+//		    binEncoder.writeEnocdedData(dos, pendingUpdateList, packer, cmdList);
+//		    dos.close();
+//
+//		    Base64CmdStreamEncoder baseCoder = new Base64CmdStreamEncoder();
+//		    FileOutputStream dbos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+//		    baseCoder.writeEnocdedData(dbos, pendingUpdateList, packer, cmdList);
+//		    dbos.close();
+//
+//		    ImageCmdStreamEncoder imgEncoder = new ImageCmdStreamEncoder();
+//		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
+//		    imgEncoder.writeEnocdedData(bos, pendingUpdateList, packer, cmdList);
+//		    bos.close();
+//		} catch (IOException ex) {
+//		    ex.printStackTrace();
+//		}
+
+		encoder.writeEnocdedData(os, pendingUpdateList, packer, cmdList);
+		// Write updates here
+
 		pendingUpdateList.clear();
 
 		long end = System.currentTimeMillis();
-		System.out.println("Total Took: "+(end-start));
+		System.out.println("Total Took: " + (end - start));
 		System.out.println();
-		
+
 		return true;
 	    }
 	} finally {
@@ -290,18 +317,20 @@ public class WebSurfaceData extends SurfaceData {
     }
 }
 
-
-//try {
-////    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-////    fos.write(bData);
-////    fos.close();
-//    
-//    FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
-//    dos.write(binData);
-//    dos.close();
+// try {
+// // FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt +
+// ".base64");
+// // fos.write(bData);
+// // fos.close();
 //
-////    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bmp");
-////    bos.write(imgData);
-////    bos.close();
-//    
-//    return true;
+// FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt +
+// ".bin");
+// dos.write(binData);
+// dos.close();
+//
+// // FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt +
+// ".bmp");
+// // bos.write(imgData);
+// // bos.close();
+//
+// return true;
