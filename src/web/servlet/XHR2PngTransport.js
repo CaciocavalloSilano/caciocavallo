@@ -8,10 +8,9 @@ function isXHR2Supported() {
 
 
 function encodeImageData() {
-	var intArray = new Uint8Array(buffer);
 	var cmdLength = readShort(intArray, 0);
-	
 	var dataStartPos = 2 * (cmdLength + 1);
+	
 	return encode64(intArray, dataStartPos);
 }
 
@@ -36,7 +35,7 @@ function StartXHR2Request(subSessionID) {
   xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
   xmlhttpreq.responseType = 'arraybuffer';
 
-  xmlhttpreq.onreadystatechange = handleXHR2PngResponse;
+  xmlhttpreq.onreadystatechange = handleXHR2RLEResponse;
   xmlhttpreq.send(null);
 }
 
