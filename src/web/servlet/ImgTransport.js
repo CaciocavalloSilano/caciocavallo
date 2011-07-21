@@ -7,7 +7,7 @@ function StartImageRequest(subSessionID) {
   
   img = new Image();  
   img.src = "ImageStreamer?subsessionid="+subSessionID+"&rand="+randParam;
-  img.onload = handleResponse;
+  img.onload = interpretCommandBuffer;
 }
 
 function isImageDataSupported() {

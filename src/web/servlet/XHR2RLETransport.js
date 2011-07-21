@@ -55,7 +55,7 @@ function handleXHR2RLEResponse() {
 		  intArray = new Uint8Array(buffer);
 
 		  decodeRLEImageData();
-		  handleResponse();
+		  interpretCommandBuffer();
 	  } else {
 		  StartRequest(); 
 	  }

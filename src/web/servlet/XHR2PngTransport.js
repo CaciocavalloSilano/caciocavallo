@@ -22,7 +22,7 @@ function handleXHR2PngResponse() {
 		  intArray = new Uint8Array(buffer);
 		  		
 		  img = new Image();
-		  img.onload = function() { handleResponse(); }
+		  img.onload = interpretCommandBuffer;
 		  img.src = "data:image/png;base64," + encodeImageData();
 	  } else {
 		  StartRequest(); 
