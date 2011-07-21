@@ -10,6 +10,8 @@ public abstract class BinaryCmdStreamEncoder extends CmdStreamEncoder {
     byte[] emptyResponseData;
     
     public BinaryCmdStreamEncoder() {
+	super("application/binary");
+	
 	emptyResponseData = new byte[2];
 	emptyResponseData[0] = 0;
 	emptyResponseData[1] = 0;
@@ -33,8 +35,7 @@ public abstract class BinaryCmdStreamEncoder extends CmdStreamEncoder {
     }
 
     @Override
-    public void writeEmptyData(HttpServletResponse response) throws IOException {
-	response.setContentType("application/binary");
-	response.getOutputStream().write(emptyResponseData);
+    public void writeEmptyData(OutputStream os) throws IOException {
+	os.write(emptyResponseData);
     }
 }

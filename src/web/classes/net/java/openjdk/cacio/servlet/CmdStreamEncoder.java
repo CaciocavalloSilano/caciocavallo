@@ -9,6 +9,12 @@ import javax.servlet.http.*;
 
 public abstract class CmdStreamEncoder {
     
+    String contentType;
+    
+    public CmdStreamEncoder(String contentType) {
+	this.contentType = contentType;
+    }
+    
     protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
 	Graphics g = packedImage.getGraphics();
 
@@ -29,7 +35,11 @@ public abstract class CmdStreamEncoder {
 //	System.out.println("Packed "+cnt+" areas into image");
     }
     
-    public abstract void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData) throws IOException;
+    public abstract void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData) throws IOException;
     
-    public abstract void writeEmptyData(HttpServletResponse response) throws IOException;
+    public abstract void writeEmptyData(OutputStream os) throws IOException;
+
+    public String getContentType() {
+        return contentType;
+    }
 }

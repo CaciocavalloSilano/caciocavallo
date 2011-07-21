@@ -9,9 +9,9 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
 public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
-
+    
     @Override
-    public void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
+    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	
 	long start = System.currentTimeMillis();
@@ -21,8 +21,6 @@ public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
 	long end = System.currentTimeMillis();
 	System.out.println("Packing took: "+(end-start));
 	
-	response.setContentType("application/binary");
-	OutputStream os = response.getOutputStream();
 	os.write(cmdStreamData);
 	new RLEImageEncoder().encodeImageToStream(packedImage, packedImage.getWidth(), packedImage.getHeight(), os);
     }

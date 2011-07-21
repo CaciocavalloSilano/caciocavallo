@@ -15,6 +15,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
     byte[] emptyImgData;
     
     public ImageCmdStreamEncoder() {
+	super("image/png");
 	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 	emptyImg.setRGB(0, 0, 0);
 	emptyImgData = new PngEncoderB(emptyImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
@@ -37,7 +38,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	}
     }
     
-    public void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
+    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	int regionWidth = packedRegionBox.getWidth();
 	int regionHeight = packedRegionBox.getHeight();
@@ -48,14 +49,12 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
 	
 	byte[] imgData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
-	response.setContentType("image/png");
-	response.getOutputStream().write(imgData);
+	os.write(imgData);
     }
 
     @Override
-    public void writeEmptyData(HttpServletResponse response) throws IOException {
-	response.setContentType("image/png");
-	response.getOutputStream().write(emptyImgData);
+    public void writeEmptyData(OutputStream os) throws IOException {
+	os.write(emptyImgData);
     }    
     
     

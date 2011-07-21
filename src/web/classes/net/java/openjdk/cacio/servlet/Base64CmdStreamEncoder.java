@@ -14,6 +14,10 @@ import com.keypoint.*;
 
 public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 
+    public Base64CmdStreamEncoder() { 
+	super("text/plain");
+    }    
+    
     protected String encodeImageCmdStream(List<Integer> cmdList) {
 	StringBuilder cmdBuilder = new StringBuilder(cmdList.size() * 4);
 	cmdBuilder.append(cmdList.size());
@@ -29,7 +33,7 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
     }
     
     @Override
-    public void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
+    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	
 	BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -39,15 +43,12 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 	byte[] bData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
 	bData = Base64Coder.encode(bData);
 	
-	OutputStream os = response.getOutputStream();
-	response.setContentType("text/plain");
 	os.write(cmdString.getBytes());
 	os.write(bData);
     }
 
     @Override
-    public void writeEmptyData(HttpServletResponse response) throws IOException {
-	response.setContentType("text/plain");
-	response.getOutputStream().write("0".getBytes());
+    public void writeEmptyData(OutputStream os) throws IOException {
+	os.write("0".getBytes());
     }
 }
