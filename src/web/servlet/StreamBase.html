@@ -4,8 +4,10 @@
 <meta charset='UTF-8'>
 <title>Insert title here</title>
 <script src="ResourceLoader?res=input.js" type="text/javascript"></script>
-<script src="ResourceLoader?res=XHRTransport.js" type="text/javascript"></script>
-<script src="ResourceLoader?res=XHR2Transport.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=XHRBase64Transport.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=XHR2Shared.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=XHR2PngTransport.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=XHR2RLETransport.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=ImgTransport.js" type="text/javascript"></script>
 <script type='text/javascript'>
 
@@ -21,16 +23,16 @@ function init() {
 	
 	//alert(isXHR2Supported());
 	
-	if(false && isImageDataSupported()) {
+	/*if(false && isImageDataSupported()) {
 		startRequestFunc = StartImageRequest;
 		readCmdStreamFunc = readImageCommandStream;
 	} else {
 		startRequestFunc = StartXHRRequest;
 		readCmdStreamFunc = readXHRCommandStream;
-	}
+	}*/
 	
-	//	startRequestFunc = StartXHR2Request;
-	//	readCmdStreamFunc = readXHR2CommandStream;
+		startRequestFunc = StartXHR2Request;
+		readCmdStreamFunc = readXHR2CommandStream;
 	
     startRequestFunc(subSessionID);
 	registerEventHandlers();
@@ -64,6 +66,7 @@ function handleResponse() {
 		   if(cmdStreamHeight > 1) {
 			//alert("Issuing drawImage: srcX:"+ srcX1 +" srcy:" + srcY1 + " width:" + width+ " height:" + height + " dstx1:" + dstX1+ " dsty2:" + dstY2+ " imgW:" + img.width+ " imgH:" + img.height);
 		   }
+		   
 		   ctx.drawImage(img, srcX1, srcY1, width, height, dstX1, dstY1, width, height)
 	   }	
 	}

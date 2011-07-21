@@ -54,7 +54,7 @@ function readImgData(height) {
 }
 
 function readImageCommandStream() {
-	var imgData = readImgData(1); //Optimize to be higher by default for small images
+	var imgData = readImgData(1);
     var imgDataArray = imgData.data;
     var cmdLength = (imgDataArray[0] << 16) + (imgDataArray[1] << 8) + (imgDataArray[2]);
     

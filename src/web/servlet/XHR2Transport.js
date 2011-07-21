@@ -1,44 +1,12 @@
 
 var xmlhttpreq;
-var buffer;
+var intArray;
 
-function isXHR2Supported() {
-//	xmlhttpreq = new XMLHttpRequest();
-	/*if() {
-		return true;
-	}*/
-	
+function isXHR2Supported() {	
 	return false;
 }
 
-function readShort(array, pos) {
-	//TODO: Negative Werte behandeln
-	return ((array[pos] << 8) + array[pos + 1]);
-}
-
-function readInt(array, pos) {
-	//TODO: Negative Werte behandeln
-	return ((array[pos] << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]);
-}
-
-function readXHR2CommandStream() {
-	var intArray = new Uint8Array(buffer);
-	var cmdLength =	readShort(intArray, 0);
-	
-	var shortBuffer = new Array();
-	for(var i=0; i < cmdLength; i++) {
-		shortBuffer[i] = readShort(intArray, (i+1)*2);
-	}
-	
-	var result = new Object();
-	result.shortBuffer = shortBuffer;
-	result.cmdStreamHeight = 0;
-	
-	return result;
-}
-
 function decodeRLEImageData() {
-	var intArray = new Uint8Array(buffer);
 	var cmdLength = readShort(intArray, 0);
 	var imgDataStartPos = 2 * (cmdLength + 1);
 	
@@ -52,7 +20,7 @@ function decodeRLEImageData() {
     }
 
     var ctx = img.getContext('2d');
-    var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size
+    var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size, or rely on dirtyWith parameters?
 	var imgDataArray = imgData.data;
    
     var runDataLength = readInt(intArray, imgDataStartPos + 4);
@@ -88,8 +56,9 @@ function decodeRLEImageData() {
 function handleXHR2RLEResponse() {
 	if (xmlhttpreq.readyState==4) {
 	  if(xmlhttpreq.status==200) {
-		  buffer = xmlhttpreq.response;
-		  
+		  var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
+		  intArray = new Uint8Array(buffer);
+
 		  decodeRLEImageData();
 		  handleResponse();
 	  } else {
@@ -111,7 +80,8 @@ function encodeImageData() {
 function handleXHR2PngResponse() {
   if (xmlhttpreq.readyState==4) {
 	  if(xmlhttpreq.status==200) {
-		  buffer = xmlhttpreq.response;
+		  var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
+		  intArray = new Uint8Array(buffer);
 		  		
 		  img = new Image();
 		  img.onload = function() { handleResponse(); }
@@ -153,7 +123,7 @@ function StartXHR2Request(subSessionID) {
 	        i3 = ((c2 & 15) << 2) | (c3 >> 6);
 	        i4 = c3 & 63;
 	 
-	        //Pad if our block consists only of 2 or 1 bytes
+	        //Pad if block consists only of 2 or 1 bytes
 		    if(c3 == undefined) {
 				i4 = 64;
 				
