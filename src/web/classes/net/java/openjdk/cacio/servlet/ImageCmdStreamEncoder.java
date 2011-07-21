@@ -1,13 +1,25 @@
 package net.java.openjdk.cacio.servlet;
 
 import java.awt.image.*;
+import java.io.*;
 import java.util.*;
 
+import javax.servlet.http.*;
+
 import com.keypoint.*;
+
 import net.java.openjdk.awt.peer.web.*;
 
 public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 
+    byte[] emptyImgData;
+    
+    public ImageCmdStreamEncoder() {
+	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+	emptyImg.setRGB(0, 0, 0);
+	emptyImgData = new PngEncoderB(emptyImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+    }
+    
     protected void encodeImageCmdStream(BufferedImage bImg, List<Integer> cmdList) {
 	bImg.setRGB(0, 0, cmdList.size());
 	
@@ -25,7 +37,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	}
     }
     
-    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+    public void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	int regionWidth = packedRegionBox.getWidth();
 	int regionHeight = packedRegionBox.getHeight();
@@ -35,6 +47,16 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	encodeImageCmdStream(packedImage, cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
 	
-	return new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	byte[] imgData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	response.setContentType("image/png");
+	response.getOutputStream().write(imgData);
+    }
+
+    @Override
+    public void writeEmptyData(HttpServletResponse response) throws IOException {
+	response.setContentType("image/png");
+	response.getOutputStream().write(emptyImgData);
     }    
+    
+    
 }

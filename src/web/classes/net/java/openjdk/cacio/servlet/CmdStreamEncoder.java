@@ -2,9 +2,10 @@ package net.java.openjdk.cacio.servlet;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.io.*;
 import java.util.List;
 
-import net.java.openjdk.awt.peer.web.*;
+import javax.servlet.http.*;
 
 public abstract class CmdStreamEncoder {
     
@@ -28,5 +29,7 @@ public abstract class CmdStreamEncoder {
 	System.out.println("Packed "+cnt+" areas into image");
     }
     
-    public abstract byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData);
+    public abstract void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData) throws IOException;
+    
+    public abstract void writeEmptyData(HttpServletResponse response) throws IOException;
 }

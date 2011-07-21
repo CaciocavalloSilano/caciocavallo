@@ -4,6 +4,8 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
+import javax.servlet.http.*;
+
 import net.java.openjdk.awt.peer.web.*;
 
 import biz.source_code.base64Coder.*;
@@ -26,32 +28,26 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 	return cmdBuilder.toString();
     }
     
-    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+    @Override
+    public void writeEnocdedData(HttpServletResponse response, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	
 	BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	String cmdString = encodeImageCmdStream(cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
 	
-	byte[] bData = null;
-	try {
-	    bData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+	byte[] bData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	bData = Base64Coder.encode(bData);
+	
+	OutputStream os = response.getOutputStream();
+	response.setContentType("text/plain");
+	os.write(cmdString.getBytes());
+	os.write(bData);
+    }
 
-	byte[] data = Base64Coder.encode(bData);
-	byte[] cmdStringBytes = cmdString.getBytes();
-	
-	//TODO: Optimize interface, so we do not have to copy data arround like this
-	ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length + cmdStringBytes.length);
-	try {
-	    bos.write(cmdStringBytes);
-	    bos.write(data);
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-	
-	return bos.toByteArray();
+    @Override
+    public void writeEmptyData(HttpServletResponse response) throws IOException {
+	response.setContentType("text/plain");
+	response.getOutputStream().write("0".getBytes());
     }
 }

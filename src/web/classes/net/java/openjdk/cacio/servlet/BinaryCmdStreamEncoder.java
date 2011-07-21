@@ -1,16 +1,20 @@
 package net.java.openjdk.cacio.servlet;
 
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
-import net.java.openjdk.awt.peer.web.*;
-import biz.source_code.base64Coder.*;
+import javax.servlet.http.*;
 
-import com.keypoint.*;
+public abstract class BinaryCmdStreamEncoder extends CmdStreamEncoder {
 
-public class BinaryCmdStreamEncoder extends CmdStreamEncoder {
-
+    byte[] emptyResponseData;
+    
+    public BinaryCmdStreamEncoder() {
+	emptyResponseData = new byte[2];
+	emptyResponseData[0] = 0;
+	emptyResponseData[1] = 0;
+    }
+    
     protected byte[] encodeImageCmdStream(List<Integer> cmdList) {
 	
 	ByteArrayOutputStream bos = new ByteArrayOutputStream(cmdList.size()*2 + 2);
@@ -27,31 +31,10 @@ public class BinaryCmdStreamEncoder extends CmdStreamEncoder {
 
 	return bos.toByteArray();
     }
-    
-    public byte[] getEncodedData(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
-	DamageRect packedRegionBox = packer.getBoundingBox();
-	
-	BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
-	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
-	copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
-	
-	byte[] bData = null;
-	try {
-	    bData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
 
-	//TODO: Optimize interface, so we do not have to copy data arround like this
-	ByteArrayOutputStream bos = new ByteArrayOutputStream(bData.length + cmdStreamData.length);
-	try {
-	    bos.write(cmdStreamData);
-	    bos.write(bData);
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-	
-	return bos.toByteArray();
+    @Override
+    public void writeEmptyData(HttpServletResponse response) throws IOException {
+	response.setContentType("application/binary");
+	response.getOutputStream().write(emptyResponseData);
     }
-
 }
