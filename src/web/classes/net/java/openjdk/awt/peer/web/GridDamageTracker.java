@@ -71,12 +71,12 @@ public class GridDamageTracker {
 	    }
 	}
 
-	System.out.println("Count before merging: " + countUnions(unions));
+//	System.out.println("Count before merging: " + countUnions(unions));
 
 	mergeCellsHorizontal(unions, mergeLimit);
 	mergeCellsVertical(unions, mergeLimit);
 
-	System.out.println("Count after merging: " + countUnions(unions));
+//	System.out.println("Count after merging: " + countUnions(unions));
 	
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
