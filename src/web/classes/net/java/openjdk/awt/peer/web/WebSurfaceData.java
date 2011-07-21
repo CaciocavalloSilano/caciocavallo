@@ -32,6 +32,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.locks.*;
 
+import javax.servlet.http.*;
+
 import biz.source_code.base64Coder.*;
 
 import com.keypoint.*;
@@ -67,6 +69,8 @@ public class WebSurfaceData extends SurfaceData {
 
     ArrayList<ScreenUpdate> pendingUpdateList = new ArrayList<ScreenUpdate>();
     GridDamageTracker damageTracker;
+    
+    CmdStreamEncoder encoder;
 
     protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
@@ -76,6 +80,7 @@ public class WebSurfaceData extends SurfaceData {
 	configuration = gc;
 	destination = dest;
 
+	encoder = new BinaryRLEStreamEncoder();
 	damageTracker = new GridDamageTracker(b.width, b.height);
 	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
 	bufferGraphics = imgBuffer.getGraphics();
@@ -217,8 +222,34 @@ public class WebSurfaceData extends SurfaceData {
 	    }
 	}
     }
+    
+    public boolean pollForScreenUpdates(HttpServletResponse response, int timeout, int pollPause) throws IOException {
+	
+	int pollCnt = timeout / pollPause; 
+	boolean updatesWritten = false;
 
-    public byte[] getScreenUpdates() {
+	try {
+		Thread.sleep(25);
+		
+        	while (pollCnt >= 0 && !updatesWritten) {
+        	    updatesWritten = writeScreenUpdates(response);
+        	    if(!updatesWritten) {
+        		    cnt++;
+        		    Thread.sleep(pollPause);
+        	    }
+        	}
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+	    }
+	
+	if(!updatesWritten) {
+	    encoder.writeEmptyData(response);
+	}
+	
+	return updatesWritten;
+    }
+
+    public boolean writeScreenUpdates(HttpServletResponse response) throws IOException {
 	long start = System.currentTimeMillis();
 	
 	// Merge all ScreenUpdates into one texture & encode command stream
@@ -226,12 +257,11 @@ public class WebSurfaceData extends SurfaceData {
 	    lockSurface();
 	    persistDamagedAreas();
 	  
-
 	    if (pendingUpdateList.size() > 0) {
 		ArrayList<Integer> cmdList = new ArrayList<Integer>(pendingUpdateList.size()*7);
 
+		//Refactor
 		TreeImagePacker packer = new TreeImagePacker();
-		//SimpleImagePacker packer = new SimpleImagePacker();
 		for (ScreenUpdate update : pendingUpdateList) {
 		    if (update instanceof BlitScreenUpdate) {
 			BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
@@ -241,42 +271,37 @@ public class WebSurfaceData extends SurfaceData {
 		    update.writeCmdStream(cmdList);
 		}
 
-		CmdStreamEncoder base64Encoder =  new Base64CmdStreamEncoder();
-
-		byte[] bData =base64Encoder.getEncodedData(pendingUpdateList, packer, cmdList);
-		
-//		ImageCmdStreamEncoder imgEncoder = new ImageCmdStreamEncoder();
-//		byte[] imgData =imgEncoder.getEncodedData(pendingUpdateList, packer, cmdList);
-		
-//		BinaryCmdStreamEncoder binaryEncoder = new BinaryCmdStreamEncoder();
-//		byte[] binData = binaryEncoder.getEncodedData(pendingUpdateList, packer, cmdList);
+		encoder.writeEnocdedData(response, pendingUpdateList, packer, cmdList);
+		//Write updates here
 		    
 		pendingUpdateList.clear();
 
-
 		long end = System.currentTimeMillis();
-		System.out.println("Took: "+(end-start));
-
+		System.out.println("Total Took: "+(end-start));
+		System.out.println();
 		
-//		try {
-//		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-//		    fos.write(bData);
-//		    fos.close();
-//
-////		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
-////		    bos.write(imgData);
-////		    bos.close();
-//		} catch (Exception ex) {
-//		    ex.printStackTrace();
-//		}
-	
-
-		return bData;
+		return true;
 	    }
 	} finally {
 	    unlockSurface();
 	}
 
-	return null;
+	return false;
     }
 }
+
+
+//try {
+////    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+////    fos.write(bData);
+////    fos.close();
+//    
+//    FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
+//    dos.write(binData);
+//    dos.close();
+//
+////    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bmp");
+////    bos.write(imgData);
+////    bos.close();
+//    
+//    return true;
