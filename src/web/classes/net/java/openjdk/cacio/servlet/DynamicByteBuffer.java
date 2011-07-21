@@ -7,7 +7,6 @@ public class DynamicByteBuffer {
     final static int BUFFER_SIZE = 8192;
     
     ArrayList<byte[]> bufferList = new ArrayList<byte[]>();
-    int size = 0;
     
     int curBufferPos = 0;
     byte[] curBuffer;
@@ -36,6 +35,7 @@ public class DynamicByteBuffer {
     }
     
     public void writeTo(OutputStream os) throws IOException {
+	int size = size();
 	for(int i=0; i < bufferList.size(); i++) {
 	    int curBuffLength = Math.min(size - BUFFER_SIZE*i, BUFFER_SIZE);
 	    byte[] curBuff = bufferList.get(i);
