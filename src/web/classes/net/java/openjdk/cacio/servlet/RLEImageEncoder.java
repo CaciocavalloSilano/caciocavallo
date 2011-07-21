@@ -13,7 +13,10 @@ public class RLEImageEncoder {
 	dos.writeShort(w);
 	dos.writeShort(h);
 	
+	long start = System.currentTimeMillis();
 	encodeImageData(img, w, h);
+	long end = System.currentTimeMillis();
+	System.out.println("Compression took: "+(end-start)+" for w:"+w+" h:"+h+"   efficiency:"+((dataBuffer.size() + runBuffer.size()) / (double) (w*h*3)));
 	dos.writeInt(runBuffer.size());
 	
 	runBuffer.writeTo(os);
@@ -22,7 +25,7 @@ public class RLEImageEncoder {
 
     public void encodeImageData(BufferedImage img, int w, int h) {
 	int[] imgData = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-	int imgStride = img.getWidth(); // TODO: Thats no stride
+	int imgStride =((SinglePixelPackedSampleModel) img.getSampleModel()).getScanlineStride();
 
 	int lastPixelValue = -1;
 	int runCount = 0;
@@ -52,7 +55,7 @@ public class RLEImageEncoder {
 			     // again at the next full iteration
 		    } else {
 			endRun(runBuffer, runCount);
-			runCount = 0;
+			runCount = 1;
 		    }
 		} else {
 		    // Terminate existing run
@@ -66,7 +69,7 @@ public class RLEImageEncoder {
 			nonRunCount++;
 		    } else {
 			endNoRun(runBuffer, nonRunCount);
-			nonRunCount = 0;
+			nonRunCount = 1;
 		    }
 
 		    writePixel(dataBuffer, pixelValue);
@@ -77,7 +80,7 @@ public class RLEImageEncoder {
 	}
 
 	if (runCount > 0) {
-	    endRun(dataBuffer, runCount);
+	    endRun(runBuffer, runCount);
 	}
 
 	if (nonRunCount > 0) {
