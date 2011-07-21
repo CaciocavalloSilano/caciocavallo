@@ -21,7 +21,7 @@ function handleXHRResponse() {
 		  parts = xmlhttpreq.responseText.split(':');
 		  				
 		  img = new Image();
-		  img.onload = function() { handleResponse(); }
+		  img.onload = interpretCommandBuffer;
 		  img.src = "data:image/png;base64," + parts[parts.length-1]; ;	
 	  } else {
 		  StartRequest(); 

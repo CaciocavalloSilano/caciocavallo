@@ -31,7 +31,7 @@ function init() {
 		readCmdStreamFunc = readXHRCommandStream;
 	}*/
 	
-		startRequestFunc = StartXHR2Request;
+		startRequestFunc = StartXHR2RLERequest;
 		readCmdStreamFunc = readXHR2CommandStream;
 	
     startRequestFunc(subSessionID);
@@ -39,7 +39,7 @@ function init() {
 }
 
  
-function handleResponse() {		
+function interpretCommandBuffer() {		
 	var canvas = document.getElementById('blackboard');
 	var ctx = canvas.getContext('2d');
 	
