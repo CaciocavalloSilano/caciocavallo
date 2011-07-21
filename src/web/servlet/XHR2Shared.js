@@ -1,3 +1,10 @@
+var intArray;
+
+function initXHR2Shared() {
+	startRequestFunc = StartXHR2Request;
+	readCmdStreamFunc = readXHR2CommandStream;
+}
+
 function readShort(array, pos) {
 	//TODO: Negative Werte behandeln
 	return ((array[pos] << 8) + array[pos + 1]);
@@ -21,4 +28,13 @@ function readXHR2CommandStream() {
 	result.cmdStreamHeight = 0;
 	
 	return result;
+}
+
+function StartXHR2Request(subSessionID) {
+  xmlhttpreq = new XMLHttpRequest();
+  xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
+  xmlhttpreq.responseType = 'arraybuffer';
+
+  xmlhttpreq.onreadystatechange = xhrSuccessHandler;
+  xmlhttpreq.send(null);
 }

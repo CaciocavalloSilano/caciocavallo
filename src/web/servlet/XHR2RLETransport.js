@@ -1,5 +1,7 @@
-var xmlhttpreq;
-var intArray;
+function initXHR2Rle() {
+	initXHR2Shared();
+	responseHandlerFunc = handleXHR2RLEResponse;
+}
 
 function decodeRLEImageData() {
 	var cmdLength = readShort(intArray, 0);
@@ -49,24 +51,9 @@ function decodeRLEImageData() {
 }
 
 function handleXHR2RLEResponse() {
-	if (xmlhttpreq.readyState==4) {
-	  if(xmlhttpreq.status==200) {
-		  var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
-		  intArray = new Uint8Array(buffer);
+	var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
+	intArray = new Uint8Array(buffer);
 
-		  decodeRLEImageData();
-		  interpretCommandBuffer();
-	  } else {
-		  StartRequest(); 
-	  }
-  }
-}
-
-function StartXHR2RLERequest(subSessionID) {
-  xmlhttpreq = new XMLHttpRequest();
-  xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
-  xmlhttpreq.responseType = 'arraybuffer';
-
-  xmlhttpreq.onreadystatechange = handleXHR2RLEResponse;
-  xmlhttpreq.send(null);
+	decodeRLEImageData();
+	interpretCommandBuffer();
 }

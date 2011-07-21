@@ -1,3 +1,9 @@
+function initXHR2Rle() {
+	startRequestFunc = StartXHRRequest;
+	readCmdStreamFunc = readXHRCommandStream;
+	responseHandlerFunc = handleXHR2RLEResponse;
+}
+
 function readXHRCommandStream() {
 	var cmdLength = parseInt(parts[0]);
 	
@@ -13,20 +19,10 @@ function readXHRCommandStream() {
 	return result;
 }
 
-var xmlhttpreq;
-
 function handleXHRResponse() {
-  if (xmlhttpreq.readyState==4) {
-	  if(xmlhttpreq.status==200) {
-		  parts = xmlhttpreq.responseText.split(':');
-		  				
-		  img = new Image();
-		  img.onload = interpretCommandBuffer;
-		  img.src = "data:image/png;base64," + parts[parts.length-1]; ;	
-	  } else {
-		  StartRequest(); 
-	  }
-  }
+	img = new Image();
+	img.onload = interpretCommandBuffer;
+	img.src = "data:image/png;base64," + parts[parts.length-1];
 }
 
 function StartXHRRequest(subSessionID) {

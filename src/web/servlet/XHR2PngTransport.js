@@ -1,11 +1,11 @@
-
-var xmlhttpreq;
-var intArray;
-
 function isXHR2Supported() {	
 	return false;
 }
 
+function initXHR2Png() {
+	initXHR2Shared();
+	responseHandlerFunc = handleXHR2PngResponse;
+}
 
 function encodeImageData() {
 	var cmdLength = readShort(intArray, 0);
@@ -16,27 +16,12 @@ function encodeImageData() {
 
 
 function handleXHR2PngResponse() {
-  if (xmlhttpreq.readyState==4) {
-	  if(xmlhttpreq.status==200) {
-		  var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
-		  intArray = new Uint8Array(buffer);
-		  		
-		  img = new Image();
-		  img.onload = interpretCommandBuffer;
-		  img.src = "data:image/png;base64," + encodeImageData();
-	  } else {
-		  StartRequest(); 
-	  }
-  }
-}
-
-function StartXHR2Request(subSessionID) {
-  xmlhttpreq = new XMLHttpRequest();
-  xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
-  xmlhttpreq.responseType = 'arraybuffer';
-
-  xmlhttpreq.onreadystatechange = handleXHR2RLEResponse;
-  xmlhttpreq.send(null);
+	var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
+	intArray = new Uint8Array(buffer);
+		
+	img = new Image();
+	img.onload = interpretCommandBuffer;
+	img.src = encodeImageData();
 }
 
 
@@ -46,7 +31,7 @@ function StartXHR2Request(subSessionID) {
 	  function encode64(array, offset) {
 
         //data:image/png;base64,
-		var output = new Array('d', 'a', 't', 'a', ':', 'i', 'm', 'a', 'g', 'e', '/', 'p', 'n', 'g', ';', 'b', 'a', 's', 'e', '6', '4');
+		var output = new Array('d', 'a', 't', 'a', ':', 'i', 'm', 'a', 'g', 'e', '/', 'p', 'n', 'g', ';', 'b', 'a', 's', 'e', '6', '4', ',');
 	    var c1, c2, c3 = "";
 	    var i1, i2, i3, i4 = 0;
 	 
