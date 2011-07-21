@@ -15,7 +15,7 @@ function decodeRLEImageData() {
     }
 
     var ctx = img.getContext('2d');
-    var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size, or rely on dirtyWith parameters?
+    var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size, or even rely on dirtyWith parameters?
 	var imgDataArray = imgData.data;
    
     var runDataLength = readInt(intArray, imgDataStartPos + 4);
@@ -60,4 +60,13 @@ function handleXHR2RLEResponse() {
 		  StartRequest(); 
 	  }
   }
+}
+
+function StartXHR2RLERequest(subSessionID) {
+  xmlhttpreq = new XMLHttpRequest();
+  xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
+  xmlhttpreq.responseType = 'arraybuffer';
+
+  xmlhttpreq.onreadystatechange = handleXHR2RLEResponse;
+  xmlhttpreq.send(null);
 }
