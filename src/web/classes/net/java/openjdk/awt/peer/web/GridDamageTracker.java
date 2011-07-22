@@ -13,11 +13,11 @@ public class GridDamageTracker {
 
     public GridDamageTracker(int width, int height) {
 	rectList = new ArrayList<DamageRect>();
-	
+
 	int cellsX = (int) Math.ceil(((double) width) / GRID_SIZE);
 	int cellsY = (int) Math.ceil(((double) height) / GRID_SIZE);
 	grid = new DamageGridElement[cellsY][cellsX];
-	
+
 	for (int y = 0; y < cellsY; y++) {
 	    for (int x = 0; x < cellsX; x++) {
 		grid[y][x] = new DamageGridElement(x * GRID_SIZE, y * GRID_SIZE);
@@ -26,13 +26,13 @@ public class GridDamageTracker {
     }
 
     public DamageRect getUnionRectangle() {
-	if(rectList.size() == 0) {
+	if (rectList.size() == 0) {
 	    return null;
 	}
-	
+
 	return new DamageRect().union(rectList);
     }
-    
+
     public void trackDamageRect(DamageRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
@@ -44,25 +44,37 @@ public class GridDamageTracker {
 		grid[y][x].addDamageRect(rect);
 	    }
 	}
-	
+
 	rectList.add(rect);
     }
-    
+
     public void reset() {
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
 		grid[y][x].reset();
 	    }
 	}
-	
+
 	rectList.clear();
     }
-    
+
+    public boolean isPackingEfficient(List<DamageRect> regionList, DamageRect unionRect) {
+	int regionSize = 0;
+	for (DamageRect rect : regionList) {
+	    regionSize += rect.getWidth() * rect.getHeight();
+	}
+
+	int unionSize = unionRect.getWidth() * unionRect.getHeight();
+
+	// Packing makes only sence if more than half of the area would be
+	// "wasted" otherwise
+	return regionSize * 2 < unionSize;
+    }
+
     public List<DamageRect> createDamagedRegionList(int mergeLimit) {
 	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
 	List<DamageRect> rectList = new ArrayList<DamageRect>();
 
-	
 	/* Calculate damaged region for each Cell */
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
@@ -71,21 +83,21 @@ public class GridDamageTracker {
 	    }
 	}
 
-//	System.out.println("Count before merging: " + countUnions(unions));
+	// System.out.println("Count before merging: " + countUnions(unions));
 
 	mergeCellsHorizontal(unions, mergeLimit);
 	mergeCellsVertical(unions, mergeLimit);
 
-//	System.out.println("Count after merging: " + countUnions(unions));
-	
+	// System.out.println("Count after merging: " + countUnions(unions));
+
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
 		if (unions[y][x] != null) {
 		    rectList.add(unions[y][x]);
 		}
 	    }
-	}	    
-	
+	}
+
 	return rectList;
     }
 
@@ -112,7 +124,7 @@ public class GridDamageTracker {
 		    DamageRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.y1 == cellRect.y1 && extensionRect.getHeight() == cellRect.getHeight()
-			    && extensionRect.x1 == cellRect.x2 /*+ 1*/) {
+			    && extensionRect.x1 == cellRect.x2 /* + 1 */) {
 			cellRect.x2 = extensionRect.x2;
 			unions[y][x] = null;
 		    }
@@ -132,7 +144,7 @@ public class GridDamageTracker {
 		    DamageRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.x1 == cellRect.x1 && extensionRect.getWidth() == cellRect.getWidth()
-			    && extensionRect.y1 == cellRect.y2 /*+ 1*/) {
+			    && extensionRect.y1 == cellRect.y2 /* + 1 */) {
 			cellRect.y2 = extensionRect.y2;
 			unions[y][x] = null;
 		    }
@@ -174,8 +186,8 @@ class DamageGridElement {
 	int x2 = x + GridDamageTracker.GRID_SIZE;
 	int y2 = y + GridDamageTracker.GRID_SIZE;
 	damageRect.restrictToArea(x, y, x2, y2);
-	
-	if(damageRect.getWidth() == 0 || damageRect.getHeight() == 0) {
+
+	if (damageRect.getWidth() == 0 || damageRect.getHeight() == 0) {
 	    return null;
 	}
 
