@@ -27,15 +27,15 @@ function StartXHR1RleRequest(subSessionID) {
 
         if (xmlhttpreq.readyState == 4) {
             if (xmlhttpreq.status == 200) {
-				intArray = intArray ? intArray : new Array();
-                
+				
                 if (useMSXHR()) {
-                    var vbArray = new VBArray(request.responseBody).toArray();
-                    for (var i = 0; i < vbArray.length; i++) {
-						intArray[i] = String.fromCharCode(vbArray[i]);
+                    intArray = new VBArray(request.responseBody).toArray();
+                    for (var i = 0; i < intArray.length; i++) {
+						intArray[i] = String.fromCharCode(intArray[i]);
 					}
                     xmlhttpreq.abort();
                 } else {
+					intArray =  intArray ? intArray : new Array();
 					var txt = xmlhttpreq.responseText;
 					for (var i = 0; i < txt.length; i++) {
 						intArray[i] = txt.charCodeAt(i) & 0xff;
