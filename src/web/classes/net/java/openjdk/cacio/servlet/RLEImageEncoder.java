@@ -3,31 +3,28 @@ package net.java.openjdk.cacio.servlet;
 import java.awt.image.*;
 import java.io.*;
 
-
 public class RLEImageEncoder {
-    DynamicByteBuffer runBuffer = new DynamicByteBuffer();
-    DynamicByteBuffer dataBuffer = new DynamicByteBuffer();
 
     public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2, OutputStream os) throws IOException {
+	DynamicByteBuffer runBuffer = new DynamicByteBuffer();
+	DynamicByteBuffer dataBuffer = new DynamicByteBuffer();
+
 	DataOutputStream dos = new DataOutputStream(os);
 	int w = x2 - x1;
 	int h = y2 - y1;
 	dos.writeShort(w);
 	dos.writeShort(h);
-	
-//	long start = System.currentTimeMillis();
-	encodeImageData(img, x1, y1, x2, y2);
-//	long end = System.currentTimeMillis();
-//	System.out.println("Compression took: "+(end-start)+" for w:"+w+" h:"+h+"   efficiency:"+((dataBuffer.size() + runBuffer.size()) / (double) (w*h*3)));
+
+	encodeImageData(img, x1, y1, x2, y2, runBuffer, dataBuffer);
 	dos.writeInt(runBuffer.size());
-	
+
 	runBuffer.writeTo(os);
 	dataBuffer.writeTo(os);
     }
 
-    public void encodeImageData(BufferedImage img, int x1, int y1, int x2, int y2) {
+    private void encodeImageData(BufferedImage img, int x1, int y1, int x2, int y2, DynamicByteBuffer runBuffer, DynamicByteBuffer dataBuffer) {
 	int[] imgData = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-	int imgStride =((SinglePixelPackedSampleModel) img.getSampleModel()).getScanlineStride();
+	int imgStride = ((SinglePixelPackedSampleModel) img.getSampleModel()).getScanlineStride();
 
 	int lastPixelValue = -1;
 	int runCount = 0;
@@ -90,9 +87,7 @@ public class RLEImageEncoder {
 	}
     }
 
-    static int optBreaker;
-
-    protected void writePixel(DynamicByteBuffer dataStream, int pixel) {
+    private void writePixel(DynamicByteBuffer dataStream, int pixel) {
 	byte r = (byte) ((pixel & 0x00FF0000) >> 16);
 	byte g = (byte) ((pixel & 0x0000FF00) >> 8);
 	byte b = (byte) (pixel & 0x000000FF);
@@ -101,7 +96,6 @@ public class RLEImageEncoder {
 	dataStream.write(g);
 	dataStream.write(b);
     }
-
 
     private void endNoRun(DynamicByteBuffer runStream, int noRunCnt) {
 	runStream.write((byte) (128 + noRunCnt));
