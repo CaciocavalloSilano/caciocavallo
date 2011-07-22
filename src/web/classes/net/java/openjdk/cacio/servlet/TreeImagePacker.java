@@ -7,6 +7,7 @@ import net.java.openjdk.awt.peer.web.*;
 public class TreeImagePacker {
 
     PackNode rootNode;
+    int width, height;
 
     public TreeImagePacker() {
 
@@ -25,10 +26,12 @@ public class TreeImagePacker {
 	int maxWidth = getMaxWidth(bltUpdateList);
 	int maxHeight = getMaxHeight(bltUpdateList);
 
+	long start = System.currentTimeMillis();
 	boolean packingSuccessful;
 	do {
 	    rootNode = new PackNode();
 	    rootNode.setRect(new DamageRect(0, 0, maxWidth, maxHeight));
+	    width = height = 0;
 	    
 	    packingSuccessful = true;
 	    for(int i=0; packingSuccessful && i < bltUpdateList.size(); i++){
@@ -38,6 +41,9 @@ public class TreeImagePacker {
 	    maxWidth *= 1.5;
 	    maxHeight *= 1.5;
 	} while (!packingSuccessful);
+	
+	long end = System.currentTimeMillis();
+	System.out.println("Tree Packing took: "+(end-start));
     }
 
     protected int getMaxWidth(ArrayList<BlitScreenUpdate> updateList) {
@@ -56,21 +62,15 @@ public class TreeImagePacker {
 	return maxHeight;
     }
 
-    private PackNode insert(DamageRect rect) {
-	return rootNode.insert(rect, rootNode);
-
-	// TODO: Track bounding box here
-	// if ( this.usedWidth < coords.x + w )
-	// this.usedWidth = coords.x + w;
-	// if ( this.usedHeight < coords.y + h )
-	// this.usedHeight = coords.y + h;
-    }
-
     private boolean insert(BlitScreenUpdate update) {
-	PackNode insertNode = insert(update.getUpdateArea());
+	PackNode insertNode =rootNode.insert(update.getUpdateArea(), rootNode);
 	if (insertNode != null) {
 	    update.setPackedX(insertNode.rect.getX1());
 	    update.setPackedY(insertNode.rect.getY1());
+	    
+	    width = Math.max(width, insertNode.rect.getX2());
+	    height = Math.max(height, insertNode.rect.getY2());
+	    
 	    return true;
 	} else {
 	    return false;
@@ -78,7 +78,7 @@ public class TreeImagePacker {
     }
 
     public DamageRect getBoundingBox() {
-	return rootNode.getBoundingBox();
+	return new DamageRect(0, 0, width, height);
     }
 
     public boolean isPackingEfficient(DamageRect boundingBox, DamageRect unionRect) {
@@ -93,39 +93,6 @@ class PackNode {
     PackNode rightNode;
     DamageRect rect;
     DamageRect imgRect;
-
-    public DamageRect getBoundingBox() {
-	DamageRect leftBox = null;
-	DamageRect rightBox = null;
-	DamageRect thisBox = null;
-
-	if (leftNode != null) {
-	    leftBox = leftNode.getBoundingBox();
-	    rightBox = rightNode.getBoundingBox();
-	}
-
-	if (imgRect != null) {
-	    thisBox = new DamageRect(rect.getX1(), rect.getY1(), rect.getX1() + imgRect.getWidth(), rect.getY1() + imgRect.getHeight());
-	}
-
-	DamageRect unionRect = leftBox != null ? leftBox : rightBox != null ? rightBox : thisBox != null ? thisBox : null;
-
-	if (unionRect != null) {
-	    if (thisBox != null) {
-		unionRect.union(thisBox);
-	    }
-
-	    if (leftBox != null) {
-		unionRect.union(leftBox);
-	    }
-
-	    if (rightBox != null) {
-		unionRect.union(rightBox);
-	    }
-	}
-
-	return unionRect;
-    }
 
     public PackNode insert(DamageRect newRect, PackNode root) {
 	// If the current node is no leaf, pass the insert down the tree
@@ -206,7 +173,6 @@ class PackNode {
 }
 
 class ScreenUpdateComperator implements Comparator<ScreenUpdate> {
-
     @Override
     public int compare(ScreenUpdate s1, ScreenUpdate s2) {
 	DamageRect u1 = s1.getUpdateArea();
