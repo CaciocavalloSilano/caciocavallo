@@ -10,6 +10,8 @@
 <script src="ResourceLoader?res=XHR2PngTransport.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=XHR2RLETransport.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=ImgTransport.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=RLEImageDecoder.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=XHR1RLETransport.js" type="text/javascript"></script>
 <script type='text/javascript'>
 
 var img;
@@ -32,7 +34,7 @@ function init() {
 		startRequestFunc = StartXHRRequest;
 		readCmdStreamFunc = readXHRCommandStream;
 	}*/
-	initXHR2Rle();
+	initXHR1Rle();
 	//initXHR2Png();
 	
     startRequestFunc(subSessionID);
