@@ -14,6 +14,8 @@ public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
     public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	
+	
+	//TODO: Optimize case where only 1 BlitScreenUpdate is pending
 	long start = System.currentTimeMillis();
 	BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
