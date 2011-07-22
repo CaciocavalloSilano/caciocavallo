@@ -6,7 +6,8 @@ function xhrSuccessHandler() {
 	  if(xmlhttpreq.status==200) {
 		  responseHandlerFunc();
 	  } else {
-		  startRequestFunc(subSessionID);
+		  //TODO: Alert
+		  //startRequestFunc(subSessionID);
 	  }
   }
 }
