@@ -1,7 +1,7 @@
 function initXHR2Rle() {
 	startRequestFunc = StartXHRRequest;
 	readCmdStreamFunc = readXHRCommandStream;
-	responseHandlerFunc = handleXHR2RLEResponse;
+	responseHandlerFunc = handleXHRResponse;
 }
 
 function readXHRCommandStream() {
