@@ -8,13 +8,15 @@ public class RLEImageEncoder {
     DynamicByteBuffer runBuffer = new DynamicByteBuffer();
     DynamicByteBuffer dataBuffer = new DynamicByteBuffer();
 
-    public void encodeImageToStream(BufferedImage img, int w, int h, OutputStream os) throws IOException {
+    public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2, OutputStream os) throws IOException {
 	DataOutputStream dos = new DataOutputStream(os);
+	int w = x2 - x1;
+	int h = y2 - y1;
 	dos.writeShort(w);
 	dos.writeShort(h);
 	
 	long start = System.currentTimeMillis();
-	encodeImageData(img, w, h);
+	encodeImageData(img, x1, y1, x2, y2);
 	long end = System.currentTimeMillis();
 	System.out.println("Compression took: "+(end-start)+" for w:"+w+" h:"+h+"   efficiency:"+((dataBuffer.size() + runBuffer.size()) / (double) (w*h*3)));
 	dos.writeInt(runBuffer.size());
@@ -23,7 +25,7 @@ public class RLEImageEncoder {
 	dataBuffer.writeTo(os);
     }
 
-    public void encodeImageData(BufferedImage img, int w, int h) {
+    public void encodeImageData(BufferedImage img, int x1, int y1, int x2, int y2) {
 	int[] imgData = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
 	int imgStride =((SinglePixelPackedSampleModel) img.getSampleModel()).getScanlineStride();
 
@@ -31,10 +33,10 @@ public class RLEImageEncoder {
 	int runCount = 0;
 	int nonRunCount = 0;
 
-	for (int y = 0; y < h; y++) {
+	for (int y = y1; y < y2; y++) {
 	    int lineStartPos = imgStride * y;
 
-	    for (int x = 0; x < w; x++) {
+	    for (int x = x1; x < x2; x++) {
 		int pixelValue = imgData[lineStartPos + x] & 0x00FFFFFF;
 
 		// We have a run, handle it
@@ -48,7 +50,7 @@ public class RLEImageEncoder {
 
 		    if (runCount < 127) {
 			// Fast path for long runs
-			for (; runCount < 127 && x < w && ((imgData[lineStartPos + x] & 0x00FFFFFF)) == lastPixelValue; x++) {
+			for (; runCount < 127 && x < x2 && ((imgData[lineStartPos + x] & 0x00FFFFFF)) == lastPixelValue; x++) {
 			    runCount++;
 			}
 			x--; // We aborted, so we have to look at this pixel
