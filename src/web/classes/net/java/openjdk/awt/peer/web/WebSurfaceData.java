@@ -190,14 +190,11 @@ public class WebSurfaceData extends SurfaceData {
 
 	    DamageRect unionRect = damageTracker.getUnionRectangle();
 	    if (unionRect != null) {
-		List<DamageRect> regionList = damageTracker.createDamagedRegionList(3);
+		List<DamageRect> regionList = damageTracker.createDamagedRegionList(5);
 
-		TreeImagePacker packer = new TreeImagePacker(regionList);
-		DamageRect packedRegionBox = packer.getBoundingBox();
+		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
 
-		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0 && packedRegionBox != null) {
-
-		    if (false || !packer.isPackingEfficient(packedRegionBox, unionRect)) {
+		    if (false || !damageTracker.isPackingEfficient(regionList, unionRect)) {
 			pendingUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
 				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
 		    } else {
@@ -265,16 +262,12 @@ public class WebSurfaceData extends SurfaceData {
 
 		// Refactor
 		TreeImagePacker packer = new TreeImagePacker();
+		packer.insertScreenUpdateList(pendingUpdateList);
 		for (ScreenUpdate update : pendingUpdateList) {
-		    if (update instanceof BlitScreenUpdate) {
-			BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
-			packer.insert(bsUpdate);
-		    }
-
 		    update.writeCmdStream(cmdList);
 		}
 
-//		try {
+		try {
 //		    BinaryRLEStreamEncoder rleEncoder = new BinaryRLEStreamEncoder();
 //		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
 //		    rleEncoder.writeEnocdedData(fos, pendingUpdateList, packer, cmdList);
@@ -294,9 +287,11 @@ public class WebSurfaceData extends SurfaceData {
 //		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
 //		    imgEncoder.writeEnocdedData(bos, pendingUpdateList, packer, cmdList);
 //		    bos.close();
-//		} catch (IOException ex) {
-//		    ex.printStackTrace();
-//		}
+		    
+		    if(false) throw new IOException();
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		}
 
 		encoder.writeEnocdedData(os, pendingUpdateList, packer, cmdList);
 		// Write updates here
