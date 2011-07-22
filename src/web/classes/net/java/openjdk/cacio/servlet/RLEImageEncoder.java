@@ -15,10 +15,10 @@ public class RLEImageEncoder {
 	dos.writeShort(w);
 	dos.writeShort(h);
 	
-	long start = System.currentTimeMillis();
+//	long start = System.currentTimeMillis();
 	encodeImageData(img, x1, y1, x2, y2);
-	long end = System.currentTimeMillis();
-	System.out.println("Compression took: "+(end-start)+" for w:"+w+" h:"+h+"   efficiency:"+((dataBuffer.size() + runBuffer.size()) / (double) (w*h*3)));
+//	long end = System.currentTimeMillis();
+//	System.out.println("Compression took: "+(end-start)+" for w:"+w+" h:"+h+"   efficiency:"+((dataBuffer.size() + runBuffer.size()) / (double) (w*h*3)));
 	dos.writeInt(runBuffer.size());
 	
 	runBuffer.writeTo(os);

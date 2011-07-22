@@ -18,19 +18,18 @@ public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
 	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
 	os.write(cmdStreamData);
 
-	// TODO: Optimize case where only 1 BlitScreenUpdate is pending
-	long start = System.currentTimeMillis();
+//	long start = System.currentTimeMillis();
 	if (pendingUpdateList.size() == 1 && pendingUpdateList.get(0) instanceof BlitScreenUpdate) {
 	    BlitScreenUpdate update = (BlitScreenUpdate) pendingUpdateList.get(0);
 	    new RLEImageEncoder().encodeImageToStream(update.getImage(), update.getSrcX(), update.getSrcY(), update.getSrcX() + update.getUpdateArea().getWidth(), update.getSrcY() + update.getUpdateArea().getHeight(), os);
-	    System.out.println("Took fast path");
+//	    System.out.println("Took fast path");
 	} else {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
 	    new RLEImageEncoder().encodeImageToStream(packedImage, 0, 0, packedImage.getWidth(), packedImage.getHeight(), os);
 	}
 
-	long end = System.currentTimeMillis();
-	System.out.println("Packing took: " + (end - start));
+//	long end = System.currentTimeMillis();
+//	System.out.println("Packing took: " + (end - start));
     }
 }

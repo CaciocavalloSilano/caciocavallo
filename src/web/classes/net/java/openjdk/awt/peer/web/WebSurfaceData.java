@@ -192,6 +192,7 @@ public class WebSurfaceData extends SurfaceData {
 	    if (unionRect != null) {
 		List<DamageRect> regionList = damageTracker.createDamagedRegionList(5);
 
+		//TODO In damage tracker verschieben, der soll uns einfach eine liste zurückgeben
 		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
 
 		    if (false || !damageTracker.isPackingEfficient(regionList, unionRect)) {
@@ -287,7 +288,7 @@ public class WebSurfaceData extends SurfaceData {
 //		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
 //		    imgEncoder.writeEnocdedData(bos, pendingUpdateList, packer, cmdList);
 //		    bos.close();
-		    
+//		    
 		    if(false) throw new IOException();
 		} catch (IOException ex) {
 		    ex.printStackTrace();
@@ -300,7 +301,7 @@ public class WebSurfaceData extends SurfaceData {
 
 		long end = System.currentTimeMillis();
 		System.out.println("Total Took: " + (end - start));
-		System.out.println();
+//		System.out.println();
 
 		return true;
 	    }
