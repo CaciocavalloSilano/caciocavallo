@@ -1,8 +1,6 @@
 package net.java.openjdk.cacio.servlet;
 
-import java.io.*;
 import java.util.*;
-
 import net.java.openjdk.awt.peer.web.*;
 
 public class CopyAreaScreenUpdate extends ScreenUpdate {

@@ -39,9 +39,7 @@ public class ImageStreamer extends HttpServlet {
 
 	if (config != null) {
 	    WebScreen screen = config.getScreen();
-	    WebSurfaceData screenSurface = screen.getSurfaceData();
-
-	    screenSurface.pollForScreenUpdates(response, 15000, 20);
+	    screen.pollForScreenUpdates(response, 15000, 20);
 	}
     }
 

@@ -46,12 +46,12 @@ public class RLEImageEncoder {
 		    }
 
 		    if (runCount < 127) {
-			// Fast path for long runs
+			// Fast path for runs
 			for (; runCount < 127 && x < x2 && ((imgData[lineStartPos + x] & 0x00FFFFFF)) == lastPixelValue; x++) {
 			    runCount++;
 			}
-			x--; // We aborted, so we have to look at this pixel
-			     // again at the next full iteration
+			x--; // We aborted for some reason, so we have to look
+			     // at this pixel again at the next full iteration
 		    } else {
 			endRun(runBuffer, runCount);
 			runCount = 1;
