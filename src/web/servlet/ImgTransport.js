@@ -1,6 +1,10 @@
 var parts;
 var cmdCanvas;
 
+function initImgTransport() {
+	startRequestFunc = StartImageRequest;
+	readCmdStreamFunc = readImageCommandStream;
+}
 
 function StartImageRequest(subSessionID) {
   var randParam = parseInt(Math.random() * 99999999);
