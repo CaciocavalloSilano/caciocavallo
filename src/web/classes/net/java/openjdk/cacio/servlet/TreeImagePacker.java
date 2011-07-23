@@ -63,7 +63,7 @@ public class TreeImagePacker {
     }
 
     private boolean insert(BlitScreenUpdate update) {
-	PackNode insertNode =rootNode.insert(update.getUpdateArea(), rootNode);
+	PackNode insertNode =rootNode.insert(update.getUpdateArea());
 	if (insertNode != null) {
 	    update.setPackedX(insertNode.rect.getX1());
 	    update.setPackedY(insertNode.rect.getY1());
@@ -94,12 +94,12 @@ class PackNode {
     DamageRect rect;
     DamageRect imgRect;
 
-    public PackNode insert(DamageRect newRect, PackNode root) {
+    public PackNode insert(DamageRect newRect) {
 	// If the current node is no leaf, pass the insert down the tree
 	if (leftNode != null) {
-	    PackNode insertNode = leftNode.insert(newRect, root);
+	    PackNode insertNode = leftNode.insert(newRect);
 	    if (insertNode == null) {
-		insertNode = rightNode.insert(newRect, root);
+		insertNode = rightNode.insert(newRect);
 	    }
 	    return insertNode;
 	} else {
@@ -134,7 +134,7 @@ class PackNode {
 	    }
 
 	    // Insert into first child we created
-	    return leftNode.insert(newRect, root);
+	    return leftNode.insert(newRect);
 	    // return root.insert(newRect, root);
 	}
     }
