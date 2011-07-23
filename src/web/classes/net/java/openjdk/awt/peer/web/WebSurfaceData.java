@@ -65,22 +65,18 @@ public class WebSurfaceData extends SurfaceData {
     private Object destination;
     int[] data;
 
-    ReentrantLock surfaceLock = new ReentrantLock();
-
-    ArrayList<ScreenUpdate> pendingUpdateList = new ArrayList<ScreenUpdate>();
     GridDamageTracker damageTracker;
+    WebScreen screen;
 
-    CmdStreamEncoder encoder;
-
-    protected WebSurfaceData(SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
+    protected WebSurfaceData(WebScreen screen, SurfaceType surfaceType, ColorModel cm, Rectangle b, GraphicsConfiguration gc, Object dest) {
 
 	super(surfaceType, cm);
-
+	
+	this.screen = screen;
 	bounds = b;
 	configuration = gc;
 	destination = dest;
 
-	encoder = new BinaryRLEStreamEncoder();
 	damageTracker = new GridDamageTracker(b.width, b.height);
 	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
 	bufferGraphics = imgBuffer.getGraphics();
@@ -120,22 +116,24 @@ public class WebSurfaceData extends SurfaceData {
 
     private static final native void initIDs();
 
-    int cnt = 0;
-
-    public void lockSurface() {
-	surfaceLock.lock();
-	cnt++;
+    public final void lockSurface() {
+	screen.lockScreen();
     }
 
-    public void unlockSurface() {
-	surfaceLock.unlock();
+    public final void unlockSurface() {
+	screen.unlockScreen();
     }
 
     public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
 	DamageRect rect = new DamageRect(x1, y1, x2, y2);
 	damageTracker.trackDamageRect(rect);
-	surfaceLock.unlock();
+	unlockSurface();
     }
+    
+    public List<ScreenUpdate> getPendingScreenUpates() {
+	return damageTracker.persistDamagedAreas(imgBuffer);
+    }
+}
 
     // @Override
     // public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h,
@@ -184,134 +182,7 @@ public class WebSurfaceData extends SurfaceData {
     // return false;
     // }
 
-    protected void persistDamagedAreas() {
-	try {
-	    lockSurface();
-
-	    DamageRect unionRect = damageTracker.getUnionRectangle();
-	    if (unionRect != null) {
-		List<DamageRect> regionList = damageTracker.createDamagedRegionList(5);
-
-		//TODO In damage tracker verschieben, der soll uns einfach eine liste zurückgeben
-		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
-
-		    if (false || !damageTracker.isPackingEfficient(regionList, unionRect)) {
-			pendingUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
-				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
-		    } else {
-			for (DamageRect dRect : regionList) {
-			    pendingUpdateList.add(new BlitScreenUpdate(dRect.getX1(), dRect.getY1(), dRect.getX1(), dRect.getY1(), dRect.getWidth(),
-				    dRect.getHeight(), imgBuffer));
-			}
-		    }
-		}
-
-		damageTracker.reset();
-	    }
-	} finally {
-	    unlockSurface();
-	}
-    }
-
-    protected void evacuateDamagedAreas() {
-	for (ScreenUpdate update : pendingUpdateList) {
-	    if (update instanceof BlitScreenUpdate) {
-		((BlitScreenUpdate) update).evacuate();
-	    }
-	}
-    }
-
-    public boolean pollForScreenUpdates(HttpServletResponse response, int timeout, int pollPause) throws IOException {
-
-	int pollCnt = timeout / pollPause;
-	boolean updatesWritten = false;
-
-	response.setContentType(encoder.getContentType());
-	OutputStream os = response.getOutputStream();
-
-	try {
-	    Thread.sleep(10);
-
-	    while (pollCnt >= 0 && !updatesWritten) {
-		updatesWritten = writeScreenUpdates(os);
-		if (!updatesWritten) {
-		    cnt++;
-		    Thread.sleep(pollPause);
-		}
-	    }
-	} catch (InterruptedException e) {
-	    e.printStackTrace();
-	}
-
-	if (!updatesWritten) {
-	    encoder.writeEmptyData(os);
-	}
-
-	return updatesWritten;
-    }
-
-    public boolean writeScreenUpdates(OutputStream os) throws IOException {
-	long start = System.currentTimeMillis();
-
-	// Merge all ScreenUpdates into one texture & encode command stream
-	try {
-	    lockSurface();
-	    persistDamagedAreas();
-
-	    if (pendingUpdateList.size() > 0) {
-		ArrayList<Integer> cmdList = new ArrayList<Integer>(pendingUpdateList.size() * 7);
-
-		// Refactor
-		TreeImagePacker packer = new TreeImagePacker();
-		packer.insertScreenUpdateList(pendingUpdateList);
-		for (ScreenUpdate update : pendingUpdateList) {
-		    update.writeCmdStream(cmdList);
-		}
-
-		try {
-//		    BinaryRLEStreamEncoder rleEncoder = new BinaryRLEStreamEncoder();
-//		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
-//		    rleEncoder.writeEnocdedData(fos, pendingUpdateList, packer, cmdList);
-//		    fos.close();
-//
-//		    BinaryCmdStreamEncoder binEncoder = new BinaryPngStreamEncoder();
-//		    FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
-//		    binEncoder.writeEnocdedData(dos, pendingUpdateList, packer, cmdList);
-//		    dos.close();
-//
-//		    Base64CmdStreamEncoder baseCoder = new Base64CmdStreamEncoder();
-//		    FileOutputStream dbos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-//		    baseCoder.writeEnocdedData(dbos, pendingUpdateList, packer, cmdList);
-//		    dbos.close();
-//
-//		    ImageCmdStreamEncoder imgEncoder = new ImageCmdStreamEncoder();
-//		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
-//		    imgEncoder.writeEnocdedData(bos, pendingUpdateList, packer, cmdList);
-//		    bos.close();
-//		    
-		    if(false) throw new IOException();
-		} catch (IOException ex) {
-		    ex.printStackTrace();
-		}
-
-		encoder.writeEnocdedData(os, pendingUpdateList, packer, cmdList);
-		// Write updates here
-
-		pendingUpdateList.clear();
-
-		long end = System.currentTimeMillis();
-		System.out.println("Total Took: " + (end - start));
-//		System.out.println();
-
-		return true;
-	    }
-	} finally {
-	    unlockSurface();
-	}
-
-	return false;
-    }
-}
+    
 
 // try {
 // // FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt +

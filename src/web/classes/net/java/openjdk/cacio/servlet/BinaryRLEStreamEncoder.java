@@ -33,7 +33,6 @@ public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
 	    rleEncoder.encodeImageToStream(packedImage, 0, 0, packedImage.getWidth(), packedImage.getHeight(), os);
 	}
-
     }
 
     /**

@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class DynamicByteBuffer {
-    final static int BUFFER_SIZE = 8192;
+    final static int BUFFER_SIZE = 4096;
     
     ArrayList<byte[]> bufferList = new ArrayList<byte[]>();
     

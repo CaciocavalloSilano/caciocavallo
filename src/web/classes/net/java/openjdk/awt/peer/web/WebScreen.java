@@ -25,6 +25,7 @@
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.Color;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -32,9 +33,14 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.image.ColorModel;
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.locks.*;
 
-import sun.awt.peer.cacio.CacioEventSource;
+import javax.servlet.http.*;
+
+import net.java.openjdk.cacio.servlet.*;
+
 import sun.awt.peer.cacio.WindowClippedGraphics;
 import sun.awt.peer.cacio.managed.*;
 import sun.java2d.SunGraphics2D;
@@ -50,6 +56,10 @@ public class WebScreen implements PlatformScreen {
    
     WebGraphicsConfiguration config;
     
+    ReentrantLock screenLock;
+    ArrayList<ScreenUpdate> pendingUpdateList;
+    CmdStreamEncoder encoder;
+    
     static {
         Dimension dim = FullScreenWindowFactory.getScreenDimension();
         width = dim.width;
@@ -61,6 +71,10 @@ public class WebScreen implements PlatformScreen {
 
     protected WebScreen(WebGraphicsConfiguration config) {
 	this.config = config;
+	
+	screenLock = new ReentrantLock();
+	pendingUpdateList = new ArrayList<ScreenUpdate>();
+	encoder  = new BinaryRLEStreamEncoder();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font,
@@ -102,7 +116,7 @@ public class WebScreen implements PlatformScreen {
     public WebSurfaceData getSurfaceData() {
 
         if (surfaceData == null) {
-            surfaceData = new WebSurfaceData(WebSurfaceData.typeDefault,
+            surfaceData = new WebSurfaceData(this, WebSurfaceData.typeDefault,
                                              getColorModel(), getBounds(),
                                              getGraphicsConfiguration(), this);
         }
@@ -113,5 +127,123 @@ public class WebScreen implements PlatformScreen {
 
     public WebGraphicsConfiguration getConfig() {
         return config;
+    }
+    
+    public final void lockScreen() {
+	screenLock.lock();
+    }
+    
+    public final void unlockScreen() {
+	screenLock.unlock();
+    }
+    
+    protected void evacuateDamagedAreas() {
+	for (ScreenUpdate update : pendingUpdateList) {
+	    if (update instanceof BlitScreenUpdate) {
+		((BlitScreenUpdate) update).evacuate();
+	    }
+	}
+    }
+
+    public boolean pollForScreenUpdates(HttpServletResponse response, int timeout, int pollPause) throws IOException {
+
+	int pollCnt = timeout / pollPause;
+	boolean updatesWritten = false;
+
+	response.setContentType(encoder.getContentType());
+	OutputStream os = response.getOutputStream();
+
+	try {
+	    Thread.sleep(10);
+
+	    while (pollCnt >= 0 && !updatesWritten) {
+		updatesWritten = writeScreenUpdates(os);
+		if (!updatesWritten) {
+		    pollCnt++;
+		    Thread.sleep(pollPause);
+		}
+	    }
+	} catch (InterruptedException e) {
+	    e.printStackTrace();
+	}
+
+	if (!updatesWritten) {
+	    encoder.writeEmptyData(os);
+	}
+
+	return updatesWritten;
+    }
+
+    public boolean writeScreenUpdates(OutputStream os) throws IOException {
+	if(surfaceData == null) { 
+	    return false;
+	}
+	
+	long start = System.currentTimeMillis();
+
+	// Merge all ScreenUpdates into one texture & encode command stream
+	try {
+	    lockScreen();
+	    List<ScreenUpdate> screenUpdates = surfaceData.getPendingScreenUpates();
+	    if(screenUpdates != null) {
+		pendingUpdateList.addAll(screenUpdates);
+	    }
+
+	    if (pendingUpdateList.size() > 0) {
+		ArrayList<Integer> cmdList = new ArrayList<Integer>(pendingUpdateList.size() * 7);
+
+		// Refactor
+		TreeImagePacker packer = new TreeImagePacker();
+		packer.insertScreenUpdateList(pendingUpdateList);
+		for (ScreenUpdate update : pendingUpdateList) {
+		    update.writeCmdStream(cmdList);
+		}
+
+		try {
+//		    BinaryRLEStreamEncoder rleEncoder = new BinaryRLEStreamEncoder();
+//		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
+//		    rleEncoder.writeEnocdedData(fos, pendingUpdateList, packer, cmdList);
+//		    fos.close();
+//
+//		    BinaryCmdStreamEncoder binEncoder = new BinaryPngStreamEncoder();
+//		    FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
+//		    binEncoder.writeEnocdedData(dos, pendingUpdateList, packer, cmdList);
+//		    dos.close();
+//
+//		    Base64CmdStreamEncoder baseCoder = new Base64CmdStreamEncoder();
+//		    FileOutputStream dbos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+//		    baseCoder.writeEnocdedData(dbos, pendingUpdateList, packer, cmdList);
+//		    dbos.close();
+//
+//		    ImageCmdStreamEncoder imgEncoder = new ImageCmdStreamEncoder();
+//		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
+//		    imgEncoder.writeEnocdedData(bos, pendingUpdateList, packer, cmdList);
+//		    bos.close();
+//		    
+		    if(false) throw new IOException();
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		}
+
+		encoder.writeEnocdedData(os, pendingUpdateList, packer, cmdList);
+		// Write updates here
+
+		pendingUpdateList.clear();
+
+		long end = System.currentTimeMillis();
+		System.out.println("Total Took: " + (end - start));
+//		System.out.println();
+
+		return true;
+	    }
+	} finally {
+	    unlockScreen();
+	}
+
+	return false;
+    }
+
+    public ArrayList<ScreenUpdate> getPendingUpdateList() {
+        return pendingUpdateList;
     }
 }
