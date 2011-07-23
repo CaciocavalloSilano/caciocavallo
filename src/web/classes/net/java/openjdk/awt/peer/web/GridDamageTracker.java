@@ -3,6 +3,8 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.image.*;
 import java.util.*;
 
+import net.java.openjdk.cacio.servlet.*;
+
 public class GridDamageTracker {
 
     public static int GRID_SIZE = 16;
@@ -25,15 +27,7 @@ public class GridDamageTracker {
 	}
     }
 
-    public DamageRect getUnionRectangle() {
-	if (rectList.size() == 0) {
-	    return null;
-	}
-
-	return new DamageRect().union(rectList);
-    }
-
-    public void trackDamageRect(DamageRect rect) {
+    protected void trackDamageRect(DamageRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
 	int x2Cell = rect.getX2() / GRID_SIZE;
@@ -47,8 +41,43 @@ public class GridDamageTracker {
 
 	rectList.add(rect);
     }
+    
+    protected List<ScreenUpdate> persistDamagedAreas(BufferedImage imgBuffer) {
+	    DamageRect unionRect = getUnionRectangle();
+	    if (unionRect != null) {
+		ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
+		
+		List<DamageRect> regionList = createDamagedRegionList(5);
+		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
+		    
+		    if (!isPackingEfficient(regionList, unionRect)) {
+			screenUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
+				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
+		    } else {
+			for (DamageRect dRect : regionList) {
+			    screenUpdateList.add(new BlitScreenUpdate(dRect.getX1(), dRect.getY1(), dRect.getX1(), dRect.getY1(), dRect.getWidth(),
+				    dRect.getHeight(), imgBuffer));
+			}
+		    }
+		}
 
-    public void reset() {
+		reset();
+		return screenUpdateList;
+	    }
+	    
+	    return null;
+    }
+
+    private DamageRect getUnionRectangle() {
+	if (rectList.size() == 0) {
+	    return null;
+	}
+
+	return new DamageRect().union(rectList);
+    }
+    
+
+    private void reset() {
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
 		grid[y][x].reset();
@@ -58,7 +87,7 @@ public class GridDamageTracker {
 	rectList.clear();
     }
 
-    public boolean isPackingEfficient(List<DamageRect> regionList, DamageRect unionRect) {
+    private boolean isPackingEfficient(List<DamageRect> regionList, DamageRect unionRect) {
 	int regionSize = 0;
 	for (DamageRect rect : regionList) {
 	    regionSize += rect.getWidth() * rect.getHeight();
@@ -71,7 +100,7 @@ public class GridDamageTracker {
 	return regionSize * 2 < unionSize;
     }
 
-    public List<DamageRect> createDamagedRegionList(int mergeLimit) {
+    private List<DamageRect> createDamagedRegionList(int mergeLimit) {
 	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
 	List<DamageRect> rectList = new ArrayList<DamageRect>();
 
@@ -101,7 +130,7 @@ public class GridDamageTracker {
 	return rectList;
     }
 
-    protected int countUnions(DamageRect[][] unions) {
+    private int countUnions(DamageRect[][] unions) {
 	int unionCnt = 0;
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
@@ -113,7 +142,7 @@ public class GridDamageTracker {
 	return unionCnt;
     }
 
-    protected void mergeCellsHorizontal(DamageRect[][] unions, int mergeLimit) {
+    private void mergeCellsHorizontal(DamageRect[][] unions, int mergeLimit) {
 	// Try to reduce regions by extending horizontally
 	for (int y = 0; y < unions.length; y++) {
 	    for (int x = 0; x < unions[0].length - 1; x++) {
@@ -124,7 +153,7 @@ public class GridDamageTracker {
 		    DamageRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.y1 == cellRect.y1 && extensionRect.getHeight() == cellRect.getHeight()
-			    && extensionRect.x1 == cellRect.x2 /* + 1 */) {
+			    && extensionRect.x1 == cellRect.x2) {
 			cellRect.x2 = extensionRect.x2;
 			unions[y][x] = null;
 		    }
@@ -133,7 +162,7 @@ public class GridDamageTracker {
 	}
     }
 
-    protected void mergeCellsVertical(DamageRect[][] unions, int mergeLimit) {
+    private void mergeCellsVertical(DamageRect[][] unions, int mergeLimit) {
 	// Try to reduce regions by extending horizontally
 	for (int x = 0; x < unions[0].length; x++) {
 	    for (int y = 0; y < unions.length - 1; y++) {
@@ -144,7 +173,7 @@ public class GridDamageTracker {
 		    DamageRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.x1 == cellRect.x1 && extensionRect.getWidth() == cellRect.getWidth()
-			    && extensionRect.y1 == cellRect.y2 /* + 1 */) {
+			    && extensionRect.y1 == cellRect.y2) {
 			cellRect.y2 = extensionRect.y2;
 			unions[y][x] = null;
 		    }
