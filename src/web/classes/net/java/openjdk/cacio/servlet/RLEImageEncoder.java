@@ -47,11 +47,16 @@ public class RLEImageEncoder {
 
 		    if (runCount < 127) {
 			// Fast path for runs
-			for (; runCount < 127 && x < x2 && ((imgData[lineStartPos + x] & 0x00FFFFFF)) == lastPixelValue; x++) {
-			    runCount++;
+			int startIndex = lineStartPos + x;
+			int maxIndex = startIndex + Math.min(127 - runCount, x2 - x);
+			int i = startIndex;
+			while(i < maxIndex  && (imgData[i] & 0x00FFFFFF) == lastPixelValue) {
+			    i++;
 			}
-			x--; // We aborted for some reason, so we have to look
-			     // at this pixel again at the next full iteration
+			
+			int runs = (i - startIndex);
+			runCount += runs; 
+			x += runs - 1; // We aborted, so we have to look at this pixel again at the next full iteration
 		    } else {
 			endRun(runBuffer, runCount);
 			runCount = 1;
