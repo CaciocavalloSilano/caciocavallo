@@ -41,29 +41,30 @@ import javax.servlet.http.*;
 
 import net.java.openjdk.cacio.servlet.*;
 
+import sun.awt.*;
 import sun.awt.peer.cacio.WindowClippedGraphics;
 import sun.awt.peer.cacio.managed.*;
 import sun.java2d.SunGraphics2D;
 
 /**
- *
+ * 
  * @author Mario Torre <neugens@limasoftware.net>
  */
 public class WebScreen implements PlatformScreen {
 
     private static final int width;
     private static final int height;
-   
+
     WebGraphicsConfiguration config;
-    
+
     ReentrantLock screenLock;
     ArrayList<ScreenUpdate> pendingUpdateList;
     CmdStreamEncoder encoder;
-    
+
     static {
-        Dimension dim = FullScreenWindowFactory.getScreenDimension();
-        width = dim.width;
-        height = dim.height;
+	Dimension dim = FullScreenWindowFactory.getScreenDimension();
+	width = dim.width;
+	height = dim.height;
     }
 
     private EventData eventData;
@@ -71,72 +72,76 @@ public class WebScreen implements PlatformScreen {
 
     protected WebScreen(WebGraphicsConfiguration config) {
 	this.config = config;
-	
+
 	screenLock = new ReentrantLock();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
-	encoder  = new BinaryRLEStreamEncoder();
+	encoder = new BinaryRLEStreamEncoder();
     }
 
-    public Graphics2D getClippedGraphics(Color fg, Color bg, Font font,
-                                         List<Rectangle> clipRects) {
+    public Graphics2D getClippedGraphics(Color fg, Color bg, Font font, List<Rectangle> clipRects) {
 
-        WebSurfaceData data = getSurfaceData();
-        Graphics2D g2d = new SunGraphics2D(data, fg, bg, font);
-        if (clipRects != null && clipRects.size() > 0) {
-            Area a = new Area(getBounds());
-            for (Rectangle clip : clipRects) {
-                a.subtract(new Area(clip));
-            }
-            g2d = new WindowClippedGraphics(g2d, a);
-        }
-        return g2d;
+	WebSurfaceData data = getSurfaceData();
+	Graphics2D g2d = new SunGraphics2D(data, fg, bg, font);
+	if (clipRects != null && clipRects.size() > 0) {
+	    Area a = new Area(getBounds());
+	    for (Rectangle clip : clipRects) {
+		a.subtract(new Area(clip));
+	    }
+	    g2d = new WindowClippedGraphics(g2d, a);
+	}
+	return g2d;
     }
 
     public ColorModel getColorModel() {
 
-        return getGraphicsConfiguration().getColorModel();
+	return getGraphicsConfiguration().getColorModel();
     }
 
     public GraphicsConfiguration getGraphicsConfiguration() {
-        return config;
+	return config;
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(0, 0, width, height);
+	return new Rectangle(0, 0, width, height);
     }
-    
-    public synchronized void addEvent(EventData data) {
-	WebToolkit toolkit = ((WebToolkit) WebToolkit.getDefaultToolkit());
-	WebWindowFactory factory = (WebWindowFactory) toolkit.getPlatformWindowFactory();
-	ScreenManagedWindowContainer windowContainer = factory.getScreenManagedWindowContainer(this);
-	data.setSource(windowContainer);
-	windowContainer.dispatchEvent(data);
+
+    public void addEvent(EventData data) {
+	try {
+	    SunToolkit.awtLock();
+
+	    WebToolkit toolkit = ((WebToolkit) WebToolkit.getDefaultToolkit());
+	    WebWindowFactory factory = (WebWindowFactory) toolkit.getPlatformWindowFactory();
+	    ScreenManagedWindowContainer windowContainer = factory.getScreenManagedWindowContainer(this);
+	    data.setSource(windowContainer);
+	    windowContainer.dispatchEvent(data);
+	} finally {
+	    SunToolkit.awtUnlock();
+	}
+
     }
 
     public WebSurfaceData getSurfaceData() {
 
-        if (surfaceData == null) {
-            surfaceData = new WebSurfaceData(this, WebSurfaceData.typeDefault,
-                                             getColorModel(), getBounds(),
-                                             getGraphicsConfiguration(), this);
-        }
-        return surfaceData;
+	if (surfaceData == null) {
+	    surfaceData = new WebSurfaceData(this, WebSurfaceData.typeDefault, getColorModel(), getBounds(), getGraphicsConfiguration(), this);
+	}
+	return surfaceData;
     }
 
     private native final long nativeInitScreen(int width, int height);
 
     public WebGraphicsConfiguration getConfig() {
-        return config;
+	return config;
     }
-    
+
     public final void lockScreen() {
 	screenLock.lock();
     }
-    
+
     public final void unlockScreen() {
 	screenLock.unlock();
     }
-    
+
     protected void evacuateDamagedAreas() {
 	for (ScreenUpdate update : pendingUpdateList) {
 	    if (update instanceof BlitScreenUpdate) {
@@ -174,18 +179,21 @@ public class WebScreen implements PlatformScreen {
 	return updatesWritten;
     }
 
+    int cnt = 0;
+
     public boolean writeScreenUpdates(OutputStream os) throws IOException {
-	if(surfaceData == null) { 
+	if (surfaceData == null) {
 	    return false;
 	}
-	
+
 	long start = System.currentTimeMillis();
 
 	// Merge all ScreenUpdates into one texture & encode command stream
+
 	try {
 	    lockScreen();
 	    List<ScreenUpdate> screenUpdates = surfaceData.getPendingScreenUpates();
-	    if(screenUpdates != null) {
+	    if (screenUpdates != null) {
 		pendingUpdateList.addAll(screenUpdates);
 	    }
 
@@ -200,27 +208,41 @@ public class WebScreen implements PlatformScreen {
 		}
 
 		try {
-//		    BinaryRLEStreamEncoder rleEncoder = new BinaryRLEStreamEncoder();
-//		    FileOutputStream fos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
-//		    rleEncoder.writeEnocdedData(fos, pendingUpdateList, packer, cmdList);
-//		    fos.close();
-//
-//		    BinaryCmdStreamEncoder binEncoder = new BinaryPngStreamEncoder();
-//		    FileOutputStream dos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
-//		    binEncoder.writeEnocdedData(dos, pendingUpdateList, packer, cmdList);
-//		    dos.close();
-//
-//		    Base64CmdStreamEncoder baseCoder = new Base64CmdStreamEncoder();
-//		    FileOutputStream dbos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-//		    baseCoder.writeEnocdedData(dbos, pendingUpdateList, packer, cmdList);
-//		    dbos.close();
-//
-//		    ImageCmdStreamEncoder imgEncoder = new ImageCmdStreamEncoder();
-//		    FileOutputStream bos = new FileOutputStream("/home/ce/imgFiles/" + cnt + ".png");
-//		    imgEncoder.writeEnocdedData(bos, pendingUpdateList, packer, cmdList);
-//		    bos.close();
-//		    
-		    if(false) throw new IOException();
+		    // BinaryRLEStreamEncoder rleEncoder = new
+		    // BinaryRLEStreamEncoder();
+		    // FileOutputStream fos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
+		    // rleEncoder.writeEnocdedData(fos, pendingUpdateList,
+		    // packer, cmdList);
+		    // fos.close();
+		    //
+		    // BinaryCmdStreamEncoder binEncoder = new
+		    // BinaryPngStreamEncoder();
+		    // FileOutputStream dos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
+		    // binEncoder.writeEnocdedData(dos, pendingUpdateList,
+		    // packer, cmdList);
+		    // dos.close();
+		    //
+		    // Base64CmdStreamEncoder baseCoder = new
+		    // Base64CmdStreamEncoder();
+		    // FileOutputStream dbos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+		    // baseCoder.writeEnocdedData(dbos, pendingUpdateList,
+		    // packer, cmdList);
+		    // dbos.close();
+		    //
+		    // ImageCmdStreamEncoder imgEncoder = new
+		    // ImageCmdStreamEncoder();
+		    // FileOutputStream bos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + (cnt++) +
+		    // ".png");
+		    // imgEncoder.writeEnocdedData(bos, pendingUpdateList,
+		    // packer, cmdList);
+		    // bos.close();
+		    //
+		    if (false)
+			throw new IOException();
 		} catch (IOException ex) {
 		    ex.printStackTrace();
 		}
@@ -232,7 +254,7 @@ public class WebScreen implements PlatformScreen {
 
 		long end = System.currentTimeMillis();
 		System.out.println("Total Took: " + (end - start));
-//		System.out.println();
+		// System.out.println();
 
 		return true;
 	    }
@@ -244,6 +266,6 @@ public class WebScreen implements PlatformScreen {
     }
 
     public ArrayList<ScreenUpdate> getPendingUpdateList() {
-        return pendingUpdateList;
+	return pendingUpdateList;
     }
 }
