@@ -3,13 +3,28 @@ var responseHandlerFunc;
 var intArray;
 
 function readShort(array, pos) {
-	//TODO: Negative Werte behandeln
-	return ((array[pos] << 8) + array[pos + 1]);
+	var highByte = array[pos];
+	var lowByte = array[pos + 1];
+	var sign = 1;
+	
+	if((highByte & 128) != 0) {
+		highByte = (~highByte) & 127;
+		sign = -1;
+	}
+	
+	return (((highByte) << 8) + lowByte) * sign;
 }
 
 function readInt(array, pos) {
-	//TODO: Negative Werte behandeln
-	return ((array[pos] << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]);
+	var highByte = array[pos];
+	var sign = 1;
+	
+	if((highByte & 128) != 0) {
+		highByte = (~highByte) & 127;
+		sign = -1;
+	}
+	
+	return ((highByte << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]) * sign;
 }
 
 function readBinCommandStream() {
