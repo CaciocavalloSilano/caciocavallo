@@ -5,26 +5,20 @@ var intArray;
 function readShort(array, pos) {
 	var highByte = array[pos];
 	var lowByte = array[pos + 1];
-	var sign = 1;
 	
-	if((highByte & 128) != 0) {
-		highByte = (~highByte) & 127;
-		sign = -1;
+	var sign = highByte & 128;
+	highByte = highByte & 127;
+	
+	var value = ((highByte) << 8) + lowByte;
+	if(sign != 0) {
+		value *= -1;
 	}
 	
-	return (((highByte) << 8) + lowByte) * sign;
+	return value;
 }
 
-function readInt(array, pos) {
-	var highByte = array[pos];
-	var sign = 1;
-	
-	if((highByte & 128) != 0) {
-		highByte = (~highByte) & 127;
-		sign = -1;
-	}
-	
-	return ((highByte << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]) * sign;
+function readInt(array, pos) {	
+	return ((array[pos] << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]);
 }
 
 function readBinCommandStream() {
