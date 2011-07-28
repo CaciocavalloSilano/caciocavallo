@@ -3,8 +3,6 @@ package net.java.openjdk.cacio.servlet;
 import java.io.*;
 import java.util.*;
 
-import javax.servlet.http.*;
-
 public abstract class BinaryCmdStreamEncoder extends CmdStreamEncoder {
 
     byte[] emptyResponseData;
@@ -18,20 +16,25 @@ public abstract class BinaryCmdStreamEncoder extends CmdStreamEncoder {
     }
     
     protected byte[] encodeImageCmdStream(List<Integer> cmdList) {
-	
 	ByteArrayOutputStream bos = new ByteArrayOutputStream(cmdList.size()*2 + 2);
-	DataOutputStream dos = new DataOutputStream(bos);
 	
-	try {
-	    dos.writeShort(cmdList.size());
-	    for(int i=0; i < cmdList.size(); i++) {
-	        dos.writeShort(cmdList.get(i));
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
+	writeJSShort(bos, cmdList.size());
+	for(int value : cmdList) {
+	    writeJSShort(bos, value);
 	}
 
 	return bos.toByteArray();
+    }
+    
+    protected void writeJSShort(ByteArrayOutputStream bos, int value) {
+	int sign = value >= 0 ? 0 : 1;
+	int absValue = Math.abs(value);
+	
+	int highByte = ((absValue & 32512) >> 8) + (sign << 7);
+	int lowByte = absValue & 0x000000FF;
+
+	bos.write(highByte);
+	bos.write(lowByte);
     }
 
     @Override
