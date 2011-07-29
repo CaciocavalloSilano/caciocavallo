@@ -2,6 +2,10 @@ function decodeRLEImageData() {
 	var cmdLength = readShort(intArray, 0);
 	var imgDataStartPos = 2 * (cmdLength + 1);
 	
+	if(intArray.length <= (imgDataStartPos + 1)) {
+		return;
+	}
+	
 	var w = readShort(intArray, imgDataStartPos);
 	var h = readShort(intArray, imgDataStartPos + 2);
 
