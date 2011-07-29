@@ -16,10 +16,14 @@ public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
     @Override
     public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {
-	DamageRect packedRegionBox = packer.getBoundingBox();
+	DamageRect packedRegionBox = packer.getBoundingBox(); //Handle case whrer width|height = 0
 
 	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
 	os.write(cmdStreamData);
+	
+	if(packedRegionBox.getWidth() == 0 || packedRegionBox.getHeight() == 0) {
+	    return;
+	}
 
 	// Fast-Path: If there is only a single BlitScreenUpdate, encode
 	// directly from the SurfaceData and avoid an additional blit

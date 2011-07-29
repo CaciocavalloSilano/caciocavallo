@@ -11,17 +11,20 @@ import net.java.openjdk.awt.peer.web.*;
 import com.keypoint.*;
 
 public class BinaryPngStreamEncoder extends BinaryCmdStreamEncoder {
-    
-    @Override
-    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
-	DamageRect packedRegionBox = packer.getBoundingBox();
-	BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
-	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
-	copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
-	
-	byte[] pngData  = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
-	os.write(cmdStreamData);
-	os.write(pngData);
-    }
 
+    @Override
+    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
+	    throws IOException {
+
+	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
+	os.write(cmdStreamData);
+
+	DamageRect packedRegionBox = packer.getBoundingBox();
+	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
+	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
+	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
+	    byte[] pngData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	    os.write(pngData);
+	}
+    }
 }
