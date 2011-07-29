@@ -77,7 +77,7 @@ function readImageCommandStream() {
 		var lowByte = imgDataArray[pixelIndex + 2]; //B
 		var value = (highByte << 8) + lowByte;
 		
-		if(sign == 1) {
+		if(sign > 0) {
 			value *= -1;
 		}		
 	
