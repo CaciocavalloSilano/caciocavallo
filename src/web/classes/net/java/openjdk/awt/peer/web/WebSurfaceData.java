@@ -61,7 +61,7 @@ public class WebSurfaceData extends SurfaceData {
 
     public BufferedImage imgBuffer;
     SurfaceData imgBufferSD;
-    Graphics bufferGraphics;
+    Graphics2D bufferGraphics;
 
     private Rectangle bounds;
     private GraphicsConfiguration configuration;
@@ -85,7 +85,7 @@ public class WebSurfaceData extends SurfaceData {
 	surfaceUpdateList = new ArrayList<ScreenUpdate>();
 	damageTracker = new GridDamageTracker(b.width, b.height);
 	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
-	bufferGraphics = imgBuffer.getGraphics();
+	bufferGraphics = (Graphics2D) imgBuffer.getGraphics();
 	bufferGraphics.setColor(Color.WHITE);
 	bufferGraphics.fillRect(0, 0, b.width, b.height);
 	data = ((DataBufferInt) imgBuffer.getRaster().getDataBuffer()).getData();
@@ -184,7 +184,9 @@ public class WebSurfaceData extends SurfaceData {
 		addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, true));
 		evacuateDamagedAreas();
 
-		doCopyArea(sg2d, x, y, w, h, dx, dy);
+		bufferGraphics.setComposite(sg2d.composite);
+		bufferGraphics.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
+		bufferGraphics.copyArea(x, y, w, h, dx, dy);
 
 		surfaceUpdateList.add(new CopyAreaScreenUpdate(x, y, x + w, y + h, dx, dy, clipRect));
 	    } finally {
@@ -195,49 +197,5 @@ public class WebSurfaceData extends SurfaceData {
 	}
 
 	return false;
-    }
-    
-    private void doCopyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
-	Region clip = sg2d.getCompClip();
-
-	SurfaceType dsttype = imgBufferSD.getSurfaceType();
-	Blit blit = Blit.locate(dsttype, sg2d.imageComp, dsttype);
-
-	if (dy == 0 && dx > 0 && dx < w) {
-	    while (w > 0) {
-		int partW = Math.min(w, dx);
-		w -= partW;
-		int sx = x + w;
-		blit.Blit(imgBufferSD, imgBufferSD, sg2d.composite, clip, sx, y, sx + dx, y + dy, partW, h);
-	    }
-	    return;
-	}
-	if (dy > 0 && dy < h && dx > -w && dx < w) {
-	    while (h > 0) {
-		int partH = Math.min(h, dy);
-		h -= partH;
-		int sy = y + h;
-		blit.Blit(imgBufferSD, imgBufferSD, sg2d.composite, clip, x, sy, x + dx, sy + dy, w, partH);
-	    }
-	    return;
-	}
-	blit.Blit(imgBufferSD, imgBufferSD, sg2d.composite, clip, x, y, x + dx, y + dy, w, h);
-    }
-    
-    
-    private void doCopyAreaSlow(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
-	Region clipRect = sg2d.getCompClip();
-	
-	BufferedImage tmpImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-	Graphics tmpG = tmpImg.getGraphics();
-	tmpG.drawImage(imgBuffer, 0, 0, w, h, x, y, x + w, y + h, null);
-	Graphics g = imgBuffer.getGraphics();
-	if (clipRect != null) {
-	    g.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
-	}
-
-	int xdx = x + dx;
-	int ydy = y + dy;
-	g.drawImage(tmpImg, xdx, ydy, null);
     }
 }
