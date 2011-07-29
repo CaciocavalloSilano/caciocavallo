@@ -23,8 +23,7 @@ public class ImageStreamer extends HttpServlet {
 	emptyImageData = new PngEncoderB(emptyImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
 	HttpSession session = request.getSession(false);
 	String subSessionID = request.getParameter("subsessionid");
 

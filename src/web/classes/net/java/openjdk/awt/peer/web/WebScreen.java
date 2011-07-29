@@ -76,6 +76,8 @@ public class WebScreen implements PlatformScreen {
 	screenLock = new ReentrantLock();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
 	encoder = new BinaryRLEStreamEncoder();
+//	encoder = new BinaryPngStreamEncoder();
+//	encoder = new ImageCmdStreamEncoder();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font, List<Rectangle> clipRects) {
@@ -141,13 +143,9 @@ public class WebScreen implements PlatformScreen {
     public final void unlockScreen() {
 	screenLock.unlock();
     }
-
-    protected void evacuateDamagedAreas() {
-	for (ScreenUpdate update : pendingUpdateList) {
-	    if (update instanceof BlitScreenUpdate) {
-		((BlitScreenUpdate) update).evacuate();
-	    }
-	}
+    
+    protected void addPendingUpdate(ScreenUpdate update) {
+	    pendingUpdateList.add(update);
     }
 
     public boolean pollForScreenUpdates(HttpServletResponse response, int timeout, int pollPause) throws IOException {
@@ -178,9 +176,8 @@ public class WebScreen implements PlatformScreen {
 
 	return updatesWritten;
     }
-
+    
     int cnt = 0;
-
     public boolean writeScreenUpdates(OutputStream os) throws IOException {
 	if (surfaceData == null) {
 	    return false;
@@ -192,7 +189,7 @@ public class WebScreen implements PlatformScreen {
 
 	try {
 	    lockScreen();
-	    List<ScreenUpdate> screenUpdates = surfaceData.getPendingScreenUpates();
+	    List<ScreenUpdate> screenUpdates = surfaceData.fetchPendingSurfaceUpdates();
 	    if (screenUpdates != null) {
 		pendingUpdateList.addAll(screenUpdates);
 	    }
@@ -204,17 +201,18 @@ public class WebScreen implements PlatformScreen {
 		TreeImagePacker packer = new TreeImagePacker();
 		packer.insertScreenUpdateList(pendingUpdateList);
 		for (ScreenUpdate update : pendingUpdateList) {
+		//    System.out.println(update);
 		    update.writeCmdStream(cmdList);
 		}
 
 		try {
-		    // BinaryRLEStreamEncoder rleEncoder = new
-		    // BinaryRLEStreamEncoder();
-		    // FileOutputStream fos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
-		    // rleEncoder.writeEnocdedData(fos, pendingUpdateList,
-		    // packer, cmdList);
-		    // fos.close();
+//		     BinaryRLEStreamEncoder rleEncoder = new
+//		     BinaryRLEStreamEncoder();
+//		     FileOutputStream fos = new
+//		     FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
+//		     rleEncoder.writeEnocdedData(fos, pendingUpdateList,
+//		     packer, cmdList);
+//		     fos.close();
 		    //
 		    // BinaryCmdStreamEncoder binEncoder = new
 		    // BinaryPngStreamEncoder();
@@ -224,29 +222,33 @@ public class WebScreen implements PlatformScreen {
 		    // packer, cmdList);
 		    // dos.close();
 		    //
-		    // Base64CmdStreamEncoder baseCoder = new
-		    // Base64CmdStreamEncoder();
-		    // FileOutputStream dbos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-		    // baseCoder.writeEnocdedData(dbos, pendingUpdateList,
-		    // packer, cmdList);
-		    // dbos.close();
+//		     Base64CmdStreamEncoder baseCoder = new
+//		     Base64CmdStreamEncoder();
+//		     FileOutputStream dbos = new
+//		     FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+//		     baseCoder.writeEnocdedData(dbos, pendingUpdateList,
+//		     packer, cmdList);
+//		     dbos.close();
 		    //
-		    // ImageCmdStreamEncoder imgEncoder = new
-		    // ImageCmdStreamEncoder();
-		    // FileOutputStream bos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + (cnt++) +
-		    // ".png");
-		    // imgEncoder.writeEnocdedData(bos, pendingUpdateList,
-		    // packer, cmdList);
-		    // bos.close();
-		    //
+//		     ImageCmdStreamEncoder imgEncoder = new
+//		     ImageCmdStreamEncoder();
+//		     FileOutputStream bos = new
+//		     FileOutputStream("/home/ce/imgFiles/" + cnt+
+//		     ".png");
+//		     imgEncoder.writeEnocdedData(bos, pendingUpdateList,
+//		     packer, cmdList);
+//		     bos.close();
+//		    //
+		    cnt++;
+//		    
+//		    Thread.sleep(50);
 		    if (false)
 			throw new IOException();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 		    ex.printStackTrace();
 		}
 
+		System.out.println("cmdlist: "+cmdList.size());
 		encoder.writeEnocdedData(os, pendingUpdateList, packer, cmdList);
 		// Write updates here
 

@@ -1,6 +1,8 @@
 package net.java.openjdk.cacio.server;
 
 import net.java.openjdk.cacio.servlet.*;
+import net.java.openjdk.cacio.servlet.benchmark.*;
+
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.servlet.*;
@@ -20,6 +22,8 @@ public class CacioServer {
         handler.setResourceBase("bin");
         handler.setServer(server);
  
+//        context.addServlet(new ServletHolder(new ImgBenchServlet()), "/ImageStreamer");
+        
         context.addServlet(new ServletHolder(new AppStarter()),"/AppStarter");
         context.addServlet(new ServletHolder(new ImageStreamer()),"/ImageStreamer");
         context.addServlet(new ServletHolder(new EventReceiver()),"/EventReceiver");
