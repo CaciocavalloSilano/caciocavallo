@@ -133,9 +133,7 @@ class PackNode {
 		rightNode.setRect(new DamageRect(rect.getX1(), rect.getY1() + newRect.getHeight(), rect.getX2(), rect.getY2()));
 	    }
 
-	    // Insert into first child we created
 	    return leftNode.insert(newRect);
-	    // return root.insert(newRect, root);
 	}
     }
 
