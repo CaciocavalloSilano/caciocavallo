@@ -34,9 +34,12 @@ function init() {
 		startRequestFunc = StartXHRRequest;
 		readCmdStreamFunc = readXHRCommandStream;
 	}*/
-	initXHR1Rle();
+	//initXHR1Rle();
 	//initXHR2Png();
+	//initImgTransport();
 	
+	initXHR2Rle();
+    
     startRequestFunc(subSessionID);
 	registerEventHandlers();
 }
@@ -51,27 +54,58 @@ function interpretCommandBuffer() {
 	var cmdBuffer = result.shortBuffer;
 	cmdStreamHeight = result.cmdStreamHeight;
 	
+		  var cnt = 0;
+		  
 	while(cmdPos < cmdBuffer.length) {
 	   var cmd = cmdBuffer[cmdPos++];
 	  
-	   //Blit command
-	   if(cmd == 0) {
-		   var dstX1 = cmdBuffer[cmdPos++];
-		   var dstY1 = cmdBuffer[cmdPos++];
-		   var dstX2 = cmdBuffer[cmdPos++];
-		   var dstY2 = cmdBuffer[cmdPos++];
-		   var srcX1 = cmdBuffer[cmdPos++];
-		   var srcY1 = cmdBuffer[cmdPos++] + cmdStreamHeight;
-		   var width = dstX2 - dstX1;
-		   var height = dstY2 - dstY1;
-
-//		   alert(Object.prototype.toString.call(dstX1));
-		   if(cmdStreamHeight > 1) {
-			//alert("Issuing drawImage: srcX:"+ srcX1 +" srcy:" + srcY1 + " width:" + width+ " height:" + height + " dstx1:" + dstX1+ " dsty2:" + dstY2+ " imgW:" + img.width+ " imgH:" + img.height);
+	  switch(cmd) {		  
+		case 0:  
+		   {
+			   if(cnt>0) {
+				   var ab=0;}
+			   var dstX1 = cmdBuffer[cmdPos++];
+			   var dstY1 = cmdBuffer[cmdPos++];
+			   var dstX2 = cmdBuffer[cmdPos++];
+			   var dstY2 = cmdBuffer[cmdPos++];
+			   var srcX1 = cmdBuffer[cmdPos++];
+			   var srcY1 = cmdBuffer[cmdPos++] + cmdStreamHeight;
+			   var width = dstX2 - dstX1;
+			   var height = dstY2 - dstY1;
+			   ctx.drawImage(img, srcX1, srcY1, width, height, dstX1, dstY1, width, height);
 		   }
+		   break;
 		   
-		   ctx.drawImage(img, srcX1, srcY1, width, height, dstX1, dstY1, width, height)
-	   }	
+		case 1:
+			{
+			   if(cnt>0) {
+				   var ab=0;}
+			   var srcX1 = cmdBuffer[cmdPos++];
+			   var srcY1 = cmdBuffer[cmdPos++];
+			   var srcX2 = cmdBuffer[cmdPos++];
+			   var srcY2 = cmdBuffer[cmdPos++];
+			   var dstX1 = cmdBuffer[cmdPos++] + srcX1;
+			   var dstY1 = cmdBuffer[cmdPos++] + srcY1;
+			   var width = srcX2 - srcX1;
+			   var height = srcY2 - srcY1;
+			   var clipX = cmdBuffer[cmdPos++];
+			   var clipY = cmdBuffer[cmdPos++];
+			   var clipWidth = cmdBuffer[cmdPos++];
+			   var clipHeight = cmdBuffer[cmdPos++];
+			   
+			   ctx.save();
+			   ctx.beginPath();
+			   ctx.rect(clipX, clipY, clipWidth, clipHeight);
+			   ctx.clip(); 
+			   
+			   ctx.drawImage(canvas, srcX1, srcY1, width, height, dstX1, dstY1, width, height);
+			   	  		  cnt++;
+			   	  		  
+			   ctx.restore();
+		   }
+		  break;
+	  }
+	  
 	}
  
 	startRequestFunc(subSessionID);
