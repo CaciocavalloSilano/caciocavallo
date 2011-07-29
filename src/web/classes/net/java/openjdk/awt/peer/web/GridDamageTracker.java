@@ -42,7 +42,7 @@ public class GridDamageTracker {
 	rectList.add(rect);
     }
     
-    protected List<ScreenUpdate> persistDamagedAreas(BufferedImage imgBuffer) {
+    protected List<ScreenUpdate> persistDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
 	    DamageRect unionRect = getUnionRectangle();
 	    if (unionRect != null) {
 		ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
@@ -50,7 +50,7 @@ public class GridDamageTracker {
 		List<DamageRect> regionList = createDamagedRegionList(5);
 		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
 		    
-		    if (!isPackingEfficient(regionList, unionRect)) {
+		    if (!isPackingEfficient(regionList, unionRect) && !forcePacking) {
 			screenUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
 				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
 		    } else {
