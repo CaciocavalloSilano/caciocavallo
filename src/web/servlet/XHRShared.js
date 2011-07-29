@@ -6,11 +6,8 @@ function readShort(array, pos) {
 	var highByte = array[pos];
 	var lowByte = array[pos + 1];
 	
-	var sign = highByte & 128;
-	highByte = highByte & 127;
-	
-	var value = ((highByte) << 8) + lowByte;
-	if(sign != 0) {
+	var value = ((highByte & 127) << 8) + lowByte;
+	if((highByte & 128) != 0) {
 		value *= -1;
 	}
 	
