@@ -25,23 +25,21 @@ function StartXHR1RleRequest(subSessionID) {
             xmlhttpreq.send();
         }
 
+		var data = new Array();
         if (xmlhttpreq.readyState == 4) {
             if (xmlhttpreq.status == 200) {
 				
                 if (useMSXHR()) {
-                    intArray = new VBArray(request.responseBody).toArray();
-                    for (var i = 0; i < intArray.length; i++) {
-						intArray[i] = String.fromCharCode(intArray[i]);
-					}
+                    data = new VBArray(xmlhttpreq.responseBody).toArray();
                     xmlhttpreq.abort();
                 } else {
-					intArray =  intArray ? intArray : new Array();
 					var txt = xmlhttpreq.responseText;
 					for (var i = 0; i < txt.length; i++) {
-						intArray[i] = txt.charCodeAt(i) & 0xff;
+						data[i] = txt.charCodeAt(i) & 0xff;
 					}	
                 }
                 
+               intArray = data;
                responseHandlerFunc();
             } else {
                 // Report error
