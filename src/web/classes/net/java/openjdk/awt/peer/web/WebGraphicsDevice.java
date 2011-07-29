@@ -41,7 +41,7 @@ class WebGraphicsDevice extends GraphicsDevice {
 
     @Override
     public String getIDstring() {
-	return "SDL Cacio Device";
+	return "Web Cacio Device";
     }
 
     @Override
@@ -54,8 +54,8 @@ class WebGraphicsDevice extends GraphicsDevice {
 	WebSessionState state = WebSessionManager.getInstance().getCurrentStateAWT();
 
 	if (state == null) {
-	    //System.err.println("Crap, how can that be"); //Ok its the strike cache disposer, which is not in our threadgroup
-	    //Thread.dumpStack();
+	    //Create a dummy WebGraphicsConfiguration for 
+	    //the strike cache disposer, which is not in our threadgroup.
 	    return new WebGraphicsConfiguration();
 	}
 
