@@ -201,7 +201,7 @@ public class WebSurfaceData extends SurfaceData {
 	Region clip = sg2d.getCompClip();
 
 	SurfaceType dsttype = imgBufferSD.getSurfaceType();
-	Blit blit = Blit.locate(dsttype, CompositeType.SrcNoEa, dsttype);
+	Blit blit = Blit.locate(dsttype, sg2d.imageComp, dsttype);
 
 	if (dy == 0 && dx > 0 && dx < w) {
 	    while (w > 0) {
