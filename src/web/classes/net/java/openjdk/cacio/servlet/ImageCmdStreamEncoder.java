@@ -30,8 +30,8 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	    int xPos = pixelCnt % bImg.getWidth();
 	    
 	    int intValue = cmdList.get(i);
-	    int r = intValue < 0 ? 1 : 0; //sign
-	    int gb = intValue & 0x0000FFFF;
+	    int r = intValue < 0 ? 1<<16 : 0; //sign
+	    int gb = Math.abs(intValue) & 0x0000FFFF;
 	    
 	    int rgb = r | gb;
 	    bImg.setRGB(xPos, yPos, rgb);
@@ -40,7 +40,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
     
     public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
-	int regionWidth = packedRegionBox.getWidth();
+	int regionWidth = packedRegionBox.getWidth() != 0 ? packedRegionBox.getWidth() : 16;
 	int regionHeight = packedRegionBox.getHeight();
 	int cmdAreaHeight = (int) Math.ceil(((double) cmdList.size() + 1) / (regionWidth));
 	
