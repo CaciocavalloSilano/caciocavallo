@@ -37,7 +37,6 @@ function init() {
 	//initXHR1Rle();
 	//initXHR2Png();
 	//initImgTransport();
-	
 	initXHR2Rle();
     
     startRequestFunc(subSessionID);
@@ -53,8 +52,6 @@ function interpretCommandBuffer() {
 	var result = readCmdStreamFunc();
 	var cmdBuffer = result.shortBuffer;
 	cmdStreamHeight = result.cmdStreamHeight;
-	
-		  var cnt = 0;
 		  
 	while(cmdPos < cmdBuffer.length) {
 	   var cmd = cmdBuffer[cmdPos++];
@@ -62,8 +59,6 @@ function interpretCommandBuffer() {
 	  switch(cmd) {		  
 		case 0:  
 		   {
-			   if(cnt>0) {
-				   var ab=0;}
 			   var dstX1 = cmdBuffer[cmdPos++];
 			   var dstY1 = cmdBuffer[cmdPos++];
 			   var dstX2 = cmdBuffer[cmdPos++];
@@ -78,8 +73,6 @@ function interpretCommandBuffer() {
 		   
 		case 1:
 			{
-			   if(cnt>0) {
-				   var ab=0;}
 			   var srcX1 = cmdBuffer[cmdPos++];
 			   var srcY1 = cmdBuffer[cmdPos++];
 			   var srcX2 = cmdBuffer[cmdPos++];
