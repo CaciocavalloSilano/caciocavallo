@@ -1,16 +1,6 @@
 package net.java.openjdk.awt.peer.web;
 
-import java.awt.AWTException;
-import java.awt.Desktop;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.HeadlessException;
-import java.awt.PrintJob;
-import java.awt.Robot;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.InvalidDnDOperationException;
@@ -70,12 +60,12 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public SystemTrayPeer createSystemTray(SystemTray target) {
-        throw new UnsupportedOperationException("Not supported yet.");
+	return new WebSystemTrayPeer();
     }
 
     @Override
     public boolean isTraySupported() {
-        throw new UnsupportedOperationException("Not supported yet.");
+	return false;
     }
 
     @Override
@@ -121,7 +111,6 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public boolean isDesktopSupported() {
-
         return false;
     }
 
