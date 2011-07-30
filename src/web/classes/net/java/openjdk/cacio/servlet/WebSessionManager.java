@@ -52,4 +52,13 @@ public class WebSessionManager {
 	// }
     }
     
+    public void disposeSession(HttpSession session) {
+	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
+	if(subSessionList != null) {
+	    for(WebSessionState state : subSessionList) {
+		state.dispose();
+	    }
+	    subSessionList.clear();
+	}
+    }
 }
