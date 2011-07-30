@@ -1,11 +1,16 @@
 package net.java.openjdk.cacio.server;
 
+import java.util.*;
+
+import javax.servlet.http.*;
+
 import net.java.openjdk.cacio.servlet.*;
 import net.java.openjdk.cacio.servlet.benchmark.*;
 
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.servlet.*;
+import org.eclipse.jetty.util.component.*;
 
 public class CacioServer {
 
@@ -17,6 +22,8 @@ public class CacioServer {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.setResourceBase("bin/");
+        context.getSessionHandler().getSessionManager().setMaxInactiveInterval(60);
+        context.getSessionHandler().addEventListener(new CacioSessionListener());
         
         ResourceHandler handler = new ResourceHandler();
         handler.setResourceBase("bin");
@@ -32,6 +39,7 @@ public class CacioServer {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { handler, context });
         server.setHandler(handlers);
+        
         
         server.start();
         server.join();
