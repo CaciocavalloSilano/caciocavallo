@@ -22,6 +22,7 @@ public class AppContextCreator {
 		sessionState = state;
 		try {
 		    state.lockSession();
+		    state.setAppContext(appContext);
 
 		    ClassLoader loader = getClass().getClassLoader();
 		    Class cls = loader.loadClass(className);
