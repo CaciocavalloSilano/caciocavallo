@@ -2,12 +2,16 @@ package net.java.openjdk.awt.peer.web;
 
 import java.util.concurrent.locks.*;
 
+import sun.awt.*;
+
 public class WebSessionState {
     ReentrantLock sessionLock = new ReentrantLock();
     WebMouseStateTracker mouseTracker;
     WebKeyboardStateTracker keyboardTracker;
     WebGraphicsConfiguration config;
     int subSessionID;
+    
+    AppContext appContext;
 
     public WebSessionState(int subSessionID) {
 	this.subSessionID = subSessionID;
@@ -41,5 +45,17 @@ public class WebSessionState {
 
     public int getSubSessionID() {
         return subSessionID;
+    }
+
+    public AppContext getAppContext() {
+        return appContext;
+    }
+
+    public void setAppContext(AppContext appContext) {
+        this.appContext = appContext;
+    }
+    
+    public void dispose()  {
+	appContext.dispose();
     }
 }
