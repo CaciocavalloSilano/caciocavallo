@@ -1,3 +1,12 @@
+function isXHR2Supported() {
+ try {
+	 new ArrayBuffer(1);
+	 return true;
+  }catch(e) {
+	return false;
+  }	
+}
+
 function initXHR2Shared() {
 	startRequestFunc = StartXHR2Request;
 	readCmdStreamFunc = readBinCommandStream;
