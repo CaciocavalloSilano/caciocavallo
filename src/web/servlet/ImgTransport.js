@@ -15,6 +15,12 @@ function StartImageRequest(subSessionID) {
 }
 
 function isImageDataSupported() {
+	//Excluse WebKit for now, as it will trigger a memory leak.
+	//TODO: should be version dependent, as its fixed in Chrome 14
+	if(navigator.userAgent.indexOf('AppleWebKit') > -1) {
+	  return false;	
+	}
+	
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('width', 256);
 	canvas.setAttribute('height', 1);
