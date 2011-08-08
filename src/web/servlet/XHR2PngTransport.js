@@ -1,7 +1,3 @@
-function isXHR2Supported() {	
-	return false;
-}
-
 function initXHR2Png() {
 	initXHR2Shared();
 	responseHandlerFunc = handleXHR2PngResponse;
