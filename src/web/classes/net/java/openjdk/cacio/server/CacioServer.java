@@ -22,7 +22,7 @@ public class CacioServer {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.setResourceBase("bin/");
-        context.getSessionHandler().getSessionManager().setMaxInactiveInterval(60);
+        context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30);
         context.getSessionHandler().addEventListener(new CacioSessionListener());
         
         ResourceHandler handler = new ResourceHandler();

@@ -52,8 +52,8 @@ import sun.java2d.SunGraphics2D;
  */
 public class WebScreen implements PlatformScreen {
 
-    private static final int width;
-    private static final int height;
+    private  int width;
+    private  int height;
 
     WebGraphicsConfiguration config;
 
@@ -61,18 +61,17 @@ public class WebScreen implements PlatformScreen {
     ArrayList<ScreenUpdate> pendingUpdateList;
     CmdStreamEncoder encoder;
 
-    static {
-	Dimension dim = FullScreenWindowFactory.getScreenDimension();
-	width = dim.width;
-	height = dim.height;
-    }
-
     private EventData eventData;
     private WebSurfaceData surfaceData;
 
     protected WebScreen(WebGraphicsConfiguration config) {
 	this.config = config;
 
+	//TODO: Replace with bounds determined by initial size-detection page and stored in AppContext
+	Dimension dim = FullScreenWindowFactory.getScreenDimension();
+	width = dim.width;
+	height = dim.height;
+	
 	screenLock = new ReentrantLock();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
 	encoder = new BinaryRLEStreamEncoder();
@@ -95,7 +94,6 @@ public class WebScreen implements PlatformScreen {
     }
 
     public ColorModel getColorModel() {
-
 	return getGraphicsConfiguration().getColorModel();
     }
 
@@ -134,6 +132,22 @@ public class WebScreen implements PlatformScreen {
 
     public WebGraphicsConfiguration getConfig() {
 	return config;
+    }
+    
+    
+    public void resizeScreen(int width, int height) {
+	try {
+	    SunToolkit.awtLock();
+	    lockScreen();
+	    this.width = width;
+	    this.height = height;
+	    
+	    surfaceData = new WebSurfaceData(this, WebSurfaceData.typeDefault, getColorModel(), getBounds(), getGraphicsConfiguration(), this);
+	    ((WebWindowFactory) ((WebToolkit) WebToolkit.getDefaultToolkit()).getPlatformWindowFactory()).repaintScreen(this);
+	}finally {
+	    SunToolkit.awtUnlock();
+	    unlockScreen();
+	}
     }
 
     public final void lockScreen() {
@@ -249,7 +263,7 @@ public class WebScreen implements PlatformScreen {
 		}
 
 		System.out.println("cmdlist: "+cmdList.size());
-		encoder.writeEnocdedData(os, pendingUpdateList, packer, cmdList);
+		encoder.writeEncodedData(os, pendingUpdateList, packer, cmdList);
 		// Write updates here
 
 		pendingUpdateList.clear();

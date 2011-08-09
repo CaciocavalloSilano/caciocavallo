@@ -82,17 +82,18 @@ public class WebSurfaceData extends SurfaceData {
 	configuration = gc;
 	destination = dest;
 
+	int w = b.width, h = b.height;
 	surfaceUpdateList = new ArrayList<ScreenUpdate>();
-	damageTracker = new GridDamageTracker(b.width, b.height);
-	imgBuffer = new BufferedImage(b.width, b.height, BufferedImage.TYPE_INT_RGB);
+	damageTracker = new GridDamageTracker(w, h);
+	imgBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 	bufferGraphics = (Graphics2D) imgBuffer.getGraphics();
 	bufferGraphics.setColor(Color.WHITE);
-	bufferGraphics.fillRect(0, 0, b.width, b.height);
+	bufferGraphics.fillRect(0, 0, w, h);
 	data = ((DataBufferInt) imgBuffer.getRaster().getDataBuffer()).getData();
 
         imgBufferSD = SurfaceManager.getManager(imgBuffer).getPrimarySurfaceData();
 	
-	initOps(data, b.width, b.height, 0);
+	initOps(data, w, h, 0);
     }
 
     @Override
@@ -133,8 +134,11 @@ public class WebSurfaceData extends SurfaceData {
     }
 
     public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
+	x2 = Math.min(bounds.width, x2);
+	y2 = Math.min(bounds.height, y2);
 	DamageRect rect = new DamageRect(x1, y1, x2, y2);
 	damageTracker.trackDamageRect(rect);
+	
 	unlockSurface();
     }
 

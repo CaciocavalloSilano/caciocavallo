@@ -12,20 +12,24 @@ public class WebWindowFactory extends FullScreenWindowFactory {
 
     @Override
     public CacioEventPump<?> createEventPump() {
-        return new WebDummyEventPump();
+	return new WebDummyEventPump();
+    }
+
+    public void repaintScreen(PlatformScreen screen) {
+	ScreenManagedWindowContainer smwc = getScreenManagedWindowContainer(screen);
+	smwc.repaint(0, 0, screen.getBounds().width, screen.getBounds().height);
     }
 
     private static final class SessionScreenSelector implements PlatformScreenSelector {
-        @Override
-        public PlatformScreen getPlatformScreen(GraphicsConfiguration config) {            
-            return ((WebGraphicsConfiguration) config).getScreen();
-        }
+	@Override
+	public PlatformScreen getPlatformScreen(GraphicsConfiguration config) {
+	    return ((WebGraphicsConfiguration) config).getScreen();
+	}
     }
 }
 
-
 class WebDummyEventPump extends CacioEventPump<EventData> {
-    //Do not start an event-pump thread at all
+    // Do not start an event-pump thread at all
     protected void start() {
     }
 

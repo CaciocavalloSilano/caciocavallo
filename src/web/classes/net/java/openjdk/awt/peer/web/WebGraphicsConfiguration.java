@@ -35,7 +35,7 @@ import java.awt.image.DirectColorModel;
 import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
 
 /**
- * SDL based implementation of the GraphicConfiguration.
+ * Web based implementation of the GraphicConfiguration.
  *
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
@@ -95,12 +95,10 @@ public class WebGraphicsConfiguration extends GraphicsConfiguration {
 
     @Override
     public Rectangle getBounds() {
-        /* TODO: implement properly */
-        return new Rectangle(FullScreenWindowFactory.getScreenDimension());
+	return screen.getBounds();
     }
 
     public WebScreen getScreen() {
         return screen;
     }
-
 }
