@@ -59,6 +59,8 @@ public class EventReceiver extends HttpServlet {
 		    processMouseEvent(state, eventDataList);
 		} else if (command.equals("MM")) {
 		    processMouseMotionEvent(state, eventDataList);
+		} else if(command.equals("MW")) {
+		    processMouseWheelEvent(state, eventDataList);
 		} else if (command.equals("K")) {
 		    processKeyEvent(state, eventDataList);
 		}
@@ -83,6 +85,14 @@ public class EventReceiver extends HttpServlet {
 	state.getMouseTracker().trackMouseMotionEvent(x, y);
     }
 
+    protected void processMouseWheelEvent(WebSessionState state, LinkedList<String> params) {
+	boolean up = Integer.parseInt(params.removeFirst()) > 0;
+	int x = Integer.parseInt(params.removeFirst());
+	int y = Integer.parseInt(params.removeFirst());
+
+	state.getMouseTracker().trackMouseWheelEvent(up, x, y);
+    }
+    
     protected void processMouseEvent(WebSessionState state, LinkedList<String> params) {
 	int x = Integer.parseInt(params.removeFirst());
 	int y = Integer.parseInt(params.removeFirst());
