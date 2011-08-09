@@ -38,7 +38,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	}
     }
     
-    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
+    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox();
 	int regionWidth = packedRegionBox.getWidth() != 0 ? packedRegionBox.getWidth() : 16;
 	int regionHeight = packedRegionBox.getHeight();
