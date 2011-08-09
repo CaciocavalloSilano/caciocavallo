@@ -15,6 +15,16 @@ public class WebMouseStateTracker {
     public WebMouseStateTracker(WebScreen screen) {
 	this.screen = screen;
     }
+    
+    public void trackMouseWheelEvent(boolean up, int x, int y) {
+	EventData data = new EventData();
+	data.setX(x);
+	data.setY(y);
+	data.setId(MouseEvent.MOUSE_WHEEL);
+	data.setButton(up ? 4 : 5);
+	
+	screen.addEvent(data);
+    }
 
     public void trackMouseMotionEvent(int x, int y) {
 	EventData data = new EventData();

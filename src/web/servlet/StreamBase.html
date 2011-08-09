@@ -24,8 +24,9 @@ var startRequestFunc;
 var subSessionID = SSID;
 
 function init() {
-	
+	 
 	//alert(isXHR2Supported());
+	//alert(isImageDataSupported());
 	
 	/*if(false && isImageDataSupported()) {
 		startRequestFunc = StartImageRequest;
@@ -154,26 +155,6 @@ function onMouseUp(e) {
     onMouseButton(e, 0);
 }
 
-function onMouseWheel(e) {
-    var evt, pos, bmask, wheelData;
-    evt = (e ? e : window.event);
-    pos = Util.getEventPosition(e, canvas, 1);
-    wheelData = evt.detail ? evt.detail * -1 : evt.wheelDelta / 40;
-    if (wheelData > 0) {
-        bmask = 1 << 3;
-    } else {
-        bmask = 1 << 4;
-    }
-
-    /*if (c_mouseButton) {
-        c_mouseButton(pos.x, pos.y, 1, bmask);
-        c_mouseButton(pos.x, pos.y, 0, bmask);
-    }*/
-    
-    pStopEvent(e);
-    return false;
-}
-
 function onMouseMove(e) {
     var evt, pos;
     evt = (e ? e : window.event);
@@ -218,6 +199,18 @@ function onKeyPress(e) {
     return false;
 }
 
+function onMouseWheel(e) {
+    var pos = pGetEventPosition(e, canvas, 1);
+    var wheelDelta = (e.wheelDelta) ? e.wheelDelta : e.detail*-1;
+    if(window.opera) {
+	  wheelDelta = wheelDelta*-1;
+	}
+    
+    eventBuffer += 'MW_'+wheelDelta+'_'+pos.x+'_'+pos.y+'_';
+    
+    pStopEvent(e);
+	return false;
+}
 
 function registerEventHandlers() {
 	  canvas = document.getElementById('blackboard');
@@ -229,6 +222,11 @@ function registerEventHandlers() {
     pAddEvent(canvas, 'mousemove', onMouseMove);
     /*Util.addEvent(c, (Util.Engine.gecko) ? 'DOMMouseScroll' : 'mousewheel',
             onMouseWheel);*/
+            
+    pAddEvent(document, "mousewheel", onMouseWheel);//Interner Explorer
+    pAddEvent(window, "DOMMouseScroll", onMouseWheel);//FireFox
+    pAddEvent(window, "mousewheel", onMouseWheel);//Safari and Opera
+
     pRemoveEvent(document, 'click', onMouseDisable);
     pRemoveEvent(document.body, 'contextmenu', onMouseDisable);
 }
