@@ -171,12 +171,10 @@ public class WebScreen implements PlatformScreen {
 	OutputStream os = response.getOutputStream();
 
 	try {
-	    Thread.sleep(10);
-
 	    while (pollCnt >= 0 && !updatesWritten) {
 		updatesWritten = writeScreenUpdates(os);
 		if (!updatesWritten) {
-		    pollCnt++;
+		    pollCnt--;
 		    Thread.sleep(pollPause);
 		}
 	    }
