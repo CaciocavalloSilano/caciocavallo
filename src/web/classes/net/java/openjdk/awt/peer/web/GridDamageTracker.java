@@ -30,8 +30,8 @@ public class GridDamageTracker {
     protected void trackDamageRect(DamageRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
-	int x2Cell = rect.getX2() / GRID_SIZE;
-	int y2Cell = rect.getY2() / GRID_SIZE;
+	int x2Cell = Math.min(rect.getX2() / GRID_SIZE, grid[0].length - 1);
+	int y2Cell = Math.min(rect.getY2() / GRID_SIZE, grid.length - 1);
 
 	for (int y = y1Cell; y <= y2Cell; y++) {
 	    for (int x = x1Cell; x <= x2Cell; x++) {
