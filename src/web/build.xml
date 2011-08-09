@@ -63,7 +63,7 @@
     <target name="create-headers">
         <mkdir dir="${dir.build.web.include}" />
 	<!--TODO: refactor static classpath setting -->
-	<javah classpath="${dir.build.shared.classes}:${dir.build.web.classes}"
+	<javah classpath="${dir.build.shared.classes}:${dir.build.web.classes}:${web.servlet-api}"
                destdir="${dir.build.web.include}"
                class="net.java.openjdk.awt.peer.web.WebGraphicsEnvironment,
                net.java.openjdk.awt.peer.web.WebScreen,
