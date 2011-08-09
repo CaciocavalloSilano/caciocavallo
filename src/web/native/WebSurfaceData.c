@@ -98,8 +98,6 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initOps
 static void
 WebDispose(JNIEnv *env, SurfaceDataOps *ops) {
 	WebSurfaceDataOps *wops = (WebSurfaceDataOps*) ops;
-    
-	(*env)->DeleteGlobalRef(env, webSurfaceCls);
 	
 	if(wops->imgBuffer &&  !(*env)->IsSameObject(env, wops->imgBuffer, NULL)) {
 		(*env)->DeleteGlobalRef(env, wops->imgBuffer);
