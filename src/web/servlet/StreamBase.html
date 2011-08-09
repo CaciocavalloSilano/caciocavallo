@@ -13,7 +13,6 @@
 <script src="ResourceLoader?res=RLEImageDecoder.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=XHR1RLETransport.js" type="text/javascript"></script>
 <script type='text/javascript'>
-
 var img;
 var cmdStreamHeight;
 
@@ -24,7 +23,7 @@ var startRequestFunc;
 var subSessionID = SSID;
 
 function init() {
-	 
+	 fitCanvasToWindow();
 	//alert(isXHR2Supported());
 	//alert(isImageDataSupported());
 	
@@ -42,6 +41,33 @@ function init() {
     
     startRequestFunc(subSessionID);
 	registerEventHandlers();
+}
+
+function fitCanvasToWindow() {
+	var canvas = document.getElementById('blackboard');
+	var tmpCanvas = document.createElement('canvas');
+	tmpCanvas.setAttribute('width', canvas.width);
+	tmpCanvas.setAttribute('height', canvas.height);
+	var tmpCtx = tmpCanvas.getContext('2d');
+	tmpCtx.drawImage(canvas, 0, 0);
+
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	var ctx = canvas.getContext('2d');
+	ctx.drawImage(tmpCanvas, 0, 0);
+
+}
+
+var lastWidth = -1;
+var lastHeight = -1;
+function resizeDelayed() {	
+	 if(lastWidth != window.innerWidth || lastHeight != window.innerHeight) {
+		 fitCanvasToWindow();
+		 lastWidth = window.innerWidth;
+		 lastHeight = window.innerHeight;
+		 
+		 eventBuffer += 'S_'+lastWidth+'_'+lastHeight+'_';
+	 }
 }
 
  
@@ -212,28 +238,41 @@ function onMouseWheel(e) {
 	return false;
 }
 
+function onMouseDisable(e) {
+	pStopEvent(e);
+	return false;
+}
+
 function registerEventHandlers() {
-	  canvas = document.getElementById('blackboard');
+    canvas = document.getElementById('blackboard');
+    
+    pAddEvent(window, "resize", function() { window.setTimeout("resizeDelayed()", 500)});
+
     pAddEvent(document, 'keydown', onKeyDown);
     pAddEvent(document, 'keyup', onKeyUp);
     pAddEvent(document, 'keypress', onKeyPress);
     pAddEvent(canvas, 'mousedown', onMouseDown);
     pAddEvent(canvas, 'mouseup', onMouseUp);
     pAddEvent(canvas, 'mousemove', onMouseMove);
-    /*Util.addEvent(c, (Util.Engine.gecko) ? 'DOMMouseScroll' : 'mousewheel',
-            onMouseWheel);*/
             
-    pAddEvent(document, "mousewheel", onMouseWheel);//Interner Explorer
-    pAddEvent(window, "DOMMouseScroll", onMouseWheel);//FireFox
-    pAddEvent(window, "mousewheel", onMouseWheel);//Safari and Opera
+    pAddEvent(window, "DOMMouseScroll", onMouseWheel);//Gecko
+    pAddEvent(window, "mousewheel", onMouseWheel); //Safari, Opera
+    pAddEvent(document, "mousewheel", onMouseWheel); //IE
 
-    pRemoveEvent(document, 'click', onMouseDisable);
-    pRemoveEvent(document.body, 'contextmenu', onMouseDisable);
+    pAddEvent(document, 'click', onMouseDisable);
+    pAddEvent(document.body, 'contextmenu', onMouseDisable);
+    pAddEvent(canvas, 'click', onMouseDisable);
+    pAddEvent(canvas, 'contextmenu', onMouseDisable);
 }
-
 </script>
+
+<style>
+	html, body { width: 100%; height: 100%; margin: 0px;}
+    canvas {position:absolute; left:0px; top:0px; margin: 0px;}
+</style>
+
 </head>
-<body onload='init();'>
-<canvas id='blackboard' width='1024px' height='768px'></canvas>
+<body onload="init();">
+  <canvas id="blackboard"/>
 </body>
 </html>

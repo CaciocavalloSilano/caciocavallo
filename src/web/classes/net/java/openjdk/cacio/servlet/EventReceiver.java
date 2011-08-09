@@ -63,9 +63,18 @@ public class EventReceiver extends HttpServlet {
 		    processMouseWheelEvent(state, eventDataList);
 		} else if (command.equals("K")) {
 		    processKeyEvent(state, eventDataList);
+		} else if(command.equals("S")) {
+		    processResizeEvent(state, eventDataList);
 		}
 	    }
 	}
+    }
+    
+    protected void processResizeEvent(WebSessionState state, LinkedList<String> params) {
+	int w = Integer.parseInt(params.removeFirst());
+	int h = Integer.parseInt(params.removeFirst());
+	
+	state.getGraphicsConfiguration().getScreen().resizeScreen(w, h);
     }
 
     protected void processKeyEvent(WebSessionState state, LinkedList<String> params) {
