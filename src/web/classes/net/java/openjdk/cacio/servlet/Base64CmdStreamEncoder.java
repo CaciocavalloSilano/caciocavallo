@@ -33,7 +33,7 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
     }
 
     @Override
-    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
+    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {
 	String cmdString = encodeImageCmdStream(cmdList);
 	os.write(cmdString.getBytes());

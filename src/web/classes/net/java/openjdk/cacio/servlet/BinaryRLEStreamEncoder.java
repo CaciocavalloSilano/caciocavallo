@@ -14,7 +14,7 @@ public class BinaryRLEStreamEncoder extends BinaryCmdStreamEncoder {
     }
 
     @Override
-    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
+    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {
 	DamageRect packedRegionBox = packer.getBoundingBox(); //Handle case whrer width|height = 0
 

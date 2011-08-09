@@ -13,7 +13,7 @@ import com.keypoint.*;
 public class BinaryPngStreamEncoder extends BinaryCmdStreamEncoder {
 
     @Override
-    public void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
+    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {
 
 	byte[] cmdStreamData = encodeImageCmdStream(cmdList);

@@ -35,7 +35,7 @@ public abstract class CmdStreamEncoder {
 //	System.out.println("Packed "+cnt+" areas into image");
     }
     
-    public abstract void writeEnocdedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData) throws IOException;
+    public abstract void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData) throws IOException;
     
     public abstract void writeEmptyData(OutputStream os) throws IOException;
 
