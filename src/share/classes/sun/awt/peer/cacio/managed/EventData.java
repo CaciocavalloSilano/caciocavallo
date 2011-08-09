@@ -28,10 +28,7 @@ package sun.awt.peer.cacio.managed;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.PaintEvent;
+import java.awt.event.*;
 
 public class EventData {
 
@@ -325,6 +322,16 @@ public class EventData {
             return new MouseEvent((Component) source, id, time, modifiers,
                                   x, y, clickCount, false,
                                   getButton(modifierChange));
+            
+        case MouseEvent.MOUSE_WHEEL:
+            modifierChange = (lastModifierState ^ modifiers);
+            lastModifierState = modifiers;
+            return new MouseWheelEvent((Component) source,MouseEvent.MOUSE_WHEEL, time,
+                    modifiers,
+                    x, y,
+                    1, false, MouseWheelEvent.WHEEL_UNIT_SCROLL,
+                    3, button==4 ?  -1 : 1);
+            
         case KeyEvent.KEY_PRESSED:
         case KeyEvent.KEY_TYPED:
         case KeyEvent.KEY_RELEASED:
