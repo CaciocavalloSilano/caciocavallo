@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_net_java_openjdk_awt_peer_web_WebSurfaceData_initOps
     operations->imgBuffer = (*env)->NewGlobalRef(env, imgBuffer);
     operations->width = width;
     operations->height = height;
-    operations->stride = width*4; //TODO stride und offset setzen!!
+    operations->stride = stride;
 }
 
 static void
