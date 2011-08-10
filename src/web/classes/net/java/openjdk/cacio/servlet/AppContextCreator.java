@@ -9,30 +9,28 @@ import sun.awt.*;
 import net.java.openjdk.awt.peer.web.*;
 
 public class AppContextCreator {
-    private WebSessionState sessionState;
+
     
-    protected WebSessionState startAppInNewAppContext(final HttpSession session, final String className, final String[] parameters) {
+    protected void startAppInNewAppContext(final WebSessionState sessionState) {
 	
 	ThreadGroup appGroup = new ThreadGroup("AppThreadGroup "+String.valueOf(new Random().nextLong()));
 	Thread t = new Thread(appGroup, "AppInitThread") {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
 		
-		WebSessionState state = WebSessionManager.getInstance().register(session);
-		sessionState = state;
 		try {
-		    state.lockSession();
-		    state.setAppContext(appContext);
+		    sessionState.lockSession();
+		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);
 
 		    ClassLoader loader = getClass().getClassLoader();
-		    Class cls = loader.loadClass(className);
+		    Class cls = loader.loadClass(sessionState.getMainClsName());
 		    Method mainMethod = cls.getMethod("main", String[].class);
 		    mainMethod.setAccessible(true);
-		    mainMethod.invoke(cls, (Object) parameters);
+		    mainMethod.invoke(cls, (Object) sessionState.getCmdLineParams());
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		} finally {
-		    state.unlockSession();
+		    sessionState.unlockSession();
 		}
 	    }
 	};
@@ -45,7 +43,5 @@ public class AppContextCreator {
 	} catch (InterruptedException e) {
 	    e.printStackTrace();
 	}
-	
-	return sessionState;
     }
 }

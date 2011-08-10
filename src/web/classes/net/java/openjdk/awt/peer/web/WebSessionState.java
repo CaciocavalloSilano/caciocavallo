@@ -1,8 +1,12 @@
 package net.java.openjdk.awt.peer.web;
 
+import java.awt.*;
 import java.util.concurrent.locks.*;
+import javax.swing.*;
 
+import net.java.openjdk.cacio.servlet.*;
 import sun.awt.*;
+import sun.awt.peer.cacio.*;
 
 public class WebSessionState {
     ReentrantLock sessionLock = new ReentrantLock();
@@ -10,6 +14,10 @@ public class WebSessionState {
     WebKeyboardStateTracker keyboardTracker;
     WebGraphicsConfiguration config;
     int subSessionID;
+    
+    String[] cmdLineParams;
+    String mainClsName;
+    Dimension initialScreenDimension;
     
     AppContext appContext;
 
@@ -57,5 +65,29 @@ public class WebSessionState {
     
     public void dispose()  {
 	appContext.dispose();
+    }
+
+    public String[] getCmdLineParams() {
+        return cmdLineParams;
+    }
+
+    public void setCmdLineParams(String[] cmdLineParams) {
+        this.cmdLineParams = cmdLineParams;
+    }
+
+    public String getMainClsName() {
+        return mainClsName;
+    }
+
+    public void setMainClsName(String mainClsName) {
+        this.mainClsName = mainClsName;
+    }
+
+    public Dimension getInitialScreenDimension() {
+        return initialScreenDimension;
+    }
+
+    public void setInitialScreenDimension(Dimension initialScreenDimension) {
+        this.initialScreenDimension = initialScreenDimension;
     }
 }

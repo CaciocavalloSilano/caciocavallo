@@ -27,9 +27,13 @@ public class WebSessionManager {
 	int subSessionID = subSessionList.size();
 	WebSessionState sessionState = new WebSessionState(subSessionID);
 	subSessionList.add(sessionState);
-	AppContext.getAppContext().put(SESSION_KEY, sessionState);
 	
 	return sessionState;
+    }
+    
+    public void registerAppContext(AppContext context, WebSessionState state) {
+	state.setAppContext(context);
+	AppContext.getAppContext().put(SESSION_KEY, state);
     }
     
     public WebSessionState getCurrentStateAWT() {

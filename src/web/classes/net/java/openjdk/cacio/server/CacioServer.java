@@ -22,7 +22,7 @@ public class CacioServer {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.setResourceBase("bin/");
-        context.getSessionHandler().getSessionManager().setMaxInactiveInterval(60);
+        context.getSessionHandler().getSessionManager().setMaxInactiveInterval(600);
         context.getSessionHandler().addEventListener(new CacioSessionListener());
         
         ResourceHandler handler = new ResourceHandler();
@@ -31,6 +31,7 @@ public class CacioServer {
  
 //        context.addServlet(new ServletHolder(new ImgBenchServlet()), "/ImageStreamer");
         
+        context.addServlet(new ServletHolder(new SessionInitializer()),"/SessionInitializer");
         context.addServlet(new ServletHolder(new AppStarter()),"/AppStarter");
         context.addServlet(new ServletHolder(new ImageStreamer()),"/ImageStreamer");
         context.addServlet(new ServletHolder(new EventReceiver()),"/EventReceiver");

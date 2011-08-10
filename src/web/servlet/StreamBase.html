@@ -24,6 +24,12 @@ var subSessionID = SSID;
 
 function init() {
 	 fitCanvasToWindow();
+	 
+	 var appStartReq = new XMLHttpRequest();
+     appStartReq.open("GET", "AppStarter?subsessionid="+subSessionID+"&w="+window.innerWidth+"&h="+window.innerHeight, false);
+     appStartReq.send(null);
+  
+  
 	//alert(isXHR2Supported());
 	//alert(isImageDataSupported());
 	
