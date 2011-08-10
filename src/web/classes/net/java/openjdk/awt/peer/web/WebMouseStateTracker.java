@@ -31,6 +31,7 @@ public class WebMouseStateTracker {
 	data.setX(x);
 	data.setY(y);
 
+	//TODO: Generalize for many buttons
 	Boolean pressedResult = pressedMap.get(MouseEvent.BUTTON1);
 	if (pressedResult != null && pressedResult) {
 	    data.setModifiers(lastMouseEvent.getModifiers());
@@ -76,12 +77,12 @@ public class WebMouseStateTracker {
 
     protected int jsButtonMaskToJava(int jsButtonMask) {
 	switch (jsButtonMask) {
-	case 1:
+	case 0:
 	    return MouseEvent.BUTTON1;
-	case 2:
+	case 1:
 	    return MouseEvent.BUTTON2;
+	case 2:
 	case 3:
-	case 4:
 	    return MouseEvent.BUTTON3;
 	}
 
@@ -90,12 +91,12 @@ public class WebMouseStateTracker {
 
     protected int jsButtonMaskToJavaMask(int jsButtonMask) {
 	switch (jsButtonMask) {
-	case 1:
+	case 0:
 	    return MouseEvent.BUTTON1_MASK;
-	case 2:
+	case 1:
 	    return MouseEvent.BUTTON2_MASK;
+	case 2:
 	case 3:
-	case 4:
 	    return MouseEvent.BUTTON3_MASK;
 	}
 
@@ -104,9 +105,11 @@ public class WebMouseStateTracker {
 
     protected void generateClickedEvent(EventData origData) {
 	EventData synthData = new EventData();
+	synthData.setX(origData.getX());
+	synthData.setY(origData.getY());
 	synthData.setId(MouseEvent.MOUSE_CLICKED);
-	synthData.setModifiers(origData.getModifiers());
-	synthData.setButton(origData.getButton());
+	synthData.setModifiers(MouseEvent.BUTTON1);
+	synthData.setButton(MouseEvent.BUTTON1);
 	synthData.setSource(origData.getSource());
 	synthData.setTime(System.currentTimeMillis());
 	synthData.setClickCount(1);
