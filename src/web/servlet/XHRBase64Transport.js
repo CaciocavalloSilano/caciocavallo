@@ -1,10 +1,12 @@
-function initXHR2Rle() {
-	startRequestFunc = StartXHRRequest;
-	readCmdStreamFunc = readXHRCommandStream;
-	responseHandlerFunc = handleXHRResponse;
+var parts;
+
+function initXHRBase64() {
+	startRequestFunc = StartXHRBase64Request;
+	readCmdStreamFunc = readXHRBase64CommandStream;
+	responseHandlerFunc = handleXHRBase64Response;
 }
 
-function readXHRCommandStream() {
+function readXHRBase64CommandStream() {
 	var cmdLength = parseInt(parts[0]);
 	
 	var shortBuffer = new Array();
@@ -19,15 +21,17 @@ function readXHRCommandStream() {
 	return result;
 }
 
-function handleXHRResponse() {
+function handleXHRBase64Response() {
+	parts = xmlhttpreq.responseText.split(":");
+	
 	img = new Image();
 	img.onload = interpretCommandBuffer;
 	img.src = "data:image/png;base64," + parts[parts.length-1];
 }
 
-function StartXHRRequest(subSessionID) {
+function StartXHRBase64Request(subSessionID) {
   xmlhttpreq = new XMLHttpRequest();
   xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
-  xmlhttpreq.onreadystatechange = handleXHRResponse;
+  xmlhttpreq.onreadystatechange = xhrSuccessHandler;
   xmlhttpreq.send(null);
 }
