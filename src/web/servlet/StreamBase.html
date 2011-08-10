@@ -34,10 +34,11 @@ function init() {
 		startRequestFunc = StartXHRRequest;
 		readCmdStreamFunc = readXHRCommandStream;
 	}*/
-	//initXHR1Rle();
+	initXHR1Rle();
 	//initXHR2Png();
 	//initImgTransport();
-	initXHR2Rle();
+	//initXHR2Rle();
+	//initXHRBase64();
     
     startRequestFunc(subSessionID);
 	registerEventHandlers();
@@ -156,19 +157,31 @@ function sendEventsAtomic() {
 	}
 }
 
+var isIE = navigator.userAgent.indexOf('MSIE') > -1;
+
 function onMouseButton(e, down) {
-    var evt, pos, bmask;
+    var evt, pos, button;
 
     evt = (e ? e : window.event);
     pos = pGetEventPosition(e, canvas, 1);
-    bmask = 1 << evt.button;
-    eventBuffer += 'M_'+pos.x+'_'+pos.y+'_'+down+'_'+bmask+'_';
     
-   // sendEventsAtomic();
-    //TODO: Immediatly flush
-   
-   // alert(eventBuffer);
-    	
+    button =  evt.button;
+    if(isIE) {
+	  switch(evt.button) {
+		  case 1: 
+		    button = 0;
+		    break;
+		  case 2:
+			button = 2;
+			break;
+		  case 4:
+			button = 1;
+			break;
+		  }
+	}
+    
+    eventBuffer += 'M_'+pos.x+'_'+pos.y+'_'+down+'_'+button+'_';
+    
     pStopEvent(e);
     return false;
 }
