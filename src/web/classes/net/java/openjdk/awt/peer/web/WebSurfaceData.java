@@ -91,8 +91,8 @@ public class WebSurfaceData extends SurfaceData {
 	bufferGraphics.fillRect(0, 0, w, h);
 	data = ((DataBufferInt) imgBuffer.getRaster().getDataBuffer()).getData();
 
-        imgBufferSD = SurfaceManager.getManager(imgBuffer).getPrimarySurfaceData();
-	
+	imgBufferSD = SurfaceManager.getManager(imgBuffer).getPrimarySurfaceData();
+
 	initOps(data, w, h, 0);
     }
 
@@ -134,11 +134,13 @@ public class WebSurfaceData extends SurfaceData {
     }
 
     public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
+	x1 = Math.max(0, x1);
+	y1 = Math.max(0, y1);
 	x2 = Math.min(bounds.width, x2);
 	y2 = Math.min(bounds.height, y2);
 	DamageRect rect = new DamageRect(x1, y1, x2, y2);
 	damageTracker.trackDamageRect(rect);
-	
+
 	unlockSurface();
     }
 
@@ -159,7 +161,7 @@ public class WebSurfaceData extends SurfaceData {
     public List<ScreenUpdate> fetchPendingSurfaceUpdates() {
 	boolean forcePacking = surfaceUpdateList.size() > 0;
 	addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, forcePacking));
-	
+
 	if (surfaceUpdateList.size() > 0) {
 	    List<ScreenUpdate> pendingUpdateList = surfaceUpdateList;
 	    surfaceUpdateList = new ArrayList<ScreenUpdate>();
