@@ -9,32 +9,14 @@ import net.java.openjdk.awt.peer.web.*;
 /**
  * Servlet implementation class EventReceiver
  */
-public class EventReceiver extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+public class EventReceiver extends SubSessionServletBase {
+   
     public EventReceiver() {
-	super();
     }
 
-    /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-     *      response)
-     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 	String parameters = request.getParameter("events");
-	HttpSession session = request.getSession(false);
-	String subSessionIDString = request.getParameter("subsessionid");
-
-	if (session == null || subSessionIDString == null) {
-	    throw new RuntimeException("Should not reach");
-	}
-
-	int subSessionID = Integer.parseInt(subSessionIDString);
-	WebSessionState currentState = WebSessionManager.getInstance().getCurrentState(session, subSessionID);
+	WebSessionState currentState = getSessionState(request);
 	try {
 	    currentState.lockSession();
 

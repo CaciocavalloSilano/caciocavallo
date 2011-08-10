@@ -9,7 +9,7 @@ import net.java.openjdk.awt.peer.web.*;
 /**
  * Servlet implementation class AppStarter
  */
-public class SessionInitializer extends HttpServlet {
+public class SessionInitializer extends SubSessionServletBase {
 
     String startHtml = null;
 
