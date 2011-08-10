@@ -14,7 +14,7 @@ import net.java.openjdk.cacio.servlet.png.*;
 /**
  * Servlet implementation class ImageStreamer
  */
-public class ImageStreamer extends HttpServlet {
+public class ImageStreamer extends SubSessionServletBase {
 
     byte[] emptyImageData;
 
@@ -25,16 +25,9 @@ public class ImageStreamer extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
-	HttpSession session = request.getSession(false);
-	String subSessionID = request.getParameter("subsessionid");
-
-	if (session == null || subSessionID == null) {
-	    throw new RuntimeException("Should not reach");
-	}
-
 	disableCaching(response);
 
-	WebSessionState state = WebSessionManager.getInstance().getCurrentState(session, Integer.parseInt(subSessionID));
+	WebSessionState state = getSessionState(request);
 	WebGraphicsConfiguration config = state.getGraphicsConfiguration();
 
 	if (config != null) {
