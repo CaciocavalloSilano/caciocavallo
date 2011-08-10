@@ -9,6 +9,7 @@ import javax.servlet.http.*;
 import com.keypoint.*;
 
 import net.java.openjdk.awt.peer.web.*;
+import net.java.openjdk.cacio.servlet.png.*;
 
 public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 
@@ -18,7 +19,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	super("image/png");
 	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 	emptyImg.setRGB(0, 0, 0);
-	emptyImgData = new PngEncoderB(emptyImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	emptyImgData = PNGEncoder.getInstance().encode(emptyImg, 2);
     }
     
     protected void encodeImageCmdStream(BufferedImage bImg, List<Integer> cmdList) {
@@ -48,7 +49,7 @@ public class ImageCmdStreamEncoder extends CmdStreamEncoder {
 	encodeImageCmdStream(packedImage, cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
 	
-	byte[] imgData = new PngEncoderB(packedImage, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	byte[] imgData = PNGEncoder.getInstance().encode(packedImage, 2);
 	os.write(imgData);
     }
 

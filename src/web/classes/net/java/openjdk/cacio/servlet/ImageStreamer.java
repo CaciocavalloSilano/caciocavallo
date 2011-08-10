@@ -9,6 +9,7 @@ import javax.servlet.http.*;
 import com.keypoint.*;
 
 import net.java.openjdk.awt.peer.web.*;
+import net.java.openjdk.cacio.servlet.png.*;
 
 /**
  * Servlet implementation class ImageStreamer
@@ -20,7 +21,7 @@ public class ImageStreamer extends HttpServlet {
     protected void generateEmptyImageData() {
 	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 	emptyImg.setRGB(0, 0, 0);
-	emptyImageData = new PngEncoderB(emptyImg, false, PngEncoder.FILTER_NONE, 2).pngEncode();
+	emptyImageData = PNGEncoder.getInstance().encode(emptyImg, 2);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
