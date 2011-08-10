@@ -38,8 +38,8 @@ public class TreeImagePacker {
 		packingSuccessful &= insert(bltUpdateList.get(i));
 	    }
 	    
-	    maxWidth *= 1.5;
-	    maxHeight *= 1.5;
+	    maxWidth = (int) (maxWidth * 1.5 + 1);
+	    maxHeight = (int) (maxHeight * 1.5 + 1);
 	} while (!packingSuccessful);
 	
 //	long end = System.currentTimeMillis();
