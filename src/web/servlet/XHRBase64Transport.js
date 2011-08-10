@@ -24,9 +24,14 @@ function readXHRBase64CommandStream() {
 function handleXHRBase64Response() {
 	parts = xmlhttpreq.responseText.split(":");
 	
-	img = new Image();
-	img.onload = interpretCommandBuffer;
-	img.src = "data:image/png;base64," + parts[parts.length-1];
+	var base64ImageData = parts[parts.length-1];
+	if(base64ImageData.length > 0) {
+		img = new Image();
+		img.onload = interpretCommandBuffer;
+		img.src = "data:image/png;base64," + base64ImageData;
+	}else {
+		interpretCommandBuffer();
+	}
 }
 
 function StartXHRBase64Request(subSessionID) {
