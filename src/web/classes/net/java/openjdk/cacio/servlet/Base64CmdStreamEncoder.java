@@ -18,8 +18,9 @@ import com.keypoint.*;
 
 public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 
+    private static byte[] emptyResponseData = "0".getBytes();
     BASE64Encoder base64Encoder;
-    
+
     public Base64CmdStreamEncoder() {
 	super("text/plain");
 	
@@ -58,6 +59,6 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 
     @Override
     public void writeEmptyData(OutputStream os) throws IOException {
-	os.write("0".getBytes());
+	os.write(emptyResponseData);
     }
 }
