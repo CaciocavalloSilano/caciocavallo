@@ -240,10 +240,7 @@ function onKeyPress(e) {
 
 function onMouseWheel(e) {
     var pos = pGetEventPosition(e, canvas, 1);
-    var wheelDelta = (e.wheelDelta) ? e.wheelDelta : e.detail*-1;
-    if(window.opera) {
-	  wheelDelta = wheelDelta*-1;
-	}
+    var wheelDelta = (e.wheelDelta) ? e.wheelDelta : e.detail;
     
     eventBuffer += 'MW_'+wheelDelta+'_'+pos.x+'_'+pos.y+'_';
     
