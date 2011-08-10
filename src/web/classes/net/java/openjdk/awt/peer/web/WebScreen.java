@@ -67,16 +67,16 @@ public class WebScreen implements PlatformScreen {
     protected WebScreen(WebGraphicsConfiguration config) {
 	this.config = config;
 
-	//TODO: Replace with bounds determined by initial size-detection page and stored in AppContext
-	Dimension dim = FullScreenWindowFactory.getScreenDimension();
-	width = dim.width;
-	height = dim.height;
+	WebSessionState state = WebSessionManager.getInstance().getCurrentStateAWT();
+	width = state.getInitialScreenDimension().width;
+	height = state.getInitialScreenDimension().height;
 	
 	screenLock = new ReentrantLock();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
 	encoder = new BinaryRLEStreamEncoder();
 //	encoder = new BinaryPngStreamEncoder();
 //	encoder = new ImageCmdStreamEncoder();
+//	encoder = new Base64CmdStreamEncoder();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font, List<Rectangle> clipRects) {
@@ -196,8 +196,6 @@ public class WebScreen implements PlatformScreen {
 	}
 
 	long start = System.currentTimeMillis();
-
-	// Merge all ScreenUpdates into one texture & encode command stream
 
 	try {
 	    lockScreen();
