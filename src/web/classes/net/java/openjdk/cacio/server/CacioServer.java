@@ -15,9 +15,13 @@ import org.eclipse.jetty.util.component.*;
 public class CacioServer {
 
     public CacioServer() throws Exception {
-	applySystemProperties();
+        this(8080);
+    }
+    
+    public CacioServer(int port) throws Exception {
+        applySystemProperties();
 	
-        Server server = new Server(8080);
+        Server server = new Server(port);
         
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
@@ -54,7 +58,9 @@ public class CacioServer {
     }
     
     public static void main(String[] args) throws Exception {
-	new CacioServer();
+        
+        int port = Integer.getInteger("cacio.web.port", 8080);
+        new CacioServer(port);
     }
 
 }
