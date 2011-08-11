@@ -120,6 +120,14 @@ function interpretCommandBuffer() {
 			   var clipWidth = cmdBuffer[cmdPos++];
 			   var clipHeight = cmdBuffer[cmdPos++];
 			   
+			   if(dstX1 + width >= canvas.width || srcX1 + width >= canvas.width) {
+				 width = canvas.width - Math.max(dstX1, srcX1) - 1;     
+			   }
+			   
+			   if(dstY1 + height >= canvas.height || srcY1 + height >= canvas.height) {
+				 height = canvas.height - Math.max(dstY1, srcY1) - 1;    
+			   }
+			   
 			   ctx.save();
 			   ctx.beginPath();
 			   ctx.rect(clipX, clipY, clipWidth, clipHeight);
