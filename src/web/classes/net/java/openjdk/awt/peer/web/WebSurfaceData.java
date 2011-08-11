@@ -135,14 +135,18 @@ public class WebSurfaceData extends SurfaceData {
     }
 
     public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
-	x1 = Math.max(0, x1);
-	y1 = Math.max(0, y1);
-	x2 = Math.min(bounds.width, x2);
-	y2 = Math.min(bounds.height, y2);
-	DamageRect rect = new DamageRect(x1, y1, x2, y2);
-	damageTracker.trackDamageRect(rect);
-
-	unlockSurface();
+	try {
+	    x1 = Math.max(0, x1);
+	    y1 = Math.max(0, y1);
+	    x2 = Math.min(bounds.width, x2);
+	    y2 = Math.min(bounds.height, y2);
+	    DamageRect rect = new DamageRect(x1, y1, x2, y2);
+	    damageTracker.trackDamageRect(rect);
+	    
+	    screen.signalScreen();
+	} finally {
+	    unlockSurface();
+	}
     }
 
     protected void evacuateDamagedAreas() {
@@ -174,35 +178,40 @@ public class WebSurfaceData extends SurfaceData {
 
     int cnt = 0;
 
-    @Override
-    public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
-	Region clipRect = sg2d.getCompClip();
-	CompositeType comptype = sg2d.imageComp;
-
-	if (clipRect.isRectangular() && sg2d.transformState < sg2d.TRANSFORM_TRANSLATESCALE
-		&& (CompositeType.SrcOverNoEa.equals(comptype) || CompositeType.SrcNoEa.equals(comptype))) {
-
-	    try {
-		lockSurface();
-
-		x += sg2d.transX;
-		y += sg2d.transY;
-
-		addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, true));
-		evacuateDamagedAreas();
-
-		bufferGraphics.setComposite(sg2d.composite);
-		bufferGraphics.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
-		bufferGraphics.copyArea(x, y, w, h, dx, dy);
-
-		surfaceUpdateList.add(new CopyAreaScreenUpdate(x, y, x + w, y + h, dx, dy, clipRect));
-	    } finally {
-		unlockSurface();
-	    }
-
-	    return true;
-	}
-
-	return false;
-    }
+    // @Override
+    // public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h,
+    // int dx, int dy) {
+    // Region clipRect = sg2d.getCompClip();
+    // CompositeType comptype = sg2d.imageComp;
+    //
+    // if (clipRect.isRectangular() && sg2d.transformState <
+    // sg2d.TRANSFORM_TRANSLATESCALE
+    // && (CompositeType.SrcOverNoEa.equals(comptype) ||
+    // CompositeType.SrcNoEa.equals(comptype))) {
+    //
+    // try {
+    // lockSurface();
+    //
+    // x += sg2d.transX;
+    // y += sg2d.transY;
+    //
+    // addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, true));
+    // evacuateDamagedAreas();
+    //
+    // bufferGraphics.setComposite(sg2d.composite);
+    // bufferGraphics.setClip(clipRect.getLoX(), clipRect.getLoY(),
+    // clipRect.getWidth(), clipRect.getHeight());
+    // bufferGraphics.copyArea(x, y, w, h, dx, dy);
+    //
+    // surfaceUpdateList.add(new CopyAreaScreenUpdate(x, y, x + w, y + h, dx,
+    // dy, clipRect));
+    // } finally {
+    // unlockSurface();
+    // }
+    //
+    // return true;
+    // }
+    //
+    // return false;
+    // }
 }

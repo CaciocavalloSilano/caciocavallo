@@ -40,10 +40,10 @@ function init() {
 		startRequestFunc = StartXHRRequest;
 		readCmdStreamFunc = readXHRCommandStream;
 	}*/
-	initXHR1Rle();
+	//initXHR1Rle();
 	//initXHR2Png();
 	//initImgTransport();
-	//initXHR2Rle();
+	initXHR2Rle();
 	//initXHRBase64();
     
     startRequestFunc(subSessionID);
@@ -62,7 +62,6 @@ function fitCanvasToWindow() {
 	canvas.height = window.innerHeight;
 	var ctx = canvas.getContext('2d');
 	ctx.drawImage(tmpCanvas, 0, 0);
-
 }
 
 var lastWidth = -1;

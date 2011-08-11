@@ -35,6 +35,7 @@ import java.awt.geom.Area;
 import java.awt.image.ColorModel;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 
 import javax.servlet.http.*;
@@ -52,12 +53,14 @@ import sun.java2d.SunGraphics2D;
  */
 public class WebScreen implements PlatformScreen {
 
-    private  int width;
-    private  int height;
+    private int width;
+    private int height;
 
     WebGraphicsConfiguration config;
 
     ReentrantLock screenLock;
+    Condition screenCondition;
+
     ArrayList<ScreenUpdate> pendingUpdateList;
     CmdStreamEncoder encoder;
 
@@ -70,13 +73,14 @@ public class WebScreen implements PlatformScreen {
 	WebSessionState state = WebSessionManager.getInstance().getCurrentStateAWT();
 	width = state.getInitialScreenDimension().width;
 	height = state.getInitialScreenDimension().height;
-	
+
 	screenLock = new ReentrantLock();
+	screenCondition = screenLock.newCondition();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
-	encoder = new BinaryRLEStreamEncoder();
+	 encoder = new BinaryRLEStreamEncoder();
 //	encoder = new BinaryPngStreamEncoder();
-//	encoder = new ImageCmdStreamEncoder();
-//	encoder = new Base64CmdStreamEncoder();
+	// encoder = new ImageCmdStreamEncoder();
+	// encoder = new Base64CmdStreamEncoder();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font, List<Rectangle> clipRects) {
@@ -133,18 +137,17 @@ public class WebScreen implements PlatformScreen {
     public WebGraphicsConfiguration getConfig() {
 	return config;
     }
-    
-    
+
     public void resizeScreen(int width, int height) {
 	try {
 	    SunToolkit.awtLock();
 	    lockScreen();
 	    this.width = width;
 	    this.height = height;
-	    
+
 	    surfaceData = new WebSurfaceData(this, WebSurfaceData.typeDefault, getColorModel(), getBounds(), getGraphicsConfiguration(), this);
 	    ((WebWindowFactory) ((WebToolkit) WebToolkit.getDefaultToolkit()).getPlatformWindowFactory()).repaintScreen(this);
-	}finally {
+	} finally {
 	    SunToolkit.awtUnlock();
 	    unlockScreen();
 	}
@@ -157,39 +160,54 @@ public class WebScreen implements PlatformScreen {
     public final void unlockScreen() {
 	screenLock.unlock();
     }
-    
-    protected void addPendingUpdate(ScreenUpdate update) {
-	    pendingUpdateList.add(update);
+
+    public final void signalScreen() {
+	screenCondition.signal();
     }
 
-    public boolean pollForScreenUpdates(HttpServletResponse response, int timeout, int pollPause) throws IOException {
+    protected void addPendingUpdate(ScreenUpdate update) {
+	pendingUpdateList.add(update);
+    }
 
-	int pollCnt = timeout / pollPause;
-	boolean updatesWritten = false;
-
+    public void pollForScreenUpdates(HttpServletResponse response, int timeout) throws IOException {
 	response.setContentType(encoder.getContentType());
 	OutputStream os = response.getOutputStream();
 
-	try {
-	    while (pollCnt >= 0 && !updatesWritten) {
-		updatesWritten = writeScreenUpdates(os);
-		if (!updatesWritten) {
-		    pollCnt--;
-		    Thread.sleep(pollPause);
-		}
-	    }
-	} catch (InterruptedException e) {
-	    e.printStackTrace();
-	}
+	boolean updatesWritten = false;
 
-	if (!updatesWritten) {
+	try {
+	    lockScreen();
+	    updatesWritten = writeScreenUpdates(os);
+
+	    if (!updatesWritten) {
+		try {
+		    boolean signalled = screenCondition.await(timeout, TimeUnit.MILLISECONDS);
+		    
+		    /*
+		     * If we had to wait, we quite likely have been waked by the first operation.
+		     * Usually (e.g. Swing) many draw-commands are executed closely together,
+		     * so we wait just a little longer, so we can send a larger batch down.
+		     */
+		    if(signalled) {
+			Thread.sleep(20);
+		    }
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
+		}
+
+		updatesWritten = writeScreenUpdates(os);
+	    }
+	} finally {
+	    unlockScreen();
+	}
+	
+	if(!updatesWritten) {
 	    encoder.writeEmptyData(os);
 	}
-
-	return updatesWritten;
     }
-    
+
     int cnt = 0;
+
     public boolean writeScreenUpdates(OutputStream os) throws IOException {
 	if (surfaceData == null) {
 	    return false;
@@ -211,18 +229,18 @@ public class WebScreen implements PlatformScreen {
 		TreeImagePacker packer = new TreeImagePacker();
 		packer.insertScreenUpdateList(pendingUpdateList);
 		for (ScreenUpdate update : pendingUpdateList) {
-		//    System.out.println(update);
+		    // System.out.println(update);
 		    update.writeCmdStream(cmdList);
 		}
 
 		try {
-//		     BinaryRLEStreamEncoder rleEncoder = new
-//		     BinaryRLEStreamEncoder();
-//		     FileOutputStream fos = new
-//		     FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
-//		     rleEncoder.writeEnocdedData(fos, pendingUpdateList,
-//		     packer, cmdList);
-//		     fos.close();
+		    // BinaryRLEStreamEncoder rleEncoder = new
+		    // BinaryRLEStreamEncoder();
+		    // FileOutputStream fos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
+		    // rleEncoder.writeEnocdedData(fos, pendingUpdateList,
+		    // packer, cmdList);
+		    // fos.close();
 		    //
 		    // BinaryCmdStreamEncoder binEncoder = new
 		    // BinaryPngStreamEncoder();
@@ -232,33 +250,33 @@ public class WebScreen implements PlatformScreen {
 		    // packer, cmdList);
 		    // dos.close();
 		    //
-//		     Base64CmdStreamEncoder baseCoder = new
-//		     Base64CmdStreamEncoder();
-//		     FileOutputStream dbos = new
-//		     FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-//		     baseCoder.writeEnocdedData(dbos, pendingUpdateList,
-//		     packer, cmdList);
-//		     dbos.close();
+		    // Base64CmdStreamEncoder baseCoder = new
+		    // Base64CmdStreamEncoder();
+		    // FileOutputStream dbos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+		    // baseCoder.writeEnocdedData(dbos, pendingUpdateList,
+		    // packer, cmdList);
+		    // dbos.close();
 		    //
-//		     ImageCmdStreamEncoder imgEncoder = new
-//		     ImageCmdStreamEncoder();
-//		     FileOutputStream bos = new
-//		     FileOutputStream("/home/ce/imgFiles/" + cnt+
-//		     ".png");
-//		     imgEncoder.writeEnocdedData(bos, pendingUpdateList,
-//		     packer, cmdList);
-//		     bos.close();
-//		    //
+		    // ImageCmdStreamEncoder imgEncoder = new
+		    // ImageCmdStreamEncoder();
+		    // FileOutputStream bos = new
+		    // FileOutputStream("/home/ce/imgFiles/" + cnt+
+		    // ".png");
+		    // imgEncoder.writeEnocdedData(bos, pendingUpdateList,
+		    // packer, cmdList);
+		    // bos.close();
+		    // //
 		    cnt++;
-//		    
-//		    Thread.sleep(50);
+		    //
+		    // Thread.sleep(50);
 		    if (false)
 			throw new IOException();
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		}
 
-		System.out.println("cmdlist: "+cmdList.size());
+		System.out.println("cmdlist: " + cmdList.size());
 		encoder.writeEncodedData(os, pendingUpdateList, packer, cmdList);
 		// Write updates here
 

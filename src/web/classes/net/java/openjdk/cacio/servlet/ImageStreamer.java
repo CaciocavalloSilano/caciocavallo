@@ -32,7 +32,7 @@ public class ImageStreamer extends SubSessionServletBase {
 
 	if (config != null) {
 	    WebScreen screen = config.getScreen();
-	    screen.pollForScreenUpdates(response, 15000, 20);
+	    screen.pollForScreenUpdates(response, 15000);
 	}
     }
 
