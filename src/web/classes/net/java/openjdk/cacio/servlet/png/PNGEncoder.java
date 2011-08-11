@@ -8,20 +8,20 @@ public abstract class PNGEncoder {
     
     public static synchronized PNGEncoder getInstance() {
 	if(instance == null) {
-	    instance = loadInstance(PNGEncoder.class.getName().replace("PNGEncoder", "PNGEncoderImageIO"));
+	    PNGEncoderKeypoint keypointEncoder = new PNGEncoderKeypoint();
+	    if(keypointEncoder.isAvailable()) {
+		instance = keypointEncoder;
+	    }else {
+		instance = new PNGEncoderImageIO();
+		System.out.println("Keypoint PNG-Encoder not found, falling back to ImageIO.");
+	    }
+	    
 	}
 	
 	return instance;
     }
     
-    private static PNGEncoder loadInstance(String className) {
-	try {
-	    Class cls = Class.forName(className);
-	    return (PNGEncoder) cls.newInstance();
-	}catch(Exception ex) {
-	    return null;
-	}
-    }
+  
     
     public abstract byte[] encode(BufferedImage img, int compression);
 }
