@@ -88,7 +88,7 @@
      <delete dir="${dir.build.web.lib_classes}/META-INF" />
      
 		<copy todir="${dir.build.web.classes}">
-			<fileset file="${web.servlet_content}/StreamBase.html"/>
+			<fileset file="${web.servlet_content}/*"/>
 		</copy>
 		
 		<jar destfile="${web.jar_runtime_file}">
