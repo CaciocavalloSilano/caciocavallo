@@ -4,6 +4,7 @@ function initXHRBase64() {
 	startRequestFunc = StartXHRBase64Request;
 	readCmdStreamFunc = readXHRBase64CommandStream;
 	responseHandlerFunc = handleXHRBase64Response;
+	return "base64";
 }
 
 function readXHRBase64CommandStream() {

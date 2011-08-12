@@ -3,6 +3,7 @@ function initXHR1Rle() {
 	startRequestFunc = StartXHR1RleRequest;
 	readCmdStreamFunc = readBinCommandStream;
 	responseHandlerFunc = handleXHR1RLEResponse;
+	return "rle";
 }
 
 function handleXHR1RLEResponse() {

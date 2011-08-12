@@ -21,33 +21,60 @@ var readCmdStreamFunc;
 var startRequestFunc;
 
 var subSessionID = SSID;
+var imgFormat = IMGFORMAT;
 
 function init() {
-	 fitCanvasToWindow();
-	 
-	 var appStartReq = new XMLHttpRequest();
-     appStartReq.open("GET", "AppStarter?subsessionid="+subSessionID+"&w="+window.innerWidth+"&h="+window.innerHeight, false);
-     appStartReq.send(null);
-  
-  
-	//alert(isXHR2Supported());
-	//alert(isImageDataSupported());
-	
-	/*if(false && isImageDataSupported()) {
-		startRequestFunc = StartImageRequest;
-		readCmdStreamFunc = readImageCommandStream;
-	} else {
-		startRequestFunc = StartXHRRequest;
-		readCmdStreamFunc = readXHRCommandStream;
-	}*/
-	//initXHR1Rle();
-	//initXHR2Png();
-	//initImgTransport();
-	initXHR2Rle();
-	//initXHRBase64();
-    
+	fitCanvasToWindow();
+	initializeApplication();    
     startRequestFunc(subSessionID);
 	registerEventHandlers();
+}
+
+function initializeApplication() {
+	 var backendName = chooseBackend();
+	
+	 var appStartReq = new XMLHttpRequest();
+     appStartReq.open("GET", "AppStarter?subsessionid="+subSessionID+"&w="+window.innerWidth+"&h="+window.innerHeight+"&b="+backendName, false);
+     appStartReq.send(null);
+}
+
+function chooseBackend() {
+	//User simply specified the image-format, 
+	//so we are free to choose the backend which implements it.
+	if(imgFormat == "rle") {
+		if(isXHR2Supported()) {
+			return initXHR2Rle();
+		} else {
+			return initXHR1Rle();
+		}
+	}else if(imgFormat == "png") {
+		if(isXHR2Supported()) {
+			return initXHR2Png();
+		} else 
+		if (isImageDataSupported()) {
+			return initImgTransport();
+		} else {
+			return initXHRBase64();
+		}
+	}else {
+		//User chose backend explicitly
+		
+		if(imgFormat == "rle_xhr1") {
+			return initXHR1Rle();
+		} else 
+		if(imgFormat == "rle_xhr2") {
+			return initXHR2Rle();
+		} else 
+		if(imgFormat == "png_xhr2") {
+			return initXHR2Png();
+		} else 
+		if(imgFormat == "png_img") {
+			return initImgTransport();
+		} else 
+		if(imgFormat == "png_base64") {
+			return initXHRBase64();
+		} 
+	}
 }
 
 function fitCanvasToWindow() {

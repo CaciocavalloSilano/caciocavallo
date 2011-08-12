@@ -18,6 +18,8 @@ public class WebSessionState {
     String[] cmdLineParams;
     String mainClsName;
     Dimension initialScreenDimension;
+//    String transportFormat;
+    CmdStreamEncoder backend;
     
     AppContext appContext;
 
@@ -90,4 +92,21 @@ public class WebSessionState {
     public void setInitialScreenDimension(Dimension initialScreenDimension) {
         this.initialScreenDimension = initialScreenDimension;
     }
+
+//    public String getTransportFormat() {
+//        return transportFormat;
+//    }
+//
+//    public void setTransportFormat(String transportFormat) {
+//        this.transportFormat = transportFormat;
+//    }
+
+    public CmdStreamEncoder getBackend() {
+        return backend;
+    }
+
+    public void setBackend(CmdStreamEncoder backend) {
+        this.backend = backend;
+    }
+
 }

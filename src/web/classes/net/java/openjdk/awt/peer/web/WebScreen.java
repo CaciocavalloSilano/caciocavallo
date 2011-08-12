@@ -77,10 +77,7 @@ public class WebScreen implements PlatformScreen {
 	screenLock = new ReentrantLock();
 	screenCondition = screenLock.newCondition();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
-	 encoder = new BinaryRLEStreamEncoder();
-//	encoder = new BinaryPngStreamEncoder();
-	// encoder = new ImageCmdStreamEncoder();
-	// encoder = new Base64CmdStreamEncoder();
+	encoder = state.getBackend();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font, List<Rectangle> clipRects) {

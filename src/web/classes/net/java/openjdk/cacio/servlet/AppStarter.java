@@ -14,9 +14,11 @@ public class AppStarter extends SubSessionServletBase {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	int width = Integer.parseInt(request.getParameter("w"));
 	int height = Integer.parseInt(request.getParameter("h"));
+	String backend = request.getParameter("b");
 
 	WebSessionState state = getSessionState(request);
 	state.setInitialScreenDimension(new Dimension(width, height));
+	state.setBackend(CmdStreamEncoder.getBackendForName(backend));
 	 new AppContextCreator().startAppInNewAppContext(state);
     }
 }

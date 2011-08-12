@@ -4,6 +4,8 @@ var cmdCanvas;
 function initImgTransport() {
 	startRequestFunc = StartImageRequest;
 	readCmdStreamFunc = readImageCommandStream;
+	
+	return "png";
 }
 
 function StartImageRequest(subSessionID) {
@@ -15,6 +17,8 @@ function StartImageRequest(subSessionID) {
 }
 
 function isImageDataSupported() {
+	return false;
+	
 	//Excluse WebKit for now, as it will trigger a memory leak.
 	//TODO: should be version dependent, as its fixed in Chrome 14
 	if(navigator.userAgent.indexOf('AppleWebKit') > -1) {
