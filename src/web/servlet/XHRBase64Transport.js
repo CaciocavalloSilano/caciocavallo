@@ -26,7 +26,7 @@ function handleXHRBase64Response() {
 	parts = xmlhttpreq.responseText.split(":");
 	
 	var base64ImageData = parts[parts.length-1];
-	if(base64ImageData.length > 0) {
+	if(parts.length >= 2 && base64ImageData.length > 0) {
 		img = new Image();
 		img.onload = interpretCommandBuffer;
 		img.src = "data:image/png;base64," + base64ImageData;
