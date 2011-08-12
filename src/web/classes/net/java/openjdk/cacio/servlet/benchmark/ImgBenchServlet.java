@@ -10,7 +10,7 @@ public class ImgBenchServlet extends HttpServlet {
     byte[] imgData;
     
     public ImgBenchServlet() {
-	imgData = loadFileInArray("30.rle");
+	imgData = loadFileInArray("150.rle");
     }
     
     protected byte[] loadFileInArray(String fileName) {

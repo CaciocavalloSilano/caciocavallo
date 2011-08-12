@@ -19,6 +19,8 @@ public class SessionInitializer extends SubSessionServletBase {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String className = request.getParameter("cls");
+	String format = request.getParameter("format");
+	format = (format != null && format.trim().length() > 0) ? format.toLowerCase() : "rle";
 
 	HttpSession session = request.getSession();
 	System.out.println("Starter-Session: " + session.getId());
@@ -27,9 +29,11 @@ public class SessionInitializer extends SubSessionServletBase {
 	WebSessionState state = WebSessionManager.getInstance().register(session);
 	state.setCmdLineParams(generateParameterArray(request));
 	state.setMainClsName(className);
+//	state.setTransportFormat(format);
 	
 	response.setContentType("text/html");
 	String ssidStartHtml = startHtml.replaceAll("SSID", String.valueOf(state.getSubSessionID()));
+	ssidStartHtml = ssidStartHtml.replaceAll("IMGFORMAT","\"" + format + "\"");
 	response.getWriter().write(ssidStartHtml);
     }
 

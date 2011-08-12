@@ -1,6 +1,7 @@
 function initXHR2Rle() {
 	initXHR2Shared();
 	responseHandlerFunc = handleXHR2RLEResponse;
+	return "rle";
 }
 
 function handleXHR2RLEResponse() {

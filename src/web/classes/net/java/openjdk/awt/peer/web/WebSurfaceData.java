@@ -27,24 +27,13 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.*;
 
 import java.awt.image.*;
-import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.locks.*;
-
-import javax.imageio.*;
-import javax.servlet.http.*;
-
-import biz.source_code.base64Coder.*;
-
-import com.keypoint.*;
-
 import net.java.openjdk.cacio.servlet.*;
 
 import sun.awt.image.*;
 import sun.java2d.*;
 import sun.java2d.loops.*;
-import sun.java2d.pipe.*;
 
 /**
  * SurfaceData implementation based on libSDL.

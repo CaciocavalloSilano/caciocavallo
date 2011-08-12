@@ -9,6 +9,11 @@ import javax.servlet.http.*;
 
 public abstract class CmdStreamEncoder {
     
+    public static final String FORMAT_PNG_BASE64 = "base64";
+    public static final String FORMAT_PNG_IMG = "img";
+    public static final String FORMAT_PNG_XHR = "png";
+    public static final String FORMAT_RLE = "rle";
+    
     String contentType;
     
     public CmdStreamEncoder(String contentType) {
@@ -41,5 +46,17 @@ public abstract class CmdStreamEncoder {
 
     public String getContentType() {
         return contentType;
+    }
+    
+    public static CmdStreamEncoder getBackendForName(String backendName) {
+	if(backendName.equalsIgnoreCase(FORMAT_RLE)) {
+	    return new BinaryRLEStreamEncoder();
+	} else if(backendName.equalsIgnoreCase(FORMAT_PNG_XHR)) {
+	    return new BinaryPngStreamEncoder();
+	} else if(backendName.equalsIgnoreCase(FORMAT_PNG_IMG)) {
+	    return new ImageCmdStreamEncoder();
+	} else {
+	    return new Base64CmdStreamEncoder();
+	}
     }
 }

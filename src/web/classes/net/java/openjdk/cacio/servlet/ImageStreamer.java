@@ -1,13 +1,10 @@
 package net.java.openjdk.cacio.servlet;
 
 import java.awt.image.*;
+
 import java.io.*;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
-
-import com.keypoint.*;
-
 import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.png.*;
 

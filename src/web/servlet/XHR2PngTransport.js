@@ -1,6 +1,7 @@
 function initXHR2Png() {
 	initXHR2Shared();
 	responseHandlerFunc = handleXHR2PngResponse;
+	return "png";
 }
 
 function encodeImageData() {
