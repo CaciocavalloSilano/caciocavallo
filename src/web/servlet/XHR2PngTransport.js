@@ -8,17 +8,26 @@ function encodeImageData() {
 	var cmdLength = readShort(intArray, 0);
 	var dataStartPos = 2 * (cmdLength + 1);
 	
-	return encode64(intArray, dataStartPos);
+	if(dataStartPos + 1 < intArray.length) {
+		return encode64(intArray, dataStartPos);
+	}
+	
+	return undefined;
 }
 
 
 function handleXHR2PngResponse() {
 	var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
 	intArray = new Uint8Array(buffer);
-		
-	img = new Image();
-	img.onload = interpretCommandBuffer;
-	img.src = encodeImageData();
+	
+	var imgData = encodeImageData();
+	if(imgData != undefined) {
+		img = new Image();
+		img.onload = interpretCommandBuffer;
+		img.src = imgData;
+	} else {
+		interpretCommandBuffer();
+	}
 }
 
 
