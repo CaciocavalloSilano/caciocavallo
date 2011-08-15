@@ -2,10 +2,6 @@ package net.java.openjdk.cacio.servlet;
 
 import java.lang.reflect.*;
 import java.util.*;
-
-import javax.servlet.http.*;
-import javax.swing.*;
-
 import sun.awt.*;
 import net.java.openjdk.awt.peer.web.*;
 
@@ -22,8 +18,6 @@ public class AppContextCreator {
 		try {
 		    sessionState.lockSession();
 		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);
-
-//		    RepaintManager.currentManager(null).setDoubleBufferingEnabled(false);
 		    
 		    ClassLoader loader = getClass().getClassLoader();
 		    Class cls = loader.loadClass(sessionState.getMainClsName());

@@ -2,18 +2,18 @@ package net.java.openjdk.awt.peer.web;
 
 import java.util.*;
 
-public class DamageRect {
+public class WebRect {
     int x1, y1, x2, y2;
 
-    public DamageRect() {
+    public WebRect() {
 
     }
     
-    public DamageRect(DamageRect rect) {
+    public WebRect(WebRect rect) {
 	this(rect.x1, rect.y1, rect.x2, rect.y2);
     }
     
-    public DamageRect(int x1, int y1, int x2, int y2) {
+    public WebRect(int x1, int y1, int x2, int y2) {
 	this.x1 = x1;
 	this.y1 = y1;
 	this.x2 = x2;
@@ -52,19 +52,19 @@ public class DamageRect {
 	this.y2 = y2;
     }
     
-    public DamageRect union(List<DamageRect> rectList) {
+    public WebRect union(List<WebRect> rectList) {
 	if(rectList.size() == 0) {
 	    return null;
 	}
 	
-	DamageRect unionRect = new DamageRect(rectList.get(0));
-	for (DamageRect rect : rectList) {
+	WebRect unionRect = new WebRect(rectList.get(0));
+	for (WebRect rect : rectList) {
 	    unionRect.union(rect);
 	}
 	return unionRect;
     }
 
-    public void union(DamageRect rect2) {
+    public void union(WebRect rect2) {
 	x1 = Math.min(x1, rect2.x1);
 	y1 = Math.min(y1, rect2.y1);
 	x2 = Math.max(x2, rect2.x2);
@@ -78,7 +78,7 @@ public class DamageRect {
 	y2 = Math.min(y2, ry2);
     }
     
-    public boolean intersects(DamageRect r) {
+    public boolean intersects(WebRect r) {
         return (r.getX2() > getX1()) &&
                 (r.getY2() > getY1()) &&
                 (getX2() > r.getX1()) &&
@@ -117,7 +117,7 @@ public class DamageRect {
 	    return false;
 	if (getClass() != obj.getClass())
 	    return false;
-	DamageRect other = (DamageRect) obj;
+	WebRect other = (WebRect) obj;
 	if (x1 != other.x1)
 	    return false;
 	if (x2 != other.x2)
