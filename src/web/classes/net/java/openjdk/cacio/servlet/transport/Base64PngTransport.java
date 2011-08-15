@@ -1,11 +1,11 @@
 package net.java.openjdk.cacio.servlet.transport;
 
 import java.awt.image.*;
+
 import java.io.*;
 import java.util.*;
 
 import net.java.openjdk.awt.peer.web.*;
-import net.java.openjdk.cacio.servlet.base64.*;
 import net.java.openjdk.cacio.servlet.imgformat.*;
 import sun.misc.*;
 
