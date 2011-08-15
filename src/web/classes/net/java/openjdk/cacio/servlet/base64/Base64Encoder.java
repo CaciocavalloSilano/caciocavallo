@@ -22,10 +22,13 @@ public class Base64Encoder {
 	    int i2;
 	    int i3;
 
+
 	    if (i +1 < in.length) {
+		//Fast-Path: Three input bytes are available
 		i2 = in[i++] & 0xff;
 		i3 = in[i++] & 0xff;
 	    } else {
+		//Handle cases where we run out of input bytes
 		i2 = 0;
 		i3 = 0;
 		
@@ -48,9 +51,11 @@ public class Base64Encoder {
 	    out[o++] = map[o2];
 
 	    if (o + 1 < dataLength) {
+		//Fast-Path, lookup & store output values
 		out[o++] = map[o3];
 		out[o++] = map[o4];
 	    } else {
+		//Handle cases at the end
 		out[o] = padByte;
 		out[o + 1] = padByte;
 		
