@@ -26,7 +26,6 @@ public class TreeImagePacker {
 	int maxWidth = getMaxWidth(bltUpdateList);
 	int maxHeight = getMaxHeight(bltUpdateList);
 
-//	long start = System.currentTimeMillis();
 	boolean packingSuccessful;
 	do {
 	    rootNode = new PackNode();
@@ -41,9 +40,6 @@ public class TreeImagePacker {
 	    maxWidth = (int) (maxWidth * 1.5 + 1);
 	    maxHeight = (int) (maxHeight * 1.5 + 1);
 	} while (!packingSuccessful);
-	
-//	long end = System.currentTimeMillis();
-//	System.out.println("Tree Packing took: "+(end-start));
     }
 
     protected int getMaxWidth(ArrayList<BlitScreenUpdate> updateList) {

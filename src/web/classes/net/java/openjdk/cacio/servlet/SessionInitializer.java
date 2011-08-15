@@ -29,7 +29,6 @@ public class SessionInitializer extends SubSessionServletBase {
 	WebSessionState state = WebSessionManager.getInstance().register(session);
 	state.setCmdLineParams(generateParameterArray(request));
 	state.setMainClsName(className);
-//	state.setTransportFormat(format);
 	
 	response.setContentType("text/html");
 	String ssidStartHtml = startHtml.replaceAll("SSID", String.valueOf(state.getSubSessionID()));
