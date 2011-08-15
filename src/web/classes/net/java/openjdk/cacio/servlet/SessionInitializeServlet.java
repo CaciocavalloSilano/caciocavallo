@@ -34,17 +34,18 @@ import net.java.openjdk.awt.peer.web.*;
 /**
  * Servlet implementation class AppStarter
  */
-public class SessionInitializer extends SubSessionServletBase {
+public class SessionInitializeServlet extends SubSessionServletBase {
 
     String startHtml = null;
 
-    public SessionInitializer() throws Exception {
+    public SessionInitializeServlet() throws Exception {
 	startHtml = loadStartHTML();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String className = request.getParameter("cls");
 	String format = request.getParameter("format");
+
 	format = (format != null && format.trim().length() > 0) ? format.toLowerCase() : "rle";
 
 	HttpSession session = request.getSession();
@@ -54,11 +55,26 @@ public class SessionInitializer extends SubSessionServletBase {
 	WebSessionState state = WebSessionManager.getInstance().register(session);
 	state.setCmdLineParams(generateParameterArray(request));
 	state.setMainClsName(className);
-	
+	state.setCompressLevel(getCompressionLevel(request));
+
 	response.setContentType("text/html");
 	String ssidStartHtml = startHtml.replaceAll("SSID", String.valueOf(state.getSubSessionID()));
-	ssidStartHtml = ssidStartHtml.replaceAll("IMGFORMAT","\"" + format + "\"");
+	ssidStartHtml = ssidStartHtml.replaceAll("IMGFORMAT", "\"" + format + "\"");
 	response.getWriter().write(ssidStartHtml);
+    }
+
+    protected int getCompressionLevel(HttpServletRequest request) {
+	String cLevelStr = request.getParameter("clevel");
+	int cLevel = 2;
+
+	if (cLevelStr != null) {
+	    try {
+		cLevel = Integer.parseInt(cLevelStr);
+	    } catch (Exception ex) {
+		ex.printStackTrace();
+	    }
+	}
+	return cLevel;
     }
 
     protected String[] generateParameterArray(HttpServletRequest request) {

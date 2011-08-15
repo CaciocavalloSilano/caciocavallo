@@ -34,9 +34,9 @@ import net.java.openjdk.awt.peer.web.*;
 /**
  * Servlet implementation class EventReceiver
  */
-public class EventReceiver extends SubSessionServletBase {
+public class EventReceiveServlet extends SubSessionServletBase {
    
-    public EventReceiver() {
+    public EventReceiveServlet() {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
