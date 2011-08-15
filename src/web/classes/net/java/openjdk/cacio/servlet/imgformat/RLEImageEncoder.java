@@ -35,12 +35,14 @@ import java.io.*;
 public class RLEImageEncoder {
 
     public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2, OutputStream os) throws IOException {
-	DynamicByteBuffer runBuffer = new DynamicByteBuffer();
-	DynamicByteBuffer dataBuffer = new DynamicByteBuffer();
-
-	DataOutputStream dos = new DataOutputStream(os);
 	int w = x2 - x1;
 	int h = y2 - y1;
+	int area = w*h;
+	
+	DynamicByteBuffer runBuffer = new DynamicByteBuffer(area < 10000 ? 256 : 1024);
+	DynamicByteBuffer dataBuffer = new DynamicByteBuffer(area < 10000 ? 512 : 4096);
+
+	DataOutputStream dos = new DataOutputStream(os);
 	dos.writeShort(w);
 	dos.writeShort(h);
 

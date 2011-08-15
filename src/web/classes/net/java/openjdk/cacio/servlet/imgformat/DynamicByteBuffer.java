@@ -29,48 +29,70 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * A fast and lightweight expanding ByteBuffer. Compared to
+ * ByteArrayOutputStream the advantage is, it doesn't have to resize and copy
+ * from its internal array. Furthermore it is not threadsafe, therefor reducing
+ * synchronization overhead.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class DynamicByteBuffer {
-    final static int BUFFER_SIZE = 4096;
-    
+    final int bufferSize;
+
     ArrayList<byte[]> bufferList = new ArrayList<byte[]>();
-    
+
     int curBufferPos = 0;
     byte[] curBuffer;
-    
-    public DynamicByteBuffer() {
+
+    public DynamicByteBuffer(int bufferSize) {
+	this.bufferSize = bufferSize;
 	addBuffer();
     }
-    
+
+    /**
+     * Write a single byte
+     * 
+     * @param b
+     */
     public final void write(byte b) {
-	if(curBufferPos == curBuffer.length) {
+	if (curBufferPos == curBuffer.length) {
 	    addBuffer();
 	}
-	
+
 	curBuffer[curBufferPos] = b;
 	curBufferPos++;
     }
-    
+
+    /**
+     * Internal function to add a new buffer to the list of allocated buffers,
+     * if the currently active buffer is full.
+     */
     private void addBuffer() {
-	curBuffer = new byte[BUFFER_SIZE];
+	curBuffer = new byte[bufferSize];
 	curBufferPos = 0;
 	bufferList.add(curBuffer);
     }
-    
+
+    /**
+     * @return the number of bytes written to this buffer
+     */
     public int size() {
-	return (bufferList.size() - 1) * BUFFER_SIZE + curBufferPos;
+	return (bufferList.size() - 1) * bufferSize + curBufferPos;
     }
-    
+
+    /**
+     * Writes the bytes written to this buffer, to the supplied OutputStream.
+     * 
+     * @param os
+     * @throws IOException
+     */
     public void writeTo(OutputStream os) throws IOException {
 	int size = size();
-	for(int i=0; i < bufferList.size(); i++) {
-	    int curBuffLength = Math.min(size - BUFFER_SIZE*i, BUFFER_SIZE);
+	for (int i = 0; i < bufferList.size(); i++) {
+	    int curBuffLength = Math.min(size - bufferSize * i, bufferSize);
 	    byte[] curBuff = bufferList.get(i);
 	    os.write(curBuff, 0, curBuffLength);
 	}
     }
-    
-    
+
 }
