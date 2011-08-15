@@ -351,6 +351,9 @@ class DamageGridCell {
 	return damageRect;
     }
 
+    /**
+     * Discard all rectangles tracked by this cell.
+     */
     protected void reset() {
 	rectangles = null;
     }
