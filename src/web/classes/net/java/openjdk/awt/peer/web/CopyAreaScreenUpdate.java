@@ -34,6 +34,8 @@ import sun.java2d.pipe.*;
  * 
  * The browser also needs to honor the currently set clip.
  * 
+ * @see ScreenUpdate
+ * @see BlitScreenUpdate
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class CopyAreaScreenUpdate extends ScreenUpdate {
