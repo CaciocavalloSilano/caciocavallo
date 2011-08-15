@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.servlet.http.*;
 
+import net.java.openjdk.awt.peer.web.*;
+
 public abstract class CmdStreamEncoder {
     
     public static final String FORMAT_PNG_BASE64 = "base64";
