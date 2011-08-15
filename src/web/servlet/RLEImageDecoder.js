@@ -19,10 +19,16 @@ function decodeRLEImageData() {
     var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size, or even rely on dirtyWith parameters?
 	var imgDataArray = imgData.data;
    
-    var runDataLength = readInt(intArray, imgDataStartPos + 4);
+	rleDecodeLoop(intArray, imgDataArray, imgDataStartPos);
+	
+	ctx.putImageData(imgData, 0, 0);
+}
+
+function rleDecodeLoop(intArray, imgDataArray, imgDataStartPos) {
+	var runDataLength = readInt(intArray, imgDataStartPos + 4);
    	var runLengthDataOffset = imgDataStartPos + 8;
 	var pixelDataOffset = runLengthDataOffset + runDataLength;
- 
+	
 	var imgDataOffset = 0;
 	var lastRed = 0, lastGreen = 0, lastBlue = 0;
     for(var i= 0; i < runDataLength; i++) {
@@ -30,14 +36,14 @@ function decodeRLEImageData() {
 		var length = cmd & 127;
 		
 		if(cmd < 128) {
-			for (var x = 0; x < length; x++) {
+			while(length-- > 0) {
 				imgDataArray[imgDataOffset++] = lastRed;
 				imgDataArray[imgDataOffset++] = lastGreen;
 				imgDataArray[imgDataOffset++] = lastBlue;
 				imgDataArray[imgDataOffset++] = 255;
 			}
 		}else {
-			for (var x = 0; x < length; x++) {		
+			while(length-- > 0) {
 				imgDataArray[imgDataOffset++] = lastRed =  intArray[pixelDataOffset++];
 				imgDataArray[imgDataOffset++] = lastGreen = intArray[pixelDataOffset++];
 				imgDataArray[imgDataOffset++] = lastBlue = intArray[pixelDataOffset++];
@@ -45,6 +51,4 @@ function decodeRLEImageData() {
 			}
 		}
 	}
-	
-	ctx.putImageData(imgData, 0, 0);
 }
