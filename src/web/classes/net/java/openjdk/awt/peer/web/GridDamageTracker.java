@@ -96,7 +96,7 @@ public class GridDamageTracker {
      * @param forcePacking
      * @return
      */
-    protected List<ScreenUpdate> persistDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
+    protected List<ScreenUpdate> groupDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
 	WebRect unionRect = getUnionRectangle();
 	if (unionRect != null) {
 	    ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
