@@ -1,4 +1,4 @@
-package net.java.openjdk.cacio.servlet.png;
+package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.awt.image.*;
 

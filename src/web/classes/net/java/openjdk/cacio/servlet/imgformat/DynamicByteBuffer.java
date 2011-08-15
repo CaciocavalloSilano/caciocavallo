@@ -1,4 +1,4 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.io.*;
 import java.util.*;

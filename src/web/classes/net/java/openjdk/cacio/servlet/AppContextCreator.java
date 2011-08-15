@@ -2,8 +2,9 @@ package net.java.openjdk.cacio.servlet;
 
 import java.lang.reflect.*;
 import java.util.*;
-import sun.awt.*;
+
 import net.java.openjdk.awt.peer.web.*;
+import sun.awt.*;
 
 public class AppContextCreator {
 
@@ -20,7 +21,7 @@ public class AppContextCreator {
 		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);
 		    
 		    ClassLoader loader = getClass().getClassLoader();
-		    Class cls = loader.loadClass(sessionState.getMainClsName());
+		    Class<?> cls = loader.loadClass(sessionState.getMainClsName());
 		    Method mainMethod = cls.getMethod("main", String[].class);
 		    mainMethod.setAccessible(true);
 		    mainMethod.invoke(cls, (Object) sessionState.getCmdLineParams());

@@ -7,6 +7,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import net.java.openjdk.awt.peer.web.*;
+import net.java.openjdk.cacio.servlet.transport.*;
 
 public class AppStarter extends SubSessionServletBase {
     
@@ -18,7 +19,7 @@ public class AppStarter extends SubSessionServletBase {
 
 	WebSessionState state = getSessionState(request);
 	state.setInitialScreenDimension(new Dimension(width, height));
-	state.setBackend(CmdStreamEncoder.getBackendForName(backend));
+	state.setBackend(Transport.getBackendForName(backend));
 	 new AppContextCreator().startAppInNewAppContext(state);
     }
 }

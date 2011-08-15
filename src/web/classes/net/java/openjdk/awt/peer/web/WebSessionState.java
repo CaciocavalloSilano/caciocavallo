@@ -5,6 +5,7 @@ import java.util.concurrent.locks.*;
 import javax.swing.*;
 
 import net.java.openjdk.cacio.servlet.*;
+import net.java.openjdk.cacio.servlet.transport.*;
 import sun.awt.*;
 import sun.awt.peer.cacio.*;
 
@@ -19,7 +20,7 @@ public class WebSessionState {
     String mainClsName;
     Dimension initialScreenDimension;
 //    String transportFormat;
-    CmdStreamEncoder backend;
+    Transport backend;
     
     AppContext appContext;
 
@@ -101,11 +102,11 @@ public class WebSessionState {
 //        this.transportFormat = transportFormat;
 //    }
 
-    public CmdStreamEncoder getBackend() {
+    public Transport getBackend() {
         return backend;
     }
 
-    public void setBackend(CmdStreamEncoder backend) {
+    public void setBackend(Transport backend) {
         this.backend = backend;
     }
 

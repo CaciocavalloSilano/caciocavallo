@@ -6,7 +6,7 @@ import java.io.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
-import net.java.openjdk.cacio.servlet.png.*;
+import net.java.openjdk.cacio.servlet.imgformat.*;
 
 /**
  * Servlet implementation class ImageStreamer

@@ -1,20 +1,20 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.cacio.servlet.transport;
 
 import java.awt.image.*;
-
 import java.io.*;
 import java.util.*;
-import sun.misc.*;
+
 import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.base64.*;
-import net.java.openjdk.cacio.servlet.png.*;
+import net.java.openjdk.cacio.servlet.imgformat.*;
+import sun.misc.*;
 
-public class Base64CmdStreamEncoder extends CmdStreamEncoder {
+public class Base64PngTransport extends Transport {
 
     private static byte[] emptyResponseData = "0".getBytes();
     BASE64Encoder base64Encoder;
 
-    public Base64CmdStreamEncoder() {
+    public Base64PngTransport() {
 	super("text/plain");
 	
 	base64Encoder = new BASE64Encoder();

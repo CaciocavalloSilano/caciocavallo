@@ -1,12 +1,12 @@
-package net.java.openjdk.cacio.servlet.png;
+package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.awt.image.*;
 import java.lang.reflect.*;
 
 public class PNGEncoderKeypoint extends PNGEncoder {
 
-    private static Class keypointEncoderCls;
-    private static Constructor keypointEncoderConstructor;
+    private static Class<?> keypointEncoderCls;
+    private static Constructor<?> keypointEncoderConstructor;
     private static Method keypointEncodeMethod;
 
     public PNGEncoderKeypoint() {
@@ -18,7 +18,7 @@ public class PNGEncoderKeypoint extends PNGEncoder {
 	    keypointEncoderCls = Class.forName("com.keypoint.PngEncoderB");
 	    keypointEncoderConstructor = keypointEncoderCls.getConstructor(new Class[] { BufferedImage.class, boolean.class, int.class,
 		    int.class });
-	    keypointEncodeMethod = keypointEncodeMethod = keypointEncoderCls.getMethod("pngEncode", new Class[0]);
+	    keypointEncodeMethod = keypointEncoderCls.getMethod("pngEncode", new Class[0]);
 	} catch (Exception ex) {
 	    ex.printStackTrace();
 	}
