@@ -130,7 +130,7 @@ public class WebSurfaceData extends SurfaceData {
 	    y1 = Math.max(0, y1);
 	    x2 = Math.min(bounds.width, x2);
 	    y2 = Math.min(bounds.height, y2);
-	    DamageRect rect = new DamageRect(x1, y1, x2, y2);
+	    WebRect rect = new WebRect(x1, y1, x2, y2);
 	    damageTracker.trackDamageRect(rect);
 	    
 	    screen.signalScreen();

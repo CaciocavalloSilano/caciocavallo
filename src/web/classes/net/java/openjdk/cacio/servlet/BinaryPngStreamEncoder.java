@@ -15,7 +15,7 @@ public class BinaryPngStreamEncoder extends BinaryCmdStreamEncoder {
 	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
 	os.write(cmdStreamData);
 
-	DamageRect packedRegionBox = packer.getBoundingBox();
+	WebRect packedRegionBox = packer.getBoundingBox();
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);

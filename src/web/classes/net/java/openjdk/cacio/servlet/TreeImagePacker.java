@@ -30,7 +30,7 @@ public class TreeImagePacker {
 	boolean packingSuccessful;
 	do {
 	    rootNode = new PackNode();
-	    rootNode.setRect(new DamageRect(0, 0, maxWidth, maxHeight));
+	    rootNode.setRect(new WebRect(0, 0, maxWidth, maxHeight));
 	    width = height = 0;
 	    
 	    packingSuccessful = true;
@@ -77,11 +77,11 @@ public class TreeImagePacker {
 	}
     }
 
-    public DamageRect getBoundingBox() {
-	return new DamageRect(0, 0, width, height);
+    public WebRect getBoundingBox() {
+	return new WebRect(0, 0, width, height);
     }
 
-    public boolean isPackingEfficient(DamageRect boundingBox, DamageRect unionRect) {
+    public boolean isPackingEfficient(WebRect boundingBox, WebRect unionRect) {
 	int packedArea = boundingBox.getWidth() * boundingBox.getHeight();
 	int unionArea = (unionRect.getWidth() * unionRect.getHeight());
 	return (packedArea * 100) / unionArea <= 80;
@@ -91,10 +91,10 @@ public class TreeImagePacker {
 class PackNode {
     PackNode leftNode;
     PackNode rightNode;
-    DamageRect rect;
-    DamageRect imgRect;
+    WebRect rect;
+    WebRect imgRect;
 
-    public PackNode insert(DamageRect newRect) {
+    public PackNode insert(WebRect newRect) {
 	// If the current node is no leaf, pass the insert down the tree
 	if (leftNode != null) {
 	    PackNode insertNode = leftNode.insert(newRect);
@@ -126,11 +126,11 @@ class PackNode {
 	    int dh = rect.getHeight() - newRect.getHeight();
 
 	    if (dw > dh) {
-		leftNode.setRect(new DamageRect(rect.getX1(), rect.getY1(), rect.getX1() + newRect.getWidth(), rect.getY2()));
-		rightNode.setRect(new DamageRect(rect.getX1() + newRect.getWidth(), rect.getY1(), rect.getX2(), rect.getY2()));
+		leftNode.setRect(new WebRect(rect.getX1(), rect.getY1(), rect.getX1() + newRect.getWidth(), rect.getY2()));
+		rightNode.setRect(new WebRect(rect.getX1() + newRect.getWidth(), rect.getY1(), rect.getX2(), rect.getY2()));
 	    } else {
-		leftNode.setRect(new DamageRect(rect.getX1(), rect.getY1(), rect.getX2(), rect.getY1() + newRect.getHeight()));
-		rightNode.setRect(new DamageRect(rect.getX1(), rect.getY1() + newRect.getHeight(), rect.getX2(), rect.getY2()));
+		leftNode.setRect(new WebRect(rect.getX1(), rect.getY1(), rect.getX2(), rect.getY1() + newRect.getHeight()));
+		rightNode.setRect(new WebRect(rect.getX1(), rect.getY1() + newRect.getHeight(), rect.getX2(), rect.getY2()));
 	    }
 
 	    return leftNode.insert(newRect);
@@ -153,19 +153,19 @@ class PackNode {
 	this.rightNode = rightNode;
     }
 
-    public DamageRect getRect() {
+    public WebRect getRect() {
 	return rect;
     }
 
-    public void setRect(DamageRect rect) {
+    public void setRect(WebRect rect) {
 	this.rect = rect;
     }
 
-    public DamageRect getImgRect() {
+    public WebRect getImgRect() {
 	return imgRect;
     }
 
-    public void setImgRect(DamageRect imgRect) {
+    public void setImgRect(WebRect imgRect) {
 	this.imgRect = imgRect;
     }
 }
@@ -173,8 +173,8 @@ class PackNode {
 class ScreenUpdateComperator implements Comparator<ScreenUpdate> {
     @Override
     public int compare(ScreenUpdate s1, ScreenUpdate s2) {
-	DamageRect u1 = s1.getUpdateArea();
-	DamageRect u2 = s2.getUpdateArea();
+	WebRect u1 = s1.getUpdateArea();
+	WebRect u2 = s2.getUpdateArea();
 
 	return (u2.getWidth() * u2.getHeight()) - (u1.getWidth() * u1.getHeight());
     }

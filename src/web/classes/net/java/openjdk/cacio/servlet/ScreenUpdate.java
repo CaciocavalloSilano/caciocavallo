@@ -5,17 +5,17 @@ import java.util.*;
 import net.java.openjdk.awt.peer.web.*;
 
 public abstract class ScreenUpdate {
-    DamageRect updateArea;
+    WebRect updateArea;
 
-    public ScreenUpdate(DamageRect updateArea) {
+    public ScreenUpdate(WebRect updateArea) {
 	this.updateArea = updateArea;
     }
 
-    public DamageRect getUpdateArea() {
+    public WebRect getUpdateArea() {
         return updateArea;
     }
 
-    public void setUpdateArea(DamageRect updateArea) {
+    public void setUpdateArea(WebRect updateArea) {
         this.updateArea = updateArea;
     }
     
