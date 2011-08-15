@@ -30,7 +30,7 @@ function initImgTransport() {
 	startRequestFunc = StartImageRequest;
 	readCmdStreamFunc = readImageCommandStream;
 	
-	return "png";
+	return "img";
 }
 
 function StartImageRequest(subSessionID) {
