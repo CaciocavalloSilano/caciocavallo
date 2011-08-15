@@ -1,15 +1,13 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.cacio.servlet.transport;
 
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.List;
 
-import javax.servlet.http.*;
-
 import net.java.openjdk.awt.peer.web.*;
 
-public abstract class CmdStreamEncoder {
+public abstract class Transport {
     
     public static final String FORMAT_PNG_BASE64 = "base64";
     public static final String FORMAT_PNG_IMG = "img";
@@ -18,14 +16,13 @@ public abstract class CmdStreamEncoder {
     
     String contentType;
     
-    public CmdStreamEncoder(String contentType) {
+    public Transport(String contentType) {
 	this.contentType = contentType;
     }
     
     protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
 	Graphics g = packedImage.getGraphics();
 
-	int cnt = 0;
 	for (ScreenUpdate update : updateList) {
 	    if (update instanceof BlitScreenUpdate) {
 		BlitScreenUpdate bsUpdate = (BlitScreenUpdate) update;
@@ -35,11 +32,8 @@ public abstract class CmdStreamEncoder {
 
 		g.drawImage(bsUpdate.getImage(), bsUpdate.getPackedX(), bsUpdate.getPackedY() + packedAreaHeight, bsUpdate.getPackedX() + width, bsUpdate.getPackedY()+ height + packedAreaHeight, bsUpdate.getSrcX(), bsUpdate.getSrcY(),
 			bsUpdate.getSrcX() + width, bsUpdate.getSrcY() + height, null);
-		cnt++;
 	    }
 	}
-	
-//	System.out.println("Packed "+cnt+" areas into image");
     }
     
     public abstract void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData) throws IOException;
@@ -50,15 +44,15 @@ public abstract class CmdStreamEncoder {
         return contentType;
     }
     
-    public static CmdStreamEncoder getBackendForName(String backendName) {
+    public static Transport getBackendForName(String backendName) {
 	if(backendName.equalsIgnoreCase(FORMAT_RLE)) {
-	    return new BinaryRLEStreamEncoder();
+	    return new BinaryRLETransport();
 	} else if(backendName.equalsIgnoreCase(FORMAT_PNG_XHR)) {
-	    return new BinaryPngStreamEncoder();
+	    return new BinaryPngTransport();
 	} else if(backendName.equalsIgnoreCase(FORMAT_PNG_IMG)) {
-	    return new ImageCmdStreamEncoder();
+	    return new ImageTransport();
 	} else {
-	    return new Base64CmdStreamEncoder();
+	    return new Base64PngTransport();
 	}
     }
 }

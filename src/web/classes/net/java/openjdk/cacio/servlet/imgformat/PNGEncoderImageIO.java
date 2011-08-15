@@ -1,9 +1,7 @@
-package net.java.openjdk.cacio.servlet.png;
+package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.awt.image.*;
 import java.io.*;
-import java.lang.reflect.*;
-
 import javax.imageio.*;
 
 public class PNGEncoderImageIO extends PNGEncoder {    

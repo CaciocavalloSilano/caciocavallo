@@ -1,13 +1,13 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.cacio.servlet.transport;
 
 import java.io.*;
 import java.util.*;
 
-public abstract class BinaryCmdStreamEncoder extends CmdStreamEncoder {
+public abstract class BinaryTransport extends Transport {
 
     byte[] emptyResponseData;
     
-    public BinaryCmdStreamEncoder() {
+    public BinaryTransport() {
 	super("application/binary");
 	
 	emptyResponseData = new byte[2];

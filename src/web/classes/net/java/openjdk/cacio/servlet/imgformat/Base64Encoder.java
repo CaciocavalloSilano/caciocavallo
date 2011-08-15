@@ -1,4 +1,4 @@
-package net.java.openjdk.cacio.servlet.base64;
+package net.java.openjdk.cacio.servlet.imgformat;
 
 public class Base64Encoder {
 

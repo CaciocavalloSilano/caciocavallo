@@ -41,6 +41,7 @@ import java.util.concurrent.locks.*;
 import javax.servlet.http.*;
 
 import net.java.openjdk.cacio.servlet.*;
+import net.java.openjdk.cacio.servlet.transport.*;
 
 import sun.awt.*;
 import sun.awt.peer.cacio.WindowClippedGraphics;
@@ -62,7 +63,7 @@ public class WebScreen implements PlatformScreen {
     Condition screenCondition;
 
     ArrayList<ScreenUpdate> pendingUpdateList;
-    CmdStreamEncoder encoder;
+    Transport encoder;
 
     private EventData eventData;
     private WebSurfaceData surfaceData;

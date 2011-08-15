@@ -1,16 +1,17 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.cacio.servlet.transport;
 
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import net.java.openjdk.awt.peer.web.*;
-import net.java.openjdk.cacio.servlet.png.*;
 
-public class ImageCmdStreamEncoder extends CmdStreamEncoder {
+import net.java.openjdk.awt.peer.web.*;
+import net.java.openjdk.cacio.servlet.imgformat.*;
+
+public class ImageTransport extends Transport {
 
     byte[] emptyImgData;
     
-    public ImageCmdStreamEncoder() {
+    public ImageTransport() {
 	super("image/png");
 	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 	emptyImg.setRGB(0, 0, 0);
