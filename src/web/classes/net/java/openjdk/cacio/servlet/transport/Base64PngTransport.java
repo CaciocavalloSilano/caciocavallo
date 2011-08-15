@@ -38,10 +38,12 @@ public class Base64PngTransport extends Transport {
 
     private static byte[] emptyResponseData = "0".getBytes();
     BASE64Encoder base64Encoder;
+    int compressionLevel;
 
-    public Base64PngTransport() {
+    public Base64PngTransport(int compressionLevel) {
 	super("text/plain");
 	
+	this.compressionLevel = compressionLevel;
 	base64Encoder = new BASE64Encoder();
     }
 
@@ -69,7 +71,7 @@ public class Base64PngTransport extends Transport {
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
-	    byte[] bData = PNGEncoder.getInstance().encode(packedImage, 2);
+	    byte[] bData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
 	    bData = Base64Encoder.encode(bData);
 	    os.write(bData);
 	}

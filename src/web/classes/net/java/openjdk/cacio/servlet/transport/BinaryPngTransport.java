@@ -34,6 +34,12 @@ import net.java.openjdk.cacio.servlet.imgformat.*;
 
 public class BinaryPngTransport extends BinaryTransport {
 
+    int compressionLevel;
+    
+    public BinaryPngTransport(int compressionLevel) {
+	this.compressionLevel = compressionLevel;
+    }
+    
     @Override
     public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {
@@ -45,7 +51,7 @@ public class BinaryPngTransport extends BinaryTransport {
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
-	    byte[] pngData = PNGEncoder.getInstance().encode(packedImage, 2);
+	    byte[] pngData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
 	    os.write(pngData);
 	}
     }
