@@ -1,11 +1,8 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
 import java.awt.image.*;
-import java.io.*;
 import java.util.List;
-
-import net.java.openjdk.awt.peer.web.*;
 
 public class BlitScreenUpdate extends ScreenUpdate {
 

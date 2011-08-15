@@ -1,8 +1,6 @@
-package net.java.openjdk.cacio.servlet;
+package net.java.openjdk.awt.peer.web;
 
 import java.util.*;
-
-import net.java.openjdk.awt.peer.web.*;
 
 public abstract class ScreenUpdate {
     WebRect updateArea;
