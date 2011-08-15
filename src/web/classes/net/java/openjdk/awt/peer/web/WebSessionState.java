@@ -27,12 +27,8 @@ package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
 import java.util.concurrent.locks.*;
-import javax.swing.*;
-
-import net.java.openjdk.cacio.servlet.*;
 import net.java.openjdk.cacio.servlet.transport.*;
 import sun.awt.*;
-import sun.awt.peer.cacio.*;
 
 public class WebSessionState {
     ReentrantLock sessionLock = new ReentrantLock();
@@ -44,8 +40,8 @@ public class WebSessionState {
     String[] cmdLineParams;
     String mainClsName;
     Dimension initialScreenDimension;
-//    String transportFormat;
     Transport backend;
+    int compressLevel;
     
     AppContext appContext;
 
@@ -135,4 +131,11 @@ public class WebSessionState {
         this.backend = backend;
     }
 
+    public int getCompressLevel() {
+        return compressLevel;
+    }
+
+    public void setCompressLevel(int compressLevel) {
+        this.compressLevel = compressLevel;
+    }
 }

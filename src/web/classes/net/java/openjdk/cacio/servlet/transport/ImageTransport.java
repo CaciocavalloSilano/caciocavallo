@@ -35,9 +35,12 @@ import net.java.openjdk.cacio.servlet.imgformat.*;
 public class ImageTransport extends Transport {
 
     byte[] emptyImgData;
+    int compressionLevel;
     
-    public ImageTransport() {
+    public ImageTransport(int compressionLevel) {
 	super("image/png");
+	this.compressionLevel = compressionLevel;
+	
 	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 	emptyImg.setRGB(0, 0, 0);
 	emptyImgData = PNGEncoder.getInstance().encode(emptyImg, 2);
@@ -70,7 +73,7 @@ public class ImageTransport extends Transport {
 	encodeImageCmdStream(packedImage, cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
 	
-	byte[] imgData = PNGEncoder.getInstance().encode(packedImage, 2);
+	byte[] imgData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
 	os.write(imgData);
     }
 

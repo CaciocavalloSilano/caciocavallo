@@ -69,15 +69,15 @@ public abstract class Transport {
         return contentType;
     }
     
-    public static Transport getBackendForName(String backendName) {
+    public static Transport getBackendForName(String backendName, int compressionLevel) {
 	if(backendName.equalsIgnoreCase(FORMAT_RLE)) {
 	    return new BinaryRLETransport();
 	} else if(backendName.equalsIgnoreCase(FORMAT_PNG_XHR)) {
-	    return new BinaryPngTransport();
+	    return new BinaryPngTransport(compressionLevel);
 	} else if(backendName.equalsIgnoreCase(FORMAT_PNG_IMG)) {
-	    return new ImageTransport();
+	    return new ImageTransport(compressionLevel);
 	} else {
-	    return new Base64PngTransport();
+	    return new Base64PngTransport(compressionLevel);
 	}
     }
 }
