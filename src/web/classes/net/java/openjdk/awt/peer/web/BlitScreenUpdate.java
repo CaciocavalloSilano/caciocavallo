@@ -69,7 +69,7 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	}
     }
 
-    public void writeCmdStream(List<Integer> cmdList) {
+    public void writeToCmdStream(List<Integer> cmdList) {
 	cmdList.add(0);
 	cmdList.add(updateArea.getX1());
 	cmdList.add(updateArea.getY1());

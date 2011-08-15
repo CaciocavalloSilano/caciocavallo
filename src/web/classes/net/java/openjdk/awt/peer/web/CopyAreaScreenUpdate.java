@@ -45,7 +45,7 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
     }
 
     @Override
-    public void writeCmdStream(List<Integer> cmdList) {
+    public void writeToCmdStream(List<Integer> cmdList) {
 	cmdList.add(1);
 	cmdList.add(updateArea.getX1());
 	cmdList.add(updateArea.getY1());
