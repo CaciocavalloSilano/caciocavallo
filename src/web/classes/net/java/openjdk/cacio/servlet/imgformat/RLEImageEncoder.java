@@ -28,6 +28,10 @@ package net.java.openjdk.cacio.servlet.imgformat;
 import java.awt.image.*;
 import java.io.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class RLEImageEncoder {
 
     public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2, OutputStream os) throws IOException {

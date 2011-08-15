@@ -28,6 +28,10 @@ package net.java.openjdk.cacio.servlet.imgformat;
 import java.awt.image.*;
 import java.lang.reflect.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class PNGEncoderKeypoint extends PNGEncoder {
 
     private static Class<?> keypointEncoderCls;

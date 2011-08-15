@@ -29,6 +29,10 @@ import javax.servlet.http.*;
 
 import net.java.openjdk.cacio.servlet.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class CacioSessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent ev) {

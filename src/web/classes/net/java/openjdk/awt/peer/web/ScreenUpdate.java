@@ -27,6 +27,10 @@ package net.java.openjdk.awt.peer.web;
 
 import java.util.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public abstract class ScreenUpdate {
     WebRect updateArea;
 

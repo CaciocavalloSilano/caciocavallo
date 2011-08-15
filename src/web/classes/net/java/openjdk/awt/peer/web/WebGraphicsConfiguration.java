@@ -25,19 +25,14 @@
 
 package net.java.openjdk.awt.peer.web;
 
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.geom.AffineTransform;
-import java.awt.image.ColorModel;
-import java.awt.image.DirectColorModel;
-import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.*;
 
 /**
  * Web based implementation of the GraphicConfiguration.
  *
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
 public class WebGraphicsConfiguration extends GraphicsConfiguration {

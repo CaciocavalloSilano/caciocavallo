@@ -34,6 +34,10 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.transport.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class AppStartServlet extends SubSessionServletBase {
     
     @Override

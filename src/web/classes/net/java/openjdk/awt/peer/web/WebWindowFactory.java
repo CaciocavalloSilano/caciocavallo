@@ -29,6 +29,10 @@ import java.awt.*;
 import sun.awt.peer.cacio.*;
 import sun.awt.peer.cacio.managed.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebWindowFactory extends FullScreenWindowFactory {
 
     public WebWindowFactory() {

@@ -26,11 +26,9 @@
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
-
 import java.awt.image.*;
 import java.util.*;
 import java.util.List;
-import net.java.openjdk.cacio.servlet.*;
 
 import sun.awt.image.*;
 import sun.java2d.*;
@@ -38,9 +36,9 @@ import sun.java2d.loops.*;
 import sun.java2d.pipe.*;
 
 /**
- * SurfaceData implementation based on libSDL.
+ * SurfaceData implementation
  * 
- * @author Mario Torre <neugens.limasoftware@gmail.com>
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebSurfaceData extends SurfaceData {
 

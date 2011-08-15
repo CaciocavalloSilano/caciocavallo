@@ -29,6 +29,10 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class PNGEncoderImageIO extends PNGEncoder {    
     @Override
     public byte[] encode(BufferedImage img, int compression) {

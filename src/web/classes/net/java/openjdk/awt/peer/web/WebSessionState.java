@@ -30,6 +30,10 @@ import java.util.concurrent.locks.*;
 import net.java.openjdk.cacio.servlet.transport.*;
 import sun.awt.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebSessionState {
     ReentrantLock sessionLock = new ReentrantLock();
     WebMouseStateTracker mouseTracker;

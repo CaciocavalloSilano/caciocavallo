@@ -28,6 +28,10 @@ package net.java.openjdk.awt.peer.web;
 import java.util.*;
 import sun.java2d.pipe.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class CopyAreaScreenUpdate extends ScreenUpdate {
 
     int dx, dy;

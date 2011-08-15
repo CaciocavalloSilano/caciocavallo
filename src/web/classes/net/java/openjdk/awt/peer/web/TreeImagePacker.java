@@ -27,8 +27,10 @@ package net.java.openjdk.awt.peer.web;
 
 import java.util.*;
 
-import net.java.openjdk.awt.peer.web.*;
-
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class TreeImagePacker {
 
     PackNode rootNode;

@@ -31,8 +31,11 @@ import java.util.*;
 import net.java.openjdk.awt.peer.web.*;
 import sun.awt.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class AppContextCreator {
-
     
     protected void startAppInNewAppContext(final WebSessionState sessionState) {
 	

@@ -28,6 +28,10 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.*;
 import java.awt.peer.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebSystemTrayPeer implements SystemTrayPeer {
 
     @Override

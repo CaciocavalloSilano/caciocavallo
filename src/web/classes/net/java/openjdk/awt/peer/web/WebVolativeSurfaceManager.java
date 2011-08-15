@@ -29,6 +29,10 @@ import sun.awt.image.SunVolatileImage;
 import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceData;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 class WebVolativeSurfaceManager extends VolatileSurfaceManager {
 
     WebVolativeSurfaceManager(SunVolatileImage image, Object context) {

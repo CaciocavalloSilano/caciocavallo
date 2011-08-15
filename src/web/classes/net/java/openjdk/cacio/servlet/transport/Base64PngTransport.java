@@ -34,8 +34,11 @@ import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.imgformat.*;
 import sun.misc.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class Base64PngTransport extends Transport {
-
     private static byte[] emptyResponseData = "0".getBytes();
     BASE64Encoder base64Encoder;
     int compressionLevel;

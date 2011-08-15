@@ -32,8 +32,11 @@ import java.util.*;
 import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.imgformat.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class BinaryRLETransport extends BinaryTransport {
-
     RLEImageEncoder rleEncoder;
 
     public BinaryRLETransport() {
