@@ -40,10 +40,9 @@ import java.util.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class GridDamageTracker {
-
     public static int GRID_SIZE = 32;
 
-    DamageGridElement[][] grid;
+    DamageGridCell[][] grid;
     BufferedImage combinedAreas;
     ArrayList<WebRect> rectList;
 
@@ -60,11 +59,11 @@ public class GridDamageTracker {
 
 	int cellsX = (int) Math.ceil(((double) width) / GRID_SIZE);
 	int cellsY = (int) Math.ceil(((double) height) / GRID_SIZE);
-	grid = new DamageGridElement[cellsY][cellsX];
+	grid = new DamageGridCell[cellsY][cellsX];
 
 	for (int y = 0; y < cellsY; y++) {
 	    for (int x = 0; x < cellsX; x++) {
-		grid[y][x] = new DamageGridElement(x * GRID_SIZE, y * GRID_SIZE);
+		grid[y][x] = new DamageGridCell(x * GRID_SIZE, y * GRID_SIZE);
 	    }
 	}
     }
@@ -80,7 +79,7 @@ public class GridDamageTracker {
 	int x2Cell = Math.min(rect.getX2() / GRID_SIZE, grid[0].length - 1);
 	int y2Cell = Math.min(rect.getY2() / GRID_SIZE, grid.length - 1);
 
-	//Adds the rect to each cell underneath the rect's area
+	// Adds the rect to each cell underneath the rect's area
 	for (int y = y1Cell; y <= y2Cell; y++) {
 	    for (int x = x1Cell; x <= x2Cell; x++) {
 		grid[y][x].addDamageRect(rect);
@@ -91,10 +90,18 @@ public class GridDamageTracker {
     }
 
     /**
+     * Groups modified areas iff reasonable into larger areas, and returns the
+     * resulting areas as BlitScreenUpdates. After a call to groupDamagedAreas
+     * the internal state is reset, and all tracked areas are discarded.
      * 
      * @param imgBuffer
+     *            The BufferedImage instance backing the WebSurfaceData
      * @param forcePacking
-     * @return
+     *            If forcePacking is false, a single BlitScreenUpdate may be
+     *            issued which allows for some fast-paths in later processing
+     *            steps.
+     * @return The resulting BlitScreenUpdates, or null if no updates are
+     *         available.
      */
     protected List<ScreenUpdate> groupDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
 	WebRect unionRect = getUnionRectangle();
@@ -122,6 +129,9 @@ public class GridDamageTracker {
 	return null;
     }
 
+    /**
+     * @return a union rectangle covering all tracked areas.
+     */
     private WebRect getUnionRectangle() {
 	if (rectList.size() == 0) {
 	    return null;
@@ -130,6 +140,9 @@ public class GridDamageTracker {
 	return new WebRect().union(rectList);
     }
 
+    /**
+     * Resets the internal state, and discards all tracked areas.
+     */
     private void reset() {
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
@@ -140,6 +153,15 @@ public class GridDamageTracker {
 	rectList.clear();
     }
 
+    /**
+     * Determines wether packing the supplied rectangles is worth the effort.
+     * 
+     * @param regionList
+     *            - A list containing the rectangles
+     * @param unionRect
+     *            - The union area spanning over the rectangles provided.
+     * @return
+     */
     private boolean isPackingEfficient(List<WebRect> regionList, WebRect unionRect) {
 	int regionSize = 0;
 	for (WebRect rect : regionList) {
@@ -153,25 +175,32 @@ public class GridDamageTracker {
 	return regionSize * 2 < unionSize;
     }
 
+    /**
+     * First creates a union-area for each cell, the tries to merge adjacent
+     * cells.
+     * 
+     * @param mergeLimit
+     *            The maximal amount cells than can be merged either horizontal
+     *            or vertical.
+     * @return The resulting list of WebRects.
+     */
     private List<WebRect> createDamagedRegionList(int mergeLimit) {
 	WebRect[][] unions = new WebRect[grid.length][grid[0].length];
 	List<WebRect> rectList = new ArrayList<WebRect>();
 
-	/* Calculate damaged region for each Cell */
+	// Calculate damaged region for each Cell
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
-		DamageGridElement elem = grid[y][x];
+		DamageGridCell elem = grid[y][x];
 		unions[y][x] = elem.calculateDamageUnion();
 	    }
 	}
 
-	// System.out.println("Count before merging: " + countUnions(unions));
-
+	// Merge cells
 	mergeCellsHorizontal(unions, mergeLimit);
 	mergeCellsVertical(unions, mergeLimit);
 
-	// System.out.println("Count after merging: " + countUnions(unions));
-
+	// Add remaining merged areas to list
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
 		if (unions[y][x] != null) {
@@ -183,6 +212,11 @@ public class GridDamageTracker {
 	return rectList;
     }
 
+    /*
+     * Internal debug function for couting the number of independent unions.
+     * This can be useful when debugging the mergeCell calls, or to analyze
+     * which cells are affected when tracking a damaged area.
+     */
     private int countUnions(WebRect[][] unions) {
 	int unionCnt = 0;
 	for (int y = 0; y < grid.length; y++) {
@@ -195,16 +229,28 @@ public class GridDamageTracker {
 	return unionCnt;
     }
 
+    /**
+     * Reduces the number of cell-rectangles, by merging adjacent cells with the
+     * same dimensions horizontally.
+     * 
+     * @param unions
+     *            List of WebRect's generated by creating union-areas of each
+     *            cell
+     * @param mergeLimit
+     *            The maximum amount of merging in x-direction
+     */
     private void mergeCellsHorizontal(WebRect[][] unions, int mergeLimit) {
-	// Try to reduce regions by extending horizontally
 	for (int y = 0; y < unions.length; y++) {
 	    for (int x = 0; x < unions[0].length - 1; x++) {
 		WebRect cellRect = unions[y][x];
 
 		int firstedMerged = x;
 		for (x++; x < unions[0].length && cellRect != null && (x - firstedMerged) < mergeLimit; x++) {
-		    WebRect extensionRect = unions[y][x];
+		    WebRect extensionRect = unions[y][x]; // Next rectangle
+							  // horizontally
 
+		    // If the next rectangle has the same dimensions, discard it
+		    // and expand the current one to cover its area.
 		    if (extensionRect != null && extensionRect.y1 == cellRect.y1 && extensionRect.getHeight() == cellRect.getHeight()
 			    && extensionRect.x1 == cellRect.x2) {
 			cellRect.x2 = extensionRect.x2;
@@ -215,16 +261,25 @@ public class GridDamageTracker {
 	}
     }
 
+    /**
+     * Reduces the number of cell-rectangles, by merging adjacent cells with the
+     * same dimensions vertically.
+     * 
+     * @param unions
+     * @param mergeLimit
+     */
     private void mergeCellsVertical(WebRect[][] unions, int mergeLimit) {
-	// Try to reduce regions by extending horizontally
 	for (int x = 0; x < unions[0].length; x++) {
 	    for (int y = 0; y < unions.length - 1; y++) {
 		WebRect cellRect = unions[y][x];
 
 		int firstMergedCell = y;
 		for (y++; y < unions.length && cellRect != null && (y - firstMergedCell) < mergeLimit; y++) {
-		    WebRect extensionRect = unions[y][x];
+		    WebRect extensionRect = unions[y][x]; // Next rectangle
+							  // vertically
 
+		    // If the next rectangle has the same dimensions, discard it
+		    // and expand the current one to cover its area.
 		    if (extensionRect != null && extensionRect.x1 == cellRect.x1 && extensionRect.getWidth() == cellRect.getWidth()
 			    && extensionRect.y1 == cellRect.y2) {
 			cellRect.y2 = extensionRect.y2;
@@ -237,25 +292,45 @@ public class GridDamageTracker {
 
 }
 
-class DamageGridElement {
+/**
+ * A single grid-cell, tracked by GridDamageTracker
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
+class DamageGridCell {
     int x, y;
     ArrayList<WebRect> rectangles = null;
 
-    boolean tracked = false;
-
-    public DamageGridElement(int x, int y) {
+    /**
+     * @param x
+     *            Pixel offset horizontally
+     * @param y
+     *            Pixel offset vertically
+     */
+    protected DamageGridCell(int x, int y) {
 	this.x = x;
 	this.y = y;
     }
 
-    public void addDamageRect(WebRect rect) {
+    /**
+     * Add a modified area to the current cell.
+     * 
+     * @param rect
+     */
+    protected void addDamageRect(WebRect rect) {
 	if (rectangles == null) {
 	    rectangles = new ArrayList<WebRect>();
 	}
 	rectangles.add(rect);
     }
 
-    public WebRect calculateDamageUnion() {
+    /**
+     * Calculates a region spanning over all modified areas tracked by this
+     * cell.
+     * 
+     * @return
+     */
+    protected WebRect calculateDamageUnion() {
 	if (rectangles == null || rectangles.size() == 0) {
 	    return null;
 	}
@@ -276,16 +351,7 @@ class DamageGridElement {
 	return damageRect;
     }
 
-    public void reset() {
+    protected void reset() {
 	rectangles = null;
-	tracked = false;
-    }
-
-    public boolean isTracked() {
-	return tracked;
-    }
-
-    public void setTracked(boolean tracked) {
-	this.tracked = tracked;
     }
 }
