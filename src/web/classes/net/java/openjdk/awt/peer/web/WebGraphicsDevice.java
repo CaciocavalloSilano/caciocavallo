@@ -32,6 +32,7 @@ import java.awt.GraphicsDevice;
 import net.java.openjdk.cacio.servlet.*;
 
 /**
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
 class WebGraphicsDevice extends GraphicsDevice {

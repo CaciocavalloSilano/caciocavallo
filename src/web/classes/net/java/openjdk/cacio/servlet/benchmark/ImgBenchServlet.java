@@ -30,6 +30,10 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class ImgBenchServlet extends HttpServlet {
 
     byte[] imgData;

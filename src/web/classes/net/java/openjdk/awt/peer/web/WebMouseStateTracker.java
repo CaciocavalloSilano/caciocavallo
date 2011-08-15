@@ -30,6 +30,10 @@ import java.util.*;
 
 import sun.awt.peer.cacio.managed.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebMouseStateTracker {
     WebScreen screen;
 

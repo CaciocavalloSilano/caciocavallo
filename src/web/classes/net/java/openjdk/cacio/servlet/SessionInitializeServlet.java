@@ -32,7 +32,8 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
- * Servlet implementation class AppStarter
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class SessionInitializeServlet extends SubSessionServletBase {
 

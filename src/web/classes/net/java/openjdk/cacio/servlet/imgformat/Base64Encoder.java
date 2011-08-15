@@ -25,6 +25,10 @@
 
 package net.java.openjdk.cacio.servlet.imgformat;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class Base64Encoder {
 
     private final static byte padByte = (byte) '=';

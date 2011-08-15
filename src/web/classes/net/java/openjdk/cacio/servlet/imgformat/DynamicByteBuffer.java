@@ -28,6 +28,10 @@ package net.java.openjdk.cacio.servlet.imgformat;
 import java.io.*;
 import java.util.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class DynamicByteBuffer {
     final static int BUFFER_SIZE = 4096;
     

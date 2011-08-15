@@ -48,6 +48,10 @@ import java.util.logging.Logger;
 import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebToolkit extends CacioToolkit {
 
     private static Logger logger =

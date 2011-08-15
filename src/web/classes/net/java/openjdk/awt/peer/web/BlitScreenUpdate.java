@@ -30,6 +30,10 @@ import java.awt.*;
 import java.awt.image.*;
 import java.util.List;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class BlitScreenUpdate extends ScreenUpdate {
 
     int packedX, packedY;

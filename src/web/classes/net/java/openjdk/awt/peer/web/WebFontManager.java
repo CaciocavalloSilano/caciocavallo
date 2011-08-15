@@ -28,6 +28,10 @@ package net.java.openjdk.awt.peer.web;
 import sun.awt.*;
 import sun.font.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebFontManager extends X11FontManager {
     
     @Override

@@ -30,8 +30,9 @@ import sun.java2d.SunGraphicsEnvironment;
 import sun.java2d.SurfaceManagerFactory;
 
 /**
- * Graphics Environment implementation based on libSDL.
+ * Graphics Environment implementation
  *
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.liamsoftware@gmail.com>
  */
 public class WebGraphicsEnvironment extends SunGraphicsEnvironment {

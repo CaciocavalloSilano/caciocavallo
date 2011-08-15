@@ -30,6 +30,7 @@ import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceManagerFactory;
 
 /**
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
 class WebSurfaceManagerFactory extends SurfaceManagerFactory {

@@ -27,6 +27,10 @@ package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.awt.image.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public abstract class PNGEncoder {
 
     private static PNGEncoder instance;

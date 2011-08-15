@@ -28,6 +28,10 @@ package net.java.openjdk.cacio.servlet;
 import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class SubSessionServletBase extends HttpServlet {
 
     protected WebSessionState getSessionState(HttpServletRequest request) {

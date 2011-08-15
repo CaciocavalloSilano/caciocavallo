@@ -28,6 +28,10 @@ package net.java.openjdk.cacio.servlet.transport;
 import java.io.*;
 import java.util.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public abstract class BinaryTransport extends Transport {
 
     byte[] emptyResponseData;

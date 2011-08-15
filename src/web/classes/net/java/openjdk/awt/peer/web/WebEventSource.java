@@ -28,6 +28,10 @@ package net.java.openjdk.awt.peer.web;
 import sun.awt.peer.cacio.*;
 import sun.awt.peer.cacio.managed.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebEventSource implements CacioEventSource {
 
     static WebEventSource instance;

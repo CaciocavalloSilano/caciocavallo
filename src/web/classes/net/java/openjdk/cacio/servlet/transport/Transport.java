@@ -32,6 +32,10 @@ import java.util.List;
 
 import net.java.openjdk.awt.peer.web.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public abstract class Transport {
     
     public static final String FORMAT_PNG_BASE64 = "base64";

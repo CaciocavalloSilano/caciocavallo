@@ -30,6 +30,10 @@ import java.awt.event.*;
 import sun.awt.peer.cacio.managed.*;
 import static java.awt.event.KeyEvent.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebKeyboardStateTracker {
     WebScreen screen;
 

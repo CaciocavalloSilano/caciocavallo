@@ -28,16 +28,33 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.image.*;
 import java.util.*;
 
-import net.java.openjdk.cacio.servlet.*;
-
+/**
+ * GridDamageTracker keeps a list of all modified areas of a WebSurfaceData and
+ * groups those areas efficiently together, so that the number of drawImage
+ * calls for the browser stays low but the amount of wasted space caused by
+ * grouping stays low.
+ * 
+ * For in-depth documentation please have a look at the project's seperated
+ * cacio-web documentation.
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class GridDamageTracker {
 
-    public static int GRID_SIZE = 16;
+    public static int GRID_SIZE = 32;
 
     DamageGridElement[][] grid;
     BufferedImage combinedAreas;
     ArrayList<WebRect> rectList;
 
+    /**
+     * Constructs a GridDamageTracker with the specified size in pixel.
+     * 
+     * @param width
+     *            - Width of the tracked WebSurfaceData in pixels
+     * @param height
+     *            - Height of the tracked WebSurfaceData in pixels
+     */
     public GridDamageTracker(int width, int height) {
 	rectList = new ArrayList<WebRect>();
 
@@ -52,12 +69,18 @@ public class GridDamageTracker {
 	}
     }
 
+    /**
+     * Tracks the specified modified/damaged area, which has been rendered to.
+     * 
+     * @param rect
+     */
     protected void trackDamageRect(WebRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
 	int x2Cell = Math.min(rect.getX2() / GRID_SIZE, grid[0].length - 1);
 	int y2Cell = Math.min(rect.getY2() / GRID_SIZE, grid.length - 1);
 
+	//Adds the rect to each cell underneath the rect's area
 	for (int y = y1Cell; y <= y2Cell; y++) {
 	    for (int x = x1Cell; x <= x2Cell; x++) {
 		grid[y][x].addDamageRect(rect);
@@ -66,31 +89,37 @@ public class GridDamageTracker {
 
 	rectList.add(rect);
     }
-    
+
+    /**
+     * 
+     * @param imgBuffer
+     * @param forcePacking
+     * @return
+     */
     protected List<ScreenUpdate> persistDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
-	    WebRect unionRect = getUnionRectangle();
-	    if (unionRect != null) {
-		ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
-		
-		List<WebRect> regionList = createDamagedRegionList(5);
-		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
-		    
-		    if (!isPackingEfficient(regionList, unionRect) && !forcePacking) {
-			screenUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
-				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
-		    } else {
-			for (WebRect dRect : regionList) {
-			    screenUpdateList.add(new BlitScreenUpdate(dRect.getX1(), dRect.getY1(), dRect.getX1(), dRect.getY1(), dRect.getWidth(),
-				    dRect.getHeight(), imgBuffer));
-			}
+	WebRect unionRect = getUnionRectangle();
+	if (unionRect != null) {
+	    ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
+
+	    List<WebRect> regionList = createDamagedRegionList(5);
+	    if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
+
+		if (!isPackingEfficient(regionList, unionRect) && !forcePacking) {
+		    screenUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(), unionRect
+			    .getWidth(), unionRect.getHeight(), imgBuffer));
+		} else {
+		    for (WebRect dRect : regionList) {
+			screenUpdateList.add(new BlitScreenUpdate(dRect.getX1(), dRect.getY1(), dRect.getX1(), dRect.getY1(), dRect.getWidth(), dRect
+				.getHeight(), imgBuffer));
 		    }
 		}
-
-		reset();
-		return screenUpdateList;
 	    }
-	    
-	    return null;
+
+	    reset();
+	    return screenUpdateList;
+	}
+
+	return null;
     }
 
     private WebRect getUnionRectangle() {
@@ -100,7 +129,6 @@ public class GridDamageTracker {
 
 	return new WebRect().union(rectList);
     }
-    
 
     private void reset() {
 	for (int y = 0; y < grid.length; y++) {

@@ -25,17 +25,12 @@
 
 package net.java.openjdk.awt.peer.web;
 
-import java.awt.Color;
-
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
-import java.awt.image.ColorModel;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 
@@ -43,15 +38,14 @@ import javax.servlet.http.*;
 
 import net.java.openjdk.cacio.servlet.*;
 import net.java.openjdk.cacio.servlet.transport.*;
-
 import sun.awt.*;
-import sun.awt.peer.cacio.WindowClippedGraphics;
+import sun.awt.peer.cacio.*;
 import sun.awt.peer.cacio.managed.*;
-import sun.java2d.SunGraphics2D;
+import sun.java2d.*;
 
 /**
  * 
- * @author Mario Torre <neugens@limasoftware.net>
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebScreen implements PlatformScreen {
 

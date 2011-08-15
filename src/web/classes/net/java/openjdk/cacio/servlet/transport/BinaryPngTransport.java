@@ -32,14 +32,17 @@ import java.util.*;
 import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.imgformat.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class BinaryPngTransport extends BinaryTransport {
-
     int compressionLevel;
-    
+
     public BinaryPngTransport(int compressionLevel) {
 	this.compressionLevel = compressionLevel;
     }
-    
+
     @Override
     public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {

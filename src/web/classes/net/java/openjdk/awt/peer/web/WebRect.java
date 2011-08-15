@@ -27,6 +27,10 @@ package net.java.openjdk.awt.peer.web;
 
 import java.util.*;
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 public class WebRect {
     int x1, y1, x2, y2;
 
