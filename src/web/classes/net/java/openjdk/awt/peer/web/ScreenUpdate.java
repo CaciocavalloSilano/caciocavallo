@@ -28,23 +28,35 @@ package net.java.openjdk.awt.peer.web;
 import java.util.*;
 
 /**
+ * A ScreenUpdate represents a change of the WebSurfaceData, which is sent to
+ * the browser.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public abstract class ScreenUpdate {
     WebRect updateArea;
 
+    /**
+     * @param updateArea
+     *            the area modified by the ScreenUpdate-Operation
+     */
     public ScreenUpdate(WebRect updateArea) {
 	this.updateArea = updateArea;
     }
 
     public WebRect getUpdateArea() {
-        return updateArea;
+	return updateArea;
     }
 
     public void setUpdateArea(WebRect updateArea) {
-        this.updateArea = updateArea;
+	this.updateArea = updateArea;
     }
-    
+
+    /**
+     * Appends the coordinates and commands of the current ScreenUpdate to the
+     * cmdList, which will later be serialized and sent to the browser.
+     * 
+     * @param cmdList
+     */
     public abstract void writeToCmdStream(List<Integer> cmdList);
 }

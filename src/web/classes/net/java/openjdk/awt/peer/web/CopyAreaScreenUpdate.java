@@ -29,6 +29,10 @@ import java.util.*;
 import sun.java2d.pipe.*;
 
 /**
+ * ScreenUpdate generated when state between browser and server is synchronized
+ * by sending a copyArea.
+ * 
+ * The browser also needs to honor the currently set clip.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -37,6 +41,16 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
     int dx, dy;
     Region clip;
     
+    /**
+     * 
+     * @param x1 x1 coordinate of src area
+     * @param y1 
+     * @param x2 
+     * @param y2
+     * @param dx - x difference between src and dst pos
+     * @param dy
+     * @param clip - clip, if one has been applied.
+     */
     public CopyAreaScreenUpdate(int x1, int y1, int x2, int y2, int dx, int dy, Region clip) {
 	super(new WebRect(x1, y1, x2, y2));
 	this.dx = dx;
@@ -63,6 +77,4 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
     public String toString() {
 	return "CopyAreaScreenUpdate [dx=" + dx + ", dy=" + dy + ", updateArea=" + updateArea + "]";
     }
-    
-    
 }

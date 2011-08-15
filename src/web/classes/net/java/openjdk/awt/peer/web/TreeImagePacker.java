@@ -193,6 +193,10 @@ class PackNode {
     }
 }
 
+/**
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 class ScreenUpdateComperator implements Comparator<ScreenUpdate> {
     @Override
     public int compare(ScreenUpdate s1, ScreenUpdate s2) {
