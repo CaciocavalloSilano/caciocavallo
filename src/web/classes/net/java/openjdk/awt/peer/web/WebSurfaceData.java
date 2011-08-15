@@ -34,6 +34,7 @@ import net.java.openjdk.cacio.servlet.*;
 import sun.awt.image.*;
 import sun.java2d.*;
 import sun.java2d.loops.*;
+import sun.java2d.pipe.*;
 
 /**
  * SurfaceData implementation based on libSDL.
@@ -167,40 +168,35 @@ public class WebSurfaceData extends SurfaceData {
 
     int cnt = 0;
 
-    // @Override
-    // public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h,
-    // int dx, int dy) {
-    // Region clipRect = sg2d.getCompClip();
-    // CompositeType comptype = sg2d.imageComp;
-    //
-    // if (clipRect.isRectangular() && sg2d.transformState <
-    // sg2d.TRANSFORM_TRANSLATESCALE
-    // && (CompositeType.SrcOverNoEa.equals(comptype) ||
-    // CompositeType.SrcNoEa.equals(comptype))) {
-    //
-    // try {
-    // lockSurface();
-    //
-    // x += sg2d.transX;
-    // y += sg2d.transY;
-    //
-    // addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, true));
-    // evacuateDamagedAreas();
-    //
-    // bufferGraphics.setComposite(sg2d.composite);
-    // bufferGraphics.setClip(clipRect.getLoX(), clipRect.getLoY(),
-    // clipRect.getWidth(), clipRect.getHeight());
-    // bufferGraphics.copyArea(x, y, w, h, dx, dy);
-    //
-    // surfaceUpdateList.add(new CopyAreaScreenUpdate(x, y, x + w, y + h, dx,
-    // dy, clipRect));
-    // } finally {
-    // unlockSurface();
-    // }
-    //
-    // return true;
-    // }
-    //
-    // return false;
-    // }
+    @Override
+    public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
+	Region clipRect = sg2d.getCompClip();
+	CompositeType comptype = sg2d.imageComp;
+
+	if (clipRect.isRectangular() && sg2d.transformState < sg2d.TRANSFORM_TRANSLATESCALE
+		&& (CompositeType.SrcOverNoEa.equals(comptype) || CompositeType.SrcNoEa.equals(comptype))) {
+
+	    try {
+		lockSurface();
+
+		x += sg2d.transX;
+		y += sg2d.transY;
+
+		addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, true));
+		evacuateDamagedAreas();
+
+		bufferGraphics.setComposite(sg2d.composite);
+		bufferGraphics.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
+		bufferGraphics.copyArea(x, y, w, h, dx, dy);
+
+		surfaceUpdateList.add(new CopyAreaScreenUpdate(x, y, x + w, y + h, dx, dy, clipRect));
+	    } finally {
+		unlockSurface();
+	    }
+
+	    return true;
+	}
+
+	return false;
+    }
 }
