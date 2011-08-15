@@ -49,14 +49,7 @@ public class WebSessionManager {
 	return null;
     }
     
-    public synchronized void unregister() {
-	// synchronized (stateStore) {
-	// WebSessionState state = stateStore.get();
-	// stateStore.set(null);
-	// }
-    }
-    
-    public void disposeSession(HttpSession session) {
+    public synchronized void disposeSession(HttpSession session) {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
 	if(subSessionList != null) {
 	    for(WebSessionState state : subSessionList) {
