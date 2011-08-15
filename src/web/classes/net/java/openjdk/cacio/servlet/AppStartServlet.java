@@ -34,7 +34,7 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.transport.*;
 
-public class AppStarter extends SubSessionServletBase {
+public class AppStartServlet extends SubSessionServletBase {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -44,7 +44,7 @@ public class AppStarter extends SubSessionServletBase {
 
 	WebSessionState state = getSessionState(request);
 	state.setInitialScreenDimension(new Dimension(width, height));
-	state.setBackend(Transport.getBackendForName(backend));
+	state.setBackend(Transport.getBackendForName(backend, state.getCompressLevel()));
 	 new AppContextCreator().startAppInNewAppContext(state);
     }
 }

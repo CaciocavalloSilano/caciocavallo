@@ -53,10 +53,10 @@ public class CacioServer {
  
 //        context.addServlet(new ServletHolder(new ImgBenchServlet()), "/ImageStreamer");
         
-        context.addServlet(new ServletHolder(new SessionInitializer()),"/SessionInitializer");
-        context.addServlet(new ServletHolder(new AppStarter()),"/AppStarter");
+        context.addServlet(new ServletHolder(new SessionInitializeServlet()),"/SessionInitializer");
+        context.addServlet(new ServletHolder(new AppStartServlet()),"/AppStarter");
         context.addServlet(new ServletHolder(new ImageStreamer()),"/ImageStreamer");
-        context.addServlet(new ServletHolder(new EventReceiver()),"/EventReceiver");
+        context.addServlet(new ServletHolder(new EventReceiveServlet()),"/EventReceiver");
         context.addServlet(new ServletHolder(new ResourceLoaderServlet()),"/ResourceLoader");
         
         HandlerList handlers = new HandlerList();
