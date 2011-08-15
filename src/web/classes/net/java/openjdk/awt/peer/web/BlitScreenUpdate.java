@@ -48,6 +48,7 @@ import java.util.List;
  * in one batch, those need to be packed into a single, larger image. packedX/Y
  * specifiy where this update is located in the "packed" image.
  * 
+ * @see ScreenUpdate
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class BlitScreenUpdate extends ScreenUpdate {
