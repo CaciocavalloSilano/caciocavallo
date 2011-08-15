@@ -154,7 +154,7 @@ public class WebSurfaceData extends SurfaceData {
 
     public List<ScreenUpdate> fetchPendingSurfaceUpdates() {
 	boolean forcePacking = surfaceUpdateList.size() > 0;
-	addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, forcePacking));
+	addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer, forcePacking));
 
 	if (surfaceUpdateList.size() > 0) {
 	    List<ScreenUpdate> pendingUpdateList = surfaceUpdateList;
@@ -181,7 +181,7 @@ public class WebSurfaceData extends SurfaceData {
 		x += sg2d.transX;
 		y += sg2d.transY;
 
-		addPendingUpdates(damageTracker.persistDamagedAreas(imgBuffer, true));
+		addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer, true));
 		evacuateDamagedAreas();
 
 		bufferGraphics.setComposite(sg2d.composite);
