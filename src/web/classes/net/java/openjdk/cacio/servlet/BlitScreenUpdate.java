@@ -16,7 +16,7 @@ public class BlitScreenUpdate extends ScreenUpdate {
     boolean isEvacuated;
 
     public BlitScreenUpdate(int dstX, int dstY, int srcX, int srcY, int w, int h, BufferedImage src) {
-	super(new DamageRect(dstX, dstY, dstX + w, dstY + h));
+	super(new WebRect(dstX, dstY, dstX + w, dstY + h));
 
 	this.srcX = srcX;
 	this.srcY = srcY;

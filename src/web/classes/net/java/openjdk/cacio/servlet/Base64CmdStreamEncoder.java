@@ -40,7 +40,7 @@ public class Base64CmdStreamEncoder extends CmdStreamEncoder {
 	String cmdString = encodeImageCmdStream(cmdList);
 	os.write(cmdString.getBytes());
 
-	DamageRect packedRegionBox = packer.getBoundingBox();
+	WebRect packedRegionBox = packer.getBoundingBox();
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);

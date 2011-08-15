@@ -11,7 +11,7 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
     Region clip;
     
     public CopyAreaScreenUpdate(int x1, int y1, int x2, int y2, int dx, int dy, Region clip) {
-	super(new DamageRect(x1, y1, x2, y2));
+	super(new WebRect(x1, y1, x2, y2));
 	this.dx = dx;
 	this.dy = dy;
 	this.clip = clip;

@@ -12,18 +12,18 @@ public class SimpleImagePacker {
 	
     }
     
-    public SimpleImagePacker(List<DamageRect> regionList) {
+    public SimpleImagePacker(List<WebRect> regionList) {
 	this();
 	insertDamagedRegionList(regionList);
     }
     
-    public void insertDamagedRegionList(List<DamageRect> regionList) {
-	for(DamageRect rect : regionList) {
+    public void insertDamagedRegionList(List<WebRect> regionList) {
+	for(WebRect rect : regionList) {
 	    insert(rect);
 	}
     }
     
-    public void insert(DamageRect rect) {
+    public void insert(WebRect rect) {
 	curHeight += rect.getHeight();
 	curWidth = Math.max(curWidth, rect.getWidth());
     }
@@ -35,11 +35,11 @@ public class SimpleImagePacker {
 	insert(update.getUpdateArea());
     }
    
-    public DamageRect getBoundingBox() {
-	return new DamageRect(0, 0, curWidth, curHeight);
+    public WebRect getBoundingBox() {
+	return new WebRect(0, 0, curWidth, curHeight);
     }
     
-    public boolean isPackingEfficient(DamageRect boundingBox, DamageRect unionRect) {
+    public boolean isPackingEfficient(WebRect boundingBox, WebRect unionRect) {
 	return true;
     }
 }

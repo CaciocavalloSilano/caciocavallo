@@ -11,10 +11,10 @@ public class GridDamageTracker {
 
     DamageGridElement[][] grid;
     BufferedImage combinedAreas;
-    ArrayList<DamageRect> rectList;
+    ArrayList<WebRect> rectList;
 
     public GridDamageTracker(int width, int height) {
-	rectList = new ArrayList<DamageRect>();
+	rectList = new ArrayList<WebRect>();
 
 	int cellsX = (int) Math.ceil(((double) width) / GRID_SIZE);
 	int cellsY = (int) Math.ceil(((double) height) / GRID_SIZE);
@@ -27,7 +27,7 @@ public class GridDamageTracker {
 	}
     }
 
-    protected void trackDamageRect(DamageRect rect) {
+    protected void trackDamageRect(WebRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
 	int x2Cell = Math.min(rect.getX2() / GRID_SIZE, grid[0].length - 1);
@@ -43,18 +43,18 @@ public class GridDamageTracker {
     }
     
     protected List<ScreenUpdate> persistDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
-	    DamageRect unionRect = getUnionRectangle();
+	    WebRect unionRect = getUnionRectangle();
 	    if (unionRect != null) {
 		ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
 		
-		List<DamageRect> regionList = createDamagedRegionList(5);
+		List<WebRect> regionList = createDamagedRegionList(5);
 		if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
 		    
 		    if (!isPackingEfficient(regionList, unionRect) && !forcePacking) {
 			screenUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(),
 				unionRect.getWidth(), unionRect.getHeight(), imgBuffer));
 		    } else {
-			for (DamageRect dRect : regionList) {
+			for (WebRect dRect : regionList) {
 			    screenUpdateList.add(new BlitScreenUpdate(dRect.getX1(), dRect.getY1(), dRect.getX1(), dRect.getY1(), dRect.getWidth(),
 				    dRect.getHeight(), imgBuffer));
 			}
@@ -68,12 +68,12 @@ public class GridDamageTracker {
 	    return null;
     }
 
-    private DamageRect getUnionRectangle() {
+    private WebRect getUnionRectangle() {
 	if (rectList.size() == 0) {
 	    return null;
 	}
 
-	return new DamageRect().union(rectList);
+	return new WebRect().union(rectList);
     }
     
 
@@ -87,9 +87,9 @@ public class GridDamageTracker {
 	rectList.clear();
     }
 
-    private boolean isPackingEfficient(List<DamageRect> regionList, DamageRect unionRect) {
+    private boolean isPackingEfficient(List<WebRect> regionList, WebRect unionRect) {
 	int regionSize = 0;
-	for (DamageRect rect : regionList) {
+	for (WebRect rect : regionList) {
 	    regionSize += rect.getWidth() * rect.getHeight();
 	}
 
@@ -100,9 +100,9 @@ public class GridDamageTracker {
 	return regionSize * 2 < unionSize;
     }
 
-    private List<DamageRect> createDamagedRegionList(int mergeLimit) {
-	DamageRect[][] unions = new DamageRect[grid.length][grid[0].length];
-	List<DamageRect> rectList = new ArrayList<DamageRect>();
+    private List<WebRect> createDamagedRegionList(int mergeLimit) {
+	WebRect[][] unions = new WebRect[grid.length][grid[0].length];
+	List<WebRect> rectList = new ArrayList<WebRect>();
 
 	/* Calculate damaged region for each Cell */
 	for (int y = 0; y < grid.length; y++) {
@@ -130,7 +130,7 @@ public class GridDamageTracker {
 	return rectList;
     }
 
-    private int countUnions(DamageRect[][] unions) {
+    private int countUnions(WebRect[][] unions) {
 	int unionCnt = 0;
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
@@ -142,15 +142,15 @@ public class GridDamageTracker {
 	return unionCnt;
     }
 
-    private void mergeCellsHorizontal(DamageRect[][] unions, int mergeLimit) {
+    private void mergeCellsHorizontal(WebRect[][] unions, int mergeLimit) {
 	// Try to reduce regions by extending horizontally
 	for (int y = 0; y < unions.length; y++) {
 	    for (int x = 0; x < unions[0].length - 1; x++) {
-		DamageRect cellRect = unions[y][x];
+		WebRect cellRect = unions[y][x];
 
 		int firstedMerged = x;
 		for (x++; x < unions[0].length && cellRect != null && (x - firstedMerged) < mergeLimit; x++) {
-		    DamageRect extensionRect = unions[y][x];
+		    WebRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.y1 == cellRect.y1 && extensionRect.getHeight() == cellRect.getHeight()
 			    && extensionRect.x1 == cellRect.x2) {
@@ -162,15 +162,15 @@ public class GridDamageTracker {
 	}
     }
 
-    private void mergeCellsVertical(DamageRect[][] unions, int mergeLimit) {
+    private void mergeCellsVertical(WebRect[][] unions, int mergeLimit) {
 	// Try to reduce regions by extending horizontally
 	for (int x = 0; x < unions[0].length; x++) {
 	    for (int y = 0; y < unions.length - 1; y++) {
-		DamageRect cellRect = unions[y][x];
+		WebRect cellRect = unions[y][x];
 
 		int firstMergedCell = y;
 		for (y++; y < unions.length && cellRect != null && (y - firstMergedCell) < mergeLimit; y++) {
-		    DamageRect extensionRect = unions[y][x];
+		    WebRect extensionRect = unions[y][x];
 
 		    if (extensionRect != null && extensionRect.x1 == cellRect.x1 && extensionRect.getWidth() == cellRect.getWidth()
 			    && extensionRect.y1 == cellRect.y2) {
@@ -186,7 +186,7 @@ public class GridDamageTracker {
 
 class DamageGridElement {
     int x, y;
-    ArrayList<DamageRect> rectangles = null;
+    ArrayList<WebRect> rectangles = null;
 
     boolean tracked = false;
 
@@ -195,20 +195,20 @@ class DamageGridElement {
 	this.y = y;
     }
 
-    public void addDamageRect(DamageRect rect) {
+    public void addDamageRect(WebRect rect) {
 	if (rectangles == null) {
-	    rectangles = new ArrayList<DamageRect>();
+	    rectangles = new ArrayList<WebRect>();
 	}
 	rectangles.add(rect);
     }
 
-    public DamageRect calculateDamageUnion() {
+    public WebRect calculateDamageUnion() {
 	if (rectangles == null || rectangles.size() == 0) {
 	    return null;
 	}
 
-	DamageRect damageRect = new DamageRect(rectangles.get(0));
-	for (DamageRect rect : rectangles) {
+	WebRect damageRect = new WebRect(rectangles.get(0));
+	for (WebRect rect : rectangles) {
 	    damageRect.union(rect);
 	}
 
