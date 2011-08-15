@@ -35,6 +35,8 @@ import net.java.openjdk.awt.peer.web.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class ImageStreamer extends SubSessionServletBase {
+    
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
 	disableCaching(response);
 
@@ -47,6 +49,10 @@ public class ImageStreamer extends SubSessionServletBase {
 	}
     }
 
+    /**
+     * Sets various headers to avoid browsers caching data.
+     * @param response
+     */
     protected void disableCaching(HttpServletResponse response) {
 	response.setHeader("Expires", "Sat, 1 May 2000 12:00:00 GMT");
 	response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");

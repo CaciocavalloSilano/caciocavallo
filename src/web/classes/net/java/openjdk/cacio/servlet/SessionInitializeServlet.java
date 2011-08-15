@@ -32,6 +32,7 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
+ * Servlet downloading the html/javascript code and pre-initializing the session.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -43,6 +44,7 @@ public class SessionInitializeServlet extends SubSessionServletBase {
 	startHtml = loadStartHTML();
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String className = request.getParameter("cls");
 	String format = request.getParameter("format");
@@ -64,6 +66,12 @@ public class SessionInitializeServlet extends SubSessionServletBase {
 	response.getWriter().write(ssidStartHtml);
     }
 
+    /**
+     * Helper-Method for parsing the compressionLevel for png compression out of the parameter-stream.
+     * If compressionLevel can not be determined, the default value 2 will be used.
+     * @param request
+     * @return
+     */
     protected int getCompressionLevel(HttpServletRequest request) {
 	String cLevelStr = request.getParameter("clevel");
 	int cLevel = 2;
@@ -78,6 +86,11 @@ public class SessionInitializeServlet extends SubSessionServletBase {
 	return cLevel;
     }
 
+    /**
+     * Parses the parameters supplied as part of the URL
+     * @param request
+     * @return the parameters contained in a list
+     */
     protected String[] generateParameterArray(HttpServletRequest request) {
 	ArrayList<String> paramList = new ArrayList<String>();
 
@@ -89,6 +102,11 @@ public class SessionInitializeServlet extends SubSessionServletBase {
 	return paramList.toArray(new String[paramList.size()]);
     }
 
+    /**
+     * Loads the html code from the classpath.
+     * @return
+     * @throws Exception
+     */
     protected String loadStartHTML() throws Exception {
 	StringBuilder htmlBuilder = new StringBuilder(8192);
 	Reader r = new InputStreamReader(getClass().getResourceAsStream("/StreamBase.html"), "UTF-8");

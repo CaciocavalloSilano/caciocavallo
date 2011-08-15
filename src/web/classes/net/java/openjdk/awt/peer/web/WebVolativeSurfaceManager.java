@@ -30,6 +30,7 @@ import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceData;
 
 /**
+ * WebVolatileSurfaceManagerImplementation for Caciocavallo-Web.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */

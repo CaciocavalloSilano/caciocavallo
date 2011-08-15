@@ -32,22 +32,25 @@ import net.java.openjdk.awt.peer.web.*;
 import sun.awt.*;
 
 /**
+ * Initializes a new AppContext, and starts the specified Application within the
+ * new AppContext. Waits until the Application has started up, to avoid browsers
+ * fetching image-data and pumping events, before initialization is finished.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class AppContextCreator {
-    
+
     protected void startAppInNewAppContext(final WebSessionState sessionState) {
-	
-	ThreadGroup appGroup = new ThreadGroup("AppThreadGroup "+String.valueOf(new Random().nextLong()));
+
+	ThreadGroup appGroup = new ThreadGroup("AppThreadGroup " + String.valueOf(new Random().nextLong()));
 	Thread t = new Thread(appGroup, "AppInitThread") {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
-		
+
 		try {
 		    sessionState.lockSession();
 		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);
-		    
+
 		    ClassLoader loader = getClass().getClassLoader();
 		    Class<?> cls = loader.loadClass(sessionState.getMainClsName());
 		    Method mainMethod = cls.getMethod("main", String[].class);
@@ -60,11 +63,11 @@ public class AppContextCreator {
 		}
 	    }
 	};
-	
+
 	try {
 	    t.start();
-	    
-	    //Wait for initialization to finish
+
+	    // Wait for initialization to finish
 	    t.join();
 	} catch (InterruptedException e) {
 	    e.printStackTrace();

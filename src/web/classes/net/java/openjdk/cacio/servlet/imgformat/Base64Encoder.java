@@ -26,6 +26,8 @@
 package net.java.openjdk.cacio.servlet.imgformat;
 
 /**
+ * Self-contained and fast Base64 implementation without line-break functionality.
+ * Used to transmit image-data in text format, in case png-image data is sent over XHR1.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -40,6 +42,7 @@ public class Base64Encoder {
 	    (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0',
 	    (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) '+', (byte) '/' };
 
+    
     public static byte[] encode(byte[] in) {
 	int dataLength = (in.length * 4 + 2) / 3;
 	byte[] out = new byte[((in.length + 2) / 3) * 4]; // length including

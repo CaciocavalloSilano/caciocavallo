@@ -33,6 +33,12 @@ import net.java.openjdk.awt.peer.web.*;
 import sun.awt.*;
 
 /**
+ * Session-Manager with sub-session functionality. Browser often assign the same
+ * session-cookie to different tabs, although for Caciocavallo-Web different
+ * WebScreen instances running in different tabs are completly seperated and
+ * isolated sessions should be represented by seperated Sessions. This has been
+ * implemented by "subsessions". Additionally to the http-session-cookie, each
+ * existing instance gets its own subsession-id.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -40,11 +46,17 @@ public class WebSessionManager {
     static final String SESSION_KEY = "WEBSessionState";
 
     private static final WebSessionManager instance = new WebSessionManager();
-    
+
     public static WebSessionManager getInstance() {
 	return instance;
     }
-    
+
+    /**
+     * Register at the current HttpSession, and issue a new subsession-id.
+     * 
+     * @param session
+     * @return the WebSessionState generated for the current subsession
+     */
     public synchronized WebSessionState register(HttpSession session) {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
 
@@ -56,32 +68,58 @@ public class WebSessionManager {
 	int subSessionID = subSessionList.size();
 	WebSessionState sessionState = new WebSessionState(subSessionID);
 	subSessionList.add(sessionState);
-	
+
 	return sessionState;
     }
-    
+
+    /**
+     * Builds links between AppContext and WebSessionState, so that the
+     * AppContext can be accessed by using WebSessionState and vice-versa.
+     * 
+     * @param context
+     * @param state
+     */
     public void registerAppContext(AppContext context, WebSessionState state) {
 	state.setAppContext(context);
 	AppContext.getAppContext().put(SESSION_KEY, state);
     }
-    
+
+    /**
+     * Returns the WebSessionState of the currently active AppContext. This is
+     * called from AWT threads, where the only way to get to the WebSessionState
+     * is through AppContext.
+     * 
+     * @return the WebSessionState
+     */
     public WebSessionState getCurrentStateAWT() {
 	return (WebSessionState) AppContext.getAppContext().get(SESSION_KEY);
     }
 
+    /**
+     * Returns the WebSessionState of the HttpSessiont. This is
+     * called from servlet threads.
+     * @param session
+     * @param subSessionID
+     * @return the WebSessionState
+     */
     public synchronized WebSessionState getCurrentState(HttpSession session, int subSessionID) {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
 	if (subSessionList != null) {
-		return subSessionList.get(subSessionID);
+	    return subSessionList.get(subSessionID);
 	}
 
 	return null;
     }
-    
+
+    /**
+     * Disposes the session, as well as the assiciated AppContext.
+     * This will also shut down the applications contained in that AppContext as well as all its threads.
+     * @param session
+     */
     public synchronized void disposeSession(HttpSession session) {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
-	if(subSessionList != null) {
-	    for(WebSessionState state : subSessionList) {
+	if (subSessionList != null) {
+	    for (WebSessionState state : subSessionList) {
 		state.dispose();
 	    }
 	    subSessionList.clear();

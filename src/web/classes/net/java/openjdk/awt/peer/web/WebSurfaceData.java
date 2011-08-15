@@ -36,7 +36,14 @@ import sun.java2d.loops.*;
 import sun.java2d.pipe.*;
 
 /**
- * SurfaceData implementation
+ * SurfaceData implementation for Caciocavallo-Web.
+ * 
+ * One of the core components of caciocavallo-web is WebSurfaceData, an
+ * implementation of OpenJDK's SurfaceData interface - which is basically a
+ * surface Java2D can render to. Whenever a rendering operation is executed,
+ * Java2D's software rendering implementation "locks" the target WebSurfaceData,
+ * and supplies cacio-web the area it plans to modify, which are passed to the
+ * GridDamageTracker.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -115,15 +122,33 @@ public class WebSurfaceData extends SurfaceData {
 
     private static final native void initIDs();
 
+    /**
+     * Locks the surface, by locking the screen-lock
+     */
     public final void lockSurface() {
 	screen.lockScreen();
     }
 
+    /**
+     * Unlocks the surface, by releasing the screen-lock.
+     */
     public final void unlockSurface() {
 	screen.unlockScreen();
     }
 
-    public void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
+    /**
+     * Adds a modified area to the list of tracked rectangles, signals the
+     * screen for changes and releases the surface-lock.
+     * 
+     * Intended to be called by native code through JNI. May only be invoked
+     * when the surface is locked.
+     * 
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     */
+    public final void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
 	try {
 	    x1 = Math.max(0, x1);
 	    y1 = Math.max(0, y1);
@@ -131,14 +156,19 @@ public class WebSurfaceData extends SurfaceData {
 	    y2 = Math.min(bounds.height, y2);
 	    WebRect rect = new WebRect(x1, y1, x2, y2);
 	    damageTracker.trackDamageRect(rect);
-	    
+
 	    screen.signalScreen();
 	} finally {
 	    unlockSurface();
 	}
     }
 
-    protected void evacuateDamagedAreas() {
+    /**
+     * "Evacuate" all pending BlitScreenUpdates.
+     * 
+     * @see BlitScreenUpdate for more information.
+     */
+    protected void evacuateBlitScreenUpdates() {
 	for (ScreenUpdate update : surfaceUpdateList) {
 	    if (update instanceof BlitScreenUpdate) {
 		((BlitScreenUpdate) update).evacuate();
@@ -146,12 +176,20 @@ public class WebSurfaceData extends SurfaceData {
 	}
     }
 
+    /**
+     * Add a list of updates, to the list of pending updates.
+     * 
+     * @param updates
+     */
     protected void addPendingUpdates(List<ScreenUpdate> updates) {
 	if (updates != null) {
 	    surfaceUpdateList.addAll(updates);
 	}
     }
 
+    /**
+     * @return A list with all ScreenUpdates, or null iff there are none.
+     */
     public List<ScreenUpdate> fetchPendingSurfaceUpdates() {
 	boolean forcePacking = surfaceUpdateList.size() > 0;
 	addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer, forcePacking));
@@ -165,14 +203,24 @@ public class WebSurfaceData extends SurfaceData {
 	return null;
     }
 
-    int cnt = 0;
-
+    /**
+     * Acceleration hook for handling copyArea operations.
+     * 
+     * Scrolling as well as Window-Movement are implemented using copyArea, and
+     * can be sped up by properly implementing copyArea. Instead of the whole
+     * modified area a copyArea commend is sent to the browser, and only the
+     * "invisible" area has to be sent down as image-data.
+     * 
+     * CopyArea needs to "evacuate" BlitScreenUpdates preceeding it, because its
+     * order dependent.
+     * 
+     */
     @Override
     public boolean copyArea(SunGraphics2D sg2d, int x, int y, int w, int h, int dx, int dy) {
 	Region clipRect = sg2d.getCompClip();
 	CompositeType comptype = sg2d.imageComp;
 
-	if (clipRect.isRectangular() && sg2d.transformState < sg2d.TRANSFORM_TRANSLATESCALE
+	if (clipRect.isRectangular() && sg2d.transformState < SunGraphics2D.TRANSFORM_TRANSLATESCALE
 		&& (CompositeType.SrcOverNoEa.equals(comptype) || CompositeType.SrcNoEa.equals(comptype))) {
 
 	    try {
@@ -181,9 +229,12 @@ public class WebSurfaceData extends SurfaceData {
 		x += sg2d.transX;
 		y += sg2d.transY;
 
+		// Materialize pending updates, and "evacuate" those changes.
 		addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer, true));
-		evacuateDamagedAreas();
+		evacuateBlitScreenUpdates();
 
+		// Execute copyArea on the BufferedImage backing the
+		// WebSurfaceData, to get the copyArea-effect there too.
 		bufferGraphics.setComposite(sg2d.composite);
 		bufferGraphics.setClip(clipRect.getLoX(), clipRect.getLoY(), clipRect.getWidth(), clipRect.getHeight());
 		bufferGraphics.copyArea(x, y, w, h, dx, dy);

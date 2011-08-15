@@ -30,6 +30,7 @@ import javax.servlet.http.*;
 import net.java.openjdk.cacio.servlet.*;
 
 /**
+ * Session-Timeout listener, disposes the session which timed out.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */

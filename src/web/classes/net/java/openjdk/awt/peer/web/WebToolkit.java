@@ -49,8 +49,9 @@ import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
 /**
- * 
+ * Toolkit implementation for Caciocavallo-Web
  * @author Clemens Eisserer <linuxhippy@gmail.com>
+ * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
 public class WebToolkit extends CacioToolkit {
 
@@ -70,7 +71,6 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public synchronized PlatformWindowFactory getPlatformWindowFactory() {
-
         if (platformWindow == null) {
             platformWindow = new WebWindowFactory();
         }
@@ -162,7 +162,7 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public void sync() {
-        /* not needed for SDL */
+        /* not needed for Web */
     }
 
     @Override
@@ -188,9 +188,6 @@ public class WebToolkit extends CacioToolkit {
     }
 
     public InputMethodDescriptor getInputMethodAdapterDescriptor() throws AWTException {
-
         return null;
     }
-
-
 }

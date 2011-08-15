@@ -31,58 +31,61 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
+ * Small utility servlet, for sending the same image/command-stream over and
+ * over and counting how many iterations the client can issue.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class ImgBenchServlet extends HttpServlet {
 
     byte[] imgData;
-    
+
     public ImgBenchServlet() {
 	imgData = loadFileInArray("150.rle");
     }
-    
+
     protected byte[] loadFileInArray(String fileName) {
 	try {
 	    FileInputStream fin = new FileInputStream(fileName);
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	    
+
 	    int read = 0;
-	    while((read = fin.read()) != -1) {
+	    while ((read = fin.read()) != -1) {
 		bos.write(read);
 	    }
-	    
+
 	    fin.close();
 	    return bos.toByteArray();
-	}catch(IOException ex) {
+	} catch (IOException ex) {
 	    ex.printStackTrace();
 	}
-	
+
 	return null;
     }
-    
+
     int counter = 0;
     long lastTime = 0;
+
     @Override
     public synchronized void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	disableCaching(resp);
 	resp.setContentType("image/png");
-	
-	if(counter % 1000 == 0) {
-	    if(counter != 0) {
-		System.out.println("Time for 1000 images: "+(System.currentTimeMillis() - lastTime));
+
+	if (counter % 1000 == 0) {
+	    if (counter != 0) {
+		System.out.println("Time for 1000 images: " + (System.currentTimeMillis() - lastTime));
 	    }
 	    lastTime = System.currentTimeMillis();
 	}
-	
-//	try {
-//	    Thread.sleep(35);
-//	} catch (InterruptedException e) {
-//	    e.printStackTrace();
-//	}
-	
+
+	// try {
+	// Thread.sleep(35);
+	// } catch (InterruptedException e) {
+	// e.printStackTrace();
+	// }
+
 	resp.getOutputStream().write(imgData);
-	
+
 	counter++;
     }
 

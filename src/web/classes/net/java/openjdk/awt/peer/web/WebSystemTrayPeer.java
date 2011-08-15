@@ -29,6 +29,8 @@ import java.awt.*;
 import java.awt.peer.*;
 
 /**
+ * Rudimentary WebSystemTrayPeer Implementation for Caciocavallo-Web.
+ * Required for AppContext.dispose(), so give it one.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */

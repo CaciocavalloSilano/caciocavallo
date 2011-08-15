@@ -31,6 +31,9 @@ import net.java.openjdk.cacio.servlet.transport.*;
 import sun.awt.*;
 
 /**
+ * WebSessionState holds, as its name implies, session-related state. 
+ * It provides access to the AWT "session" represented by AppContexts, from
+ * the servlet session.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -40,23 +43,29 @@ public class WebSessionState {
     WebKeyboardStateTracker keyboardTracker;
     WebGraphicsConfiguration config;
     int subSessionID;
-    
+
     String[] cmdLineParams;
     String mainClsName;
     Dimension initialScreenDimension;
     Transport backend;
     int compressLevel;
-    
+
     AppContext appContext;
 
     public WebSessionState(int subSessionID) {
 	this.subSessionID = subSessionID;
     }
-    
+
+    /**
+     * Lock the session lock
+     */
     public void lockSession() {
 	sessionLock.lock();
     }
 
+    /**
+     * Unlock the session lock
+     */
     public void unlockSession() {
 	sessionLock.unlock();
     }
@@ -65,6 +74,10 @@ public class WebSessionState {
 	return config;
     }
 
+    /**
+     * Set the GraphicsConfiguration, and initialize InputState trackers
+     * @param config
+     */
     public void setGraphicsConfiguration(WebGraphicsConfiguration config) {
 	this.config = config;
 	mouseTracker = new WebMouseStateTracker(config.getScreen());
@@ -80,66 +93,58 @@ public class WebSessionState {
     }
 
     public int getSubSessionID() {
-        return subSessionID;
+	return subSessionID;
     }
 
     public AppContext getAppContext() {
-        return appContext;
+	return appContext;
     }
 
     public void setAppContext(AppContext appContext) {
-        this.appContext = appContext;
+	this.appContext = appContext;
     }
-    
-    public void dispose()  {
+
+    public void dispose() {
 	appContext.dispose();
     }
 
     public String[] getCmdLineParams() {
-        return cmdLineParams;
+	return cmdLineParams;
     }
 
     public void setCmdLineParams(String[] cmdLineParams) {
-        this.cmdLineParams = cmdLineParams;
+	this.cmdLineParams = cmdLineParams;
     }
 
     public String getMainClsName() {
-        return mainClsName;
+	return mainClsName;
     }
 
     public void setMainClsName(String mainClsName) {
-        this.mainClsName = mainClsName;
+	this.mainClsName = mainClsName;
     }
 
     public Dimension getInitialScreenDimension() {
-        return initialScreenDimension;
+	return initialScreenDimension;
     }
 
     public void setInitialScreenDimension(Dimension initialScreenDimension) {
-        this.initialScreenDimension = initialScreenDimension;
+	this.initialScreenDimension = initialScreenDimension;
     }
 
-//    public String getTransportFormat() {
-//        return transportFormat;
-//    }
-//
-//    public void setTransportFormat(String transportFormat) {
-//        this.transportFormat = transportFormat;
-//    }
-
     public Transport getBackend() {
-        return backend;
+	return backend;
     }
 
     public void setBackend(Transport backend) {
-        this.backend = backend;
+	this.backend = backend;
     }
 
     public int getCompressLevel() {
-        return compressLevel;
+	return compressLevel;
     }
 
     public void setCompressLevel(int compressLevel) {
-        this.compressLevel = compressLevel;
+	this.compressLevel = compressLevel;
     }
 }
