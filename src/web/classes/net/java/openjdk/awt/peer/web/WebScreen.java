@@ -223,7 +223,7 @@ public class WebScreen implements PlatformScreen {
 		packer.insertScreenUpdateList(pendingUpdateList);
 		for (ScreenUpdate update : pendingUpdateList) {
 		    // System.out.println(update);
-		    update.writeCmdStream(cmdList);
+		    update.writeToCmdStream(cmdList);
 		}
 
 		try {

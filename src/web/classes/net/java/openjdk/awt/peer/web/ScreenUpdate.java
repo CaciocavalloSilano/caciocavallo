@@ -46,5 +46,5 @@ public abstract class ScreenUpdate {
         this.updateArea = updateArea;
     }
     
-    public abstract void writeCmdStream(List<Integer> cmdList);
+    public abstract void writeToCmdStream(List<Integer> cmdList);
 }
