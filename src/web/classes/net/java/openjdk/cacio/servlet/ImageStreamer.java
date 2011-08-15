@@ -25,28 +25,16 @@
 
 package net.java.openjdk.cacio.servlet;
 
-import java.awt.image.*;
-
 import java.io.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
-import net.java.openjdk.cacio.servlet.imgformat.*;
 
 /**
- * 
+ * Servlet for fetching ScreenUpdates if available.
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class ImageStreamer extends SubSessionServletBase {
-
-    byte[] emptyImageData;
-
-    protected void generateEmptyImageData() {
-	BufferedImage emptyImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-	emptyImg.setRGB(0, 0, 0);
-	emptyImageData = PNGEncoder.getInstance().encode(emptyImg, 2);
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
 	disableCaching(response);
 
