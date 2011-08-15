@@ -30,6 +30,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
+ * Servlet for loading Resources located on the classpath.
+ * Useful when deploying resources which are packed in jar-files.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -40,6 +42,7 @@ public class ResourceLoaderServlet extends HttpServlet {
     public ResourceLoaderServlet() throws Exception {
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String resourceName = request.getParameter("res");
 	resourceName = '/' + resourceName.replace('_', '/');

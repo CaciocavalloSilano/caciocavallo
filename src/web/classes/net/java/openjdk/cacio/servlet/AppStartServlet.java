@@ -35,11 +35,16 @@ import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.transport.*;
 
 /**
+ * Servlet for actually starting an Application, after the environment (e.g.
+ * screen-size and supported transport backends) has been set-up accordingly by
+ * the SessionInitializeServlet.
+ * 
+ * Usually called automatically by the client-initialization code, not by the user.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class AppStartServlet extends SubSessionServletBase {
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	int width = Integer.parseInt(request.getParameter("w"));
@@ -49,6 +54,6 @@ public class AppStartServlet extends SubSessionServletBase {
 	WebSessionState state = getSessionState(request);
 	state.setInitialScreenDimension(new Dimension(width, height));
 	state.setBackend(Transport.getBackendForName(backend, state.getCompressLevel()));
-	 new AppContextCreator().startAppInNewAppContext(state);
+	new AppContextCreator().startAppInNewAppContext(state);
     }
 }

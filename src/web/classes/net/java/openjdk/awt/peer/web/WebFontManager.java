@@ -29,6 +29,8 @@ import sun.awt.*;
 import sun.font.*;
 
 /**
+ * FontManager implementation of the caciocavallo-web backend,
+ * based on X11FontManager.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */

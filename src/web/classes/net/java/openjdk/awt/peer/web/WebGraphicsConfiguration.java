@@ -30,8 +30,8 @@ import java.awt.geom.*;
 import java.awt.image.*;
 
 /**
- * Web based implementation of the GraphicConfiguration.
- *
+ * GraphicConfiguration implementation for caciocavallo-web.
+ * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
@@ -40,53 +40,49 @@ public class WebGraphicsConfiguration extends GraphicsConfiguration {
     private WebGraphicsDevice device;
     private WebScreen screen;
 
-    //Dummy
     public WebGraphicsConfiguration() {
 	device = new WebGraphicsDevice();
     }
-    
+
     WebGraphicsConfiguration(WebGraphicsDevice device) {
-        this.device = device;
-        this.screen = new WebScreen(this);
+	this.device = device;
+	this.screen = new WebScreen(this);
     }
 
     static GraphicsConfiguration getDefaultConfiguration() {
-
-        GraphicsEnvironment ge =
-        GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        GraphicsConfiguration gc = gd.getDefaultConfiguration();
-        return (WebGraphicsConfiguration) gc;
+	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	GraphicsDevice gd = ge.getDefaultScreenDevice();
+	GraphicsConfiguration gc = gd.getDefaultConfiguration();
+	return (WebGraphicsConfiguration) gc;
     }
 
     @Override
     public GraphicsDevice getDevice() {
-        return this.device;
+	return this.device;
     }
 
     @Override
     public ColorModel getColorModel() {
-        return new DirectColorModel(24, 0x00FF0000, 0x0000FF00,
-                                    0x000000FF);
+	return new DirectColorModel(24, 0x00FF0000, 0x0000FF00, 0x000000FF);
     }
 
     @Override
     public ColorModel getColorModel(int transparency) {
-        if (transparency == Transparency.OPAQUE) {
-            return getColorModel();
-        } else {
-            return ColorModel.getRGBdefault();
-        }
+	if (transparency == Transparency.OPAQUE) {
+	    return getColorModel();
+	} else {
+	    return ColorModel.getRGBdefault();
+	}
     }
 
     @Override
     public AffineTransform getDefaultTransform() {
-        return new AffineTransform();
+	return new AffineTransform();
     }
 
     @Override
     public AffineTransform getNormalizingTransform() {
-        return new AffineTransform();
+	return new AffineTransform();
     }
 
     @Override
@@ -95,6 +91,6 @@ public class WebGraphicsConfiguration extends GraphicsConfiguration {
     }
 
     public WebScreen getScreen() {
-        return screen;
+	return screen;
     }
 }

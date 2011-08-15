@@ -28,20 +28,39 @@ package net.java.openjdk.awt.peer.web;
 import java.util.*;
 
 /**
+ * Lightweight rectangle implementation. WebRect uses x1/y1 x2/y2 coordinates,
+ * instead of width/height.
  * 
+ * @See java.awt.Rectangle
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebRect {
     int x1, y1, x2, y2;
 
+    /**
+     * Construct WebRect with all coordinates set to 0.
+     */
     public WebRect() {
 
     }
-    
+
+    /**
+     * Constructs essentially a copy of the passed rect.
+     * 
+     * @param rect
+     */
     public WebRect(WebRect rect) {
 	this(rect.x1, rect.y1, rect.x2, rect.y2);
     }
-    
+
+    /**
+     * Constructs a WebRect and initializes it with the coordinates passed in.
+     * 
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
     public WebRect(int x1, int y1, int x2, int y2) {
 	this.x1 = x1;
 	this.y1 = y1;
@@ -80,12 +99,18 @@ public class WebRect {
     public void setY2(int y2) {
 	this.y2 = y2;
     }
-    
+
+    /**
+     * Builds a WebRect where all WebRects in rectList are contained in.
+     * 
+     * @param rectList
+     * @return
+     */
     public WebRect union(List<WebRect> rectList) {
-	if(rectList.size() == 0) {
+	if (rectList.size() == 0) {
 	    return null;
 	}
-	
+
 	WebRect unionRect = new WebRect(rectList.get(0));
 	for (WebRect rect : rectList) {
 	    unionRect.union(rect);
@@ -93,38 +118,53 @@ public class WebRect {
 	return unionRect;
     }
 
+    /**
+     * Sets the coordinates of this rect, so that rect2 is contained.
+     * 
+     * @param rect2
+     */
     public void union(WebRect rect2) {
 	x1 = Math.min(x1, rect2.x1);
 	y1 = Math.min(y1, rect2.y1);
 	x2 = Math.max(x2, rect2.x2);
 	y2 = Math.max(y2, rect2.y2);
     }
-    
+
+    /**
+     * Shrinks the current WebRect, so that it is completly contained in the
+     * corrdinates passed.
+     * 
+     * @param rx1
+     * @param ry1
+     * @param rx2
+     * @param ry2
+     */
     public void restrictToArea(int rx1, int ry1, int rx2, int ry2) {
 	x1 = Math.max(x1, rx1);
 	y1 = Math.max(y1, ry1);
 	x2 = Math.min(x2, rx2);
 	y2 = Math.min(y2, ry2);
     }
-    
+
+    /**
+     *  Tests for intersection with another WebRect.
+     *  @param r the "other" WebRect
+     * @return True if this intersects the other webrect
+     */
     public boolean intersects(WebRect r) {
-        return (r.getX2() > getX1()) &&
-                (r.getY2() > getY1()) &&
-                (getX2() > r.getX1()) &&
-                (getY2() > r.getY1());
+	return (r.getX2() > getX1()) && (r.getY2() > getY1()) && (getX2() > r.getX1()) && (getY2() > r.getY1());
     }
-    
-    
+
     public int getWidth() {
 	return x2 - x1;
     }
-    
+
     public int getHeight() {
 	return y2 - y1;
     }
-    
+
     public String toString() {
-	return "x1:"+x1+" y1:"+y1+" x2:"+x2+" y2:"+y2+"   w:"+getWidth()+" h:"+getHeight();
+	return "x1:" + x1 + " y1:" + y1 + " x2:" + x2 + " y2:" + y2 + "   w:" + getWidth() + " h:" + getHeight();
     }
 
     @Override

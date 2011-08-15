@@ -32,6 +32,8 @@ import java.awt.GraphicsDevice;
 import net.java.openjdk.cacio.servlet.*;
 
 /**
+ * GraphicsDevice implementation for caciocavallo-web.
+ * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */

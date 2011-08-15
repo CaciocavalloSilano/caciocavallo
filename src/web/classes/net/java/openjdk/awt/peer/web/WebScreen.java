@@ -44,6 +44,11 @@ import sun.awt.peer.cacio.managed.*;
 import sun.java2d.*;
 
 /**
+ * Screen Implementation for Caciocavallo-Web.
+ * 
+ * WebScreen is basically the "hub" where all things come together. Each
+ * Caciocavallo-Web session has a single screen, which itself consists of a
+ * WebSurfaceData.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -102,7 +107,12 @@ public class WebScreen implements PlatformScreen {
 	return new Rectangle(0, 0, width, height);
     }
 
-    public void addEvent(EventData data) {
+    /**
+     * Dispatch an event received by a servlet.
+     * 
+     * @param data
+     */
+    public void dispatchEvent(EventData data) {
 	try {
 	    SunToolkit.awtLock();
 
@@ -117,8 +127,12 @@ public class WebScreen implements PlatformScreen {
 
     }
 
+    /**
+     * Get the WebSurfaceData, or initialize one if it doesn't yet exist.
+     * 
+     * @return
+     */
     public WebSurfaceData getSurfaceData() {
-
 	if (surfaceData == null) {
 	    surfaceData = new WebSurfaceData(this, WebSurfaceData.typeDefault, getColorModel(), getBounds(), getGraphicsConfiguration(), this);
 	}
@@ -131,6 +145,14 @@ public class WebScreen implements PlatformScreen {
 	return config;
     }
 
+    /**
+     * Resizes the screen by discarding the current WebSurfaceData inculding all
+     * pending ScreenUpdates, initializing a WebSurfaceData with the requested
+     * size, and issuing a repaint command for all Windows.
+     * 
+     * @param width
+     * @param height
+     */
     public void resizeScreen(int width, int height) {
 	try {
 	    SunToolkit.awtLock();
@@ -146,22 +168,36 @@ public class WebScreen implements PlatformScreen {
 	}
     }
 
+    /**
+     * Grabs the screen-lock
+     */
     public final void lockScreen() {
 	screenLock.lock();
     }
 
+    /**
+     * Releases the screen-lock
+     */
     public final void unlockScreen() {
 	screenLock.unlock();
     }
 
+    /**
+     * Signall a possible waiting thread 
+     */
     public final void signalScreen() {
 	screenCondition.signal();
     }
 
-    protected void addPendingUpdate(ScreenUpdate update) {
-	pendingUpdateList.add(update);
-    }
-
+    /**
+     * Polls the WebScreen for pending updates.
+     * - Returns immediatly if pending updates are available
+     * - Waits up to timeout seconds, of no updates are available.
+     * 
+     * @param response - the HttpServletResponse the updates will be written to
+     * @param timeout
+     * @throws IOException
+     */
     public void pollForScreenUpdates(HttpServletResponse response, int timeout) throws IOException {
 	response.setContentType(encoder.getContentType());
 	OutputStream os = response.getOutputStream();
@@ -175,13 +211,14 @@ public class WebScreen implements PlatformScreen {
 	    if (!updatesWritten) {
 		try {
 		    boolean signalled = screenCondition.await(timeout, TimeUnit.MILLISECONDS);
-		    
+
 		    /*
-		     * If we had to wait, we quite likely have been waked by the first operation.
-		     * Usually (e.g. Swing) many draw-commands are executed closely together,
-		     * so we wait just a little longer, so we can send a larger batch down.
+		     * If we had to wait, we quite likely have been waked by the
+		     * first operation. Usually (e.g. Swing) many draw-commands
+		     * are executed closely together, so we wait just a little
+		     * longer, so we can send a larger batch down.
 		     */
-		    if(signalled) {
+		    if (signalled) {
 			Thread.sleep(20);
 		    }
 		} catch (InterruptedException e) {
@@ -193,15 +230,20 @@ public class WebScreen implements PlatformScreen {
 	} finally {
 	    unlockScreen();
 	}
-	
-	if(!updatesWritten) {
+
+	if (!updatesWritten) {
 	    encoder.writeEmptyData(os);
 	}
     }
 
-    int cnt = 0;
-
-    public boolean writeScreenUpdates(OutputStream os) throws IOException {
+    /**
+     * If available, writes pending ScreenUpdates to the supplied OutputStream.
+     * 
+     * @param os the OUtputStream the pending updates are written to
+     * @return true if updates have been written, false if no updates were pending.
+     * @throws IOException
+     */
+    protected boolean writeScreenUpdates(OutputStream os) throws IOException {
 	if (surfaceData == null) {
 	    return false;
 	}
@@ -226,58 +268,15 @@ public class WebScreen implements PlatformScreen {
 		    update.writeToCmdStream(cmdList);
 		}
 
-		try {
-		    // BinaryRLEStreamEncoder rleEncoder = new
-		    // BinaryRLEStreamEncoder();
-		    // FileOutputStream fos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
-		    // rleEncoder.writeEnocdedData(fos, pendingUpdateList,
-		    // packer, cmdList);
-		    // fos.close();
-		    //
-		    // BinaryCmdStreamEncoder binEncoder = new
-		    // BinaryPngStreamEncoder();
-		    // FileOutputStream dos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
-		    // binEncoder.writeEnocdedData(dos, pendingUpdateList,
-		    // packer, cmdList);
-		    // dos.close();
-		    //
-		    // Base64CmdStreamEncoder baseCoder = new
-		    // Base64CmdStreamEncoder();
-		    // FileOutputStream dbos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
-		    // baseCoder.writeEnocdedData(dbos, pendingUpdateList,
-		    // packer, cmdList);
-		    // dbos.close();
-		    //
-		    // ImageCmdStreamEncoder imgEncoder = new
-		    // ImageCmdStreamEncoder();
-		    // FileOutputStream bos = new
-		    // FileOutputStream("/home/ce/imgFiles/" + cnt+
-		    // ".png");
-		    // imgEncoder.writeEnocdedData(bos, pendingUpdateList,
-		    // packer, cmdList);
-		    // bos.close();
-		    // //
-		    cnt++;
-		    //
-		    // Thread.sleep(50);
-		    if (false)
-			throw new IOException();
-		} catch (Exception ex) {
-		    ex.printStackTrace();
-		}
-
 		System.out.println("cmdlist: " + cmdList.size());
+		
+		// Write updates to us
 		encoder.writeEncodedData(os, pendingUpdateList, packer, cmdList);
-		// Write updates here
 
 		pendingUpdateList.clear();
 
 		long end = System.currentTimeMillis();
 		System.out.println("Total Took: " + (end - start));
-		// System.out.println();
 
 		return true;
 	    }
@@ -292,3 +291,47 @@ public class WebScreen implements PlatformScreen {
 	return pendingUpdateList;
     }
 }
+
+
+// try {
+// BinaryRLEStreamEncoder rleEncoder = new
+// BinaryRLEStreamEncoder();
+// FileOutputStream fos = new
+// FileOutputStream("/home/ce/imgFiles/" + cnt + ".rle");
+// rleEncoder.writeEnocdedData(fos, pendingUpdateList,
+// packer, cmdList);
+// fos.close();
+//
+// BinaryCmdStreamEncoder binEncoder = new
+// BinaryPngStreamEncoder();
+// FileOutputStream dos = new
+// FileOutputStream("/home/ce/imgFiles/" + cnt + ".bin");
+// binEncoder.writeEnocdedData(dos, pendingUpdateList,
+// packer, cmdList);
+// dos.close();
+//
+// Base64CmdStreamEncoder baseCoder = new
+// Base64CmdStreamEncoder();
+// FileOutputStream dbos = new
+// FileOutputStream("/home/ce/imgFiles/" + cnt + ".base64");
+// baseCoder.writeEnocdedData(dbos, pendingUpdateList,
+// packer, cmdList);
+// dbos.close();
+//
+// ImageCmdStreamEncoder imgEncoder = new
+// ImageCmdStreamEncoder();
+// FileOutputStream bos = new
+// FileOutputStream("/home/ce/imgFiles/" + cnt+
+// ".png");
+// imgEncoder.writeEnocdedData(bos, pendingUpdateList,
+// packer, cmdList);
+// bos.close();
+// //
+// cnt++;
+//
+// Thread.sleep(50);
+// if (false)
+// throw new IOException();
+// } catch (Exception ex) {
+// ex.printStackTrace();
+// }

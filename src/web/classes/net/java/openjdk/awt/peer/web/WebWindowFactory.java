@@ -30,6 +30,12 @@ import sun.awt.peer.cacio.*;
 import sun.awt.peer.cacio.managed.*;
 
 /**
+ * FullScreenWindowFactory for Caciocavallo-Web.
+ * 
+ * This differs from the "usual" FullScreenWindowFactory implementations, by
+ * tricking Caciocavallo to not start an event-pump-thread. As Caciocavallo-Web
+ * gets events pushed by a servlet-thread, instead of pulling it from a possibly
+ * blocking event source, there is no need for a seperate thread.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -57,8 +63,17 @@ public class WebWindowFactory extends FullScreenWindowFactory {
     }
 }
 
+/**
+ * Dummy EventPump.
+ * 
+ * @author Clemens Eisserer <linuxhippy@gmail.com>
+ */
 class WebDummyEventPump extends CacioEventPump<EventData> {
-    // Do not start an event-pump thread at all
+    /**
+     * Do not start an event-pump thread at all, by overriding Thread.start()
+     * with a no-op method
+     */
+    @Override
     protected void start() {
     }
 

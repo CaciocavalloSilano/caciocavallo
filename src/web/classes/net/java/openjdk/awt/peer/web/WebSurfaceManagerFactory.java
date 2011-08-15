@@ -30,6 +30,8 @@ import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceManagerFactory;
 
 /**
+ * WebSurfaceManagerFactory implementation for Caciocavallo-Web.
+ * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.limasoftware@gmail.com>
  */
@@ -41,7 +43,6 @@ class WebSurfaceManagerFactory extends SurfaceManagerFactory {
     @Override
     public VolatileSurfaceManager createVolatileManager(SunVolatileImage image,
                                                         Object context) {
-
         return new WebVolativeSurfaceManager(image, context);
     }
 

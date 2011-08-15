@@ -29,6 +29,7 @@ import java.awt.image.*;
 import java.io.*;
 
 /**
+ * Run-Length encoder for images.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */

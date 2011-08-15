@@ -52,7 +52,7 @@ public class WebMouseStateTracker {
 	data.setId(MouseEvent.MOUSE_WHEEL);
 	data.setButton(up ? 4 : 5);
 	
-	screen.addEvent(data);
+	screen.dispatchEvent(data);
     }
 
     public void trackMouseMotionEvent(int x, int y) {
@@ -69,7 +69,7 @@ public class WebMouseStateTracker {
 	    data.setId(MouseEvent.MOUSE_MOVED);
 	}
 
-	screen.addEvent(data);
+	screen.dispatchEvent(data);
     }
 
     public void trackMouseEvent(boolean down, int buttonMask, int x, int y) {
@@ -88,7 +88,7 @@ public class WebMouseStateTracker {
 //	    data.setClickCount(1);
 //	}
 
-	screen.addEvent(data);
+	screen.dispatchEvent(data);
 
 	switch (data.getId()) {
 	case MouseEvent.MOUSE_PRESSED:
@@ -146,7 +146,7 @@ public class WebMouseStateTracker {
 	if (lastClickedEvent != null && (System.currentTimeMillis() - lastClickedEvent.getTime()) <= 200) {
 	    synthData.setClickCount(2);
 	}
-	screen.addEvent(synthData);
+	screen.dispatchEvent(synthData);
 
 	lastClickedEvent = synthData;
     }

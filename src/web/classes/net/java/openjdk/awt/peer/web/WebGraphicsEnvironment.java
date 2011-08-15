@@ -30,7 +30,7 @@ import sun.java2d.SunGraphicsEnvironment;
 import sun.java2d.SurfaceManagerFactory;
 
 /**
- * Graphics Environment implementation
+ * Graphics Environment implementation for caciocavallo-web.
  *
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  * @author Mario Torre <neugens.liamsoftware@gmail.com>

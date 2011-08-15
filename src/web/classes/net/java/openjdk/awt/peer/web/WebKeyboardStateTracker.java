@@ -60,7 +60,7 @@ public class WebKeyboardStateTracker {
 	}
 
 	lastEvent = data;
-	screen.addEvent(data);
+	screen.dispatchEvent(data);
     }
 
     protected void generateTypedEvent(EventData pressedEvent, int keySym, char keyChar, boolean shift) {
@@ -74,7 +74,7 @@ public class WebKeyboardStateTracker {
 	    typedEvent.setKeyChar(getCharForKeyCode(keySym, shift));
 //	    typedEvent.setKeyChar(s);
 	    
-	    screen.addEvent(typedEvent);
+	    screen.dispatchEvent(typedEvent);
 	}
     }
 

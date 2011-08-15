@@ -29,11 +29,17 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
+ * SubSessionServletBase contains utility functions for dealing with subsession functionality.
  * 
+ * @see WebSessionManager
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class SubSessionServletBase extends HttpServlet {
 
+    /**
+     * @param request the request-object of the ongoing HttpRequest
+     * @return  WebSessionState assicioated with the current Session/SubSession
+     */
     protected WebSessionState getSessionState(HttpServletRequest request) {
 	HttpSession session = request.getSession(false);
 	String subSessionID = request.getParameter("subsessionid");
