@@ -31,6 +31,22 @@ import java.awt.image.*;
 import java.util.List;
 
 /**
+ * ScreenUpdate generated when state between browser and server is synchronized
+ * by sending image-data, and bliting the image-data to a defined position.
+ * 
+ * BlitScreenUpdates are usually generated after grouping small areas together
+ * by GridDamageTracker.
+ * 
+ * If possible BlitScreenUpdates read directly out of the BufferedImage backing
+ * the WebSurfaceData (isEvacuated=false), however some operation (e.g.
+ * operations which require to be executed in-order like copyArea) require the
+ * source data to be "evacuated". In this case the image-data is copied to a
+ * BufferedImage contained in the BlitScreenUpdate.
+ * 
+ * Variable description: srcX/Y: Where the modified area is read from dstX/Y:
+ * Where the area should be blitted to packedX/Y: When sending multiple updates
+ * in one batch, those need to be packed into a single, larger image. packedX/Y
+ * specifiy where this update is located in the "packed" image.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -42,6 +58,24 @@ public class BlitScreenUpdate extends ScreenUpdate {
     BufferedImage image;
     boolean isEvacuated;
 
+    /**
+     * 
+     * @param dstX
+     *            x destination coordinate
+     * @param dstY
+     *            y destinantion coordinate
+     * @param srcX
+     *            x source coordinate
+     * @param srcY
+     *            y source coordinate
+     * @param w
+     *            width of the updated area
+     * @param h
+     *            height of the updated area
+     * @param src
+     *            the source from where the imagedata should be read, usually
+     *            the WebSurfaceData's backing BufferedImage
+     */
     public BlitScreenUpdate(int dstX, int dstY, int srcX, int srcY, int w, int h, BufferedImage src) {
 	super(new WebRect(dstX, dstY, dstX + w, dstY + h));
 
@@ -52,6 +86,11 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	this.image = src;
     }
 
+    /**
+     * Copies the specified area of the BufferedImage passed by the constructor
+     * to a private BufferedImage, and updates the srcx/y corrdinates
+     * approriatly.
+     */
     public void evacuate() {
 	if (!isEvacuated) {
 	    BufferedImage src = image;
@@ -64,7 +103,7 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	    g.drawImage(src, 0, 0, w, h, srcX, srcY, srcX + w, srcY + h, null);
 	    setSrcX(0);
 	    setSrcY(0);
-	    
+
 	    isEvacuated = true;
 	}
     }
@@ -79,6 +118,9 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	cmdList.add(packedY);
     }
 
+    /**
+     * @return The BufferedImage containing the src-data
+     */
     public BufferedImage getImage() {
 	return image;
     }
