@@ -42,10 +42,12 @@
 var img;
 var cmdStreamHeight;
 
-
 var readCmdStreamFunc;
 var startRequestFunc;
 
+var isIE = navigator.userAgent.indexOf('MSIE') > -1;
+
+//Will be filled in by the SessionInitializeServlet at request time
 var subSessionID = SSID;
 var imgFormat = IMGFORMAT;
 
@@ -56,6 +58,11 @@ function init() {
 	registerEventHandlers();
 }
 
+/**
+* Issues the HTTP-Request to start the selected Application,
+* and pass the name of the chosen Transport as well as the size of
+* the canvas.
+*/
 function initializeApplication() {
 	 var transportName = chooseTransport();
 	
@@ -64,12 +71,21 @@ function initializeApplication() {
      appStartReq.send(null);
 }
 
+/**
+* Choses a suitable Transport by detecting honoring 
+* the user's format choice as well as the browser's
+* capabilities.
+* 
+* The use can either choose between "rle" and "png"
+* format, or manually select a backend.
+* For manual selection sanity checks are skipped.
+*/
 function chooseTransport() {
 	//User simply specified the image-format, 
 	//so we are free to choose the backend which implements it.
 	
 	//IE9 only supports XHR1RLE, so don't try the png paths
-	if(imgFormat == "rle" || navigator.userAgent.indexOf("MSIE") > -1) {
+	if(imgFormat == "rle" || isIE) {
 		if(isXHR2Supported()) {
 			return initXHR2Rle();
 		} else {
@@ -106,6 +122,13 @@ function chooseTransport() {
 	}
 }
 
+/**
+* Resizes the canvas to the width of the window.
+* As contents are lost when resizing a canvas, it tries to
+* preserve as much content as possible by creating a temporary
+* canvas to hold the initial contents, which are drawn back
+* afterwards.
+*/
 function fitCanvasToWindow() {
 	var canvas = document.getElementById('blackboard');
 	var tmpCanvas = document.createElement('canvas');
@@ -120,9 +143,15 @@ function fitCanvasToWindow() {
 	ctx.drawImage(tmpCanvas, 0, 0);
 }
 
+/**
+* Resizes the canvas to the width of the window,
+* and notifies the server about the size change.
+* 
+* No action is taken, if the size didn't change.
+*/
 var lastWidth = -1;
 var lastHeight = -1;
-function resizeDelayed() {	
+function fitCanvasToWindowAndNotify() {	
 	 if(lastWidth != window.innerWidth || lastHeight != window.innerHeight) {
 		 fitCanvasToWindow();
 		 lastWidth = window.innerWidth;
@@ -132,7 +161,30 @@ function resizeDelayed() {
 	 }
 }
 
+/**
+* Because canvas-resizing is a very heavyweight operation
+* on both the client and the server, only update the size
+* once every 500ms.
+* This is archieved by executing the resize calles delayed,
+* and checking for the actual size in fitCanvasToWindowAndNotify().
+* E.g. if ten resize-events are queued, but at the time the first one
+* is executed resizing has stopped, width/height will stay the same
+* the next 9 resize-invokations, and therefor only one resize
+* will be issued.
+*/
+function fitCanvasToWindowAndNotifyDelayed() {
+	 window.setTimeout("resizeCanvas()", 500);
+}
+
  
+/**
+* Interprets the commands, called after the data has been
+* fetched and processed by the transports.
+* When done with interpreting, a new request is started.
+*
+* Requires the image-data to be set to the global variable img!
+*
+*/
 function interpretCommandBuffer() {		
 	var canvas = document.getElementById('blackboard');
 	var ctx = canvas.getContext('2d');
@@ -225,8 +277,6 @@ function sendEventsAtomic() {
 		//Mutex(eventBuffer, "__sendEvents()")
 	}
 }
-
-var isIE = navigator.userAgent.indexOf('MSIE') > -1;
 
 function onMouseButton(e, down) {
     var evt, pos, button;
@@ -325,7 +375,7 @@ function onMouseDisable(e) {
 function registerEventHandlers() {
     canvas = document.getElementById('blackboard');
     
-    pAddEvent(window, "resize", function() { window.setTimeout("resizeDelayed()", 500)});
+    pAddEvent(window, "resize", fitCanvasToWindowAndNotifyDelayed);
 
     pAddEvent(document, 'keydown', onKeyDown);
     pAddEvent(document, 'keyup', onKeyUp);
@@ -335,7 +385,7 @@ function registerEventHandlers() {
     pAddEvent(canvas, 'mousemove', onMouseMove);
             
     pAddEvent(window, "DOMMouseScroll", onMouseWheel);//Gecko
-    pAddEvent(window, "mousewheel", onMouseWheel); //Safari, Opera
+    pAddEvent(window, "mousewheel", onMouseWheel); //Webkit, Opera
     pAddEvent(document, "mousewheel", onMouseWheel); //IE
 
     pAddEvent(document, 'click', onMouseDisable);
