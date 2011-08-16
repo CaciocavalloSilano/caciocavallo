@@ -54,6 +54,13 @@ public abstract class Transport {
 	this.contentType = contentType;
     }
 
+    /**
+     * Utility function to copy the ScreenUpdates into a single, packed BufferedImage.
+     * The ScreenUpdates need to have the packed coordinates set already.
+     * @param updateList
+     * @param packedImage
+     * @param packedAreaHeight
+     */
     protected void copyUpdatesToPackedImage(List<ScreenUpdate> updateList, BufferedImage packedImage, int packedAreaHeight) {
 	Graphics g = packedImage.getGraphics();
 
@@ -71,9 +78,25 @@ public abstract class Transport {
 	}
     }
 
+    /**
+     * Encodes pendingUpdateList and writes the result the the OutputStream.
+     * @param os
+     * @param pendingUpdateList
+     * @param packer
+     * @param cmdData
+     * @throws IOException
+     */
     public abstract void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData)
 	    throws IOException;
 
+    /**
+     * Writes data in the case no new image-data is available but the timeout
+     * has occured. Depending on the transport-type different data has to be
+     * sent (e.g. an empty image, or a "0" string).
+     * 
+     * @param os
+     * @throws IOException
+     */
     public abstract void writeEmptyData(OutputStream os) throws IOException;
 
     /**
@@ -84,16 +107,18 @@ public abstract class Transport {
     }
 
     /**
-     * @param backendName
+     * Initializes a Transport for the given transportName.
+     * 
+     * @param transportName
      * @param compressionLevel
      * @return
      */
-    public static Transport getTransportForName(String backendName, int compressionLevel) {
-	if (backendName.equalsIgnoreCase(FORMAT_RLE)) {
+    public static Transport getTransportForName(String transportName, int compressionLevel) {
+	if (transportName.equalsIgnoreCase(FORMAT_RLE)) {
 	    return new BinaryRLETransport();
-	} else if (backendName.equalsIgnoreCase(FORMAT_PNG_XHR)) {
+	} else if (transportName.equalsIgnoreCase(FORMAT_PNG_XHR)) {
 	    return new BinaryPngTransport(compressionLevel);
-	} else if (backendName.equalsIgnoreCase(FORMAT_PNG_IMG)) {
+	} else if (transportName.equalsIgnoreCase(FORMAT_PNG_IMG)) {
 	    return new ImageTransport(compressionLevel);
 	} else {
 	    return new Base64PngTransport(compressionLevel);
