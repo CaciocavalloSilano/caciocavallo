@@ -67,7 +67,9 @@ function initializeApplication() {
 function chooseTransport() {
 	//User simply specified the image-format, 
 	//so we are free to choose the backend which implements it.
-	if(imgFormat == "rle") {
+	
+	//IE9 only supports XHR1RLE, so don't try the png paths
+	if(imgFormat == "rle" || navigator.userAgent.indexOf("MSIE") > -1) {
 		if(isXHR2Supported()) {
 			return initXHR2Rle();
 		} else {
@@ -79,7 +81,8 @@ function chooseTransport() {
 		} else 
 		if (isImageDataSupported()) {
 			return initImgTransport();
-		} else {
+		} else 
+		if(isBase64Supported()) {
 			return initXHRBase64();
 		}
 	}else {
