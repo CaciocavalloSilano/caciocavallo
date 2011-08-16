@@ -23,6 +23,19 @@
  * questions.
  */
 
+
+/**
+ * Transport for receiving rle encoded image data in binary format
+ * over XmlHttpRequest1, on browsers where XMLHttpRequest2 is not 
+ * available.
+ * Although XHR1 was designed to transport text/xml only, it can be
+ * at a performance cost be tricked to transport binary data to.
+ */
+ 
+ /**
+  * Initializes the function-pointers for the XHR1RLE transport,
+  * and returns the server-side backend-name.
+  */
 function initXHR1Rle() {
 	startRequestFunc = StartXHR1RleRequest;
 	readCmdStreamFunc = readBinCommandStream;
@@ -30,16 +43,30 @@ function initXHR1Rle() {
 	return "rle";
 }
 
+/**
+ * Response-Handler
+ */
 function handleXHR1RLEResponse() {
 	decodeRLEImageData();
 	interpretCommandBuffer();
 }
 
 
+/**
+ * Utility function to determine when to use IE's proprietary
+ * XMLHttpRequest implementation. 
+ */
 function useMSXHR() {
     return typeof ActiveXObject == "function";
 }
 
+/**
+ * Starts a request for fetching image-data, and converts the
+ * result to an array holding binary data.
+ * 
+ * This is archieved by overriding the mime-type, so the browser
+ * doesn't try interpret the bytes returned by the server.
+ */
 function StartXHR1RleRequest(subSessionID) {
     xmlhttpreq = useMSXHR() ? new ActiveXObject("Msxml2.XmlHttp.6.0") : new XMLHttpRequest();
     xmlhttpreq.onreadystatechange = function() {
@@ -50,6 +77,8 @@ function StartXHR1RleRequest(subSessionID) {
             xmlhttpreq.send();
         }
 
+		//Convert the text-data returned to an array
+		//containing binary data.
 		var data = new Array();
         if (xmlhttpreq.readyState == 4) {
             if (xmlhttpreq.status == 200) {

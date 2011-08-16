@@ -197,7 +197,8 @@ function interpretCommandBuffer() {
 	while(cmdPos < cmdBuffer.length) {
 	   var cmd = cmdBuffer[cmdPos++];
 	  
-	  switch(cmd) {		  
+	  switch(cmd) {		
+		  //BlitScreenUpdate  
 		case 0:  
 		   {
 			   var dstX1 = cmdBuffer[cmdPos++];
@@ -212,6 +213,7 @@ function interpretCommandBuffer() {
 		   }
 		   break;
 		   
+		   //CopyAreaScreenUpdate
 		case 1:
 			{
 			   var srcX1 = cmdBuffer[cmdPos++];

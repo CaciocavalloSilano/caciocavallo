@@ -23,6 +23,14 @@
  * questions.
  */
  
+ /**
+  * Functionality shared between all transports using XmlHttpRequest2
+  */
+ 
+ /**
+  * Determines wether XmlHttpRequest2 is available by checking for
+  * Javascript typed arrays.
+  */
 function isXHR2Supported() {
  try {
 	 new ArrayBuffer(1);
@@ -32,11 +40,18 @@ function isXHR2Supported() {
   }	
 }
 
+/**
+ * Initialize function pointers which are initialized with
+ * the same values for all transports using XHR2.
+ */
 function initXHR2Shared() {
 	startRequestFunc = StartXHR2Request;
 	readCmdStreamFunc = readBinCommandStream;
 }
 
+/**
+ * Starts asynchronous XHR2 request for fetching image data.
+ */
 function StartXHR2Request(subSessionID) {
   xmlhttpreq = new XMLHttpRequest();
   xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);

@@ -23,10 +23,22 @@
  * questions.
  */
  
+  /**
+  * Functionality shared between all transports using XmlHttpRequest,
+  * in version 1 and 2.
+  */
+ 
 var xmlhttpreq;
 var responseHandlerFunc;
 var intArray;
 
+/**
+ * Reads a signed 16-bit integer from a byte-array, 
+ * written with BinaryTransport.writeJSShort().
+ * Parameters:
+ * array - the byte array to read the integer from
+ * pos - the offset in bytes
+ */
 function readShort(array, pos) {
 	var highByte = array[pos];
 	var lowByte = array[pos + 1];
@@ -39,10 +51,17 @@ function readShort(array, pos) {
 	return value;
 }
 
+/**
+ * Reads an unsigned 32-bit integer from a byte-array.
+ */
 function readInt(array, pos) {	
 	return ((array[pos] << 24) + (array[pos + 1] << 16) + (array[pos + 2] << 8) + array[pos + 3]);
 }
 
+/**
+ * Turns the command-stream bytes into an array
+ * of 16-bit signed integers.
+ */
 function readBinCommandStream() {
 	var cmdLength =	readShort(intArray, 0);
 	
@@ -63,8 +82,7 @@ function xhrSuccessHandler() {
 	  if(xmlhttpreq.status==200) {
 		  responseHandlerFunc();
 	  } else {
-		  //TODO: Alert
-		  //startRequestFunc(subSessionID);
+		//TODO: Handle error
 	  }
   }
 }
