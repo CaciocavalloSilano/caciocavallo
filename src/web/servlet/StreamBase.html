@@ -56,6 +56,7 @@ function init() {
 	initializeApplication();    
     startRequestFunc(subSessionID);
 	registerEventHandlers();
+	sendEvents();
 }
 
 /**
@@ -261,24 +262,28 @@ function interpretCommandBuffer() {
 var eventXmlHttpReq = new XMLHttpRequest();
 var eventBuffer = '';
 
-window.setInterval("sendEventsAtomic()", 10);
+//window.setInterval("sendEvents()", 10);
 
-function __sendEvents() {
+function sendEvents() {
 		if(eventBuffer.length > 0) {
 		  var localEvents = 'subsessionid=SSID&events=' + eventBuffer;
 		  eventBuffer = '';
-		  eventXmlHttpReq.open('POST', 'EventReceiver', false);
+		  eventXmlHttpReq.open('POST', 'EventReceiver', true);
 		  eventXmlHttpReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		  eventXmlHttpReq.onreadystatechange = eventResponseHandler;
 		  eventXmlHttpReq.send(localEvents);
+		}else {
+			window.setTimeout("sendEvents()", 10);
 		}
 }
 
-function sendEventsAtomic() {
-	if(eventBuffer.length > 0) {
-		__sendEvents();
-		//Mutex(eventBuffer, "__sendEvents()")
-	}
+function eventResponseHandler(){
+   if (eventXmlHttpReq.readyState == 4) { 
+	   sendEvents();
+   }	
 }
+
+
 
 function onMouseButton(e, down) {
     var evt, pos, button;
