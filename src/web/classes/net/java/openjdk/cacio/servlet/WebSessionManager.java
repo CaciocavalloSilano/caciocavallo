@@ -25,6 +25,7 @@
 
 package net.java.openjdk.cacio.servlet;
 
+import java.lang.ref.*;
 import java.util.*;
 
 import javax.servlet.http.*;
@@ -46,6 +47,8 @@ public class WebSessionManager {
     static final String SESSION_KEY = "WEBSessionState";
 
     private static final WebSessionManager instance = new WebSessionManager();
+    
+    ThreadLocal<WeakReference<WebSessionState>> threadStateHolder = new ThreadLocal<WeakReference<WebSessionState>>();
 
     public static WebSessionManager getInstance() {
 	return instance;
@@ -94,6 +97,16 @@ public class WebSessionManager {
     public WebSessionState getCurrentStateAWT() {
 	return (WebSessionState) AppContext.getAppContext().get(SESSION_KEY);
     }
+    
+    public WebSessionState getCurrentState() {
+	WebSessionState state = getCurrentStateAWT();
+   
+	if(state == null) {
+	    state = threadStateHolder.get().get();
+	}
+	
+	return state;
+    }
 
     /**
      * Returns the WebSessionState of the HttpSessiont. This is
@@ -105,7 +118,9 @@ public class WebSessionManager {
     public synchronized WebSessionState getCurrentState(HttpSession session, int subSessionID) {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
 	if (subSessionList != null) {
-	    return subSessionList.get(subSessionID);
+	    WebSessionState state = subSessionList.get(subSessionID);
+	    threadStateHolder.set(new WeakReference<WebSessionState>(state));
+	    return state;
 	}
 
 	return null;
