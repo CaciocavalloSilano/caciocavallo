@@ -35,6 +35,21 @@ import net.java.openjdk.cacio.servlet.imgformat.*;
 import sun.misc.*;
 
 /**
+ * String-based transport. Encodes the command-list as string and encodes the
+ * image-data in png-format applies base64 encoding.
+ * 
+ * On the client the command-list part and the base64 encoded image-data are
+ * split, and the image-data is loaded using data-URIs.
+ * 
+ * Although less efficient space-wise, quite efficient for devices with weak
+ * CPUs, as the image-data has not to be processed using javascript. Base64
+ * decoding and data-URI interpretation is usually very fast using native code.
+ * 
+ * Using this backend a Sony Xperia Arc (Android 2.2, Snapdragon 1Ghz) is able
+ * to play Java2Demo almost real-time, while its a slide-show with the RLE based
+ * backends due the additional processing required on the client-side.
+ * 
+ * Javascript counterpart: XHRBase64Transport.js
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -45,11 +60,16 @@ public class Base64PngTransport extends Transport {
 
     public Base64PngTransport(int compressionLevel) {
 	super("text/plain");
-	
+
 	this.compressionLevel = compressionLevel;
 	base64Encoder = new BASE64Encoder();
     }
 
+    /**
+     * Encodes the command-list.
+     * @param cmdList
+     * @return a string where each integer-value is seperated by a colon.
+     */
     protected String encodeImageCmdStream(List<Integer> cmdList) {
 	StringBuilder cmdBuilder = new StringBuilder(cmdList.size() * 4);
 	cmdBuilder.append(cmdList.size());

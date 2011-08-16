@@ -33,6 +33,15 @@ import net.java.openjdk.awt.peer.web.*;
 import net.java.openjdk.cacio.servlet.imgformat.*;
 
 /**
+ * Transport sending binary data, with png used for image-encoding.
+ * 
+ * Because browsers don't provide a way to feed binary data into an image, the
+ * client has to generate a base64 encoded data-URI.
+ * 
+ * Useful for systems where bandwith is limited, but the client has a powerful
+ * CPU.
+ * 
+ * Javascript counterpart: XHR2PngTransport.js
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */

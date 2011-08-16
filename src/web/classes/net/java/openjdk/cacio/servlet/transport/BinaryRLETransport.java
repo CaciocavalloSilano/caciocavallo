@@ -34,6 +34,16 @@ import net.java.openjdk.cacio.servlet.imgformat.*;
 
 /**
  * 
+ * Transport using run-length encoding, data is transmitted in binary format.
+ * This is the preferred backend for high-performance CPUs when bandwidth is not
+ * constrained, like in corporate networks using desktop PCs because RLE
+ * encoding puts only light load on the server, compared to PNG.
+ * 
+ * XHR2 is preferred, for compatibility a slow XHR1 based workarround exists.
+ * 
+ * Javascript counterpart: XHR2RLETransport.js, XHR1RLETransport.js,
+ * RLEImageDecoder.js
+ * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class BinaryRLETransport extends BinaryTransport {
@@ -46,12 +56,11 @@ public class BinaryRLETransport extends BinaryTransport {
     @Override
     public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
 	    throws IOException {
-	WebRect packedRegionBox = packer.getBoundingBox(); //Handle case whrer width|height = 0
-
 	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
 	os.write(cmdStreamData);
 	
-	if(packedRegionBox.getWidth() == 0 || packedRegionBox.getHeight() == 0) {
+	WebRect packedRegionBox = packer.getBoundingBox();
+	if (packedRegionBox.getWidth() == 0 || packedRegionBox.getHeight() == 0) {
 	    return;
 	}
 
