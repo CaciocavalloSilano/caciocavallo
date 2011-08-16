@@ -29,6 +29,10 @@ import java.awt.image.*;
 import java.lang.reflect.*;
 
 /**
+ * Reflection based implementation (to avoid compile-time dependency) of the
+ * PNGEncoder interface, using the com.keypoint.PngEncoder png encoder, which is
+ * faster than the ImageIO solution bundled with the JDK and allows
+ * caciocavallo-web to modify the compression ratio.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -42,21 +46,29 @@ public class PNGEncoderKeypoint extends PNGEncoder {
 	loadKeypointEncoder();
     }
 
+    /**
+     * Loads the keypoint png encoder using reflection.
+     */
     private void loadKeypointEncoder() {
 	try {
 	    keypointEncoderCls = Class.forName("com.keypoint.PngEncoderB");
-	    keypointEncoderConstructor = keypointEncoderCls.getConstructor(new Class[] { BufferedImage.class, boolean.class, int.class,
-		    int.class });
+	    keypointEncoderConstructor = keypointEncoderCls.getConstructor(new Class[] { BufferedImage.class, boolean.class, int.class, int.class });
 	    keypointEncodeMethod = keypointEncoderCls.getMethod("pngEncode", new Class[0]);
 	} catch (Exception ex) {
 	    ex.printStackTrace();
 	}
     }
 
+    /**
+     * @return true iff loading com.keypoint.PngEncoder was successful.
+     */
     protected boolean isAvailable() {
 	return keypointEncodeMethod != null;
     }
 
+    /**
+     * @see PNGEncoder
+     */
     @Override
     public byte[] encode(BufferedImage img, int compression) {
 	try {

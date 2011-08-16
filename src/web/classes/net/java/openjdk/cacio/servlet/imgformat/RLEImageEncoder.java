@@ -35,11 +35,25 @@ import java.io.*;
  */
 public class RLEImageEncoder {
 
+    /**
+     * RLE encodes the specified area of the image between x1/y1 and x2/y2 of
+     * the passed image and writes the resulting data to the OutputStream.
+     * Preceeding the image-data the image-dimensions are written as a 2-byte
+     * integer value.
+     * 
+     * @param img
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param os
+     * @throws IOException
+     */
     public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2, OutputStream os) throws IOException {
 	int w = x2 - x1;
 	int h = y2 - y1;
-	int area = w*h;
-	
+	int area = w * h;
+
 	DynamicByteBuffer runBuffer = new DynamicByteBuffer(area < 10000 ? 256 : 1024);
 	DynamicByteBuffer dataBuffer = new DynamicByteBuffer(area < 10000 ? 512 : 4096);
 
@@ -54,6 +68,28 @@ public class RLEImageEncoder {
 	dataBuffer.writeTo(os);
     }
 
+    /**
+     * RLE encides the specified area of the BufferedImage.
+     * 
+     * Run-Length and image-data information is stored seperatly in two
+     * DataBuffers. Each byte in the rle-buffer specifies either a "run"
+     * (runByte & 128 == 0) or a non-run otherwise.
+     * 
+     * For a run, the last pixel-value is repeated (runByte & 127) times. For a
+     * no-run, no runs are expected for the next (runByte & 127) times, and
+     * pixel-data can be fetched from the pixel-data buffer without checking
+     * when decoding.
+     * 
+     * @param img
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param runBuffer
+     *            run-length-data is saved to this DataBuffer
+     * @param dataBuffer
+     *            pixel-data is saved to this DataBuffer.
+     */
     private void encodeImageData(BufferedImage img, int x1, int y1, int x2, int y2, DynamicByteBuffer runBuffer, DynamicByteBuffer dataBuffer) {
 	int[] imgData = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
 	int imgStride = ((SinglePixelPackedSampleModel) img.getSampleModel()).getScanlineStride();
@@ -82,13 +118,14 @@ public class RLEImageEncoder {
 			int startIndex = lineStartPos + x;
 			int maxIndex = startIndex + Math.min(127 - runCount, x2 - x);
 			int i = startIndex;
-			while(i < maxIndex  && (imgData[i] & 0x00FFFFFF) == lastPixelValue) {
+			while (i < maxIndex && (imgData[i] & 0x00FFFFFF) == lastPixelValue) {
 			    i++;
 			}
-			
+
 			int runs = (i - startIndex);
-			runCount += runs; 
-			x += runs - 1; // We aborted, so we have to look at this pixel again at the next full iteration
+			runCount += runs;
+			x += runs - 1; // We aborted, so we have to look at this
+				       // pixel again at the next full iteration
 		    } else {
 			endRun(runBuffer, runCount);
 			runCount = 1;
@@ -124,6 +161,13 @@ public class RLEImageEncoder {
 	}
     }
 
+    /**
+     * Appends the RGB pixel data of the specified pixel to the
+     * DynamicByteBuffer passed.
+     * 
+     * @param dataStream
+     * @param pixel
+     */
     private void writePixel(DynamicByteBuffer dataStream, int pixel) {
 	byte r = (byte) ((pixel & 0x00FF0000) >> 16);
 	byte g = (byte) ((pixel & 0x0000FF00) >> 8);
@@ -134,10 +178,20 @@ public class RLEImageEncoder {
 	dataStream.write(b);
     }
 
+    /**
+     * Encodes the end of a no-run into a run-byte and appends it to the buffer.
+     * @param runStream
+     * @param noRunCnt
+     */
     private void endNoRun(DynamicByteBuffer runStream, int noRunCnt) {
 	runStream.write((byte) (128 + noRunCnt));
     }
 
+    /**
+     *  Encodes the end of a run into a run-byte and appends it to the buffer.
+     * @param runStream
+     * @param runCnt
+     */
     private void endRun(DynamicByteBuffer runStream, int runCnt) {
 	runStream.write((byte) runCnt);
     }
