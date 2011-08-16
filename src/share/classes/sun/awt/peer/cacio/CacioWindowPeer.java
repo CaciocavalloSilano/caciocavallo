@@ -320,7 +320,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     @Override
     public void setOpaque(boolean isOpaque) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO: Implement.
     }
 
     @Override
