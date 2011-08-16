@@ -26,24 +26,51 @@
 package sun.awt.peer.cacio.managed;
 
 import sun.awt.peer.cacio.*;
+import sun.security.action.*;
+
 import java.awt.Component;
 import java.awt.event.FocusEvent;
+import java.security.*;
 
-class FocusManager {
+public class FocusManager {
 
     private static FocusManager instance;
 
+    private static final Class focusManagerCls;
+    static {
+	String focusMgrClsName = AccessController.doPrivileged(new GetPropertyAction("cacio.focusmgr"));
+	Class cls = FocusManager.class;
+	try {
+	    if(focusMgrClsName != null) {
+		cls = Class.forName(focusMgrClsName);
+	    }
+	} catch (ClassNotFoundException e) {
+	    e.printStackTrace(); //TODO: Logger
+	}
+	
+	focusManagerCls = cls;
+    }
+    
     static FocusManager getInstance() {
         if (instance == null) {
-            instance = new FocusManager();
+            try {
+		instance =(FocusManager) focusManagerCls.newInstance();
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
         }
-        return instance;
+        return instance.getContextInstance();
     }
 
     private ManagedWindow focusedWindow;
 
-    private FocusManager() {
+    public FocusManager() {
     }
+    
+    protected FocusManager getContextInstance() {
+	return instance;
+    } 
+    
 
     ManagedWindow getFocusedWindow() {
         return focusedWindow;

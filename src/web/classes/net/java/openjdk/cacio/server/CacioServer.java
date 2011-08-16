@@ -90,6 +90,7 @@ public class CacioServer {
 	System.setProperty("awt.toolkit", "net.java.openjdk.awt.peer.web.WebToolkit");
 	System.setProperty("java.awt.graphicsenv", "net.java.openjdk.awt.peer.web.WebGraphicsEnvironment");
 	System.setProperty("sun.font.fontmanager", "net.java.openjdk.awt.peer.web.WebFontManager");
+	System.setProperty("cacio.focusmgr", "net.java.openjdk.awt.peer.web.WebFocusManager");
     }
 
     public static void main(String[] args) throws Exception {
