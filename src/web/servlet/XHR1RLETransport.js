@@ -74,7 +74,7 @@ function StartXHR1RleRequest(subSessionID) {
             if (xmlhttpreq.overrideMimeType) {
                 xmlhttpreq.overrideMimeType('text/plain; charset=x-user-defined');
             }
-            xmlhttpreq.send();
+            xmlhttpreq.send(null);
         }
 
 		//Convert the text-data returned to an array
