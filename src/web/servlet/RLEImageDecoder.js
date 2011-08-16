@@ -23,6 +23,8 @@
  * questions.
  */
 
+var imgData;
+
 /**
  * Decodes run-length encoded image data into an ImageData 
  * object and puts the image-data onto a canvas, which is
@@ -31,6 +33,9 @@
  * 
  * Because canvas-creation is very heavyweight, the canvas
  * is re-used if it is large enough.
+ * 
+ * ImageData is re-used if the cached instance has exactly
+ * the same dimensions.
  */
 function decodeRLEImageData() {
 	var cmdLength = readShort(intArray, 0);
@@ -50,7 +55,9 @@ function decodeRLEImageData() {
     }
 
     var ctx = img.getContext('2d');
-    var imgData = ctx.createImageData(w, h); //Cache if canvas has *same* size, or even rely on dirtyWith parameters?
+	if(!imgData || imgData.width != w || imgData.height != h) {
+		imgData = ctx.createImageData(w, h);
+	}
 	var imgDataArray = imgData.data;
    
 	rleDecodeLoop(intArray, imgDataArray, imgDataStartPos);
@@ -74,6 +81,7 @@ function rleDecodeLoop(intArray, imgDataArray, imgDataStartPos) {
 		var length = cmd & 127;
 		
 		if(cmd < 128) {
+			//runs
 			while(length-- > 0) {
 				imgDataArray[imgDataOffset++] = lastRed;
 				imgDataArray[imgDataOffset++] = lastGreen;
@@ -81,6 +89,7 @@ function rleDecodeLoop(intArray, imgDataArray, imgDataStartPos) {
 				imgDataArray[imgDataOffset++] = 255;
 			}
 		}else {
+			//no-runs
 			while(length-- > 0) {
 				imgDataArray[imgDataOffset++] = lastRed =  intArray[pixelDataOffset++];
 				imgDataArray[imgDataOffset++] = lastGreen = intArray[pixelDataOffset++];
