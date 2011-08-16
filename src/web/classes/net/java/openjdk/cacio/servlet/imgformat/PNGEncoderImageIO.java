@@ -30,10 +30,15 @@ import java.io.*;
 import javax.imageio.*;
 
 /**
+ * Implementation of the PNGEncoder interface using ImageIO.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class PNGEncoderImageIO extends PNGEncoder {    
+   
+    /**
+     * @see PNGEncoder
+     */
     @Override
     public byte[] encode(BufferedImage img, int compression) {
 	ByteArrayOutputStream bos = new ByteArrayOutputStream((img.getWidth() * img.getHeight()) / 2);

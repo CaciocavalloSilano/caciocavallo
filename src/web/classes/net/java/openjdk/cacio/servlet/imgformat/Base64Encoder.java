@@ -26,8 +26,9 @@
 package net.java.openjdk.cacio.servlet.imgformat;
 
 /**
- * Self-contained and fast Base64 implementation without line-break functionality.
- * Used to transmit image-data in text format, in case png-image data is sent over XHR1.
+ * Self-contained and fast Base64 implementation without line-break
+ * functionality. Used to transmit image-data in text format, in case png-image
+ * data is sent over XHR1.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -42,7 +43,13 @@ public class Base64Encoder {
 	    (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0',
 	    (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) '+', (byte) '/' };
 
-    
+    /**
+     * Encodes data base64, without inserting line-breaks.
+     * 
+     * @param in
+     *            The data to be encoded
+     * @return
+     */
     public static byte[] encode(byte[] in) {
 	int dataLength = (in.length * 4 + 2) / 3;
 	byte[] out = new byte[((in.length + 2) / 3) * 4]; // length including
@@ -54,20 +61,19 @@ public class Base64Encoder {
 	    int i2;
 	    int i3;
 
-
-	    if (i +1 < in.length) {
-		//Fast-Path: Three input bytes are available
+	    if (i + 1 < in.length) {
+		// Fast-Path: Three input bytes are available
 		i2 = in[i++] & 0xff;
 		i3 = in[i++] & 0xff;
 	    } else {
-		//Handle cases where we run out of input bytes
+		// Handle cases where we run out of input bytes
 		i2 = 0;
 		i3 = 0;
-		
-		if(i < in.length) {
+
+		if (i < in.length) {
 		    i2 = in[i++] & 0xff;
 		}
-		if(i < in.length) {
+		if (i < in.length) {
 		    i3 = in[i++] & 0xff;
 		}
 	    }
@@ -78,29 +84,29 @@ public class Base64Encoder {
 	    int o3 = ((i2 & 15) << 2) | (i3 >>> 6);
 	    int o4 = i3 & 63;
 
-	    //Look up characters, write to output and pad if requred
+	    // Look up characters, write to output and pad if requred
 	    out[o++] = map[o1];
 	    out[o++] = map[o2];
 
 	    if (o + 1 < dataLength) {
-		//Fast-Path, lookup & store output values
+		// Fast-Path, lookup & store output values
 		out[o++] = map[o3];
 		out[o++] = map[o4];
 	    } else {
-		//Handle cases at the end
+		// Handle cases at the end
 		out[o] = padByte;
 		out[o + 1] = padByte;
-		
-		if(o < dataLength) {
+
+		if (o < dataLength) {
 		    out[o++] = map[o3];
 		}
-		
-		if(o < dataLength) {
+
+		if (o < dataLength) {
 		    out[o++] = map[o4];
 		}
 	    }
 	}
-	
+
 	return out;
     }
 }
