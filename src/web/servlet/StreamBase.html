@@ -256,13 +256,9 @@ function interpretCommandBuffer() {
 }
 
 
-
-
 /*Event-Handling*/
 var eventXmlHttpReq = new XMLHttpRequest();
 var eventBuffer = '';
-
-//window.setInterval("sendEvents()", 10);
 
 function sendEvents() {
 		if(eventBuffer.length > 0) {
@@ -329,37 +325,20 @@ function onMouseMove(e) {
 }
 
 function onKeyDown(e) {
-    /*if (c_keyPress) {
-        c_keyPress(getKeysym(e), 1, e.ctrlKey, e.shiftKey, e.altKey);
-    }*/
-    
     eventBuffer += 'K_1_'+getKeysym(e)+"_"+e.ctrlKey+"_"+e.shiftKey+"_"+e.altKey+'_';
-   // sendEventsAtomic();
     
     pStopEvent(e);
     return false;
 }
 
-function onKeyUp(e) {
-
-/*    if (! conf.focused) {
-        return true;
-    }
-    if (c_keyPress) {
-        c_keyPress(getKeysym(e), 0, e.ctrlKey, e.shiftKey, e.altKey);
-    }*/
-    
+function onKeyUp(e) {    
     eventBuffer += 'K_0_'+getKeysym(e)+"_"+e.ctrlKey+"_"+e.shiftKey+"_"+e.altKey+'_';
-    //sendEventsAtomic();
     
     pStopEvent(e);
     return false;
 }
 
 function onKeyPress(e) {
-    /*if (! conf.focused) {
-        return true;
-    }*/
     pStopEvent(e);
     return false;
 }
