@@ -25,6 +25,7 @@
 
 package net.java.openjdk.cacio.servlet;
 
+import java.awt.KeyboardFocusManager;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -46,7 +47,7 @@ public class AppContextCreator {
 	Thread t = new Thread(appGroup, "AppInitThread") {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
-
+		KeyboardFocusManager.setCurrentKeyboardFocusManager(new WebKeyboardFocusManager());
 		try {
 		    sessionState.lockSession();
 		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);
