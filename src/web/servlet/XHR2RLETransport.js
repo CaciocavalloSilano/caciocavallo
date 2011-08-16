@@ -23,12 +23,24 @@
  * questions.
  */
  
+ /**
+ * Transport for receiving rle encoded image data in binary format
+ * over XmlHttpRequest2.
+ */
+ 
+ /**
+  * Initializes the SHR2RLE transport by setting the appropriate 
+  * function pointers.
+  */
 function initXHR2Rle() {
 	initXHR2Shared();
 	responseHandlerFunc = handleXHR2RLEResponse;
 	return "rle";
 }
 
+/**
+ * Response-Handler
+ */
 function handleXHR2RLEResponse() {
 	var buffer = xmlhttpreq.response ? xmlhttpreq.response : xmlhttpreq.mozResponseArrayBuffer;
 	intArray = new Uint8Array(buffer);

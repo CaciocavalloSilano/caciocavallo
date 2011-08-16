@@ -23,8 +23,17 @@
  * questions.
  */
  
+ /**
+ * Backend for receiving image-data base64 encoded in text format.
+ * Doesn't reliable work on IE9.
+ */
+ 
 var parts;
 
+/**
+ * Initializes the XHRBase64 transport by setting the appropiate
+ * function pointers.
+ */
 function initXHRBase64() {
 	startRequestFunc = StartXHRBase64Request;
 	readCmdStreamFunc = readXHRBase64CommandStream;
@@ -32,6 +41,11 @@ function initXHRBase64() {
 	return "base64";
 }
 
+/**
+ * Reads the command list values which are received as
+ * colon seperated string, which has been split and stored
+ * in the global parts-array.
+ */
 function readXHRBase64CommandStream() {
 	var cmdLength = parseInt(parts[0]);
 	
@@ -47,6 +61,12 @@ function readXHRBase64CommandStream() {
 	return result;
 }
 
+/**
+ * Receive the command-stream and base64 encoded image
+ * data in a colon-speparated string.
+ * Split the string, and load the image-data using 
+ * the data-URI scheme.
+ */
 function handleXHRBase64Response() {
 	parts = xmlhttpreq.responseText.split(":");
 	
@@ -60,6 +80,9 @@ function handleXHRBase64Response() {
 	}
 }
 
+/**
+ * Starts asynchronous XHR1 request
+ */
 function StartXHRBase64Request(subSessionID) {
   xmlhttpreq = new XMLHttpRequest();
   xmlhttpreq.open("GET", "ImageStreamer?subsessionid="+subSessionID, true);
