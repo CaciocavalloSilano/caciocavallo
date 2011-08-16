@@ -23,6 +23,15 @@
  * questions.
  */
 
+/**
+ * Decodes run-length encoded image data into an ImageData 
+ * object and puts the image-data onto a canvas, which is
+ * later used as "img" source when interpreting the command
+ * buffer.
+ * 
+ * Because canvas-creation is very heavyweight, the canvas
+ * is re-used if it is large enough.
+ */
 function decodeRLEImageData() {
 	var cmdLength = readShort(intArray, 0);
 	var imgDataStartPos = 2 * (cmdLength + 1);
@@ -49,6 +58,10 @@ function decodeRLEImageData() {
 	ctx.putImageData(imgData, 0, 0);
 }
 
+/**
+ * Actual decode loop, see RLEImageEncoder.java for an
+ * in depth-description of the RLE format used.
+ */
 function rleDecodeLoop(intArray, imgDataArray, imgDataStartPos) {
 	var runDataLength = readInt(intArray, imgDataStartPos + 4);
    	var runLengthDataOffset = imgDataStartPos + 8;
