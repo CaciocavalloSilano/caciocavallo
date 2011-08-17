@@ -42,6 +42,7 @@ public class WebSessionState {
     WebMouseStateTracker mouseTracker;
     WebKeyboardStateTracker keyboardTracker;
     WebGraphicsConfiguration config;
+    WebScreen screen;
     int subSessionID;
 
     String[] cmdLineParams;
@@ -105,7 +106,10 @@ public class WebSessionState {
     }
 
     public void dispose() {
-	appContext.dispose();
+	if(appContext != null) {
+	    appContext.dispose();
+	}
+	screen = null;
     }
 
     public String[] getCmdLineParams() {
@@ -146,5 +150,13 @@ public class WebSessionState {
 
     public void setCompressLevel(int compressLevel) {
 	this.compressLevel = compressLevel;
+    }
+
+    public WebScreen getScreen() {
+        return screen;
+    }
+
+    public void setScreen(WebScreen screen) {
+        this.screen = screen;
     }
 }
