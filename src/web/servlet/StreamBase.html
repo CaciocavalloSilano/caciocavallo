@@ -98,8 +98,7 @@ function chooseTransport() {
 		} else 
 		if (isImageDataSupported()) {
 			return initImgTransport();
-		} else 
-		if(isBase64Supported()) {
+		} else {
 			return initXHRBase64();
 		}
 	}else {
