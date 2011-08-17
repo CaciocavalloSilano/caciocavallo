@@ -25,10 +25,14 @@
 
 package net.java.openjdk.cacio.server;
 
+import java.util.concurrent.*;
+
 import net.java.openjdk.cacio.servlet.*;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.server.nio.*;
 import org.eclipse.jetty.servlet.*;
+import org.eclipse.jetty.util.thread.*;
 
 /**
  * Server-Startup class for Caciocavallo-Web. Initializes a builtin Jetty
@@ -39,7 +43,7 @@ import org.eclipse.jetty.servlet.*;
 public class CacioServer {
 
     public CacioServer() throws Exception {
-	this(8080);
+	this(8080, 100);
     }
 
     /**
@@ -49,11 +53,12 @@ public class CacioServer {
      * @param port
      * @throws Exception
      */
-    public CacioServer(int port) throws Exception {
+    public CacioServer(int port, int maxThreads) throws Exception {
 	applySystemProperties();
 
 	Server server = new Server(port);
-
+	server.setThreadPool(new QueuedThreadPool(maxThreads));
+	
 	ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 	context.setContextPath("/");
 	context.setResourceBase("bin/");
@@ -76,7 +81,7 @@ public class CacioServer {
 	HandlerList handlers = new HandlerList();
 	handlers.setHandlers(new Handler[] { handler, context });
 	server.setHandler(handlers);
-
+	
 	server.start();
 	server.join();
     }
@@ -95,7 +100,8 @@ public class CacioServer {
 
     public static void main(String[] args) throws Exception {
 	int port = Integer.getInteger("cacio.web.port", 8080);
-	new CacioServer(port);
+	int maxThreads = Integer.getInteger("cacio.threads", 100);
+	new CacioServer(port, maxThreads);
     }
 
 }
