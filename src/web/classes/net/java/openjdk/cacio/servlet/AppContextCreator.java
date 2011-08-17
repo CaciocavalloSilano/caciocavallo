@@ -47,11 +47,13 @@ public class AppContextCreator {
 	Thread t = new Thread(appGroup, "AppInitThread") {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
-		KeyboardFocusManager.setCurrentKeyboardFocusManager(new WebKeyboardFocusManager());
+
 		try {
 		    sessionState.lockSession();
 		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);
-
+		    
+		    KeyboardFocusManager.setCurrentKeyboardFocusManager(new WebKeyboardFocusManager());
+		    
 		    ClassLoader loader = getClass().getClassLoader();
 		    Class<?> cls = loader.loadClass(sessionState.getMainClsName());
 		    Method mainMethod = cls.getMethod("main", String[].class);
