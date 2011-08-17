@@ -45,6 +45,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.java.openjdk.cacio.servlet.*;
+
+import sun.awt.*;
 import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
@@ -71,10 +74,14 @@ public class WebToolkit extends CacioToolkit {
 
     @Override
     public synchronized PlatformWindowFactory getPlatformWindowFactory() {
-        if (platformWindow == null) {
-            platformWindow = new WebWindowFactory();
+	WebSessionState state = WebSessionManager.getInstance().getCurrentState();
+        
+	WebWindowFactory factory;
+	if ((factory = state.getWindowFactory()) == null) {
+	    factory = new WebWindowFactory();
+	   state.setWindowFactory(factory);
         }
-        return platformWindow;
+        return factory;
     }
 
     @Override

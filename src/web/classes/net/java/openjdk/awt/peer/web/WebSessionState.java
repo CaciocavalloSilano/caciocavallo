@@ -43,6 +43,7 @@ public class WebSessionState {
     WebKeyboardStateTracker keyboardTracker;
     WebGraphicsConfiguration config;
     WebScreen screen;
+    WebWindowFactory windowFactory;
     int subSessionID;
 
     String[] cmdLineParams;
@@ -110,6 +111,7 @@ public class WebSessionState {
 	    appContext.dispose();
 	}
 	screen = null;
+	windowFactory = null;
     }
 
     public String[] getCmdLineParams() {
@@ -158,5 +160,13 @@ public class WebSessionState {
 
     public void setScreen(WebScreen screen) {
         this.screen = screen;
+    }
+
+    public WebWindowFactory getWindowFactory() {
+        return windowFactory;
+    }
+
+    public void setWindowFactory(WebWindowFactory windowFactory) {
+        this.windowFactory = windowFactory;
     }
 }
