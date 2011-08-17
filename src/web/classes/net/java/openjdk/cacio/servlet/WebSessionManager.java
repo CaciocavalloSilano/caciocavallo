@@ -47,7 +47,7 @@ public class WebSessionManager {
     static final String SESSION_KEY = "WEBSessionState";
 
     private static final WebSessionManager instance = new WebSessionManager();
-    
+
     ThreadLocal<WeakReference<WebSessionState>> threadStateHolder = new ThreadLocal<WeakReference<WebSessionState>>();
 
     public static WebSessionManager getInstance() {
@@ -85,6 +85,7 @@ public class WebSessionManager {
     public void registerAppContext(AppContext context, WebSessionState state) {
 	state.setAppContext(context);
 	AppContext.getAppContext().put(SESSION_KEY, state);
+	registerSessionAtCurrentThread(state);
     }
 
     /**
@@ -97,20 +98,21 @@ public class WebSessionManager {
     public WebSessionState getCurrentStateAWT() {
 	return (WebSessionState) AppContext.getAppContext().get(SESSION_KEY);
     }
-    
+
     public WebSessionState getCurrentState() {
 	WebSessionState state = getCurrentStateAWT();
-   
-	if(state == null) {
+
+	if (state == null) {
 	    state = threadStateHolder.get().get();
 	}
-	
+
 	return state;
     }
 
     /**
-     * Returns the WebSessionState of the HttpSessiont. This is
-     * called from servlet threads.
+     * Returns the WebSessionState of the HttpSessiont. This is called from
+     * servlet threads.
+     * 
      * @param session
      * @param subSessionID
      * @return the WebSessionState
@@ -119,23 +121,34 @@ public class WebSessionManager {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
 	if (subSessionList != null) {
 	    WebSessionState state = subSessionList.get(subSessionID);
-	    threadStateHolder.set(new WeakReference<WebSessionState>(state));
+	    registerSessionAtCurrentThread(state);
 	    return state;
 	}
 
 	return null;
     }
 
+    private void registerSessionAtCurrentThread(WebSessionState state) {
+	threadStateHolder.set(new WeakReference<WebSessionState>(state));
+    }
+
     /**
-     * Disposes the session, as well as the assiciated AppContext.
-     * This will also shut down the applications contained in that AppContext as well as all its threads.
+     * Disposes the session, as well as the assiciated AppContext. This will
+     * also shut down the applications contained in that AppContext as well as
+     * all its threads.
+     * 
      * @param session
      */
     public synchronized void disposeSession(HttpSession session) {
 	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
 	if (subSessionList != null) {
 	    for (WebSessionState state : subSessionList) {
-		state.dispose();
+		state.lockSession();
+		try {
+		    state.dispose();
+		} finally {
+		    state.unlockSession();
+		}
 	    }
 	    subSessionList.clear();
 	}
