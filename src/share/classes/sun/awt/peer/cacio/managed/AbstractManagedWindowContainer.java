@@ -220,7 +220,7 @@ abstract class AbstractManagedWindowContainer
                 }
             }
         }
-        Graphics2D g = getClippedGraphics(Color.BLACK, Color.BLACK,
+        Graphics2D g = getClippedGraphics(Color.WHITE, Color.WHITE,
                                           new Font(Font.DIALOG, Font.BOLD, 12),
                                           rects);
         g.clearRect(x, y, w, h);
