@@ -25,12 +25,9 @@
 
 package net.java.openjdk.cacio.server;
 
-import java.util.concurrent.*;
-
 import net.java.openjdk.cacio.servlet.*;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
-import org.eclipse.jetty.server.nio.*;
 import org.eclipse.jetty.servlet.*;
 import org.eclipse.jetty.util.thread.*;
 
@@ -43,7 +40,7 @@ import org.eclipse.jetty.util.thread.*;
 public class CacioServer {
 
     public CacioServer() throws Exception {
-	this(8080, 100);
+	this(8080, 125);
     }
 
     /**
@@ -100,7 +97,7 @@ public class CacioServer {
 
     public static void main(String[] args) throws Exception {
 	int port = Integer.getInteger("cacio.web.port", 8080);
-	int maxThreads = Integer.getInteger("cacio.threads", 100);
+	int maxThreads = Integer.getInteger("cacio.threads", 125);
 	new CacioServer(port, maxThreads);
     }
 
