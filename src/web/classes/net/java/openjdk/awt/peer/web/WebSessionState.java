@@ -44,6 +44,7 @@ public class WebSessionState {
     WebGraphicsConfiguration config;
     WebScreen screen;
     WebWindowFactory windowFactory;
+    WebFocusManager focusManager;
     int subSessionID;
 
     String[] cmdLineParams;
@@ -112,6 +113,7 @@ public class WebSessionState {
 	}
 	screen = null;
 	windowFactory = null;
+	focusManager = null;
     }
 
     public String[] getCmdLineParams() {
@@ -168,5 +170,13 @@ public class WebSessionState {
 
     public void setWindowFactory(WebWindowFactory windowFactory) {
         this.windowFactory = windowFactory;
+    }
+
+    public WebFocusManager getFocusManager() {
+        return focusManager;
+    }
+
+    public void setFocusManager(WebFocusManager focusManager) {
+        this.focusManager = focusManager;
     }
 }
