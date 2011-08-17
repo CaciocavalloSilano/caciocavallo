@@ -28,6 +28,9 @@ package net.java.openjdk.awt.peer.web;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.lang.ref.*;
+
+import net.java.openjdk.cacio.servlet.*;
 
 /**
  * GraphicConfiguration implementation for caciocavallo-web.
@@ -38,7 +41,7 @@ import java.awt.image.*;
 public class WebGraphicsConfiguration extends GraphicsConfiguration {
 
     private WebGraphicsDevice device;
-    private WebScreen screen;
+    private WeakReference<WebScreen> screenRef;
 
     public WebGraphicsConfiguration() {
 	device = new WebGraphicsDevice();
@@ -46,7 +49,17 @@ public class WebGraphicsConfiguration extends GraphicsConfiguration {
 
     WebGraphicsConfiguration(WebGraphicsDevice device) {
 	this.device = device;
-	this.screen = new WebScreen(this);
+	
+	/* 
+	 * Sometimes awt/swing caches stuff, keeping references to
+	 * the heavyweight WebScreen longer alive than required, so
+	 * we use a WeakReference.
+	 * A strong reference is held by WebSessionState, so as long as
+	 * the session is valid, we have a reference to the WebScreen.
+	 */
+	WebScreen screen = new WebScreen(this);
+	screenRef = new WeakReference<WebScreen>(screen);
+	WebSessionManager.getInstance().getCurrentState().setScreen(screen);
     }
 
     static GraphicsConfiguration getDefaultConfiguration() {
@@ -87,10 +100,10 @@ public class WebGraphicsConfiguration extends GraphicsConfiguration {
 
     @Override
     public Rectangle getBounds() {
-	return screen.getBounds();
+	return getScreen().getBounds();
     }
 
     public WebScreen getScreen() {
-	return screen;
+	return screenRef.get();
     }
 }
