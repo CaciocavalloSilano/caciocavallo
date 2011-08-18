@@ -26,11 +26,14 @@
 package cacio.test;
 
 import java.awt.Button;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Panel;
-import sun.awt.ComponentAccessor;
+
+import sun.awt.*;
+import sun.awt.AWTAccessor.*;
 
 public class TestPanel {
 
@@ -60,6 +63,8 @@ public class TestPanel {
         System.err.println("Frame props: " + f.getForeground() + ", " + f.getBackground() + ", " + f.getFont());
         System.err.println("Panel props: " + p.getForeground() + ", " + p.getBackground() + ", " + p.getFont());
         System.err.println("Button props: " + b.getForeground() + ", " + b.getBackground() + ", " + b.getFont());
-        System.err.println("real Button props: " + ComponentAccessor.getForeground(b) + ", " + ComponentAccessor.getBackground(b) + ", " + ComponentAccessor.getFont(b));
+        
+        ComponentAccessor componentAccessor = AWTAccessor.getComponentAccessor();
+        System.err.println("real Button props: " + componentAccessor.getForeground(b) + ", " + componentAccessor.getBackground(b) + ", " + componentAccessor.getFont(b));
     }
 }
