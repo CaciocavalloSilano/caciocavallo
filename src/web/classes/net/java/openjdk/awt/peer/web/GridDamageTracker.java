@@ -73,7 +73,7 @@ public class GridDamageTracker {
      * 
      * @param rect
      */
-    protected void trackDamageRect(WebRect rect) {
+    public void trackDamageRect(WebRect rect) {
 	int x1Cell = rect.getX1() / GRID_SIZE;
 	int y1Cell = rect.getY1() / GRID_SIZE;
 	int x2Cell = Math.min(rect.getX2() / GRID_SIZE, grid[0].length - 1);
@@ -103,7 +103,7 @@ public class GridDamageTracker {
      * @return The resulting BlitScreenUpdates, or null if no updates are
      *         available.
      */
-    protected List<ScreenUpdate> groupDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
+    public List<ScreenUpdate> groupDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
 	WebRect unionRect = getUnionRectangle();
 	if (unionRect != null) {
 	    ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();

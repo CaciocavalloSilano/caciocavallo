@@ -40,7 +40,7 @@ public class EventReceiveServlet extends SubSessionServletBase {
     public EventReceiveServlet() {
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
 	String parameters = request.getParameter("events");
 	WebSessionState currentState = getSessionState(request);
 	try {

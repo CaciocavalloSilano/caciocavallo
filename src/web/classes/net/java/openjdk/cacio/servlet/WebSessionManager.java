@@ -99,6 +99,10 @@ public class WebSessionManager {
 	return (WebSessionState) AppContext.getAppContext().get(SESSION_KEY);
     }
 
+    /**
+     * Can be called if a method is called by the servlet-thread as well as by AWT/App threads.
+     * @return
+     */
     public WebSessionState getCurrentState() {
 	WebSessionState state = getCurrentStateAWT();
 
@@ -128,6 +132,11 @@ public class WebSessionManager {
 	return null;
     }
 
+    /**
+     * Registers the state for the current thread.
+     * Has to be called before calling into cacio-web from a servlet!
+     * @param state
+     */
     private void registerSessionAtCurrentThread(WebSessionState state) {
 	threadStateHolder.set(new WeakReference<WebSessionState>(state));
     }
