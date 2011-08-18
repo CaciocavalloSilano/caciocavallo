@@ -32,6 +32,6 @@
     </target>
 
     <target name="clean">
-        <!-- TODO: Implement. -->
+        <delete dir="${dir.build.test.classes}" />
     </target>
 </project>
