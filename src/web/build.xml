@@ -82,14 +82,14 @@
         <include name="*.jar"/>
       </fileset>
      </unzip>
-     
-     <unzip dest="${dir.build.web.lib_classes}" src="${web.dependency_jar}"/>       
       
      <delete dir="${dir.build.web.lib_classes}/META-INF" />
      
 		<copy todir="${dir.build.web.classes}">
 			<fileset file="${web.servlet_content}/*"/>
 		</copy>
+		
+		<copy file="${web.jskeylib}/keylib.js" todir="${dir.build.web.lib_classes}"/>
 		
 		<jar destfile="${web.jar_runtime_file}">
 			<fileset dir="${dir.build.web.classes}"/>
