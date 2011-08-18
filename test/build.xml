@@ -7,12 +7,28 @@
 
     <target name="compile">
         <mkdir dir="${dir.build.test.classes}" />
-        <javac classpath="${dir.build.test.classes}"
+        <javac classpath="${dir.build.test.classes}:${lib.junit}"
                bootclasspath="${openjdk}/classes"
                srcdir="${dir.src.test.classes}"
                destdir="${dir.build.test.classes}"
                debug="${compile.debug}"
         />
+    </target>
+    
+    <target name="run">
+		<junit printsummary="yes" fork="true">
+			<classpath>
+				<pathelement path="${dir.build.test.classes}"/>
+				<pathelement path="${lib.junit}"/>
+				<pathelement path="${web.jar_runtime_file}"/>
+			</classpath>
+    
+			<batchtest haltonfailure="no" todir="${test.reports}">
+					<fileset dir="${dir.src.test.classes}">
+						  <include name="cacioweb/*Test*.java"/>
+					</fileset>          
+			</batchtest>
+		</junit>
     </target>
 
     <target name="clean">
