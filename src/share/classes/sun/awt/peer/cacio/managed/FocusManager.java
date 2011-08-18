@@ -31,105 +31,119 @@ import sun.security.action.*;
 import java.awt.Component;
 import java.awt.event.FocusEvent;
 import java.security.*;
+import java.util.logging.*;
 
 public class FocusManager {
 
-    private static FocusManager instance;
+    private static Logger logger = Logger.getLogger(FocusManager.class.getName());
 
+    private static FocusManager instance;
     private static final Class focusManagerCls;
+
+    /**
+     * Load the specified FocusManager Implementation, or default to
+     * FocusManager in case the property "cacio.focusmgr" has not been set.
+     */
     static {
 	String focusMgrClsName = AccessController.doPrivileged(new GetPropertyAction("cacio.focusmgr"));
 	Class cls = FocusManager.class;
 	try {
-	    if(focusMgrClsName != null) {
+	    if (focusMgrClsName != null) {
 		cls = Class.forName(focusMgrClsName);
 	    }
 	} catch (ClassNotFoundException e) {
-	    e.printStackTrace(); //TODO: Logger
+	    logger.log(Level.SEVERE, "Unable to load FocusManager implementation", e);
 	}
-	
+
 	focusManagerCls = cls;
     }
-    
+
+    /**
+     * @return The FocusManager instance for the current "context"
+     */
     static FocusManager getInstance() {
-        if (instance == null) {
-            try {
-		instance =(FocusManager) focusManagerCls.newInstance();
+	if (instance == null) {
+	    try {
+		instance = (FocusManager) focusManagerCls.newInstance();
 	    } catch (Exception e) {
-		e.printStackTrace();
+		logger.log(Level.SEVERE, "Unable to create FocusManager instance", e);
 	    }
-        }
-        return instance.getContextInstance();
+	}
+	return instance.getContextInstance();
     }
 
     private ManagedWindow focusedWindow;
 
     public FocusManager() {
     }
-    
+
+    /**
+     * The default-implementation is classloader scoped, as it stores the
+     * FocusManager in a static field. Subclasses that wish to change the scope
+     * (e.g. to AppContext scope) have to override this method.
+     * 
+     * @return FocusManager instance for the current "context".
+     */
     protected FocusManager getContextInstance() {
 	return instance;
-    } 
-    
+    }
 
     ManagedWindow getFocusedWindow() {
-        return focusedWindow;
+	return focusedWindow;
     }
 
     void setVisible(ManagedWindow w, boolean v) {
-        if (v) {
-            setFocusedWindow(w);
-        } else {
-            setFocusedWindow(null);
-        }
+	if (v) {
+	    setFocusedWindow(w);
+	} else {
+	    setFocusedWindow(null);
+	}
     }
 
     void mousePressed(ManagedWindow w) {
-        if (w != focusedWindow) {
-            setFocusedWindow(w);
-        }
+	if (w != focusedWindow) {
+	    setFocusedWindow(w);
+	}
     }
 
     void setFocusedWindow(ManagedWindow w) {
-        setFocusedWindowNoEvent(w);
-        focusLost(focusedWindow, w);
-        focusGained(w, focusedWindow);
+	setFocusedWindowNoEvent(w);
+	focusLost(focusedWindow, w);
+	focusGained(w, focusedWindow);
     }
 
     void setFocusedWindowNoEvent(ManagedWindow w) {
-        focusedWindow = w;
+	focusedWindow = w;
     }
 
     private void focusLost(ManagedWindow w, ManagedWindow lostTo) {
-        if (w != null) {
-            CacioComponent cacioComp = w.getCacioComponent();
-            Component c = cacioComp.getAWTComponent();
-            Component opposite = getAWTComponent(lostTo);
-            FocusEvent fe = new FocusEvent(c, FocusEvent.FOCUS_LOST, false,
-                                           opposite);
-            cacioComp.handlePeerEvent(fe);
-        }
+	if (w != null) {
+	    CacioComponent cacioComp = w.getCacioComponent();
+	    Component c = cacioComp.getAWTComponent();
+	    Component opposite = getAWTComponent(lostTo);
+	    FocusEvent fe = new FocusEvent(c, FocusEvent.FOCUS_LOST, false, opposite);
+	    cacioComp.handlePeerEvent(fe);
+	}
     }
 
     private void focusGained(ManagedWindow w, ManagedWindow lost) {
-        if (w != null) {
-            CacioComponent cacioComp = w.getCacioComponent();
-            Component c = cacioComp.getAWTComponent();
-            Component opposite = getAWTComponent(lost);
-            FocusEvent fe = new FocusEvent(c, FocusEvent.FOCUS_GAINED, false,
-                                           opposite);
-            cacioComp.handlePeerEvent(fe);
-        }
+	if (w != null) {
+	    CacioComponent cacioComp = w.getCacioComponent();
+	    Component c = cacioComp.getAWTComponent();
+	    Component opposite = getAWTComponent(lost);
+	    FocusEvent fe = new FocusEvent(c, FocusEvent.FOCUS_GAINED, false, opposite);
+	    cacioComp.handlePeerEvent(fe);
+	}
     }
 
     private Component getAWTComponent(ManagedWindow w) {
-        Component c;
-        if (w != null) {
-            CacioComponent cacio = w.getCacioComponent();
-            c = cacio.getAWTComponent();
-        } else {
-            c = null;
-        }
-        return c;
+	Component c;
+	if (w != null) {
+	    CacioComponent cacio = w.getCacioComponent();
+	    c = cacio.getAWTComponent();
+	} else {
+	    c = null;
+	}
+	return c;
     }
 }
