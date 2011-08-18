@@ -155,7 +155,7 @@ public class TreeImagePacker {
      * @return true iff packing images is more efficient than simply spanning a
      *         bounding-box arround all changes.
      */
-    protected boolean isPackingEfficient(WebRect boundingBox, WebRect unionRect) {
+    public boolean isPackingEfficient(WebRect boundingBox, WebRect unionRect) {
 	int packedArea = boundingBox.getWidth() * boundingBox.getHeight();
 	int unionArea = (unionRect.getWidth() * unionRect.getHeight());
 	return (packedArea * 100) / unionArea <= 80;
@@ -241,5 +241,4 @@ class ScreenUpdateComperator implements Comparator<ScreenUpdate> {
 
 	return (u2.getWidth() * u2.getHeight()) - (u1.getWidth() * u1.getHeight());
     }
-
 }
