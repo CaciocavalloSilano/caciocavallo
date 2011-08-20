@@ -150,15 +150,15 @@ public class WebSurfaceData extends SurfaceData {
      */
     public final void addDirtyRectAndUnlock(int x1, int x2, int y1, int y2) {
 	try {
-	    x1 = Math.max(0, x1);
-	    y1 = Math.max(0, y1);
-	    x1 = Math.min(bounds.width, x1);
-	    y1 = Math.min(bounds.height, y1);
+	    x1 = (x1 > 0) ? x1 : 0;
+	    y1 = (y1 > 0) ? y1 : 0;
+	    x1 = (x1 < bounds.width) ? x1 : bounds.width;
+	    y1 = (y1 < bounds.height) ? y1 : bounds.height;
 	    
-	    x2 = Math.max(x1, x2);
-	    y2 = Math.max(y1, y2);
-	    x2 = Math.min(bounds.width, x2);
-	    y2 = Math.min(bounds.height, y2);
+	    x2 = (x2 > x1) ? x2 : x1;
+	    y2 = (y2 > y1) ? y2 : y1;
+	    x2 = (x2 < bounds.width) ? x2 : bounds.width;
+	    y2 = (y2 < bounds.height) ? y2 : bounds.height;
 
 	    WebRect rect = new WebRect(x1, y1, x2, y2);
 	    damageTracker.trackDamageRect(rect);
