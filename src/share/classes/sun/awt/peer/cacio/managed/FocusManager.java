@@ -65,7 +65,7 @@ public class FocusManager {
 	if (instance == null) {
 	    try {
 		instance = (FocusManager) focusManagerCls.newInstance();
-	    } catch (Exception e) {
+	    } catch (ReflectiveOperationException e) {
 		logger.log(Level.SEVERE, "Unable to create FocusManager instance", e);
 	    }
 	}
