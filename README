@@ -128,33 +128,59 @@ CLASSPATH=/home/neugens/work_space/tools/cpptasks.jar ant compile
 should do the trick.
 
 
+
 Caciocavallo-Web
 ----
 
-For now the Web-Backend has a dependencies to LGPL utility code,
-which can't be part of the repo.
-Because of classloader/visibility problems, for now an integrated
-http server is used, which uses Jetty.
+Caciocavallo-Web is a caciocavallo implementation for displaying AWT/Swing
+applications in a html5 capable browser, while the application is runing
+on a server. Events are sent from the browser to the server, 
+whereas the visual output is sent to the browser.
 
-The following dependencies are required:
-http://download.eclipse.org/jetty/  (stable Jetty-7)
-http://93.83.133.214/cacioweb/cacio_dependencies.jar (source available under cacio_dependencies_src.tar.gz)
+Dependencies:
+
+* JsKeyLib: Caciocavallo-Web requires a LGPL2 licensed javascript library for decoding
+keyboard events, which because of licensing constraints can't be contained
+in the caciocavallo-repository.
+The library can be downloaded from: 
+http://sourceforge.net/p/jskeylib/home/Home/
+
+* Jetty-7 http://download.eclipse.org/jetty/
+
+* JUnit4 for running the unit tests.
+
+* KeyPoint png encoder (optional)
+For transports using the png format, keypoint's png encoder provides better
+performance and allows to adjust the compressionLevel.
+To enable the keypoint png encoder, simply download the library-file 
+http://93.83.133.214/cacioweb/keypoint_png.jar
+and add it to your classpath. (source file named keypoint_png_src.tar.gz)
+
+
+Building:
 
 Unzip jetty, and adjust the following paths in user.properties:
-> web.dependency_jar=/home/ce/cacio_dependencies.jar
-> web.jetty_lib_dir=/home/ce/Development/libs/jetty
-> web.servlet-api=/home/ce/Development/libs/jetty/servlet-api-2.5.jar
+web.jetty_lib_dir=/home/ce/Development/libs/jetty
+web.servlet-api=/home/ce/Development/libs/jetty/servlet-api-2.5.jar
+web.jskeylib=/home/ce/jskeylib-code
+lib.junit=/home/ce/Development/libs/junit-4.8.2.jar
 
 Use the following ant-task to build the server runtime: cacio.web.srv-runtime
-Also make sure build/web/lib/libcacio-web.so is in your library path.
 
 To start the application, simply add the application you would like to run
-to the classpath and start the server runtime:
-java -cp cacio-web-runtime.jar:SwingSet2.jar net.java.openjdk.cacio.server.CacioServer
+to the classpath, add the native part to the java_library_path and start the server runtime:
+java -cp cacio-web-runtime.jar:SwingSet2.jar:(keypoint_png.jar) 
+-Djava.library.path=build/web/lib/ net.java.openjdk.cacio.server.CacioServer
 
 and open the ApplicationStarter-Servlet using your Browser:
-http://localhost:8080/AppStarter?cls=SwingSet2
+http://localhost:8080/SessionInitializer?cls=SwingSet2
 
+It is also possible to specify a compression format, when starting 
+an Application: http://localhost:8080/SessionInitializer?cls=SwingSet2&format=png
+
+When using png-compression, the compression-level can be adjusted additionally:
+http://localhost:8080/SessionInitializer?cls=SwingSet2&format=png&clevel=2
+where cLevel can be an integer between 0 (no) and 9 (highest) compression.
 
 
 Test
