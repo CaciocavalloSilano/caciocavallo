@@ -26,7 +26,10 @@
 package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.awt.image.*;
+
 import java.lang.reflect.*;
+import java.util.logging.*;
+
 
 /**
  * Reflection based implementation (to avoid compile-time dependency) of the
@@ -38,6 +41,8 @@ import java.lang.reflect.*;
  */
 public class PNGEncoderKeypoint extends PNGEncoder {
 
+    private static Logger logger = Logger.getLogger(PNGEncoderKeypoint.class.getName());
+    
     private static Class<?> keypointEncoderCls;
     private static Constructor<?> keypointEncoderConstructor;
     private static Method keypointEncodeMethod;
@@ -55,7 +60,7 @@ public class PNGEncoderKeypoint extends PNGEncoder {
 	    keypointEncoderConstructor = keypointEncoderCls.getConstructor(new Class[] { BufferedImage.class, boolean.class, int.class, int.class });
 	    keypointEncodeMethod = keypointEncoderCls.getMethod("pngEncode", new Class[0]);
 	} catch (Exception ex) {
-	    ex.printStackTrace();
+	    logger.log(Level.INFO, ex.getMessage());
 	}
     }
 
@@ -75,7 +80,7 @@ public class PNGEncoderKeypoint extends PNGEncoder {
 	    Object encoderInstance = keypointEncoderConstructor.newInstance(new Object[] { img, Boolean.FALSE, Integer.valueOf(0), compression });
 	    return (byte[]) keypointEncodeMethod.invoke(encoderInstance, new Object[0]);
 	} catch (Exception ex) {
-	    ex.printStackTrace();
+	    logger.log(Level.SEVERE, "Error encoding png image", ex);
 	}
 
 	return null;

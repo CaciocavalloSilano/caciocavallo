@@ -26,6 +26,7 @@
 package net.java.openjdk.cacio.servlet.imgformat;
 
 import java.awt.image.*;
+import java.util.logging.*;
 
 /**
  * Generic PNGEncoder interface, to allow Caciocavallo-Web to use different png
@@ -36,7 +37,8 @@ import java.awt.image.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public abstract class PNGEncoder {
-
+    private static Logger logger = Logger.getLogger(PNGEncoder.class.getName());
+    
     private static PNGEncoder instance;
 
     public static synchronized PNGEncoder getInstance() {
@@ -46,7 +48,7 @@ public abstract class PNGEncoder {
 		instance = keypointEncoder;
 	    } else {
 		instance = new PNGEncoderImageIO();
-		System.out.println("Keypoint PNG-Encoder not found, falling back to ImageIO.");
+		logger.log(Level.INFO, "Keypoint PNG-Encoder not found, falling back to ImageIO.");
 	    }
 
 	}
