@@ -28,6 +28,7 @@ package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -55,6 +56,7 @@ public class BlitScreenUpdate extends ScreenUpdate {
 
     int packedX, packedY;
     int srcX, srcY;
+    int originalSrcX, originalSrcY;
 
     BufferedImage image;
     boolean isEvacuated;
@@ -80,8 +82,8 @@ public class BlitScreenUpdate extends ScreenUpdate {
     public BlitScreenUpdate(int dstX, int dstY, int srcX, int srcY, int w, int h, BufferedImage src) {
 	super(new WebRect(dstX, dstY, dstX + w, dstY + h));
 
-	this.srcX = srcX;
-	this.srcY = srcY;
+	this.srcX = this.originalSrcX = srcX;
+	this.srcY = this.originalSrcY = srcY;
 	this.isEvacuated = false;
 
 	this.image = src;
@@ -102,8 +104,8 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	    image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 	    Graphics g = image.getGraphics();
 	    g.drawImage(src, 0, 0, w, h, srcX, srcY, srcX + w, srcY + h, null);
-	    setSrcX(0);
-	    setSrcY(0);
+	    srcX = 0;
+	    srcY = 0;
 
 	    isEvacuated = true;
 	}
@@ -117,6 +119,23 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	cmdList.add(updateArea.getY2());
 	cmdList.add(packedX);
 	cmdList.add(packedY);
+    }
+
+    public static int getPendingBlitScreenUpdateSize(List<ScreenUpdate> pendingUpdates) {
+	int size = 0;
+
+	for (ScreenUpdate update : pendingUpdates) {
+	    if (update instanceof BlitScreenUpdate) {
+		WebRect updateArea = update.getUpdateArea();
+		size += updateArea.getWidth() * updateArea.getHeight();
+	    }
+	}
+
+	return size;
+    }
+
+    public WebRect getSourceBoundingBox() {
+	return new WebRect(originalSrcX, originalSrcY, originalSrcX + updateArea.getWidth(), originalSrcY + updateArea.getHeight());
     }
 
     /**
@@ -148,13 +167,5 @@ public class BlitScreenUpdate extends ScreenUpdate {
 
     public int getSrcY() {
 	return srcY;
-    }
-
-    public void setSrcX(int srcX) {
-	this.srcX = srcX;
-    }
-
-    public void setSrcY(int srcY) {
-	this.srcY = srcY;
     }
 }

@@ -52,6 +52,24 @@ public abstract class ScreenUpdate {
 	this.updateArea = updateArea;
     }
 
+    public static WebRect getScreenUpdateBoundingBox(List<ScreenUpdate> pendingUpdates) {
+	WebRect unionRectangle = null;
+
+	for (ScreenUpdate update : pendingUpdates) {
+	    WebRect updateArea = update.getSourceBoundingBox();
+
+	    if (unionRectangle == null) {
+		unionRectangle = updateArea;
+	    } else {
+		unionRectangle.union(updateArea);
+	    }
+	}
+
+	return unionRectangle != null ? unionRectangle : new WebRect();
+    }
+
+    public abstract WebRect getSourceBoundingBox();
+
     /**
      * Appends the coordinates and commands of the current ScreenUpdate to the
      * cmdList, which will later be serialized and sent to the browser.
