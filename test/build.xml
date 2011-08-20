@@ -11,11 +11,17 @@
                bootclasspath="${openjdk}/classes"
                srcdir="${dir.src.test.classes}"
                destdir="${dir.build.test.classes}"
-               debug="${compile.debug}"
-        />
+               debug="${compile.debug}">
+        
+               <include name="**/*.java"/>
+               
+               <!--cacio-web classes are compiled by web-run automatically,
+                   so no need to to compile them twice -->
+               <exclude name="cacioweb/*"/>
+        </javac>
     </target>
     
-    <target name="run">
+    <target name="web-run">
 		<junit printsummary="yes" fork="true">
 			<classpath>
 				<pathelement path="${dir.build.test.classes}"/>
