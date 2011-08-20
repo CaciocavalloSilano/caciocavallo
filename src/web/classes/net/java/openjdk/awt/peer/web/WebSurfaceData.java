@@ -154,7 +154,7 @@ public class WebSurfaceData extends SurfaceData {
 	    y1 = (y1 > 0) ? y1 : 0;
 	    x1 = (x1 < bounds.width) ? x1 : bounds.width;
 	    y1 = (y1 < bounds.height) ? y1 : bounds.height;
-	    
+
 	    x2 = (x2 > x1) ? x2 : x1;
 	    y2 = (y2 > y1) ? y2 : y1;
 	    x2 = (x2 < bounds.width) ? x2 : bounds.width;
@@ -194,19 +194,57 @@ public class WebSurfaceData extends SurfaceData {
     }
 
     /**
+     * If there are multiple BlitScreenUpdates caused by ScreenUpdates which
+     * require ordering (e.g. CopyAreaScreenUpdate), check if the total
+     * Image-Size of those BlitScreenUpdates is really less than a single one
+     * spanning the whole changed area.
+     */
+    protected void mergeMultipleScreenUpdates() {
+	if (surfaceUpdateList.size() >= 2) {
+	    WebRect singleUpdateBoundingBox = ScreenUpdate.getScreenUpdateBoundingBox(surfaceUpdateList);
+	    int multiUpdateSize = BlitScreenUpdate.getPendingBlitScreenUpdateSize(surfaceUpdateList);
+	    int singleUpdateSize = singleUpdateBoundingBox.getWidth() * singleUpdateBoundingBox.getHeight();
+
+	    if (multiUpdateSize >= singleUpdateSize / 2) {
+		surfaceUpdateList.clear();
+		surfaceUpdateList
+			.add(new BlitScreenUpdate(singleUpdateBoundingBox.getX1(), singleUpdateBoundingBox.getY1(), singleUpdateBoundingBox.getX1(),
+				singleUpdateBoundingBox.getY1(), singleUpdateBoundingBox.getWidth(), singleUpdateBoundingBox.getHeight(), imgBuffer));
+	    }
+	}
+    }
+
+    /**
      * @return A list with all ScreenUpdates, or null iff there are none.
      */
     public List<ScreenUpdate> fetchPendingSurfaceUpdates() {
-	boolean forcePacking = surfaceUpdateList.size() > 0;
-	addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer, forcePacking));
+	addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer));
 
 	if (surfaceUpdateList.size() > 0) {
+	    mergeMultipleScreenUpdates();
+
 	    List<ScreenUpdate> pendingUpdateList = surfaceUpdateList;
 	    surfaceUpdateList = new ArrayList<ScreenUpdate>();
 	    return pendingUpdateList;
 	}
 
 	return null;
+    }
+
+    /**
+     * Checks wether generating an order requiring ScreenUpdate is efficient at
+     * all, by investigating the amount of image-data that would have to be
+     * effacuated. If this method returns false, its often better to fall back to
+     * software routines and let the DamageTracking do its job.
+     * 
+     * Although ScreenUpdates are merged if profitable by
+     * mergeMultipleScreenUpdates(), evacuating huge amounts of image-data, just
+     * to throw it away later, is very inefficient.
+     * 
+     * @return
+     */
+    private boolean isOrderedScreenUpdateEfficient() {
+	return BlitScreenUpdate.getPendingBlitScreenUpdateSize(surfaceUpdateList) * 2 < (bounds.width * bounds.height);
     }
 
     /**
@@ -231,12 +269,15 @@ public class WebSurfaceData extends SurfaceData {
 
 	    try {
 		lockSurface();
+		if (!isOrderedScreenUpdateEfficient()) {
+		    return false;
+		}
 
 		x += sg2d.transX;
 		y += sg2d.transY;
 
 		// Materialize pending updates, and "evacuate" those changes.
-		addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer, true));
+		addPendingUpdates(damageTracker.groupDamagedAreas(imgBuffer));
 		evacuateBlitScreenUpdates();
 
 		// Execute copyArea on the BufferedImage backing the

@@ -42,16 +42,19 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
 
     int dx, dy;
     Region clip;
-    
+
     /**
      * 
-     * @param x1 x1 coordinate of src area
-     * @param y1 
-     * @param x2 
+     * @param x1
+     *            x1 coordinate of src area
+     * @param y1
+     * @param x2
      * @param y2
-     * @param dx - x difference between src and dst pos
+     * @param dx
+     *            - x difference between src and dst pos
      * @param dy
-     * @param clip - clip, if one has been applied.
+     * @param clip
+     *            - clip, if one has been applied.
      */
     public CopyAreaScreenUpdate(int x1, int y1, int x2, int y2, int dx, int dy, Region clip) {
 	super(new WebRect(x1, y1, x2, y2));
@@ -73,6 +76,11 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
 	cmdList.add(clip.getLoY());
 	cmdList.add(clip.getWidth());
 	cmdList.add(clip.getHeight());
+    }
+
+    public WebRect getSourceBoundingBox() {
+	WebRect updateArea = getUpdateArea();
+	return new WebRect(updateArea.getX1() + dx, updateArea.getY1() + dy, updateArea.getX2() + dx, updateArea.getY2() + dy);
     }
 
     @Override

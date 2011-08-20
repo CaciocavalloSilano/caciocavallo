@@ -96,32 +96,28 @@ public class GridDamageTracker {
      * 
      * @param imgBuffer
      *            The BufferedImage instance backing the WebSurfaceData
-     * @param forcePacking
+     * @param packingForced
      *            If forcePacking is false, a single BlitScreenUpdate may be
      *            issued which allows for some fast-paths in later processing
-     *            steps.
+     *            steps. If however, "breaker"-ScreenUpdates are queued, those
+     *            optimizations aren't possible anyway, so avoid that
+     *            optimization.
      * @return The resulting BlitScreenUpdates, or null if no updates are
      *         available.
      */
-    public List<ScreenUpdate> groupDamagedAreas(BufferedImage imgBuffer, boolean forcePacking) {
+    public List<ScreenUpdate> groupDamagedAreas(BufferedImage imgBuffer) {
 	WebRect unionRect = getUnionRectangle();
 	if (unionRect != null) {
 	    ArrayList<ScreenUpdate> screenUpdateList = new ArrayList<ScreenUpdate>();
 
 	    List<WebRect> regionList = createDamagedRegionList(5);
 	    if (unionRect != null && unionRect.getWidth() > 0 && unionRect.getHeight() > 0) {
-
-		if (!isPackingEfficient(regionList, unionRect) && !forcePacking) {
-		    screenUpdateList.add(new BlitScreenUpdate(unionRect.getX1(), unionRect.getY1(), unionRect.getX1(), unionRect.getY1(), unionRect
-			    .getWidth(), unionRect.getHeight(), imgBuffer));
-		} else {
 		    for (WebRect dRect : regionList) {
 			screenUpdateList.add(new BlitScreenUpdate(dRect.getX1(), dRect.getY1(), dRect.getX1(), dRect.getY1(), dRect.getWidth(), dRect
 				.getHeight(), imgBuffer));
 		    }
-		}
 	    }
-
+	    
 	    reset();
 	    return screenUpdateList;
 	}
@@ -143,7 +139,7 @@ public class GridDamageTracker {
     /**
      * Resets the internal state, and discards all tracked areas.
      */
-    private void reset() {
+    public void reset() {
 	for (int y = 0; y < grid.length; y++) {
 	    for (int x = 0; x < grid[0].length; x++) {
 		grid[y][x].reset();
@@ -151,28 +147,6 @@ public class GridDamageTracker {
 	}
 
 	rectList.clear();
-    }
-
-    /**
-     * Determines wether packing the supplied rectangles is worth the effort.
-     * 
-     * @param regionList
-     *            - A list containing the rectangles
-     * @param unionRect
-     *            - The union area spanning over the rectangles provided.
-     * @return
-     */
-    private boolean isPackingEfficient(List<WebRect> regionList, WebRect unionRect) {
-	int regionSize = 0;
-	for (WebRect rect : regionList) {
-	    regionSize += rect.getWidth() * rect.getHeight();
-	}
-
-	int unionSize = unionRect.getWidth() * unionRect.getHeight();
-
-	// Packing makes only sence if more than half of the area would be
-	// "wasted" otherwise
-	return regionSize * 2 < unionSize;
     }
 
     /**
@@ -335,10 +309,7 @@ class DamageGridCell {
 	    return null;
 	}
 
-	WebRect damageRect = new WebRect(rectangles.get(0));
-	for (WebRect rect : rectangles) {
-	    damageRect.union(rect);
-	}
+	WebRect damageRect = new WebRect().union(rectangles);
 
 	int x2 = x + GridDamageTracker.GRID_SIZE;
 	int y2 = y + GridDamageTracker.GRID_SIZE;
