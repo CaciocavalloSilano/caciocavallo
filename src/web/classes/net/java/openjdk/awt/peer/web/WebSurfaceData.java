@@ -152,8 +152,14 @@ public class WebSurfaceData extends SurfaceData {
 	try {
 	    x1 = Math.max(0, x1);
 	    y1 = Math.max(0, y1);
+	    x1 = Math.min(bounds.width, x1);
+	    y1 = Math.min(bounds.height, y1);
+	    
+	    x2 = Math.max(x1, x2);
+	    y2 = Math.max(y1, y2);
 	    x2 = Math.min(bounds.width, x2);
 	    y2 = Math.min(bounds.height, y2);
+
 	    WebRect rect = new WebRect(x1, y1, x2, y2);
 	    damageTracker.trackDamageRect(rect);
 
