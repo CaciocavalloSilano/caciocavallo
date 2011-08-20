@@ -121,6 +121,11 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	cmdList.add(packedY);
     }
 
+    /**
+     * @param pendingUpdates
+     * @return size of the imagedata in pixels of all BlitScreenUpdates
+     *         contained in the last.
+     */
     public static int getPendingBlitScreenUpdateSize(List<ScreenUpdate> pendingUpdates) {
 	int size = 0;
 
@@ -134,7 +139,7 @@ public class BlitScreenUpdate extends ScreenUpdate {
 	return size;
     }
 
-    public WebRect getSourceBoundingBox() {
+    public WebRect getSurfaceDataUpdateArea() {
 	return new WebRect(originalSrcX, originalSrcY, originalSrcX + updateArea.getWidth(), originalSrcY + updateArea.getHeight());
     }
 
