@@ -52,11 +52,16 @@ public abstract class ScreenUpdate {
 	this.updateArea = updateArea;
     }
 
+    /**
+     * @param pendingUpdates
+     * @return a bounding box, which spans over all ScreenUpdates contained in
+     *         the list.
+     */
     public static WebRect getScreenUpdateBoundingBox(List<ScreenUpdate> pendingUpdates) {
 	WebRect unionRectangle = null;
 
 	for (ScreenUpdate update : pendingUpdates) {
-	    WebRect updateArea = update.getSourceBoundingBox();
+	    WebRect updateArea = update.getSurfaceDataUpdateArea();
 
 	    if (unionRectangle == null) {
 		unionRectangle = updateArea;
@@ -68,7 +73,11 @@ public abstract class ScreenUpdate {
 	return unionRectangle != null ? unionRectangle : new WebRect();
     }
 
-    public abstract WebRect getSourceBoundingBox();
+    /**
+     * @return The updated area of the SurfaceData. Will not be affected by
+     *         evacuating.
+     */
+    public abstract WebRect getSurfaceDataUpdateArea();
 
     /**
      * Appends the coordinates and commands of the current ScreenUpdate to the

@@ -78,7 +78,7 @@ public class CopyAreaScreenUpdate extends ScreenUpdate {
 	cmdList.add(clip.getHeight());
     }
 
-    public WebRect getSourceBoundingBox() {
+    public WebRect getSurfaceDataUpdateArea() {
 	WebRect updateArea = getUpdateArea();
 	return new WebRect(updateArea.getX1() + dx, updateArea.getY1() + dy, updateArea.getX2() + dx, updateArea.getY2() + dy);
     }

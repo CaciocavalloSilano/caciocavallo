@@ -198,6 +198,10 @@ public class WebSurfaceData extends SurfaceData {
      * require ordering (e.g. CopyAreaScreenUpdate), check if the total
      * Image-Size of those BlitScreenUpdates is really less than a single one
      * spanning the whole changed area.
+     * 
+     * Because multiple BlitScreenUpdates have packing overhead, the threshold
+     * is for choosing a single one is at 66% of the size a single
+     * BlitScreenUpdate would take.
      */
     protected void mergeMultipleScreenUpdates() {
 	if (surfaceUpdateList.size() >= 2) {
@@ -205,7 +209,7 @@ public class WebSurfaceData extends SurfaceData {
 	    int multiUpdateSize = BlitScreenUpdate.getPendingBlitScreenUpdateSize(surfaceUpdateList);
 	    int singleUpdateSize = singleUpdateBoundingBox.getWidth() * singleUpdateBoundingBox.getHeight();
 
-	    if (multiUpdateSize >= singleUpdateSize / 2) {
+	    if (multiUpdateSize * 1.5 >= singleUpdateSize) {
 		surfaceUpdateList.clear();
 		surfaceUpdateList
 			.add(new BlitScreenUpdate(singleUpdateBoundingBox.getX1(), singleUpdateBoundingBox.getY1(), singleUpdateBoundingBox.getX1(),
@@ -234,12 +238,17 @@ public class WebSurfaceData extends SurfaceData {
     /**
      * Checks wether generating an order requiring ScreenUpdate is efficient at
      * all, by investigating the amount of image-data that would have to be
-     * effacuated. If this method returns false, its often better to fall back to
-     * software routines and let the DamageTracking do its job.
+     * evacuated (for now only already generated BlitScreenUpdates are taken
+     * into account. If this method returns false, it is often better to fall
+     * back to software routines and let the DamageTracking do its job.
      * 
-     * Although ScreenUpdates are merged if profitable by
+     * Although ScreenUpdates are merged iff profitable by
      * mergeMultipleScreenUpdates(), evacuating huge amounts of image-data, just
      * to throw it away later, is very inefficient.
+     * 
+     * TODO: Update GridDamageTracker to be able to call groupDamagedAreas()
+     * multiple times, so the amount of data the current evacuation would
+     * require.
      * 
      * @return
      */
