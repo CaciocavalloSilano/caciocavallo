@@ -66,14 +66,14 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      * the selector is used in createPlatformToplevelWindow
      * to define
      */
-    private PlatformScreenSelector selector;
+    private final PlatformScreenSelector selector;
 
     /**
      * This allows the mappings between PlatformScreen and
      * ScreenManagedWindowContainer, and is needed to re-source events
      * from PlatformScreen to ManagedWindowContainer.
      */
-    private Map<PlatformScreen, ScreenManagedWindowContainer> screenMap;
+    private final Map<PlatformScreen, ScreenManagedWindowContainer> screenMap;
 
     /**
      * The event source that generates the basic events.
