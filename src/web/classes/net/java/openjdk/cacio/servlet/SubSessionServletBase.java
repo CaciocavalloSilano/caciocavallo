@@ -25,6 +25,8 @@
 
 package net.java.openjdk.cacio.servlet;
 
+import java.util.logging.*;
+
 import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
@@ -35,6 +37,7 @@ import net.java.openjdk.awt.peer.web.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class SubSessionServletBase extends HttpServlet {
+    private Logger logger = Logger.getLogger(this.getClass().getName());
 
     /**
      * @param request the request-object of the ongoing HttpRequest
@@ -45,7 +48,8 @@ public class SubSessionServletBase extends HttpServlet {
 	String subSessionID = request.getParameter("subsessionid");
 
 	if (session == null || subSessionID == null) {
-	    throw new RuntimeException("Should not reach");
+	    logger.log(Level.WARNING, "No Session registered for the specified session-id/subsession-number. Ignoring request");
+	    return null;
 	}
 	
 	return WebSessionManager.getInstance().getCurrentState(session, Integer.parseInt(subSessionID));

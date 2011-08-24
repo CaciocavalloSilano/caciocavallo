@@ -39,7 +39,8 @@ import net.java.openjdk.cacio.servlet.transport.*;
  * screen-size and supported transport backends) has been set-up accordingly by
  * the SessionInitializeServlet.
  * 
- * Usually called automatically by the client-initialization code, not by the user.
+ * Usually called automatically by the client-initialization code, not by the
+ * user.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -52,8 +53,10 @@ public class AppStartServlet extends SubSessionServletBase {
 	String transport = request.getParameter("t");
 
 	WebSessionState state = getSessionState(request);
-	state.setInitialScreenDimension(new Dimension(width, height));
-	state.setBackend(Transport.getTransportForName(transport, state.getCompressLevel()));
-	new AppContextCreator().startAppInNewAppContext(state);
+	if (state != null) {
+	    state.setInitialScreenDimension(new Dimension(width, height));
+	    state.setBackend(Transport.getTransportForName(transport, state.getCompressLevel()));
+	    new AppContextCreator().startAppInNewAppContext(state);
+	}
     }
 }

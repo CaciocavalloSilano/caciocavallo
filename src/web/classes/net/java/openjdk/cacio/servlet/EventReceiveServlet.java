@@ -36,20 +36,22 @@ import net.java.openjdk.awt.peer.web.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class EventReceiveServlet extends SubSessionServletBase {
-   
+
     public EventReceiveServlet() {
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String parameters = request.getParameter("events");
 	WebSessionState currentState = getSessionState(request);
-	try {
-	    currentState.lockSession();
+	if (currentState != null && currentState.getScreen() != null) {   
+	    try {
+		currentState.lockSession();
 
-	    WebScreen screen = currentState.getGraphicsConfiguration().getScreen();
-	    parseEventData(parameters, currentState, screen);
-	} finally {
-	    currentState.unlockSession();
+		WebScreen screen = currentState.getScreen();
+		parseEventData(parameters, currentState, screen);
+	    } finally {
+		currentState.unlockSession();
+	    }
 	}
     }
 
@@ -67,21 +69,21 @@ public class EventReceiveServlet extends SubSessionServletBase {
 		    processMouseEvent(state, eventDataList);
 		} else if (command.equals("MM")) {
 		    processMouseMotionEvent(state, eventDataList);
-		} else if(command.equals("MW")) {
+		} else if (command.equals("MW")) {
 		    processMouseWheelEvent(state, eventDataList);
 		} else if (command.equals("K")) {
 		    processKeyEvent(state, eventDataList);
-		} else if(command.equals("S")) {
+		} else if (command.equals("S")) {
 		    processResizeEvent(state, eventDataList);
 		}
 	    }
 	}
     }
-    
+
     protected void processResizeEvent(WebSessionState state, LinkedList<String> params) {
 	int w = Integer.parseInt(params.removeFirst());
 	int h = Integer.parseInt(params.removeFirst());
-	
+
 	state.getGraphicsConfiguration().getScreen().resizeScreen(w, h);
     }
 
@@ -109,7 +111,7 @@ public class EventReceiveServlet extends SubSessionServletBase {
 
 	state.getMouseTracker().trackMouseWheelEvent(up, x, y);
     }
-    
+
     protected void processMouseEvent(WebSessionState state, LinkedList<String> params) {
 	int x = Integer.parseInt(params.removeFirst());
 	int y = Integer.parseInt(params.removeFirst());
