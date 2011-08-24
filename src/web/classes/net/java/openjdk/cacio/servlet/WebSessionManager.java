@@ -27,6 +27,7 @@ package net.java.openjdk.cacio.servlet;
 
 import java.lang.ref.*;
 import java.util.*;
+import java.util.logging.*;
 
 import javax.servlet.http.*;
 
@@ -44,6 +45,8 @@ import sun.awt.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebSessionManager {
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+    
     static final String SESSION_KEY = "WEBSessionState";
 
     private static final WebSessionManager instance = new WebSessionManager();
@@ -155,7 +158,10 @@ public class WebSessionManager {
 		state.lockSession();
 		try {
 		    state.dispose();
-		} finally {
+		} catch(Exception ex) {
+		    logger.log(Level.WARNING, "Exception occured when disposing session", ex);
+		} 
+		finally {
 		    state.unlockSession();
 		}
 	    }
