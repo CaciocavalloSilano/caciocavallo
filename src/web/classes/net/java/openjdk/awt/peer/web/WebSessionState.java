@@ -26,23 +26,30 @@
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.lang.reflect.*;
 import java.util.concurrent.locks.*;
+import java.util.logging.*;
+
 import net.java.openjdk.cacio.servlet.transport.*;
 import sun.awt.*;
+import sun.awt.peer.cacio.managed.FocusManager;
 
 /**
- * WebSessionState holds, as its name implies, session-related state. 
- * It provides access to the AWT "session" represented by AppContexts, from
- * the servlet session.
+ * WebSessionState holds, as its name implies, session-related state. It
+ * provides access to the AWT "session" represented by AppContexts, from the
+ * servlet session.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebSessionState {
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
     ReentrantLock sessionLock = new ReentrantLock();
-    WebMouseStateTracker mouseTracker;
-    WebKeyboardStateTracker keyboardTracker;
-    WebGraphicsConfiguration config;
-    WebScreen screen;
+    volatile WebMouseStateTracker mouseTracker;
+    volatile WebKeyboardStateTracker keyboardTracker;
+    volatile WebGraphicsConfiguration config;
+    volatile WebScreen screen;
     WebWindowFactory windowFactory;
     WebFocusManager focusManager;
     int subSessionID;
@@ -79,6 +86,7 @@ public class WebSessionState {
 
     /**
      * Set the GraphicsConfiguration, and initialize InputState trackers
+     * 
      * @param config
      */
     public void setGraphicsConfiguration(WebGraphicsConfiguration config) {
@@ -108,12 +116,39 @@ public class WebSessionState {
     }
 
     public void dispose() {
-	if(appContext != null) {
+	if (appContext != null) {
+	    logSessionDispose();
+	    
+	    SunToolkit.postEvent(appContext, new InvocationEvent(this, new Runnable() {
+		public void run() {
+		    Window[] windowArray = Window.getWindows();
+		    for(Window w : windowArray) {
+			w.dispose();
+		    }
+		}
+	    }));
+	    
 	    appContext.dispose();
 	}
 	screen = null;
 	windowFactory = null;
 	focusManager = null;
+    }
+
+    private void logSessionDispose() {
+	EventQueue queue = (EventQueue) appContext.get(AppContext.EVENT_QUEUE_KEY);
+	if (queue != null) {
+	    try {
+		Method getDispatchThreadMethod = queue.getClass().getDeclaredMethod("getDispatchThread", new Class[0]);
+		getDispatchThreadMethod.setAccessible(true);
+		Thread edt = (Thread) getDispatchThreadMethod.invoke(queue, new Object[0]);
+		if(edt != null) {
+		    logger.log(Level.INFO, "Shutting down: " + edt.getName());
+		}
+	    } catch (ReflectiveOperationException ex) {
+		logger.log(Level.WARNING, "Unable to reflectivly accessing the EventQueue's Dispatch Thread", ex);
+	    }
+	}
     }
 
     public String[] getCmdLineParams() {
@@ -157,26 +192,26 @@ public class WebSessionState {
     }
 
     public WebScreen getScreen() {
-        return screen;
+	return screen;
     }
 
     public void setScreen(WebScreen screen) {
-        this.screen = screen;
+	this.screen = screen;
     }
 
     public WebWindowFactory getWindowFactory() {
-        return windowFactory;
+	return windowFactory;
     }
 
     public void setWindowFactory(WebWindowFactory windowFactory) {
-        this.windowFactory = windowFactory;
+	this.windowFactory = windowFactory;
     }
 
     public WebFocusManager getFocusManager() {
-        return focusManager;
+	return focusManager;
     }
 
     public void setFocusManager(WebFocusManager focusManager) {
-        this.focusManager = focusManager;
+	this.focusManager = focusManager;
     }
 }
