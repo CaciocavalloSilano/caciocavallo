@@ -32,25 +32,28 @@ import net.java.openjdk.awt.peer.web.*;
 
 /**
  * Servlet for fetching ScreenUpdates if available.
+ * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class ImageStreamer extends SubSessionServletBase {
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	disableCaching(response);
 
 	WebSessionState state = getSessionState(request);
-	WebGraphicsConfiguration config = state.getGraphicsConfiguration();
-
-	if (config != null) {
-	    WebScreen screen = config.getScreen();
-	    screen.pollForScreenUpdates(response, 15000);
+	if (state != null) {
+	    WebScreen screen = state.getScreen();
+	  
+	    if(screen != null) {
+		screen.pollForScreenUpdates(response, 15000);
+	    }
 	}
     }
 
     /**
      * Sets various headers to avoid browsers caching data.
+     * 
      * @param response
      */
     protected void disableCaching(HttpServletResponse response) {
