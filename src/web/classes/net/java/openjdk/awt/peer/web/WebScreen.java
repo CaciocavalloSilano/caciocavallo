@@ -73,6 +73,9 @@ public class WebScreen implements PlatformScreen {
 
 	WebSessionState state = WebSessionManager.getInstance().getCurrentStateAWT();
 	width = state.getInitialScreenDimension().width;
+	width = width > 0 ? width : 1;
+	height = height > 0 ? height : 1;
+	
 	height = state.getInitialScreenDimension().height;
 
 	screenLock = new ReentrantLock();
@@ -119,8 +122,10 @@ public class WebScreen implements PlatformScreen {
 	    WebToolkit toolkit = ((WebToolkit) WebToolkit.getDefaultToolkit());
 	    WebWindowFactory factory = (WebWindowFactory) toolkit.getPlatformWindowFactory();
 	    ScreenManagedWindowContainer windowContainer = factory.getScreenManagedWindowContainer(this);
-	    data.setSource(windowContainer);
-	    windowContainer.dispatchEvent(data);
+	    if(windowContainer != null) {
+		data.setSource(windowContainer);
+		windowContainer.dispatchEvent(data);
+	    }
 	} finally {
 	    SunToolkit.awtUnlock();
 	}
