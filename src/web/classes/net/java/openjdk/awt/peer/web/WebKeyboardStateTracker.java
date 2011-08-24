@@ -35,7 +35,7 @@ import static java.awt.event.KeyEvent.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebKeyboardStateTracker {
-    WebScreen screen;
+    final WebScreen screen;
 
     EventData lastEvent = null;
 

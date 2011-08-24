@@ -35,7 +35,7 @@ import sun.awt.peer.cacio.managed.*;
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
 public class WebMouseStateTracker {
-    WebScreen screen;
+    final WebScreen screen;
 
     EventData lastMouseEvent = null;
     EventData lastClickedEvent = null;
