@@ -62,6 +62,12 @@ public class DynamicByteBuffer {
 	curBuffer[curBufferPos] = b;
 	curBufferPos++;
     }
+    
+    public final void write(byte[] b) {
+	for(int i=0; i < b.length; i++) {
+	    write(b[i]);
+	}
+    }
 
     /**
      * Internal function to add a new buffer to the list of allocated buffers,

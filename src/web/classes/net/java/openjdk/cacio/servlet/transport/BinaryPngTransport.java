@@ -48,22 +48,31 @@ import net.java.openjdk.cacio.servlet.imgformat.*;
 public class BinaryPngTransport extends BinaryTransport {
     int compressionLevel;
 
+    byte[] cmdStreamData;
+    BufferedImage packedImage;
+
     public BinaryPngTransport(int compressionLevel) {
 	this.compressionLevel = compressionLevel;
     }
 
     @Override
-    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
-	    throws IOException {
-
-	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
-	os.write(cmdStreamData);
+    public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+	cmdStreamData = encodeImageCmdStream(cmdList);
 
 	WebRect packedRegionBox = packer.getBoundingBox();
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
-	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
+	    packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
+	}
+    }
+
+    @Override
+    public void writeEncodedData(OutputStream os) throws IOException {
+	os.write(cmdStreamData);
+
+	if (packedImage != null) {
 	    byte[] pngData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
+	    packedImage = null;
 	    os.write(pngData);
 	}
     }

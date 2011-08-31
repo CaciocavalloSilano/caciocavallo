@@ -79,15 +79,20 @@ public abstract class Transport {
     }
 
     /**
-     * Encodes pendingUpdateList and writes the result the the OutputStream.
-     * @param os
+     * Encodes pendingUpdateList and preseves the ScreenUpdate data
      * @param pendingUpdateList
      * @param packer
      * @param cmdData
+     */
+    public abstract void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData);
+    
+    
+    /**
+     * Writes the preseved/encoded update data to the specified OutputStream.
+     * @param os
      * @throws IOException
      */
-    public abstract void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData)
-	    throws IOException;
+    public abstract void writeEncodedData(OutputStream os) throws IOException;
 
     /**
      * Writes data in the case no new image-data is available but the timeout
