@@ -32,6 +32,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.*;
 
 import javax.servlet.http.*;
@@ -209,7 +210,6 @@ public class WebScreen implements PlatformScreen {
 	OutputStream os = response.getOutputStream();
 
 	boolean updatesWritten = false;
-
 	try {
 	    lockScreen();
 	    updatesWritten = prepareScreenUpdates();
@@ -223,9 +223,13 @@ public class WebScreen implements PlatformScreen {
 		     * first operation. Usually (e.g. Swing) many draw-commands
 		     * are executed closely together, so we wait just a little
 		     * longer, so we can send a larger batch down.
+		     * In order to allow the rendering thread to do its job, we have
+		     * to unlock the screen however.
 		     */
 		    if (signalled) {
-			Thread.sleep(20);
+			unlockScreen();
+			Thread.sleep(10);
+			lockScreen();
 		    }
 		} catch (InterruptedException e) {
 		    e.printStackTrace();
@@ -243,6 +247,7 @@ public class WebScreen implements PlatformScreen {
 	    encoder.writeEmptyData(os);
 	}
     }
+
 
     /**
      * If ScreenUpdates are pending, preserve/encode pending them,
