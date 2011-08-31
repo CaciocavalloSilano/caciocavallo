@@ -53,6 +53,8 @@ public class ImageTransport extends Transport {
     byte[] emptyImgData;
     int compressionLevel;
 
+    BufferedImage packedImage;
+    
     public ImageTransport(int compressionLevel) {
 	super("image/png");
 	this.compressionLevel = compressionLevel;
@@ -88,19 +90,22 @@ public class ImageTransport extends Transport {
     }
 
     @Override
-    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
-	    throws IOException {
+    public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
 	WebRect packedRegionBox = packer.getBoundingBox();
 	int regionWidth = packedRegionBox.getWidth() != 0 ? packedRegionBox.getWidth() : 16;
 	int regionHeight = packedRegionBox.getHeight();
 	int cmdAreaHeight = (int) Math.ceil(((double) cmdList.size() + 1) / (regionWidth));
 
-	BufferedImage packedImage = new BufferedImage(regionWidth, regionHeight + cmdAreaHeight, BufferedImage.TYPE_INT_RGB);
+	packedImage = new BufferedImage(regionWidth, regionHeight + cmdAreaHeight, BufferedImage.TYPE_INT_RGB);
 	encodeImageCmdStream(packedImage, cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
-
+    }
+    
+    @Override
+    public void writeEncodedData(OutputStream os) throws IOException {
 	byte[] imgData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
 	os.write(imgData);
+	packedImage = null;
     }
 
     @Override

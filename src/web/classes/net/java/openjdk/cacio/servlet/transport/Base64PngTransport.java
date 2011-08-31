@@ -58,6 +58,9 @@ public class Base64PngTransport extends Transport {
     BASE64Encoder base64Encoder;
     int compressionLevel;
 
+    String cmdString;
+    BufferedImage packedImage;
+
     public Base64PngTransport(int compressionLevel) {
 	super("text/plain");
 
@@ -67,6 +70,7 @@ public class Base64PngTransport extends Transport {
 
     /**
      * Encodes the command-list.
+     * 
      * @param cmdList
      * @return a string where each integer-value is seperated by a colon.
      */
@@ -85,17 +89,25 @@ public class Base64PngTransport extends Transport {
     }
 
     @Override
-    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
-	    throws IOException {
-	String cmdString = encodeImageCmdStream(cmdList);
-	os.write(cmdString.getBytes());
+    public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+	cmdString = encodeImageCmdStream(cmdList);
 
 	WebRect packedRegionBox = packer.getBoundingBox();
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
+
+	}
+    }
+
+    @Override
+    public void writeEncodedData(OutputStream os) throws IOException {
+	os.write(cmdString.getBytes());
+
+	if (packedImage != null) {
 	    byte[] bData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
 	    bData = Base64Encoder.encode(bData);
+	    packedImage = null;
 	    os.write(bData);
 	}
     }

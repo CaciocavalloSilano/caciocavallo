@@ -35,6 +35,10 @@ import java.io.*;
  */
 public class RLEImageEncoder {
 
+    byte[] sizeInfoBuffer;
+    DynamicByteBuffer runBuffer;
+    DynamicByteBuffer dataBuffer;
+
     /**
      * RLE encodes the specified area of the image between x1/y1 and x2/y2 of
      * the passed image and writes the resulting data to the OutputStream.
@@ -49,21 +53,31 @@ public class RLEImageEncoder {
      * @param os
      * @throws IOException
      */
-    public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2, OutputStream os) throws IOException {
+    public void encodeImageToStream(BufferedImage img, int x1, int y1, int x2, int y2) {
 	int w = x2 - x1;
 	int h = y2 - y1;
 	int area = w * h;
 
-	DynamicByteBuffer runBuffer = new DynamicByteBuffer(area < 10000 ? 256 : 1024);
-	DynamicByteBuffer dataBuffer = new DynamicByteBuffer(area < 10000 ? 512 : 4096);
+	runBuffer = new DynamicByteBuffer(area < 10000 ? 256 : 1024);
+	dataBuffer = new DynamicByteBuffer(area < 10000 ? 512 : 4096);
 
-	DataOutputStream dos = new DataOutputStream(os);
-	dos.writeShort(w);
-	dos.writeShort(h);
+	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	DataOutputStream dos = new DataOutputStream(bos);
+	try {
+	    dos.writeShort(w);
+	    dos.writeShort(h);
 
-	encodeImageData(img, x1, y1, x2, y2, runBuffer, dataBuffer);
-	dos.writeInt(runBuffer.size());
+	    encodeImageData(img, x1, y1, x2, y2, runBuffer, dataBuffer);
+	    dos.writeInt(runBuffer.size());
 
+	    sizeInfoBuffer = bos.toByteArray();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void writeTo(OutputStream os) throws IOException {
+	os.write(sizeInfoBuffer);
 	runBuffer.writeTo(os);
 	dataBuffer.writeTo(os);
     }
@@ -180,6 +194,7 @@ public class RLEImageEncoder {
 
     /**
      * Encodes the end of a no-run into a run-byte and appends it to the buffer.
+     * 
      * @param runStream
      * @param noRunCnt
      */
@@ -188,12 +203,12 @@ public class RLEImageEncoder {
     }
 
     /**
-     *  Encodes the end of a run into a run-byte and appends it to the buffer.
+     * Encodes the end of a run into a run-byte and appends it to the buffer.
+     * 
      * @param runStream
      * @param runCnt
      */
     private void endRun(DynamicByteBuffer runStream, int runCnt) {
 	runStream.write((byte) runCnt);
     }
-
 }

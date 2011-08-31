@@ -48,33 +48,42 @@ import net.java.openjdk.cacio.servlet.imgformat.*;
  */
 public class BinaryRLETransport extends BinaryTransport {
     RLEImageEncoder rleEncoder;
+    byte[] cmdStreamData;
 
     public BinaryRLETransport() {
-	rleEncoder = new RLEImageEncoder();
     }
 
     @Override
-    public void writeEncodedData(OutputStream os, List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList)
-	    throws IOException {
-	byte[] cmdStreamData = encodeImageCmdStream(cmdList);
-	os.write(cmdStreamData);
-	
+    public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+	cmdStreamData = encodeImageCmdStream(cmdList);
+
 	WebRect packedRegionBox = packer.getBoundingBox();
 	if (packedRegionBox.getWidth() == 0 || packedRegionBox.getHeight() == 0) {
 	    return;
 	}
 
+	rleEncoder = new RLEImageEncoder();
 	// Fast-Path: If there is only a single BlitScreenUpdate, encode
 	// directly from the SurfaceData and avoid an additional blit
 	BlitScreenUpdate singleUpdate = getLonelyBlitScreenUpdate(pendingUpdateList);
 	if (singleUpdate != null) {
 	    WebRect updateArea = singleUpdate.getUpdateArea();
 	    rleEncoder.encodeImageToStream(singleUpdate.getImage(), singleUpdate.getSrcX(), singleUpdate.getSrcY(), singleUpdate.getSrcX()
-		    + updateArea.getWidth(), singleUpdate.getSrcY() + updateArea.getHeight(), os);
+		    + updateArea.getWidth(), singleUpdate.getSrcY() + updateArea.getHeight());
 	} else {
 	    BufferedImage packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
-	    rleEncoder.encodeImageToStream(packedImage, 0, 0, packedImage.getWidth(), packedImage.getHeight(), os);
+	    rleEncoder.encodeImageToStream(packedImage, 0, 0, packedImage.getWidth(), packedImage.getHeight());
+	}
+    }
+
+    @Override
+    public void writeEncodedData(OutputStream os) throws IOException {
+	os.write(cmdStreamData);
+
+	if (rleEncoder != null) {
+	    rleEncoder.writeTo(os);
+	    rleEncoder = null;
 	}
     }
 

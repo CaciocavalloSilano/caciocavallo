@@ -75,7 +75,7 @@ public class WebScreen implements PlatformScreen {
 	width = state.getInitialScreenDimension().width;
 	width = width > 0 ? width : 1;
 	height = height > 0 ? height : 1;
-	
+
 	height = state.getInitialScreenDimension().height;
 
 	screenLock = new ReentrantLock();
@@ -122,7 +122,7 @@ public class WebScreen implements PlatformScreen {
 	    WebToolkit toolkit = ((WebToolkit) WebToolkit.getDefaultToolkit());
 	    WebWindowFactory factory = (WebWindowFactory) toolkit.getPlatformWindowFactory();
 	    ScreenManagedWindowContainer windowContainer = factory.getScreenManagedWindowContainer(this);
-	    if(windowContainer != null) {
+	    if (windowContainer != null) {
 		data.setSource(windowContainer);
 		windowContainer.dispatchEvent(data);
 	    }
@@ -188,18 +188,19 @@ public class WebScreen implements PlatformScreen {
     }
 
     /**
-     * Signall a possible waiting thread 
+     * Signall a possible waiting thread
      */
     public final void signalScreen() {
 	screenCondition.signal();
     }
 
     /**
-     * Polls the WebScreen for pending updates.
-     * - Returns immediatly if pending updates are available
-     * - Waits up to timeout seconds, of no updates are available.
+     * Polls the WebScreen for pending updates. - Returns immediatly if pending
+     * updates are available - Waits up to timeout seconds, of no updates are
+     * available.
      * 
-     * @param response - the HttpServletResponse the updates will be written to
+     * @param response
+     *            - the HttpServletResponse the updates will be written to
      * @param timeout
      * @throws IOException
      */
@@ -211,7 +212,7 @@ public class WebScreen implements PlatformScreen {
 
 	try {
 	    lockScreen();
-	    updatesWritten = writeScreenUpdates(os);
+	    updatesWritten = prepareScreenUpdates();
 
 	    if (!updatesWritten) {
 		try {
@@ -230,30 +231,33 @@ public class WebScreen implements PlatformScreen {
 		    e.printStackTrace();
 		}
 
-		updatesWritten = writeScreenUpdates(os);
+		updatesWritten = prepareScreenUpdates();
 	    }
 	} finally {
 	    unlockScreen();
 	}
 
-	if (!updatesWritten) {
+	if (updatesWritten) {
+	    encoder.writeEncodedData(os);
+	} else {
 	    encoder.writeEmptyData(os);
 	}
     }
 
     /**
-     * If available, writes pending ScreenUpdates to the supplied OutputStream.
+     * If ScreenUpdates are pending, preserve/encode pending them,
+     * so the ScreenLock can be released and rendering can continue.
      * 
-     * @param os the OUtputStream the pending updates are written to
-     * @return true if updates have been written, false if no updates were pending.
+     * @param os
+     *            the OUtputStream the pending updates are written to
+     * @return true if updates have been written, false if no updates were
+     *         pending.
      * @throws IOException
      */
-    protected boolean writeScreenUpdates(OutputStream os) throws IOException {
+    protected boolean prepareScreenUpdates() {
 	if (surfaceData == null) {
 	    return false;
 	}
-
-	long start = System.currentTimeMillis();
 
 	try {
 	    lockScreen();
@@ -273,15 +277,9 @@ public class WebScreen implements PlatformScreen {
 		    update.writeToCmdStream(cmdList);
 		}
 
-		System.out.println("cmdlist: " + cmdList.size());
-		
 		// Write updates to us
-		encoder.writeEncodedData(os, pendingUpdateList, packer, cmdList);
-
+		encoder.prepareUpdate(pendingUpdateList, packer, cmdList);
 		pendingUpdateList.clear();
-
-		long end = System.currentTimeMillis();
-		System.out.println("Total Took: " + (end - start));
 
 		return true;
 	    }
@@ -292,11 +290,14 @@ public class WebScreen implements PlatformScreen {
 	return false;
     }
 
+    protected void writeScreenUpdates(OutputStream os) throws IOException {
+	encoder.writeEncodedData(os);
+    }
+
     public ArrayList<ScreenUpdate> getPendingUpdateList() {
 	return pendingUpdateList;
     }
 }
-
 
 // try {
 // BinaryRLEStreamEncoder rleEncoder = new
