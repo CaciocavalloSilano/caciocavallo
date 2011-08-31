@@ -273,7 +273,7 @@ public class GridDamageTracker {
  */
 class DamageGridCell {
     int x, y;
-    ArrayList<WebRect> rectangles = null;
+    WebRect cellRect;
 
     /**
      * @param x
@@ -292,10 +292,11 @@ class DamageGridCell {
      * @param rect
      */
     protected void addDamageRect(WebRect rect) {
-	if (rectangles == null) {
-	    rectangles = new ArrayList<WebRect>();
+	if (cellRect == null) {
+	    cellRect = new WebRect(rect);
+	} else {
+	    cellRect.union(rect);
 	}
-	rectangles.add(rect);
     }
 
     /**
@@ -305,27 +306,25 @@ class DamageGridCell {
      * @return
      */
     protected WebRect calculateDamageUnion() {
-	if (rectangles == null || rectangles.size() == 0) {
+	if (cellRect == null) {
 	    return null;
 	}
-
-	WebRect damageRect = new WebRect().union(rectangles);
 
 	int x2 = x + GridDamageTracker.GRID_SIZE;
 	int y2 = y + GridDamageTracker.GRID_SIZE;
-	damageRect.restrictToArea(x, y, x2, y2);
+	cellRect.restrictToArea(x, y, x2, y2);
 
-	if (damageRect.getWidth() == 0 || damageRect.getHeight() == 0) {
+	if (cellRect.getWidth() == 0 || cellRect.getHeight() == 0) {
 	    return null;
 	}
 
-	return damageRect;
+	return cellRect;
     }
 
     /**
      * Discard all rectangles tracked by this cell.
      */
     protected void reset() {
-	rectangles = null;
+	cellRect = null;
     }
 }
