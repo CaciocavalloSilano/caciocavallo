@@ -41,11 +41,13 @@ public class EventReceiveServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String parameters = request.getParameter("events");
+	int eventID = Integer.parseInt(request.getParameter("eid"));
+	
 	WebSessionState currentState = WebSessionManager.getInstance().getSessionState(request);
 	if (currentState != null && currentState.getScreen() != null) {   
 	    try {
 		currentState.lockSession();
-		currentState.getEventManager().parseEventData(parameters, currentState);
+		currentState.getEventManager().parseEventData(eventID, parameters);
 	    } finally {
 		currentState.unlockSession();
 	    }
