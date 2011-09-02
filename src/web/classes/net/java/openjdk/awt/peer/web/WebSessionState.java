@@ -90,7 +90,7 @@ public class WebSessionState {
      */
     public void setGraphicsConfiguration(WebGraphicsConfiguration config) {
 	this.config = config;
-	eventManager = new WebEventManager(config.getScreen());
+	eventManager = new WebEventManager(this);
     }
 
 
