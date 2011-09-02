@@ -36,7 +36,7 @@ import net.java.openjdk.awt.peer.web.*;
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
-public class SessionInitializeServlet extends SubSessionServletBase {
+public class SessionInitializeServlet extends HttpServlet {
 
     String startHtml = null;
 
