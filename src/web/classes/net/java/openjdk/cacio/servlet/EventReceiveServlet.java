@@ -35,14 +35,14 @@ import net.java.openjdk.awt.peer.web.*;
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
-public class EventReceiveServlet extends SubSessionServletBase {
+public class EventReceiveServlet extends HttpServlet {
 
     public EventReceiveServlet() {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String parameters = request.getParameter("events");
-	WebSessionState currentState = getSessionState(request);
+	WebSessionState currentState = WebSessionManager.getInstance().getSessionState(request);
 	if (currentState != null && currentState.getScreen() != null) {   
 	    try {
 		currentState.lockSession();

@@ -44,7 +44,7 @@ import net.java.openjdk.cacio.servlet.transport.*;
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
-public class AppStartServlet extends SubSessionServletBase {
+public class AppStartServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,7 +52,7 @@ public class AppStartServlet extends SubSessionServletBase {
 	int height = Integer.parseInt(request.getParameter("h"));
 	String transport = request.getParameter("t");
 
-	WebSessionState state = getSessionState(request);
+	WebSessionState state = WebSessionManager.getInstance().getSessionState(request);
 	if (state != null) {
 	    state.setInitialScreenDimension(new Dimension(width, height));
 	    state.setBackend(Transport.getTransportForName(transport, state.getCompressLevel()));

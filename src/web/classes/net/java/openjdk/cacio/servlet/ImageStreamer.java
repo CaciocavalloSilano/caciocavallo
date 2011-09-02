@@ -35,13 +35,13 @@ import net.java.openjdk.awt.peer.web.*;
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
-public class ImageStreamer extends SubSessionServletBase {
+public class ImageStreamer extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	disableCaching(response);
 
-	WebSessionState state = getSessionState(request);
+	WebSessionState state = WebSessionManager.getInstance().getSessionState(request);
 	if (state != null) {
 	    WebScreen screen = state.getScreen();
 	  

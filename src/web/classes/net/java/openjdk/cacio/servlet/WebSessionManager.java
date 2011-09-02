@@ -168,4 +168,17 @@ public class WebSessionManager {
 	    subSessionList.clear();
 	}
     }
+    
+    
+    public WebSessionState getSessionState(HttpServletRequest request) {
+	HttpSession session = request.getSession(false);
+	String subSessionID = request.getParameter("subsessionid");
+
+	if (session == null || subSessionID == null) {
+	    logger.log(Level.WARNING, "No Session registered for the specified session-id/subsession-number. Ignoring request");
+	    return null;
+	}
+	
+	return getCurrentState(session, Integer.parseInt(subSessionID));
+    }
 }
