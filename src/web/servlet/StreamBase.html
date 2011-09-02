@@ -38,12 +38,15 @@
 <script src="ResourceLoader?res=ImgTransport.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=RLEImageDecoder.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=XHR1RLETransport.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=HttpEventStreamer.js" type="text/javascript"></script>
 <script type='text/javascript'>
 var img;
 var cmdStreamHeight;
 
 var readCmdStreamFunc;
 var startRequestFunc;
+/*Event-Handling*/
+var eventBuffer = '';
 
 var isIE = navigator.userAgent.indexOf('MSIE') > -1;
 
@@ -253,31 +256,6 @@ function interpretCommandBuffer() {
  
 	startRequestFunc(subSessionID);
 }
-
-
-/*Event-Handling*/
-var eventXmlHttpReq = new XMLHttpRequest();
-var eventBuffer = '';
-
-function sendEvents() {
-		if(eventBuffer.length > 0) {
-		  var localEvents = 'subsessionid=SSID&events=' + eventBuffer;
-		  eventBuffer = '';
-		  eventXmlHttpReq.open('POST', 'EventReceiver', true);
-		  eventXmlHttpReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		  eventXmlHttpReq.onreadystatechange = eventResponseHandler;
-		  eventXmlHttpReq.send(localEvents);
-		}else {
-			window.setTimeout("sendEvents()", 10);
-		}
-}
-
-function eventResponseHandler(){
-   if (eventXmlHttpReq.readyState == 4) { 
-	   sendEvents();
-   }	
-}
-
 
 
 function onMouseButton(e, down) {
