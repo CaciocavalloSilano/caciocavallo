@@ -26,6 +26,7 @@
 package net.java.openjdk.awt.peer.web;
 
 import java.awt.*;
+
 import java.awt.event.*;
 import java.lang.reflect.*;
 import java.util.concurrent.locks.*;
@@ -33,7 +34,6 @@ import java.util.logging.*;
 
 import net.java.openjdk.cacio.servlet.transport.*;
 import sun.awt.*;
-import sun.awt.peer.cacio.managed.FocusManager;
 
 /**
  * WebSessionState holds, as its name implies, session-related state. It

@@ -29,6 +29,7 @@ import java.io.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
+import net.java.openjdk.cacio.servlet.transport.*;
 
 /**
  * Servlet for fetching ScreenUpdates if available.
@@ -46,7 +47,9 @@ public class ImageStreamer extends HttpServlet {
 	    WebScreen screen = state.getScreen();
 	  
 	    if(screen != null) {
-		screen.pollForScreenUpdates(response, 15000);
+		Transport transport = screen.pollForScreenUpdates(15000);
+		response.setContentType(transport.getContentType());
+		transport.writeToStream(response.getOutputStream());
 	    }
 	}
     }

@@ -205,10 +205,8 @@ public class WebScreen implements PlatformScreen {
      * @param timeout
      * @throws IOException
      */
-    public void pollForScreenUpdates(HttpServletResponse response, int timeout) throws IOException {
-	response.setContentType(encoder.getContentType());
-	OutputStream os = response.getOutputStream();
-
+    public Transport pollForScreenUpdates(int timeout) throws IOException {
+	
 	boolean updatesWritten = false;
 	try {
 	    lockScreen();
@@ -241,11 +239,7 @@ public class WebScreen implements PlatformScreen {
 	    unlockScreen();
 	}
 
-	if (updatesWritten) {
-	    encoder.writeEncodedData(os);
-	} else {
-	    encoder.writeEmptyData(os);
-	}
+	return encoder;
     }
 
 
@@ -293,10 +287,6 @@ public class WebScreen implements PlatformScreen {
 	}
 
 	return false;
-    }
-
-    protected void writeScreenUpdates(OutputStream os) throws IOException {
-	encoder.writeEncodedData(os);
     }
 
     public ArrayList<ScreenUpdate> getPendingUpdateList() {

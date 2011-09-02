@@ -55,6 +55,7 @@ public class BinaryRLETransport extends BinaryTransport {
 
     @Override
     public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+	dataAvailable = true;
 	cmdStreamData = encodeImageCmdStream(cmdList);
 
 	WebRect packedRegionBox = packer.getBoundingBox();
@@ -78,12 +79,16 @@ public class BinaryRLETransport extends BinaryTransport {
     }
 
     @Override
-    public void writeEncodedData(OutputStream os) throws IOException {
-	os.write(cmdStreamData);
+    public void writeToStream(OutputStream os) throws IOException {
+	if (dataAvailable) {
+	    os.write(cmdStreamData);
 
-	if (rleEncoder != null) {
-	    rleEncoder.writeTo(os);
-	    rleEncoder = null;
+	    if (rleEncoder != null) {
+		rleEncoder.writeTo(os);
+		rleEncoder = null;
+	    }
+	} else {
+	    writeEmptyData(os);
 	}
     }
 

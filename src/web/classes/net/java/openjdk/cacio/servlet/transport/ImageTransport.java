@@ -54,7 +54,7 @@ public class ImageTransport extends Transport {
     int compressionLevel;
 
     BufferedImage packedImage;
-    
+
     public ImageTransport(int compressionLevel) {
 	super("image/png");
 	this.compressionLevel = compressionLevel;
@@ -99,18 +99,19 @@ public class ImageTransport extends Transport {
 	packedImage = new BufferedImage(regionWidth, regionHeight + cmdAreaHeight, BufferedImage.TYPE_INT_RGB);
 	encodeImageCmdStream(packedImage, cmdList);
 	copyUpdatesToPackedImage(pendingUpdateList, packedImage, cmdAreaHeight);
-    }
-    
-    @Override
-    public void writeEncodedData(OutputStream os) throws IOException {
-	byte[] imgData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
-	os.write(imgData);
-	packedImage = null;
+	dataAvailable = true;
     }
 
     @Override
-    public void writeEmptyData(OutputStream os) throws IOException {
-	os.write(emptyImgData);
-    }
+    public void writeToStream(OutputStream os) throws IOException {
+	if (dataAvailable) {
+	    byte[] imgData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
+	    os.write(imgData);
+	    packedImage = null;
+	} else {
+	    os.write(emptyImgData);
+	}
 
+	dataAvailable = false;
+    }
 }
