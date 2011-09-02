@@ -46,8 +46,7 @@ public class WebSessionState {
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     ReentrantLock sessionLock = new ReentrantLock();
-    volatile WebMouseStateTracker mouseTracker;
-    volatile WebKeyboardStateTracker keyboardTracker;
+    volatile WebEventManager eventManager;
     volatile WebGraphicsConfiguration config;
     volatile WebScreen screen;
     WebWindowFactory windowFactory;
@@ -91,17 +90,9 @@ public class WebSessionState {
      */
     public void setGraphicsConfiguration(WebGraphicsConfiguration config) {
 	this.config = config;
-	mouseTracker = new WebMouseStateTracker(config.getScreen());
-	keyboardTracker = new WebKeyboardStateTracker(config.getScreen());
+	eventManager = new WebEventManager(config.getScreen());
     }
 
-    public WebMouseStateTracker getMouseTracker() {
-	return mouseTracker;
-    }
-
-    public WebKeyboardStateTracker getKeyboardTracker() {
-	return keyboardTracker;
-    }
 
     public int getSubSessionID() {
 	return subSessionID;
@@ -213,5 +204,9 @@ public class WebSessionState {
 
     public void setFocusManager(WebFocusManager focusManager) {
 	this.focusManager = focusManager;
+    }
+
+    public WebEventManager getEventManager() {
+        return eventManager;
     }
 }
