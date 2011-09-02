@@ -5,19 +5,16 @@ var dispatchDelay = 10;
 var curEventId = 1;
 var idleRequestArray = new Array();
 
-//TODO: Move into some pretty init routine
-for(var i=0; i < maxEventRequests; i++) {
-    idleRequestArray.push(new XMLHttpRequest());
+function initHttpEventStreamer(ssid) {
+    for(var i=0; i < maxEventRequests; i++) {
+        idleRequestArray.push(new XMLHttpRequest());
+    }
+
+    sendEventsXHR();
 }
 
 
-function chromeLog(msg) {
-  if(console && console.log) {
-    console.log(msg);    
-  }    
-}
-
-function sendEvents() {
+function sendEventsXHR() {
         if(idleRequestArray.length == 0) {
             dispatchDelay += 10;
             chromeLog("Dispatch increased: "+dispatchDelay);
@@ -43,7 +40,7 @@ function sendEvents() {
           }
         }
 			 
-        window.setTimeout("sendEvents()", dispatchDelay);
+        window.setTimeout("sendEventsXHR()", dispatchDelay);
 }
 
 function eventResponseHandler(){
@@ -53,4 +50,8 @@ function eventResponseHandler(){
    }	
 }
 
-
+function chromeLog(msg) {
+  if(console && console.log) {
+    console.log(msg);    
+  }    
+}
