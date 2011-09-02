@@ -29,6 +29,8 @@ import java.awt.KeyboardFocusManager;
 import java.lang.reflect.*;
 import java.util.*;
 
+import javax.swing.*;
+
 import net.java.openjdk.awt.peer.web.*;
 import sun.awt.*;
 
@@ -48,6 +50,10 @@ public class AppContextCreator {
 	    public void run() {
 		AppContext appContext = SunToolkit.createNewAppContext();
 
+//		RepaintManager mgr = new RepaintManager();
+//		mgr.setDoubleBufferingEnabled(false);
+//		RepaintManager.setCurrentManager(mgr);
+		
 		try {
 		    sessionState.lockSession();
 		    WebSessionManager.getInstance().registerAppContext(appContext, sessionState);

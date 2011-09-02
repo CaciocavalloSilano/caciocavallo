@@ -64,16 +64,16 @@ public class WebSessionManager {
      * @return the WebSessionState generated for the current subsession
      */
     public synchronized WebSessionState register(HttpSession session) {
-	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
+	HashMap<Integer, WebSessionState> subSessionMap = (HashMap<Integer, WebSessionState>) session.getAttribute(SESSION_KEY);
 
-	if (subSessionList == null) {
-	    subSessionList = new ArrayList<WebSessionState>();
-	    session.setAttribute(SESSION_KEY, subSessionList);
+	if (subSessionMap == null) {
+	    subSessionMap = new HashMap<Integer, WebSessionState>();
+	    session.setAttribute(SESSION_KEY, subSessionMap);
 	}
 
-	int subSessionID = subSessionList.size();
-	WebSessionState sessionState = new WebSessionState(subSessionID);
-	subSessionList.add(sessionState);
+	int subSessionID = subSessionMap.size();
+	WebSessionState sessionState = new WebSessionState(subSessionID, subSessionMap);
+	subSessionMap.put(subSessionID, sessionState);
 
 	return sessionState;
     }
@@ -125,9 +125,9 @@ public class WebSessionManager {
      * @return the WebSessionState
      */
     public synchronized WebSessionState getCurrentState(HttpSession session, int subSessionID) {
-	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
-	if (subSessionList != null) {
-	    WebSessionState state = subSessionList.get(subSessionID);
+	HashMap<Integer, WebSessionState> subSessionMap = (HashMap<Integer, WebSessionState>) session.getAttribute(SESSION_KEY);
+	if (subSessionMap != null) {
+	    WebSessionState state = subSessionMap.get(subSessionID);
 	    registerSessionAtCurrentThread(state);
 	    return state;
 	}
@@ -140,7 +140,7 @@ public class WebSessionManager {
      * Has to be called before calling into cacio-web from a servlet!
      * @param state
      */
-    private void registerSessionAtCurrentThread(WebSessionState state) {
+    public void registerSessionAtCurrentThread(WebSessionState state) {
 	threadStateHolder.set(new WeakReference<WebSessionState>(state));
     }
 
@@ -152,9 +152,13 @@ public class WebSessionManager {
      * @param session
      */
     public synchronized void disposeSession(HttpSession session) {
-	List<WebSessionState> subSessionList = (List<WebSessionState>) session.getAttribute(SESSION_KEY);
-	if (subSessionList != null) {
-	    for (WebSessionState state : subSessionList) {
+	HashMap<Integer, WebSessionState> subSessionMap = (HashMap<Integer, WebSessionState>) session.getAttribute(SESSION_KEY);
+	if (subSessionMap != null) {
+	    List<Integer> subSessionKeyList = new ArrayList<Integer>(subSessionMap.keySet());
+	    
+	    for (Integer subSessionId : subSessionKeyList) {
+		WebSessionState state = subSessionMap.get(subSessionId);
+		
 		state.lockSession();
 		try {
 		    state.dispose();
@@ -165,8 +169,14 @@ public class WebSessionManager {
 		    state.unlockSession();
 		}
 	    }
-	    subSessionList.clear();
+	    subSessionMap.clear();
 	}
+    }
+    
+    public synchronized void disposeSessionState(HttpSession session, WebSessionState state) {
+	HashMap<Integer, WebSessionState> subSessionMap = state.getSubSessionMap();
+	subSessionMap.remove(state.getSubSessionID());
+	state.dispose();
     }
     
     

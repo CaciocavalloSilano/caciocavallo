@@ -29,6 +29,8 @@ import java.awt.*;
 
 import java.awt.event.*;
 import java.lang.reflect.*;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.locks.*;
 import java.util.logging.*;
 
@@ -60,9 +62,11 @@ public class WebSessionState {
     int compressLevel;
 
     AppContext appContext;
+    HashMap<Integer, WebSessionState> subSessionMap;
 
-    public WebSessionState(int subSessionID) {
+    public WebSessionState(int subSessionID, HashMap<Integer, WebSessionState> subSessionMap) {
 	this.subSessionID = subSessionID;
+	this.subSessionMap = subSessionMap;
     }
 
     /**
@@ -208,5 +212,9 @@ public class WebSessionState {
 
     public WebEventManager getEventManager() {
         return eventManager;
+    }
+
+    public HashMap<Integer, WebSessionState> getSubSessionMap() {
+        return subSessionMap;
     }
 }

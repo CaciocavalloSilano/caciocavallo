@@ -39,12 +39,17 @@
 <script src="ResourceLoader?res=RLEImageDecoder.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=XHR1RLETransport.js" type="text/javascript"></script>
 <script src="ResourceLoader?res=HttpEventStreamer.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=WebSocketEventStreamer.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=WebSocketShared.js" type="text/javascript"></script>
+<script src="ResourceLoader?res=WSBase64Transport.js" type="text/javascript"></script>
 <script type='text/javascript'>
 var img;
 var cmdStreamHeight;
 
 var readCmdStreamFunc;
 var startRequestFunc;
+var initEventFunc;
+
 /*Event-Handling*/
 var eventBuffer = '';
 
@@ -58,8 +63,9 @@ function init() {
 	fitCanvasToWindow();
 	initializeApplication();    
     startRequestFunc(subSessionID);
-	registerEventHandlers();
-	sendEvents();
+	
+    initEventFunc();
+    registerEventHandlers();
 }
 
 /**
@@ -85,9 +91,12 @@ function initializeApplication() {
 * For manual selection sanity checks are skipped.
 */
 function chooseTransport() {
-	//User simply specified the image-format, 
+	//WebSocket based backends can override it
+    initEventFunc = initHttpEventStreamer;
+        
+    //User simply specified the image-format, 
 	//so we are free to choose the backend which implements it.
-	
+	    
 	//IE9 only supports XHR1RLE, so don't try the png paths
 	if(imgFormat == "rle" || isIE) {
 		if(isXHR2Supported()) {
@@ -121,7 +130,10 @@ function chooseTransport() {
 		} else 
 		if(imgFormat == "png_base64") {
 			return initXHRBase64();
-		} 
+		} else
+        if(imgFormat == "png_base64_ws") {
+            return initWSBase64();
+        }
 	}
 }
 
@@ -254,6 +266,7 @@ function interpretCommandBuffer() {
 	  
 	}
  
+    busy = false;
 	startRequestFunc(subSessionID);
 }
 

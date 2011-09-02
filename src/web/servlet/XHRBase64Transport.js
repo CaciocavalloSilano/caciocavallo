@@ -69,8 +69,11 @@ function readXHRBase64CommandStream() {
  */
 function handleXHRBase64Response() {
 	parts = xmlhttpreq.responseText.split(":");
-	
-	var base64ImageData = parts[parts.length-1];
+    loadBase64ImageData();
+}
+
+function loadBase64ImageData() {
+    var base64ImageData = parts[parts.length-1];
 	if(parts.length >= 2 && base64ImageData.length > 0) {
 		img = new Image();
 		img.onload = interpretCommandBuffer;

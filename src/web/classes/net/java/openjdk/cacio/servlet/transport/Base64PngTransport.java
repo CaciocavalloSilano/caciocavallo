@@ -114,21 +114,21 @@ public class Base64PngTransport extends Transport {
     public void writeToStream(OutputStream os) throws IOException {
 	if (dataAvailable) {
 	    os.write(cmdString.getBytes());
-
-	    if (packedImage != null) {
-		byte[] bData = getEncodedImageData();
-
-		os.write(bData);
-	    }
+	    os.write(getEncodedImageData());
 	} else {
 	    os.write(emptyResponseData);
 	}
     }
 
     protected byte[] getEncodedImageData() {
-	byte[] bData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
-	packedImage = null;
 	dataAvailable = false;
-	return Base64Encoder.encode(bData);
+
+	if (packedImage != null) {
+	    byte[] bData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
+	    packedImage = null;
+	    return Base64Encoder.encode(bData);
+	}
+
+	return new byte[0];
     }
 }
