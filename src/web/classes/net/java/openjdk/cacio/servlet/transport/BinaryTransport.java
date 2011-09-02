@@ -83,8 +83,7 @@ public abstract class BinaryTransport extends Transport {
 	bos.write(lowByte);
     }
 
-    @Override
-    public void writeEmptyData(OutputStream os) throws IOException {
+    protected void writeEmptyData(OutputStream os) throws IOException {
 	os.write(emptyResponseData);
     }
 }

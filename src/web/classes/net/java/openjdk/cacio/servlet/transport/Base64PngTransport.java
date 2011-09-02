@@ -55,6 +55,8 @@ import sun.misc.*;
  */
 public class Base64PngTransport extends Transport {
     private static byte[] emptyResponseData = "0".getBytes();
+    private static String emptyResponseString = "0";
+
     BASE64Encoder base64Encoder;
     int compressionLevel;
 
@@ -90,30 +92,43 @@ public class Base64PngTransport extends Transport {
 
     @Override
     public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+	dataAvailable = true;
 	cmdString = encodeImageCmdStream(cmdList);
 
 	WebRect packedRegionBox = packer.getBoundingBox();
 	if (packedRegionBox.getWidth() > 0 && packedRegionBox.getHeight() > 0) {
 	    packedImage = new BufferedImage(packedRegionBox.getWidth(), packedRegionBox.getHeight(), BufferedImage.TYPE_INT_RGB);
 	    copyUpdatesToPackedImage(pendingUpdateList, packedImage, 0);
+	}
+    }
 
+    public String asString() {
+	if (dataAvailable) {
+	    return cmdString + new String(getEncodedImageData());
+	} else {
+	    return emptyResponseString;
 	}
     }
 
     @Override
-    public void writeEncodedData(OutputStream os) throws IOException {
-	os.write(cmdString.getBytes());
+    public void writeToStream(OutputStream os) throws IOException {
+	if (dataAvailable) {
+	    os.write(cmdString.getBytes());
 
-	if (packedImage != null) {
-	    byte[] bData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
-	    bData = Base64Encoder.encode(bData);
-	    packedImage = null;
-	    os.write(bData);
+	    if (packedImage != null) {
+		byte[] bData = getEncodedImageData();
+
+		os.write(bData);
+	    }
+	} else {
+	    os.write(emptyResponseData);
 	}
     }
 
-    @Override
-    public void writeEmptyData(OutputStream os) throws IOException {
-	os.write(emptyResponseData);
+    protected byte[] getEncodedImageData() {
+	byte[] bData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
+	packedImage = null;
+	dataAvailable = false;
+	return Base64Encoder.encode(bData);
     }
 }

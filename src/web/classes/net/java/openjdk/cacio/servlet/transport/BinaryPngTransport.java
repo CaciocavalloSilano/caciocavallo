@@ -57,6 +57,7 @@ public class BinaryPngTransport extends BinaryTransport {
 
     @Override
     public void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdList) {
+	dataAvailable = true;
 	cmdStreamData = encodeImageCmdStream(cmdList);
 
 	WebRect packedRegionBox = packer.getBoundingBox();
@@ -67,13 +68,19 @@ public class BinaryPngTransport extends BinaryTransport {
     }
 
     @Override
-    public void writeEncodedData(OutputStream os) throws IOException {
-	os.write(cmdStreamData);
+    public void writeToStream(OutputStream os) throws IOException {
+	if (dataAvailable) {
+	    os.write(cmdStreamData);
 
-	if (packedImage != null) {
-	    byte[] pngData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
-	    packedImage = null;
-	    os.write(pngData);
+	    if (packedImage != null) {
+		byte[] pngData = PNGEncoder.getInstance().encode(packedImage, compressionLevel);
+		packedImage = null;
+		os.write(pngData);
+	    }
+	} else {
+	    writeEmptyData(os);
 	}
+
+	dataAvailable = true;
     }
 }

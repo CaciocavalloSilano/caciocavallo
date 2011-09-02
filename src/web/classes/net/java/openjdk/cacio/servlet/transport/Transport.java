@@ -49,6 +49,7 @@ public abstract class Transport {
     public static final String FORMAT_RLE = "rle";
 
     String contentType;
+    boolean dataAvailable = false;
 
     public Transport(String contentType) {
 	this.contentType = contentType;
@@ -85,24 +86,6 @@ public abstract class Transport {
      * @param cmdData
      */
     public abstract void prepareUpdate(List<ScreenUpdate> pendingUpdateList, TreeImagePacker packer, List<Integer> cmdData);
-    
-    
-    /**
-     * Writes the preseved/encoded update data to the specified OutputStream.
-     * @param os
-     * @throws IOException
-     */
-    public abstract void writeEncodedData(OutputStream os) throws IOException;
-
-    /**
-     * Writes data in the case no new image-data is available but the timeout
-     * has occured. Depending on the transport-type different data has to be
-     * sent (e.g. an empty image, or a "0" string).
-     * 
-     * @param os
-     * @throws IOException
-     */
-    public abstract void writeEmptyData(OutputStream os) throws IOException;
 
     /**
      * @return the HTTP content type the transport outputs.
@@ -128,5 +111,15 @@ public abstract class Transport {
 	} else {
 	    return new Base64PngTransport(compressionLevel);
 	}
+    }
+    
+    public abstract void writeToStream(OutputStream os) throws IOException;
+    
+    public byte[] asByteArray() {
+	throw new RuntimeException("Not implemented.");
+    }
+    
+    public String asString() {
+	throw new RuntimeException("Not implemented");
     }
 }
