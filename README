@@ -146,6 +146,9 @@ The library can be downloaded from:
 http://sourceforge.net/p/jskeylib/home/Home/
 
 * Jetty-7 http://download.eclipse.org/jetty/
+If you intend to use the WebSocket backend, please use the latest 
+version of Jetty-8. Caciocavallo-Web has been tested successfully with 
+jetty-8.0.1 (jetty-8.0 has a bug in session-handling which causes memory leaks).
 
 * JUnit4 for running the unit tests.
 
