@@ -33,6 +33,7 @@ function sendEventsXHR() {
               eventBuffer = '';
               curEventId++;
               
+              eventXmlHttpReq.active = true;
               eventXmlHttpReq.open('POST', 'EventReceiver', true);
               eventXmlHttpReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
               eventXmlHttpReq.onreadystatechange = eventResponseHandler;
@@ -44,7 +45,8 @@ function sendEventsXHR() {
 }
 
 function eventResponseHandler(){
-   if (this.readyState == 2) {
+   if (this.readyState >= 2 && this.active) {
+       this.active = false;
        this.abort();
        idleRequestArray.push(this);
    }	
