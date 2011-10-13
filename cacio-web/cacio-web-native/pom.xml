@@ -52,7 +52,7 @@
   <dependencies>
     <dependency>
       <groupId>net.java.openjdk.cacio</groupId>
-      <artifactId>cacio-web</artifactId>
+      <artifactId>cacio-web-java</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
