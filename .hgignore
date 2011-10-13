@@ -8,3 +8,8 @@ syntax: regexp
 ^netbeans/tests/build/*
 ^test/classes/awtconformance
 private.properties$
+^jetty_libs
+.class$
+.project
+.classpath
+.settings

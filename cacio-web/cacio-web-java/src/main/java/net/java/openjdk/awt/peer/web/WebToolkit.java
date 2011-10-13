@@ -64,7 +64,7 @@ public class WebToolkit extends CacioToolkit {
     private PlatformWindowFactory platformWindow;
 
     static {
-        System.loadLibrary("cacio-web");
+        LibraryLoader.loadLibs();
     }
 
     public WebToolkit() {
