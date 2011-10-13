@@ -723,8 +723,8 @@ class CacioComponentPeer<AWTComponentType extends Component,
 
     public void coalescePaintEvent(PaintEvent e) {
 
-        if (!(e instanceof IgnorePaintEvent)) {
-            paintArea.add(e.getUpdateRect(), e.getID());
+	if (!(e instanceof IgnorePaintEvent)) {
+	    paintArea.add(e.getUpdateRect(), e.getID());
         }
     }
 

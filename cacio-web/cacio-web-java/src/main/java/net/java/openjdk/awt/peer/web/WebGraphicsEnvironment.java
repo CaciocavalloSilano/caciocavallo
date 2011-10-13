@@ -38,7 +38,7 @@ import sun.java2d.SurfaceManagerFactory;
 public class WebGraphicsEnvironment extends SunGraphicsEnvironment {
 
     static {
-        System.loadLibrary("cacio-web");
+        LibraryLoader.loadLibs();
         SurfaceManagerFactory.setInstance(new WebSurfaceManagerFactory());
     }
 

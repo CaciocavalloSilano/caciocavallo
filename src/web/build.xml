@@ -89,7 +89,7 @@
 			<fileset file="${web.servlet_content}/*"/>
 		</copy>
 		
-		<copy file="${web.jskeylib}/keylib.js" todir="${dir.build.web.lib_classes}"/>
+		<copy file="${web.jskeylib}/jskeylib.js" todir="${dir.build.web.lib_classes}"/>
 		
 		<jar destfile="${web.jar_runtime_file}">
 			<fileset dir="${dir.build.web.classes}"/>
