@@ -64,6 +64,8 @@ public class WebSessionState {
     AppContext appContext;
     HashMap<Integer, WebSessionState> subSessionMap;
 
+    volatile boolean contextInitialized = false;
+    
     public WebSessionState(int subSessionID, HashMap<Integer, WebSessionState> subSessionMap) {
 	this.subSessionID = subSessionID;
 	this.subSessionMap = subSessionMap;
@@ -216,5 +218,13 @@ public class WebSessionState {
 
     public HashMap<Integer, WebSessionState> getSubSessionMap() {
         return subSessionMap;
+    }
+
+    public boolean isContextInitialized() {
+        return contextInitialized;
+    }
+
+    public void setContextInitialized(boolean initialized) {
+        this.contextInitialized = initialized;
     }
 }
