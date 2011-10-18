@@ -56,7 +56,10 @@ public class AppStartServlet extends HttpServlet {
 	if (state != null) {
 	    state.setInitialScreenDimension(new Dimension(width, height));
 	    state.setBackend(Transport.getTransportForName(transport, state.getCompressLevel()));
-	    new AppContextCreator().startAppInNewAppContext(state);
+	    
+	    if(!state.isContextInitialized()) {
+		new AppContextCreator().startAppInNewAppContext(state);
+	    }
 	}
     }
 }
