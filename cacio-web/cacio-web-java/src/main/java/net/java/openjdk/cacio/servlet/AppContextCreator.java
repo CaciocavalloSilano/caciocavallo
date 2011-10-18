@@ -43,7 +43,7 @@ import sun.awt.*;
  */
 public class AppContextCreator {
 
-    protected void startAppInNewAppContext(final WebSessionState sessionState) {
+    public void startAppInNewAppContext(final WebSessionState sessionState) {
 
 	ThreadGroup appGroup = new ThreadGroup("AppThreadGroup " + String.valueOf(new Random().nextLong()));
 	Thread t = new Thread(appGroup, "AppInitThread") {
@@ -65,6 +65,8 @@ public class AppContextCreator {
 		    Method mainMethod = cls.getMethod("main", String[].class);
 		    mainMethod.setAccessible(true);
 		    mainMethod.invoke(cls, (Object) sessionState.getCmdLineParams());
+		    
+		    sessionState.setContextInitialized(true);
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		} finally {
