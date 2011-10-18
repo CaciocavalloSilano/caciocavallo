@@ -82,7 +82,6 @@ public class WebScreen implements PlatformScreen {
 	screenLock = new ReentrantLock();
 	screenCondition = screenLock.newCondition();
 	pendingUpdateList = new ArrayList<ScreenUpdate>();
-	encoder = state.getBackend();
     }
 
     public Graphics2D getClippedGraphics(Color fg, Color bg, Font font, List<Rectangle> clipRects) {
@@ -260,6 +259,9 @@ public class WebScreen implements PlatformScreen {
 
 	try {
 	    lockScreen();
+	    
+	    encoder = WebSessionManager.getInstance().getCurrentState().getBackend();
+	    
 	    List<ScreenUpdate> screenUpdates = surfaceData.fetchPendingSurfaceUpdates();
 	    if (screenUpdates != null) {
 		pendingUpdateList.addAll(screenUpdates);
