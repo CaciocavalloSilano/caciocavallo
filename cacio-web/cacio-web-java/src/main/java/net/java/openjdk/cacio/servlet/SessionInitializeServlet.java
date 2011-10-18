@@ -32,7 +32,8 @@ import javax.servlet.http.*;
 import net.java.openjdk.awt.peer.web.*;
 
 /**
- * Servlet downloading the html/javascript code and pre-initializing the session.
+ * Servlet downloading the html/javascript code and pre-initializing the
+ * session.
  * 
  * @author Clemens Eisserer <linuxhippy@gmail.com>
  */
@@ -48,27 +49,32 @@ public class SessionInitializeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	String className = request.getParameter("cls");
 	String format = request.getParameter("format");
-
 	format = (format != null && format.trim().length() > 0) ? format.toLowerCase() : "rle";
 
-	HttpSession session = request.getSession();
-	System.out.println("Starter-Session: " + session.getId());
-	System.out.println("Loading Application Class: " + className);
+	String subSessionStr = request.getParameter("ssid");
+	if (subSessionStr == null) {
+	    HttpSession session = request.getSession();
+	    System.out.println("Starter-Session: " + session.getId());
+	    System.out.println("Loading Application Class: " + className);
 
-	WebSessionState state = WebSessionManager.getInstance().register(session);
-	state.setCmdLineParams(generateParameterArray(request));
-	state.setMainClsName(className);
-	state.setCompressLevel(getCompressionLevel(request));
+	    WebSessionState state = WebSessionManager.getInstance().register(session);
+	    state.setCmdLineParams(generateParameterArray(request));
+	    state.setMainClsName(className);
+	    state.setCompressLevel(getCompressionLevel(request));
+	    subSessionStr = String.valueOf(state.getSubSessionID());
+	}
 
 	response.setContentType("text/html");
-	String ssidStartHtml = startHtml.replaceAll("SSID", String.valueOf(state.getSubSessionID()));
+	String ssidStartHtml = startHtml.replaceAll("SSID", String.valueOf(subSessionStr));
 	ssidStartHtml = ssidStartHtml.replaceAll("IMGFORMAT", "\"" + format + "\"");
 	response.getWriter().write(ssidStartHtml);
     }
 
     /**
-     * Helper-Method for parsing the compressionLevel for png compression out of the parameter-stream.
-     * If compressionLevel can not be determined, the default value 2 will be used.
+     * Helper-Method for parsing the compressionLevel for png compression out of
+     * the parameter-stream. If compressionLevel can not be determined, the
+     * default value 2 will be used.
+     * 
      * @param request
      * @return
      */
@@ -88,6 +94,7 @@ public class SessionInitializeServlet extends HttpServlet {
 
     /**
      * Parses the parameters supplied as part of the URL
+     * 
      * @param request
      * @return the parameters contained in a list
      */
@@ -104,6 +111,7 @@ public class SessionInitializeServlet extends HttpServlet {
 
     /**
      * Loads the html code from the classpath.
+     * 
      * @return
      * @throws Exception
      */
