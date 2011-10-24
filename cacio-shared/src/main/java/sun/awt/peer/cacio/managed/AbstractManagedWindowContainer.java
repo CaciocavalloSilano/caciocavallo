@@ -144,7 +144,6 @@ abstract class AbstractManagedWindowContainer
                 {
                     FocusManager.getInstance().setFocusedWindowNoEvent(source);
                 }
-
                 return source.dispatchEventImpl(event);
 
             } else {
