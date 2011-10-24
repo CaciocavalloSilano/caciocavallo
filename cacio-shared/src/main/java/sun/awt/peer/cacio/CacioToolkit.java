@@ -349,4 +349,10 @@ public abstract class CacioToolkit extends SunToolkit {
                                   model.isAlphaPremultiplied());
 
     }
+
+    @Override
+    public boolean areExtraMouseButtonsEnabled() {
+        return false;
+    }
+    
 }
