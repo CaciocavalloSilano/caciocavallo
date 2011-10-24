@@ -36,7 +36,7 @@ public class FullScreenEventPump extends CacioEventPump<EventData> {
     }
 
     @Override
-    protected EventData fetchNativeEvent() {
+    protected EventData fetchNativeEvent() throws InterruptedException {
         return source.getNextEvent();
     }
 

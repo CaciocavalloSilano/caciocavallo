@@ -25,13 +25,20 @@
 
 package sun.awt.peer.cacio.managed;
 
-import sun.awt.peer.cacio.*;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import sun.awt.peer.cacio.CacioComponent;
+import sun.awt.peer.cacio.CacioEventPump;
+import sun.awt.peer.cacio.CacioEventSource;
+import sun.awt.peer.cacio.PlatformToplevelWindow;
+import sun.awt.peer.cacio.PlatformWindow;
+import sun.awt.peer.cacio.PlatformWindowFactory;
 import sun.security.action.GetPropertyAction;
 
 public class FullScreenWindowFactory implements PlatformWindowFactory {
@@ -51,7 +58,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      * PlatformScreen to the corresponding ManagedWindowContainer.
      */
     private class FullScreenEventSource implements CacioEventSource {
-        public EventData getNextEvent() {
+        public EventData getNextEvent() throws InterruptedException {
             EventData d = eventSource.getNextEvent();
             PlatformScreen source = (PlatformScreen) d.getSource();
             d.setSource(screenMap.get(source));

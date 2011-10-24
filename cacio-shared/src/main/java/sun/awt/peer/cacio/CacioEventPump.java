@@ -104,8 +104,9 @@ public abstract class CacioEventPump<ET> implements Runnable {
      * event.
      *
      * @return the native event
+     * @throws InterruptedException 
      */
-    protected abstract ET fetchNativeEvent();
+    protected abstract ET fetchNativeEvent() throws InterruptedException;
 
     /**
      * Dispatches the native event. This method is called in an AWT
