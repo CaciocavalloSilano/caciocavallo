@@ -1,12 +1,11 @@
 package net.java.openjdk.cacio.ctc;
 
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.peer.RobotPeer;
 
-import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.managed.EventData;
 
 public class CTCRobotPeer implements RobotPeer {
@@ -80,16 +79,24 @@ public class CTCRobotPeer implements RobotPeer {
 
     }
 
+    private void keyEvent(int keycode, int id) {
+        EventData ev = new EventData();
+        ev.setSource(CTCScreen.getInstance());
+        ev.setId(id);
+        ev.setTime(System.currentTimeMillis());
+        ev.setModifiers(currentModifiers);
+        ev.setKeyCode(keycode);
+        CTCEventSource.getInstance().postEvent(ev);
+    }
+
     @Override
     public void keyPress(int keycode) {
-        // TODO Auto-generated method stub
-
+        keyEvent(keycode, KeyEvent.KEY_PRESSED);
     }
 
     @Override
     public void keyRelease(int keycode) {
-        // TODO Auto-generated method stub
-
+        keyEvent(keycode, KeyEvent.KEY_RELEASED);
     }
 
     @Override

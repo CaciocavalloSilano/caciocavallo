@@ -2,10 +2,12 @@ package net.java.openjdk.cacio.ctc;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import org.fest.swing.core.KeyPressInfo;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiTask;
 import org.fest.swing.fixture.FrameFixture;
@@ -66,5 +68,19 @@ public class SimpleFESTTest {
         b.requireText("FLUFF");
         b.click();
         b.requireText("TEST");
+        ff.cleanUp();
+    }
+ 
+    @Test
+    public void testButtonKeyActivate() {
+        FrameFixture ff = new FrameFixture(frame);
+        JButtonFixture b = ff.button("button");
+        b.requireText("TEST");
+        b.focus();
+        b.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_SPACE));
+        b.requireText("FLUFF");
+        b.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_SPACE));
+        b.requireText("TEST");
+        ff.cleanUp();
     }
 }
