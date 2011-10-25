@@ -7,6 +7,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import net.java.openjdk.cacio.ctc.junit.CacioFESTRunner;
+
+import org.fest.swing.annotation.GUITest;
 import org.fest.swing.core.KeyPressInfo;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiTask;
@@ -15,10 +18,13 @@ import org.fest.swing.fixture.JButtonFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(CacioFESTRunner.class)
 public class SimpleFESTTest {
 
     private JFrame frame;
+    private FrameFixture ff;
 
     @Before
     public void setUp() {
@@ -45,10 +51,12 @@ public class SimpleFESTTest {
                 frame.setVisible(true);
             }
         });
+        ff = new FrameFixture(frame);
     }
 
     @After
     public void tearDown() throws Exception {
+        ff.cleanUp();
         GuiActionRunner.execute(new GuiTask() {
             
             @Override
@@ -60,20 +68,19 @@ public class SimpleFESTTest {
     }
 
     @Test
+    @GUITest
     public void testButton() {
-        FrameFixture ff = new FrameFixture(frame);
         JButtonFixture b = ff.button("button");
         b.requireText("TEST");
         b.click();
         b.requireText("FLUFF");
         b.click();
         b.requireText("TEST");
-        ff.cleanUp();
     }
  
     @Test
+    @GUITest
     public void testButtonKeyActivate() {
-        FrameFixture ff = new FrameFixture(frame);
         JButtonFixture b = ff.button("button");
         b.requireText("TEST");
         b.focus();
@@ -81,6 +88,5 @@ public class SimpleFESTTest {
         b.requireText("FLUFF");
         b.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_SPACE));
         b.requireText("TEST");
-        ff.cleanUp();
     }
 }
