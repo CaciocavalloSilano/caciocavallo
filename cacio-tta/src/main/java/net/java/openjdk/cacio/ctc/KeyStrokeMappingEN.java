@@ -51,6 +51,7 @@ import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 
 import java.awt.AWTKeyStroke;
+import java.awt.event.KeyEvent;
 import java.util.Map;
 
 class KeyStrokeMappingEN extends AbstractKeyStrokeMapping implements KeyStrokeMapping {
@@ -160,7 +161,13 @@ class KeyStrokeMappingEN extends AbstractKeyStrokeMapping implements KeyStrokeMa
 
     @Override
     public char getKeyChar(int keyCode, int modifiers) {
-        return map.get(AWTKeyStroke.getAWTKeyStroke(keyCode, modifiers));
+        AWTKeyStroke stroke = keyStroke(keyCode, modifiers);
+        Character ch = map.get(stroke);
+        if (ch == null) {
+            return KeyEvent.CHAR_UNDEFINED;
+        } else {
+            return ch.charValue();
+        }
     }
 
     

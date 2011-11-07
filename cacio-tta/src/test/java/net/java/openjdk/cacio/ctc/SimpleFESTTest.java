@@ -115,20 +115,7 @@ public class SimpleFESTTest {
 
   @Test
   @GUITest
-  public void testEnterTextDE() {
-      Locale.setDefault(Locale.GERMANY);
-      JTextComponentFixture t = ff.textBox("text");
-      t.deleteText();
-//    t.enterText("\u00b3");
-//    t.requireText("\u00b3");
-      t.enterText("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()`~-_=+[{]}\\|;:'\",<.>/?\u00b2\u00a7\u00b0\u20ac\u00b4\u00b5");
-      t.requireText("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()`~-_=+[{]}\\|;:'\",<.>/?\u00b2\u00a7\u00b0\u20ac\u00b4\u00b5");
-  }
-
-  @Test
-  @GUITest
-  public void testEnterTextEN() {
-      Locale.setDefault(Locale.UK);
+  public void testEnterText() {
       JTextComponentFixture t = ff.textBox("text");
       t.deleteText();
       t.enterText("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()`~-_=+[{]}\\|;:'\",<.>/?");
