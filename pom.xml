@@ -7,7 +7,7 @@
   <name>Caciocavallo Main Module</name>
   <packaging>pom</packaging>
   <modules>
-    <module>cacio-web</module>
     <module>cacio-shared</module>
+    <module>cacio-tta</module>
   </modules>
 </project>
