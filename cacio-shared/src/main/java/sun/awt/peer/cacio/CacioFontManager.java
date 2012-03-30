@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Clemens Eisserer, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,28 +23,24 @@
  * questions.
  */
 
-package net.java.openjdk.awt.peer.web;
+package sun.awt.peer.cacio;
 
-import sun.awt.*;
-import sun.font.*;
+import sun.awt.FontConfiguration;
+import sun.awt.X11FontManager;
+import sun.font.FcFontConfiguration;
 
-/**
- * FontManager implementation of the caciocavallo-web backend,
- * based on X11FontManager.
- * 
- * @author Clemens Eisserer <linuxhippy@gmail.com>
- */
-public class WebFontManager extends X11FontManager {
-    
+public class CacioFontManager extends X11FontManager {
+
     @Override
     protected FontConfiguration createFontConfiguration() {
-	FcFontConfiguration fcFontConfig = new FcFontConfiguration(this);
-	fcFontConfig.init();
-	return fcFontConfig;
+        FcFontConfiguration fcFontConfig = new FcFontConfiguration(this);
+        fcFontConfig.init();
+        return fcFontConfig;
     }
 
     @Override
     protected String getFontPath(boolean b) {
-	return "";
+        return "";
     }
+
 }
