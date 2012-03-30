@@ -81,6 +81,16 @@ import sun.awt.image.OffScreenImage;
 
 public abstract class CacioToolkit extends SunToolkit {
 
+    static {
+        if (isLinux()) {
+            System.setProperty("sun.font.fontmanager", "sun.awt.peer.cacio.CacioFontManager");
+        }
+    }
+
+    private static boolean isLinux() {
+        return "Linux".equals(System.getProperty("os.name"));
+    }
+
     public CacioToolkit() {
         CacioEventPump pump = getPlatformWindowFactory().createEventPump();
         pump.start();
