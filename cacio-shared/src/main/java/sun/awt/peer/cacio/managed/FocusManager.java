@@ -25,13 +25,15 @@
 
 package sun.awt.peer.cacio.managed;
 
-import sun.awt.peer.cacio.*;
-import sun.security.action.*;
-
 import java.awt.Component;
 import java.awt.event.FocusEvent;
-import java.security.*;
-import java.util.logging.*;
+import java.security.AccessController;
+import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import sun.awt.peer.cacio.CacioComponent;
+import sun.security.action.GetPropertyAction;
 
 public class FocusManager {
 
@@ -72,7 +74,7 @@ public class FocusManager {
 	return instance.getContextInstance();
     }
 
-    private ManagedWindow focusedWindow;
+    private Stack<ManagedWindow> focusedWindowStack = new Stack<ManagedWindow>();
 
     public FocusManager() {
     }
@@ -89,31 +91,53 @@ public class FocusManager {
     }
 
     ManagedWindow getFocusedWindow() {
-	return focusedWindow;
+        if (focusedWindowStack.isEmpty()) {
+            return null;
+        } else {
+            return focusedWindowStack.lastElement();
+        }
     }
 
     void setVisible(ManagedWindow w, boolean v) {
 	if (v) {
 	    setFocusedWindow(w);
 	} else {
-	    setFocusedWindow(null);
+            hideWindow(w);
 	}
     }
 
+    private void hideWindow(ManagedWindow w) {
+        if (getFocusedWindow() == w) {
+            if (focusedWindowStack.size() > 1) {
+                ManagedWindow previous = focusedWindowStack.get(focusedWindowStack.size() - 2);
+                setFocusedWindow(previous);
+            } else {
+                setFocusedWindow(null);
+            }
+        }
+        focusedWindowStack.remove(w);
+    }
+
     void mousePressed(ManagedWindow w) {
-	if (w != focusedWindow) {
+	if (w != getFocusedWindow()) {
 	    setFocusedWindow(w);
 	}
     }
 
     void setFocusedWindow(ManagedWindow w) {
+        ManagedWindow old = getFocusedWindow();
 	setFocusedWindowNoEvent(w);
-	focusLost(focusedWindow, w);
-	focusGained(w, focusedWindow);
+	focusLost(old, w);
+	focusGained(w, old);
     }
 
     void setFocusedWindowNoEvent(ManagedWindow w) {
-	focusedWindow = w;
+        if (w == null) {
+            focusedWindowStack.pop();
+        } else {
+            focusedWindowStack.removeElement(w);
+            focusedWindowStack.push(w);
+        }
     }
 
     private void focusLost(ManagedWindow w, ManagedWindow lostTo) {
