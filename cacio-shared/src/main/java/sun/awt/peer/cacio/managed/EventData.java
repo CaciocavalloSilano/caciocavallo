@@ -77,6 +77,8 @@ public class EventData {
      */
     private int button;
 
+    private boolean popup;
+
     /**
      * The update rectangle for paint events.
      */
@@ -246,6 +248,14 @@ public class EventData {
         button = b;
     }
 
+    public boolean isPopup() {
+        return popup;
+    }
+
+    public void setPopup(boolean popup) {
+        this.popup = popup;
+    }
+
     /**
      * Returns the update rectangle for paint events.
      *
@@ -320,7 +330,7 @@ public class EventData {
             int modifierChange = (lastModifierState ^ modifiers);
             lastModifierState = modifiers;
             return new MouseEvent((Component) source, id, time, modifiers,
-                                  x, y, clickCount, false,
+                                  x, y, clickCount, popup,
                                   getButton(modifierChange));
             
         case MouseEvent.MOUSE_WHEEL:

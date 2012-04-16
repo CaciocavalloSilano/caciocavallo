@@ -15,7 +15,7 @@ public class CTCRobotPeer implements RobotPeer {
     private int currentX = 0;
     private int currentY = 0;
 
-    private EventData mouseEvent(int id, int currentButton) {
+    private EventData mouseEvent(int id, int currentButton, boolean popup) {
         EventData ev = new EventData();
         ev.setId(id);
         ev.setSource(CTCScreen.getInstance());
@@ -24,6 +24,7 @@ public class CTCRobotPeer implements RobotPeer {
         ev.setX(currentX);
         ev.setY(currentY);
         ev.setButton(currentButton);
+        ev.setPopup(popup);
         return ev;
     }
 
@@ -31,7 +32,7 @@ public class CTCRobotPeer implements RobotPeer {
     public void mouseMove(int x, int y) {
         currentX = x;
         currentY = y;
-        EventData ev = mouseEvent(MouseEvent.MOUSE_MOVED, MouseEvent.NOBUTTON);
+        EventData ev = mouseEvent(MouseEvent.MOUSE_MOVED, MouseEvent.NOBUTTON, false);
         CTCEventSource.getInstance().postEvent(ev);
     }
 
@@ -39,17 +40,17 @@ public class CTCRobotPeer implements RobotPeer {
     public void mousePress(int buttons) {
         if ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON1_MASK) != 0) {
             currentModifiers |= InputEvent.BUTTON1_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON1_DOWN_MASK);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON1_DOWN_MASK, false);
             CTCEventSource.getInstance().postEvent(ev);
         }
         if ((buttons & InputEvent.BUTTON2_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON2_MASK) != 0) {
             currentModifiers |= InputEvent.BUTTON2_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON2_DOWN_MASK);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON2_DOWN_MASK, false);
             CTCEventSource.getInstance().postEvent(ev);
         }
         if ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON3_MASK) != 0) {
             currentModifiers |= InputEvent.BUTTON3_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON3_DOWN_MASK);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON3_DOWN_MASK, true);
             CTCEventSource.getInstance().postEvent(ev);
         }
     }
@@ -57,19 +58,19 @@ public class CTCRobotPeer implements RobotPeer {
     @Override
     public void mouseRelease(int buttons) {
         if ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON3_MASK) != 0) {
-            currentModifiers &= ~InputEvent.BUTTON1_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON3_DOWN_MASK);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON3_DOWN_MASK, true);
             CTCEventSource.getInstance().postEvent(ev);
+            currentModifiers &= ~InputEvent.BUTTON3_MASK;
         }
         if ((buttons & InputEvent.BUTTON2_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON2_MASK) != 0) {
-            currentModifiers &= ~InputEvent.BUTTON2_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON2_DOWN_MASK);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON2_DOWN_MASK, false);
             CTCEventSource.getInstance().postEvent(ev);
+            currentModifiers &= ~InputEvent.BUTTON2_MASK;
         }
         if ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON1_MASK) != 0) {
-            currentModifiers &= ~InputEvent.BUTTON3_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON1_DOWN_MASK);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON1_DOWN_MASK, false);
             CTCEventSource.getInstance().postEvent(ev);
+            currentModifiers &= ~InputEvent.BUTTON1_MASK;
         }
     }
 
