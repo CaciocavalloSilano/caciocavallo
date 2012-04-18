@@ -10,10 +10,27 @@ import sun.awt.peer.cacio.managed.EventData;
 
 public class CTCRobotPeer implements RobotPeer {
 
+    /**
+     * 
+     */
+    private static final int BUTTON_MASK_CONVERSION_SHIFT = 6;
+
+    /**
+     * 
+     */
+    private static final int BUTTON_MASKS = InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
+
+    /**
+     * 
+     */
+    private static final int BUTTON_DOWN_MASKS = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
+
     private int currentModifiers = 0;
     
     private int currentX = 0;
     private int currentY = 0;
+
+    private MouseClickSupport mouseClickSupport = new MouseClickSupport();
 
     private EventData mouseEvent(int id, int currentButton, boolean popup) {
         EventData ev = new EventData();
@@ -25,6 +42,7 @@ public class CTCRobotPeer implements RobotPeer {
         ev.setY(currentY);
         ev.setButton(currentButton);
         ev.setPopup(popup);
+        ev.setClickCount(mouseClickSupport.getClickCount());
         return ev;
     }
 
@@ -38,40 +56,42 @@ public class CTCRobotPeer implements RobotPeer {
 
     @Override
     public void mousePress(int buttons) {
-        if ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON1_MASK) != 0) {
-            currentModifiers |= InputEvent.BUTTON1_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON1_DOWN_MASK, false);
-            CTCEventSource.getInstance().postEvent(ev);
-        }
-        if ((buttons & InputEvent.BUTTON2_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON2_MASK) != 0) {
-            currentModifiers |= InputEvent.BUTTON2_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON2_DOWN_MASK, false);
-            CTCEventSource.getInstance().postEvent(ev);
-        }
-        if ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON3_MASK) != 0) {
-            currentModifiers |= InputEvent.BUTTON3_MASK;
-            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, MouseEvent.BUTTON3_DOWN_MASK, true);
+        int buttonMask = buttonDownToButtonMask(buttons);
+        int buttonDownMask = buttonToButtonDownMask(buttons);
+
+        if (buttonDownMask != 0 && buttonMask != 0) {
+            currentModifiers |= buttonMask;
+            EventData ev = mouseEvent(MouseEvent.MOUSE_PRESSED, buttonDownMask, false);
+            mouseClickSupport.mouseEvent(ev);
+            ev = mouseEvent(MouseEvent.MOUSE_PRESSED, buttonDownMask, false);
             CTCEventSource.getInstance().postEvent(ev);
         }
     }
 
     @Override
     public void mouseRelease(int buttons) {
-        if ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON3_MASK) != 0) {
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON3_DOWN_MASK, true);
+        int buttonMask = buttonDownToButtonMask(buttons);
+        int buttonDownMask = buttonToButtonDownMask(buttons);
+
+        if (buttonDownMask != 0 && buttonMask != 0) {
+            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, buttonDownMask, true);
             CTCEventSource.getInstance().postEvent(ev);
-            currentModifiers &= ~InputEvent.BUTTON3_MASK;
+            ev = mouseEvent(MouseEvent.MOUSE_RELEASED, buttonDownMask, true);
+            mouseClickSupport.mouseEvent(ev);
+            currentModifiers &= ~buttonMask;
         }
-        if ((buttons & InputEvent.BUTTON2_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON2_MASK) != 0) {
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON2_DOWN_MASK, false);
-            CTCEventSource.getInstance().postEvent(ev);
-            currentModifiers &= ~InputEvent.BUTTON2_MASK;
-        }
-        if ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0 || (buttons & InputEvent.BUTTON1_MASK) != 0) {
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, MouseEvent.BUTTON1_DOWN_MASK, false);
-            CTCEventSource.getInstance().postEvent(ev);
-            currentModifiers &= ~InputEvent.BUTTON1_MASK;
-        }
+    }
+
+    private int buttonToButtonDownMask(int buttons) {
+        int buttonDownMask = buttons & BUTTON_DOWN_MASKS;
+        buttonDownMask |= (buttons & BUTTON_MASKS) << BUTTON_MASK_CONVERSION_SHIFT;
+        return buttonDownMask;
+    }
+
+    private int buttonDownToButtonMask(int buttons) {
+        int buttonMask = buttons & BUTTON_MASKS;
+        buttonMask |= (buttons & BUTTON_DOWN_MASKS) >> BUTTON_MASK_CONVERSION_SHIFT;
+        return buttonMask;
     }
 
     @Override
