@@ -33,21 +33,20 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
-import net.java.openjdk.cacio.ctc.junit.CacioFESTRunner;
-
 import org.fest.swing.annotation.GUITest;
 import org.fest.swing.core.MouseButton;
 import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JLabelFixture;
+import org.fest.swing.junit.v4_5.runner.GUITestRunner;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(CacioFESTRunner.class)
-//@RunWith(GUITestRunner.class)
+//@RunWith(CacioFESTRunner.class)
+@RunWith(GUITestRunner.class)
 public class ClickEventTestFESTTest {
 
     private FrameFixture ff;
@@ -93,7 +92,7 @@ public class ClickEventTestFESTTest {
         lf.robot.releaseMouse(MouseButton.LEFT_BUTTON);
         Point screenLoc = lf.target.getLocationOnScreen();
         screenLoc.translate(10, 10);
-        checkClick(MouseEvent.BUTTON1, screenLoc, new Point(10, 10));
+        checkClick(MouseEvent.BUTTON1, screenLoc, new Point(10, 10), false);
     }
 
     @Test
@@ -125,7 +124,7 @@ public class ClickEventTestFESTTest {
     public void verifyClickMiddleMouse() {
         JLabelFixture lf = ff.label("label");
         lf.click(MouseButton.MIDDLE_BUTTON);
-        checkClick(MouseEvent.BUTTON2, null, null);
+        checkClick(MouseEvent.BUTTON2, null, null, false);
     }
 
     @Test
@@ -133,15 +132,18 @@ public class ClickEventTestFESTTest {
     public void verifyClickRightMouse() {
         JLabelFixture lf = ff.label("label");
         lf.click(MouseButton.RIGHT_BUTTON);
-        checkClick(MouseEvent.BUTTON3, null, null);
+        checkClick(MouseEvent.BUTTON3, null, null, true);
     }
 
-    private void checkClick(int button, Point screenLoc, Point loc) {
+    private void checkClick(int button, Point screenLoc, Point loc, boolean popup) {
 
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(MouseEvent.MOUSE_PRESSED, events.get(0).getID());
         Assert.assertEquals(MouseEvent.MOUSE_RELEASED, events.get(1).getID());
         Assert.assertEquals(MouseEvent.MOUSE_CLICKED, events.get(2).getID());
+        Assert.assertFalse(events.get(0).isPopupTrigger());
+        Assert.assertEquals(popup, events.get(1).isPopupTrigger());
+        Assert.assertFalse(events.get(2).isPopupTrigger());
         for (MouseEvent event : events) {
             Assert.assertEquals(1, event.getClickCount());
             Assert.assertEquals(button, event.getButton());

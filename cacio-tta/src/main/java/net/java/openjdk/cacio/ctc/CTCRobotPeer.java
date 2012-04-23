@@ -74,9 +74,9 @@ public class CTCRobotPeer implements RobotPeer {
         int buttonDownMask = buttonToButtonDownMask(buttons);
 
         if (buttonDownMask != 0 && buttonMask != 0) {
-            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, buttonDownMask, true);
+            EventData ev = mouseEvent(MouseEvent.MOUSE_RELEASED, buttonDownMask, (buttons & InputEvent.BUTTON3_MASK) != 0);
             CTCEventSource.getInstance().postEvent(ev);
-            ev = mouseEvent(MouseEvent.MOUSE_RELEASED, buttonDownMask, true);
+            ev = mouseEvent(MouseEvent.MOUSE_RELEASED, buttonDownMask, false);
             mouseClickSupport.mouseEvent(ev);
             currentModifiers &= ~buttonMask;
         }
