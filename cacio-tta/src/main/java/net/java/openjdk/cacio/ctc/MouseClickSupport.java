@@ -75,6 +75,7 @@ class MouseClickSupport {
         ev.setSource(CTCScreen.getInstance());
         ev.setTime(System.currentTimeMillis());
         ev.setClickCount(clickCount);
+        ev.setPopup(false);
         CTCEventSource.getInstance().postEvent(ev);
     }
 
