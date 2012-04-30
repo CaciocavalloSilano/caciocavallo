@@ -72,22 +72,27 @@ That's all for now, time to move on to...
 Build
 -----
 
-To build project Caciocavallo you need first a recent build of OpenJDK
-or IcedTea. Caciocavallo requires the use of Sun internal classes, so
-chances are that it will not even compile. But as we don't expect many
-changes in the AWT and Java2D code we rely on, you should be able to just
-build and run Cacio without pain.
+Building Cacio requires OpenJDK7 or later, it will not work with any
+previous release or alternative JDKs.
 
-You can clone the latest code from the OpenJDK website. As of this writing,
-one patch is still required. This is being discussed here:
+Caciocavallo utilizes Maven for the main modules. In the toplevel Cacio
+directory simply type:
 
-https://bugs.openjdk.java.net/show_bug.cgi?id=100052
+mvn clean install
 
-This patch is needed in order to run the native library code for the
-Caciocavallo backends.
+This should compile Caciocavallo.
 
-For Caciocavallo, the ant build included should work on Eclipse or
-NetBeans and on the command line as well.
+In order to build Cacio-web, you need an installation of Maven 2 (it will
+not work with Maven3 ... yet). Go into the cacio-web subdirectory
+and type:
+
+mvn2 clean install
+
+This should compile both the Java classes and native portions of Cacio-web.
+
+The other, and as of now not supported, modules under the src/ directory utilize
+Ant for building. Following is the old description of the Ant build process used
+for those modules:
 
 There is a build.properties file that needs tweaking with some paths, but this
 file is tracked by Mercurial, so changing it will call for endless merge or
