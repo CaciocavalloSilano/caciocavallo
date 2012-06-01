@@ -136,12 +136,6 @@ public class CTCToolkit extends CacioToolkit {
     }
 
     @Override
-    public int getScreenResolution() throws HeadlessException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
     public ColorModel getColorModel() throws HeadlessException {
         // TODO Auto-generated method stub
         return null;
