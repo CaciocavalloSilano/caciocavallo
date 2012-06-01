@@ -52,6 +52,7 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.Transparency;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.awt.peer.ButtonPeer;
@@ -104,9 +105,12 @@ public abstract class CacioToolkit extends SunToolkit {
         return "Linux".equals(System.getProperty("os.name"));
     }
 
+    private Clipboard clipboard;
+
     public CacioToolkit() {
         CacioEventPump pump = getPlatformWindowFactory().createEventPump();
         pump.start();
+        clipboard = new Clipboard("Cacio system clipboard");
     }
 
     @Override
@@ -381,6 +385,11 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public int getScreenResolution() throws HeadlessException {
         return screenResolution;
+    }
+
+    @Override
+    public Clipboard getSystemClipboard() throws HeadlessException {
+        return clipboard;
     }
 
 }
