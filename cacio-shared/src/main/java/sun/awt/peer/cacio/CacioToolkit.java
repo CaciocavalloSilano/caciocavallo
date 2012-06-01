@@ -81,10 +81,23 @@ import sun.awt.image.OffScreenImage;
 
 public abstract class CacioToolkit extends SunToolkit {
 
+    private static final int DEFAULT_SCREEN_RESOLUTION = 96;
+
+    private static final int screenResolution;
     static {
         if (isLinux()) {
             System.setProperty("sun.font.fontmanager", "sun.awt.peer.cacio.CacioFontManager");
         }
+        String resolution = System.getProperty("cacio.screenResolution");
+        int res = DEFAULT_SCREEN_RESOLUTION;
+        if (resolution != null) {
+            try {
+                res = Integer.parseInt(resolution);
+            } catch (NumberFormatException ex) {
+                // Nothing we can do here.
+            }
+        }
+        screenResolution = res;
     }
 
     private static boolean isLinux() {
@@ -364,5 +377,10 @@ public abstract class CacioToolkit extends SunToolkit {
     public boolean areExtraMouseButtonsEnabled() {
         return false;
     }
-    
+
+    @Override
+    public int getScreenResolution() throws HeadlessException {
+        return screenResolution;
+    }
+
 }
