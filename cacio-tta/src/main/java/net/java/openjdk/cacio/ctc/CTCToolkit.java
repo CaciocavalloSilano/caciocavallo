@@ -160,12 +160,6 @@ public class CTCToolkit extends CacioToolkit {
     }
 
     @Override
-    public Clipboard getSystemClipboard() throws HeadlessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Map<TextAttribute, ?> mapInputMethodHighlight(
             InputMethodHighlight highlight) throws HeadlessException {
         // TODO Auto-generated method stub
