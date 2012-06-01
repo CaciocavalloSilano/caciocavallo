@@ -69,6 +69,7 @@ import java.awt.peer.ListPeer;
 import java.awt.peer.MenuBarPeer;
 import java.awt.peer.MenuItemPeer;
 import java.awt.peer.MenuPeer;
+import java.awt.peer.MouseInfoPeer;
 import java.awt.peer.PanelPeer;
 import java.awt.peer.PopupMenuPeer;
 import java.awt.peer.ScrollPanePeer;
@@ -392,4 +393,7 @@ public abstract class CacioToolkit extends SunToolkit {
         return clipboard;
     }
 
+    protected MouseInfoPeer getMouseInfoPeer() {
+        return CacioMouseInfoPeer.getInstance();
+    }
 }
