@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.peer.RobotPeer;
 
+import sun.awt.peer.cacio.CacioMouseInfoPeer;
 import sun.awt.peer.cacio.managed.EventData;
 
 public class CTCRobotPeer implements RobotPeer {
@@ -52,6 +53,7 @@ public class CTCRobotPeer implements RobotPeer {
         currentY = y;
         EventData ev = mouseEvent(MouseEvent.MOUSE_MOVED, MouseEvent.NOBUTTON, false);
         CTCEventSource.getInstance().postEvent(ev);
+        CacioMouseInfoPeer.getInstance().setMouseScreenCoordinates(x, y);
     }
 
     @Override
