@@ -231,7 +231,10 @@ class CacioComponentPeer<AWTComponentType extends Component,
     public void dispose() {
         
         platformWindow.dispose();
-	CacioToolkit.disposePeer(awtComponent, this);
+        if (proxy != null) {
+            proxy.dispose();
+        }
+        CacioToolkit.disposePeer(awtComponent, this);
     }
 
     @Override

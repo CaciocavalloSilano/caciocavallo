@@ -55,14 +55,14 @@ import sun.java2d.pipe.Region;
 
 class ProxyWindowPeer implements WindowPeer {
 
-    private CacioComponentPeer target;
+    private ProxyWindow proxyWindow;
 
     ProxyWindowPeer(ProxyWindow pw) {
-        target = pw.getTargetPeer();
+        proxyWindow = pw;
     }
 
     CacioComponentPeer getTarget() {
-        return this.target;
+        return proxyWindow.getTargetPeer();
     }
 
     @Override
@@ -166,7 +166,7 @@ class ProxyWindowPeer implements WindowPeer {
 
         /* correctly dispatch events from windows borders menues and buttons */
         if (e instanceof WindowEvent) {
-            target.getAWTComponent().dispatchEvent(e);
+            getTarget().getAWTComponent().dispatchEvent(e);
         }
     }
 
@@ -177,7 +177,7 @@ class ProxyWindowPeer implements WindowPeer {
 
     @Override
     public Point getLocationOnScreen() {
-        return target.getLocationOnScreen();
+        return getTarget().getLocationOnScreen();
     }
 
     @Override
@@ -192,27 +192,27 @@ class ProxyWindowPeer implements WindowPeer {
 
     @Override
     public ColorModel getColorModel() {
-        return target.getColorModel();
+        return getTarget().getColorModel();
     }
 
     @Override
     public Toolkit getToolkit() {
-        return target.getToolkit();
+        return getTarget().getToolkit();
     }
 
     @Override
     public Graphics getGraphics() {
-        return target.getGraphics();
+        return getTarget().getGraphics();
     }
 
     @Override
     public FontMetrics getFontMetrics(Font font) {
-        return target.getFontMetrics(font);
+        return getTarget().getFontMetrics(font);
     }
 
     @Override
     public void dispose() {
-        // Nothing to do here.
+        CacioToolkit.disposePeer(proxyWindow, this);
     }
 
     @Override
@@ -232,7 +232,7 @@ class ProxyWindowPeer implements WindowPeer {
 
     @Override
     public void updateCursorImmediately() {
-        target.updateCursorImmediately();
+        getTarget().updateCursorImmediately();
     }
 
     @Override
@@ -240,13 +240,13 @@ class ProxyWindowPeer implements WindowPeer {
                                 boolean focusedWindowChangeAllowed, long time,
                                 Cause cause) {
 
-        return target.requestFocus(lightweightChild, temporary,
+        return getTarget().requestFocus(lightweightChild, temporary,
                                    focusedWindowChangeAllowed, time, cause);
     }
 
     @Override
     public boolean isFocusable() {
-        return target.isFocusable();
+        return getTarget().isFocusable();
     }
 
     @Override
@@ -256,27 +256,27 @@ class ProxyWindowPeer implements WindowPeer {
 
     @Override
     public Image createImage(int width, int height) {
-        return target.createImage(width, height);
+        return getTarget().createImage(width, height);
     }
 
     @Override
     public VolatileImage createVolatileImage(int width, int height) {
-        return target.createVolatileImage(width, height);
+        return getTarget().createVolatileImage(width, height);
     }
 
     @Override
     public boolean prepareImage(Image img, int w, int h, ImageObserver o) {
-        return target.prepareImage(img, w, h, o);
+        return getTarget().prepareImage(img, w, h, o);
     }
 
     @Override
     public int checkImage(Image img, int w, int h, ImageObserver o) {
-        return target.checkImage(img, w, h, o);
+        return getTarget().checkImage(img, w, h, o);
     }
 
     @Override
     public GraphicsConfiguration getGraphicsConfiguration() {
-        return target.getGraphicsConfiguration();
+        return getTarget().getGraphicsConfiguration();
     }
 
     @Override

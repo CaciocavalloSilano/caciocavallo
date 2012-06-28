@@ -273,13 +273,14 @@ public abstract class CacioToolkit extends SunToolkit {
     @Override
     public WindowPeer createWindow(Window target) throws HeadlessException {
 
+        WindowPeer windowPeer;
         if (target instanceof ProxyWindow) {
-            return new ProxyWindowPeer((ProxyWindow) target);
+            windowPeer = new ProxyWindowPeer((ProxyWindow) target);
+        } else {
+            windowPeer = new CacioWindowPeer(target, getPlatformWindowFactory());
         }
-        CacioWindowPeer peer = new CacioWindowPeer(target,
-                                                   getPlatformWindowFactory());
-        SunToolkit.targetCreatedPeer(target, peer);
-        return peer;
+        SunToolkit.targetCreatedPeer(target, windowPeer);
+        return windowPeer;
 
     }
 
