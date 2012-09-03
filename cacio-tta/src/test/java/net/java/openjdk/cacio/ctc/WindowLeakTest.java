@@ -61,12 +61,24 @@ public class WindowLeakTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
+
         for (int i = 0; i < 1000; i++) {
             createDisposeWindow();
         }
+
         System.gc();
         System.runFinalization();
+        Thread.sleep(1000);
+
+        System.gc();
+        System.runFinalization();
+        Thread.sleep(1000);
+
+        System.gc();
+        System.runFinalization();
+        Thread.sleep(1000);
+
         int numFinalizedWindows = 0;
         while (true) {
             Reference<? extends Window> ref = windowQueue.poll();
@@ -77,6 +89,7 @@ public class WindowLeakTest {
         }
         System.out.println("Number of finalized windows: " + numFinalizedWindows);
         assertTrue(numFinalizedWindows > 0);
+
     }
 
     private void createDisposeWindow() {
