@@ -61,7 +61,7 @@ public class WindowLeakTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
         for (int i = 0; i < 1000; i++) {
             createDisposeWindow();
         }
