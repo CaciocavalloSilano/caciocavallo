@@ -33,20 +33,21 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
+import net.java.openjdk.cacio.ctc.junit.CacioFESTRunner;
+
 import org.fest.swing.annotation.GUITest;
 import org.fest.swing.core.MouseButton;
 import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JLabelFixture;
-import org.fest.swing.junit.v4_5.runner.GUITestRunner;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-//@RunWith(CacioFESTRunner.class)
-@RunWith(GUITestRunner.class)
+@RunWith(CacioFESTRunner.class)
+//@RunWith(GUITestRunner.class)
 public class ClickEventTestFESTTest {
 
     private FrameFixture ff;
