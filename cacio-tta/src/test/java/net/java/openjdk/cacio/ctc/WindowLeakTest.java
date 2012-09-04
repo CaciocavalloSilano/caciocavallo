@@ -67,18 +67,11 @@ public class WindowLeakTest {
             createDisposeWindow();
         }
 
-        System.gc();
-        System.runFinalization();
-        Thread.sleep(1000);
-
-        System.gc();
-        System.runFinalization();
-        Thread.sleep(1000);
-
-        System.gc();
-        System.runFinalization();
-        Thread.sleep(1000);
-
+        for (int i = 0; i < 1000; i++) {
+            System.gc();
+            System.runFinalization();
+        }
+        
         int numFinalizedWindows = 0;
         while (true) {
             Reference<? extends Window> ref = windowQueue.poll();
