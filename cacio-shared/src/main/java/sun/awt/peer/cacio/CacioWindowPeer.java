@@ -89,8 +89,6 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
     CacioWindowPeer(Window awtC, PlatformWindowFactory pwf) {
         super(awtC, pwf);
-        ((Window) awtC).setFocusableWindowState(true);
-        ((Window) awtC).setFocusTraversalPolicyProvider(true);
     }
 
     @Override
