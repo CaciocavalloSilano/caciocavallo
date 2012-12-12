@@ -4,10 +4,10 @@
   <parent>
     <groupId>net.java.openjdk.cacio</groupId>
     <artifactId>cacio</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
   </parent>
   <artifactId>cacio-web</artifactId>
-  <packaging>nar</packaging>
+  <packaging>jar</packaging>
   <name>CacioWeb Module</name>
   <dependencies>
     <dependency>
@@ -43,103 +43,51 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>jetty</id>
-      <name>Jetty</name>
-      <url>http://oss.sonatype.org/content/groups/jetty</url>
-      <layout>default</layout>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </snapshots>
-      <id>duns</id>
-      <name>Duns Maven Repository</name>
-      <url>http://duns.github.com/maven-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-nar-plugin</artifactId>
-        <version>2.1-SNAPSHOT</version>
-        <extensions>true</extensions>
-        <configuration>
-          <libraries>
-            <library>
-              <type>jni</type>
-              <linkCPP>false</linkCPP>
-            </library>
-          </libraries>
-        </configuration>      </plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+	<executions>
+	  <execution>
+	    <id>assembly-single</id>
+	    <phase>package</phase>
+	    <goals>
+	      <goal>single</goal>
+	    </goals>
+	    <configuration>
+	      <descriptors>
+		<descriptor>src/main/assembly/src.xml</descriptor>
+	      </descriptors>
+	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>  
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>  
+        </executions>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-          <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
+          <executable>make</executable>
+          <arguments>
+            <argument>all</argument>
+          </arguments>
+          <systemProperties>
+            <systemProperty>
+              <key>JAVA_HOME</key>
+              <value>${java.home}</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
-    <pluginManagement>
-    	<plugins>
-    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-    		<plugin>
-    			<groupId>org.eclipse.m2e</groupId>
-    			<artifactId>lifecycle-mapping</artifactId>
-    			<version>1.0.0</version>
-    			<configuration>
-    				<lifecycleMappingMetadata>
-    					<pluginExecutions>
-    						<pluginExecution>
-    							<pluginExecutionFilter>
-    								<groupId>
-    									org.apache.maven.plugins
-    								</groupId>
-    								<artifactId>
-    									maven-nar-plugin
-    								</artifactId>
-    								<versionRange>
-    									[2.1-SNAPSHOT,)
-    								</versionRange>
-    								<goals>
-    									<goal>nar-unpack</goal>
-    									<goal>nar-gnu-process</goal>
-    									<goal>nar-testCompile</goal>
-    									<goal>nar-gnu-make</goal>
-    									<goal>nar-javah</goal>
-    									<goal>nar-validate</goal>
-    									<goal>nar-download</goal>
-    									<goal>nar-gnu-configure</goal>
-    									<goal>nar-resources</goal>
-    									<goal>nar-compile</goal>
-    									<goal>nar-system-generate</goal>
-    									<goal>nar-gnu-resources</goal>
-    								</goals>
-    							</pluginExecutionFilter>
-    							<action>
-    								<ignore></ignore>
-    							</action>
-    						</pluginExecution>
-    					</pluginExecutions>
-    				</lifecycleMappingMetadata>
-    			</configuration>
-    		</plugin>
-    	</plugins>
-    </pluginManagement>
   </build>
-
 </project>
