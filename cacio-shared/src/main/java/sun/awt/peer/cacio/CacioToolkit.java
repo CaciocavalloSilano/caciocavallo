@@ -284,8 +284,13 @@ public abstract class CacioToolkit extends SunToolkit {
 
     }
 
-    @Override
+    // Old versions of OpenJDK use this.
     public KeyboardFocusManagerPeer createKeyboardFocusManagerPeer(KeyboardFocusManager manager) throws HeadlessException {
+        return getKeyboardFocusManagerPeer();
+    }
+
+    // New versions of OpenJDK use this.
+    public KeyboardFocusManagerPeer getKeyboardFocusManagerPeer() throws HeadlessException {
         return CacioKeyboardFocusManagerPeer.getInstance();
     }
 
