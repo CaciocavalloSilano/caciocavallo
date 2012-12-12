@@ -3,7 +3,7 @@
 
   <groupId>net.java.openjdk.cacio</groupId>
   <artifactId>cacio</artifactId>
-  <version>1.3</version>
+  <version>1.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <parent>
