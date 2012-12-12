@@ -32,11 +32,12 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.beans.PropertyVetoException;
 
-import sun.util.logging.PlatformLogger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WebKeyboardFocusManager extends DefaultKeyboardFocusManager {
 
-    private static final PlatformLogger focusLog = PlatformLogger.getLogger("net.java.openjdk.awt.peer.web.WebKeyboardFocusManager");
+    private static final Logger focusLog = Logger.getLogger("net.java.openjdk.awt.peer.web.WebKeyboardFocusManager");
     private static final String notPrivileged = "this KeyboardFocusManager is not installed in the current thread's context";
 
     private Component focusOwner;
@@ -59,7 +60,7 @@ public class WebKeyboardFocusManager extends DefaultKeyboardFocusManager {
             if (this == getCurrentKeyboardFocusManager()) {
                 return focusOwner;
             } else {
-                if (focusLog.isLoggable(PlatformLogger.FINER)) {
+                if (focusLog.isLoggable(Level.FINER)) {
                     focusLog.finer("This manager is " + this + ", current is " + getCurrentKeyboardFocusManager());
                 }
                 throw new SecurityException(notPrivileged);
@@ -116,7 +117,7 @@ public class WebKeyboardFocusManager extends DefaultKeyboardFocusManager {
                 if (this == getCurrentKeyboardFocusManager()) {
                     return permanentFocusOwner;
                 } else {
-                    if (focusLog.isLoggable(PlatformLogger.FINER)) {
+                    if (focusLog.isLoggable(Level.FINER)) {
                         focusLog.finer("This manager is " + this + ", current is " + getCurrentKeyboardFocusManager());
                     }
                     throw new SecurityException(notPrivileged);
@@ -182,7 +183,7 @@ public class WebKeyboardFocusManager extends DefaultKeyboardFocusManager {
             if (this == getCurrentKeyboardFocusManager()) {
                return focusedWindow;
             } else {
-                if (focusLog.isLoggable(PlatformLogger.FINER)) {
+                if (focusLog.isLoggable(Level.FINER)) {
                     focusLog.finer("This manager is " + this + ", current is " + getCurrentKeyboardFocusManager());
                 }
                 throw new SecurityException(notPrivileged);
@@ -250,7 +251,7 @@ public class WebKeyboardFocusManager extends DefaultKeyboardFocusManager {
             if (this == getCurrentKeyboardFocusManager()) {
                return activeWindow;
             } else {
-                if (focusLog.isLoggable(PlatformLogger.FINER)) {
+                if (focusLog.isLoggable(Level.FINER)) {
                     focusLog.finer("This manager is " + this + ", current is " + getCurrentKeyboardFocusManager());
                 }
                 throw new SecurityException(notPrivileged);
@@ -284,7 +285,7 @@ public class WebKeyboardFocusManager extends DefaultKeyboardFocusManager {
         Window oldActiveWindow;
         synchronized (KeyboardFocusManager.class) {
             oldActiveWindow = getActiveWindow();
-            if (focusLog.isLoggable(PlatformLogger.FINER)) {
+            if (focusLog.isLoggable(Level.FINER)) {
                 focusLog.finer("Setting global active window to " + activeWindow + ", old active " + oldActiveWindow);
             }
 

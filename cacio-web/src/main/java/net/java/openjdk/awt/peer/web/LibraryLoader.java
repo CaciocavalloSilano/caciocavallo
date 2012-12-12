@@ -14,7 +14,7 @@ class LibraryLoader {
 
     static synchronized void loadLibs() {
 	if (! loaded) {
-	    String libName = System.mapLibraryName("cacio-web");
+	    String libName = System.mapLibraryName("cacioweb");
 	    System.err.println("loading library: /" + libName);
 	    InputStream in = LibraryLoader.class.getResourceAsStream("/" + libName);
 	    File outFile = new File(System.getProperty("java.io.tmpdir")  + File.separator + libName);
