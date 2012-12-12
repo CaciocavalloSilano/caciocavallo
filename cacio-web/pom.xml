@@ -46,6 +46,26 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+
+                <get src="http://downloads.sourceforge.net/project/jskeylib/jskeylib-0.1/jskeylib-0.1.tar.gz"
+                     dest="${project.build.directory}" />
+                <untar src="${project.build.directory}/jskeylib-0.1.tar.gz" dest="${project.build.directory}" compression="gzip" />
+                <copy file="${project.build.directory}/jskeylib-0.1/jskeylib.js" tofile="${project.build.directory}/classes/keylib.js" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
 	<executions>
