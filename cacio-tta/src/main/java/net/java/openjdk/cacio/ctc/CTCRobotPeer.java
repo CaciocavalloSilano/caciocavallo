@@ -51,9 +51,14 @@ public class CTCRobotPeer implements RobotPeer {
     public void mouseMove(int x, int y) {
         currentX = x;
         currentY = y;
-        EventData ev = mouseEvent(MouseEvent.MOUSE_MOVED, MouseEvent.NOBUTTON, false);
+        int id = isButtonPressed() ? MouseEvent.MOUSE_MOVED : MouseEvent.MOUSE_DRAGGED;
+        EventData ev = mouseEvent(id, MouseEvent.NOBUTTON, false);
         CTCEventSource.getInstance().postEvent(ev);
         CacioMouseInfoPeer.getInstance().setMouseScreenCoordinates(x, y);
+    }
+
+    private boolean isButtonPressed() {
+        return (currentModifiers & BUTTON_MASKS) == 0;
     }
 
     @Override
