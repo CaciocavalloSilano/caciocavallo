@@ -10,6 +10,10 @@ import java.util.Locale;
 
 public class DirectFBGraphicsEnvironment extends GraphicsEnvironment {
 
+    static {
+        NarSystem.loadLibrary();
+    }
+
     private long nativePtr;
 
     private native long createDirectFB();
