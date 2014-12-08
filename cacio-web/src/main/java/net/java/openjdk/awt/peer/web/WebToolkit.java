@@ -34,11 +34,7 @@ import java.awt.font.TextAttribute;
 import java.awt.im.InputMethodHighlight;
 import java.awt.im.spi.InputMethodDescriptor;
 import java.awt.image.ColorModel;
-import java.awt.peer.DesktopPeer;
-import java.awt.peer.FontPeer;
-import java.awt.peer.RobotPeer;
-import java.awt.peer.SystemTrayPeer;
-import java.awt.peer.TrayIconPeer;
+import java.awt.peer.*;
 import java.util.Map;
 import java.util.Properties;
 
@@ -48,6 +44,7 @@ import java.util.logging.Logger;
 import net.java.openjdk.cacio.servlet.*;
 
 import sun.awt.*;
+import sun.awt.datatransfer.DataTransferer;
 import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 
@@ -195,6 +192,16 @@ public class WebToolkit extends CacioToolkit {
     }
 
     public InputMethodDescriptor getInputMethodAdapterDescriptor() throws AWTException {
+        return null;
+    }
+
+    @Override
+    public FramePeer createLightweightFrame(LightweightFrame lightweightFrame) throws HeadlessException {
+        return null;
+    }
+
+    @Override
+    public DataTransferer getDataTransferer() {
         return null;
     }
 }

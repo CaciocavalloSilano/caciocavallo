@@ -125,10 +125,12 @@ public class FocusManager {
     }
 
     void setFocusedWindow(ManagedWindow w) {
-        ManagedWindow old = getFocusedWindow();
-	setFocusedWindowNoEvent(w);
-	focusLost(old, w);
-	focusGained(w, old);
+        if (w != null && (w.getCacioComponent() == null || w.getCacioComponent().isFocusable())) {
+            ManagedWindow old = getFocusedWindow();
+            setFocusedWindowNoEvent(w);
+            focusLost(old, w);
+            focusGained(w, old);
+        }
     }
 
     void setFocusedWindowNoEvent(ManagedWindow w) {

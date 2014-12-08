@@ -61,4 +61,5 @@ public interface CacioComponent {
      */
     void handlePeerEvent(AWTEvent event);
 
+    boolean isFocusable();
 }
