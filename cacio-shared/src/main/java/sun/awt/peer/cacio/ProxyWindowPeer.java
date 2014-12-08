@@ -75,9 +75,12 @@ class ProxyWindowPeer implements WindowPeer {
         // TODO: Maybe call target.toBack() here?
     }
 
-    @Override
     public void setAlwaysOnTop(boolean alwaysOnTop) {
         // TODO: Maybe call target.setAlwaysOnTop here?
+    }
+
+    @Override
+    public void updateAlwaysOnTopState() {
     }
 
     @Override
@@ -195,7 +198,6 @@ class ProxyWindowPeer implements WindowPeer {
         return getTarget().getColorModel();
     }
 
-    @Override
     public Toolkit getToolkit() {
         return getTarget().getToolkit();
     }

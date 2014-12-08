@@ -109,4 +109,8 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
         }
     }
 
+    @Override
+    public void emulateActivation(boolean activate) {
+
+    }
 }

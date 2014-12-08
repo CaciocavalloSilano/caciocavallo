@@ -14,3 +14,5 @@ private.properties$
 .classpath
 .settings
 /target/
+.iml
+.idea

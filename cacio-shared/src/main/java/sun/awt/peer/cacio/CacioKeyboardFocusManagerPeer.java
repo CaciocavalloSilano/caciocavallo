@@ -100,8 +100,9 @@ class CacioKeyboardFocusManagerPeer implements KeyboardFocusManagerPeer {
         // TODO: Implement.
     }
 
-    void setCurrentFocusedWindow(Window w) {
-        currentFocusedWindow = w;
+    @Override
+    public void setCurrentFocusedWindow(Window win) {
+        currentFocusedWindow = win;
     }
 
     boolean requestFocus(Component target, Component lightweightChild, boolean temporary,

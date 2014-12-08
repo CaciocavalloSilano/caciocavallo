@@ -60,7 +60,7 @@ import java.awt.image.WritableRaster;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 
 import sun.awt.SunToolkit;
 import sun.awt.CausedFocusEvent.Cause;
@@ -338,7 +338,6 @@ class CacioComponentPeer<AWTComponentType extends Component,
         return pref;
     }
 
-    @Override
     public Toolkit getToolkit() {
 
         return Toolkit.getDefaultToolkit();

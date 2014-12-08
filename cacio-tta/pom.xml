@@ -29,6 +29,11 @@
       <artifactId>fest-swing-junit-4.5</artifactId>
       <version>1.2.1</version>
     </dependency>
+      <dependency>
+          <groupId>com.jidesoft</groupId>
+          <artifactId>jide-oss</artifactId>
+          <version>3.5.11</version>
+      </dependency>
   </dependencies>
 
   <build>

@@ -224,7 +224,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
             {
                 // Simulate what the native system thinks is the currently focused window.
                 CacioKeyboardFocusManagerPeer.getInstance().setCurrentFocusedWindow(w);
-                Window opposite = getOppositeWindow((FocusEvent) ev); 
+                Window opposite = getOppositeWindow((FocusEvent) ev);
                 WindowEvent we =
                     new WindowEvent(w, WindowEvent.WINDOW_GAINED_FOCUS, opposite);
                 super.handlePeerEvent(we);
@@ -369,4 +369,16 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
         }
     }
 
+    @Override
+    public void updateAlwaysOnTopState() {
+    }
+
+    @Override
+    public boolean isFocusable() {
+        boolean ret = super.isFocusable();
+        if (ret) {
+            ret = getAWTComponent().isFocusable() && getAWTComponent().getFocusableWindowState();
+        }
+        return ret;
+    }
 }

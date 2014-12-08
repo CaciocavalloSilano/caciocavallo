@@ -18,14 +18,12 @@ import java.awt.font.TextAttribute;
 import java.awt.im.InputMethodHighlight;
 import java.awt.im.spi.InputMethodDescriptor;
 import java.awt.image.ColorModel;
-import java.awt.peer.DesktopPeer;
-import java.awt.peer.FontPeer;
-import java.awt.peer.RobotPeer;
-import java.awt.peer.SystemTrayPeer;
-import java.awt.peer.TrayIconPeer;
+import java.awt.peer.*;
 import java.util.Map;
 import java.util.Properties;
 
+import sun.awt.LightweightFrame;
+import sun.awt.datatransfer.DataTransferer;
 import sun.awt.peer.cacio.CacioToolkit;
 import sun.awt.peer.cacio.PlatformWindowFactory;
 import sun.awt.peer.cacio.managed.FullScreenWindowFactory;
@@ -166,4 +164,13 @@ public class CTCToolkit extends CacioToolkit {
         return null;
     }
 
+    @Override
+    public FramePeer createLightweightFrame(LightweightFrame lightweightFrame) throws HeadlessException {
+        return null;
+    }
+
+    @Override
+    public DataTransferer getDataTransferer() {
+        return null;
+    }
 }
