@@ -25,59 +25,15 @@
 
 package net.java.openjdk.cacio.directfb;
 
-import java.awt.GraphicsDevice;
-
-import sun.awt.SunToolkit;
-import sun.java2d.SunGraphicsEnvironment;
+import sun.awt.image.SunVolatileImage;
+import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceManagerFactory;
 
-public class DirectFBGraphicsEnvironment extends SunGraphicsEnvironment {
-
-    static {
-        try {
-            Class.forName("sun.awt.X11FontManager");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        NarSystem.loadLibrary();
-        // System.loadLibrary("awt_xawt");
-        // System.loadLibrary("awt");
-        SurfaceManagerFactory.setInstance(new DirectFBSurfaceManagerFactory());
-    }
-
-    private long nativePtr;
-
-    private DirectFBGraphicsDevice defaultDevice;
-
-    long getDirectFB() {
-        return nativePtr;
-    }
-
-    private native long createDirectFB();
-
-    public DirectFBGraphicsEnvironment() {
-        try {
-            SunToolkit.awtLock();
-            nativePtr = createDirectFB();
-        } finally {
-            SunToolkit.awtUnlock();
-        }
-        defaultDevice = new DirectFBGraphicsDevice(this);
-    }
+class DirectFBSurfaceManagerFactory extends SurfaceManagerFactory {
 
     @Override
-    protected int getNumScreens() {
-        return 1;
-    }
-
-    @Override
-    public boolean isDisplayLocal() {
-        return true;
-    }
-
-    @Override
-    protected GraphicsDevice makeScreenDevice(int num) {
-        return defaultDevice;
+    public VolatileSurfaceManager createVolatileManager(SunVolatileImage img, Object ctx) {
+        return new DirectFBSurfaceManager(img, ctx);
     }
 
 }

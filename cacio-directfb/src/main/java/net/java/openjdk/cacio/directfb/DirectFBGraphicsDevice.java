@@ -25,59 +25,42 @@
 
 package net.java.openjdk.cacio.directfb;
 
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 
-import sun.awt.SunToolkit;
-import sun.java2d.SunGraphicsEnvironment;
-import sun.java2d.SurfaceManagerFactory;
+class DirectFBGraphicsDevice extends GraphicsDevice {
 
-public class DirectFBGraphicsEnvironment extends SunGraphicsEnvironment {
+    private DirectFBGraphicsConfiguration defaultConfig;
 
-    static {
-        try {
-            Class.forName("sun.awt.X11FontManager");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        NarSystem.loadLibrary();
-        // System.loadLibrary("awt_xawt");
-        // System.loadLibrary("awt");
-        SurfaceManagerFactory.setInstance(new DirectFBSurfaceManagerFactory());
+    private DirectFBGraphicsEnvironment env;
+
+    DirectFBGraphicsDevice(DirectFBGraphicsEnvironment env) {
+        this.env = env;
+        defaultConfig = new DirectFBGraphicsConfiguration(this);
     }
 
-    private long nativePtr;
-
-    private DirectFBGraphicsDevice defaultDevice;
-
-    long getDirectFB() {
-        return nativePtr;
-    }
-
-    private native long createDirectFB();
-
-    public DirectFBGraphicsEnvironment() {
-        try {
-            SunToolkit.awtLock();
-            nativePtr = createDirectFB();
-        } finally {
-            SunToolkit.awtUnlock();
-        }
-        defaultDevice = new DirectFBGraphicsDevice(this);
+    DirectFBGraphicsEnvironment getEnv() {
+        return env;
     }
 
     @Override
-    protected int getNumScreens() {
-        return 1;
+    public int getType() {
+        return GraphicsDevice.TYPE_RASTER_SCREEN;
     }
 
     @Override
-    public boolean isDisplayLocal() {
-        return true;
+    public String getIDstring() {
+        return "DirectFB Screen";
     }
 
     @Override
-    protected GraphicsDevice makeScreenDevice(int num) {
-        return defaultDevice;
+    public GraphicsConfiguration[] getConfigurations() {
+        return new GraphicsConfiguration[] { defaultConfig };
+    }
+
+    @Override
+    public GraphicsConfiguration getDefaultConfiguration() {
+        return defaultConfig;
     }
 
 }
