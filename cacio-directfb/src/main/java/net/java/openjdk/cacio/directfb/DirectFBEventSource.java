@@ -25,59 +25,24 @@
 
 package net.java.openjdk.cacio.directfb;
 
-import java.awt.GraphicsDevice;
+import sun.awt.peer.cacio.CacioEventSource;
+import sun.awt.peer.cacio.managed.EventData;
 
-import sun.awt.SunToolkit;
-import sun.java2d.SunGraphicsEnvironment;
-import sun.java2d.SurfaceManagerFactory;
+public class DirectFBEventSource implements CacioEventSource {
 
-public class DirectFBGraphicsEnvironment extends SunGraphicsEnvironment {
+    private static native void initIDs();
 
     static {
-        try {
-            Class.forName("sun.awt.X11FontManager");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        NarSystem.loadLibrary();
-        // System.loadLibrary("awt_xawt");
-        // System.loadLibrary("awt");
-        SurfaceManagerFactory.setInstance(new DirectFBSurfaceManagerFactory());
+        initIDs();
     }
 
-    private long nativePtr;
-
-    private DirectFBGraphicsDevice defaultDevice;
-
-    long getDirectFB() {
-        return nativePtr;
-    }
-
-    private native long createDirectFB();
-
-    public DirectFBGraphicsEnvironment() {
-        try {
-            SunToolkit.awtLock();
-            nativePtr = createDirectFB();
-        } finally {
-            SunToolkit.awtUnlock();
-        }
-        defaultDevice = new DirectFBGraphicsDevice(this);
-    }
+    private native void getNextDirectFBEvent(EventData data);
 
     @Override
-    protected int getNumScreens() {
-        return 1;
-    }
-
-    @Override
-    public boolean isDisplayLocal() {
-        return true;
-    }
-
-    @Override
-    protected GraphicsDevice makeScreenDevice(int num) {
-        return defaultDevice;
+    public EventData getNextEvent() throws InterruptedException {
+        EventData data = new EventData();
+        getNextDirectFBEvent(data);
+        return data;
     }
 
 }

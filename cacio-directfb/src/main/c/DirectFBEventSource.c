@@ -23,23 +23,12 @@
  * questions.
  */
 
-#include <directfb.h>
-#include "net_java_openjdk_cacio_directfb_DirectFBGraphicsEnvironment.h"
+#include "net_java_openjdk_cacio_directfb_DirectFBEventSource.h"
 
-// extern jclass tkClass;
+JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_directfb_DirectFBEventSource_initIDs (JNIEnv* env, jclass clazz) {
 
-JNIEXPORT jlong JNICALL Java_net_java_openjdk_cacio_directfb_DirectFBGraphicsEnvironment_createDirectFB(JNIEnv* env, jobject thiz) {
+}
 
-  IDirectFB* dfb = NULL;
-  int dummy_argc = 0;
-  char* dummy_argv[0];
-  DirectFBInit(&dummy_argc, &dummy_argv);
-  DirectFBCreate(&dfb);
+JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_directfb_DirectFBEventSource_getNextDirectFBEvent(JNIEnv* env, jobject thiz, jobject eventData) {
 
-  dfb->SetCooperativeLevel(dfb, DFSCL_NORMAL);
-
-  printf("created directfb: %p\n", dfb);
-
-  //printf("DEBUG tkClass: %p", tkClass);
-  return (long) dfb;
 }
