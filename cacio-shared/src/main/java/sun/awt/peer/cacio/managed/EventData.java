@@ -385,4 +385,18 @@ public class EventData {
         button = 0;
         updateRect = null;
     }
+
+    @Override
+    public String toString() {
+        switch (id) {
+        case MouseEvent.MOUSE_MOVED:
+            return "MOUSE_MOVED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+        case MouseEvent.MOUSE_PRESSED:
+            return "MOUSE_PRESSED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+        case MouseEvent.MOUSE_RELEASED:
+            return "MOUSE_RELEASED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+        default:
+            return "UNKNOWN/UNIMPLEMENTED";
+        }
+    }
 }
