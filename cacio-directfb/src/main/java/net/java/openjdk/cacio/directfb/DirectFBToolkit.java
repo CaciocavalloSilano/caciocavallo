@@ -74,7 +74,7 @@ public class DirectFBToolkit extends CacioToolkit {
     public PlatformWindowFactory getPlatformWindowFactory() {
         if (windowFactory == null) {
             DirectFBScreen screen = new DirectFBScreen();
-            DirectFBEventSource eventSource = new DirectFBEventSource();
+            DirectFBEventSource eventSource = new DirectFBEventSource(screen);
             windowFactory = new FullScreenWindowFactory(screen, eventSource);
         }
         return windowFactory;

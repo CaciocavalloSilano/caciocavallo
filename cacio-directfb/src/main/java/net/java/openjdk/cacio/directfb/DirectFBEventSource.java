@@ -25,10 +25,12 @@
 
 package net.java.openjdk.cacio.directfb;
 
+import java.awt.GraphicsEnvironment;
+
 import sun.awt.peer.cacio.CacioEventSource;
 import sun.awt.peer.cacio.managed.EventData;
 
-public class DirectFBEventSource implements CacioEventSource {
+class DirectFBEventSource implements CacioEventSource {
 
     private static native void initIDs();
 
@@ -36,13 +38,33 @@ public class DirectFBEventSource implements CacioEventSource {
         initIDs();
     }
 
-    private native void getNextDirectFBEvent(EventData data);
+    private long eventBuffer;
+    private EventData eventData;
+    private DirectFBScreen screen;
+    private int x, y;
+
+    private native long nativeInit(long dfb);
+
+    DirectFBEventSource(DirectFBScreen screen) {
+        long dfb = ((DirectFBGraphicsEnvironment) GraphicsEnvironment.getLocalGraphicsEnvironment()).getDirectFB();
+        eventBuffer = nativeInit(dfb);
+        eventData = new EventData();
+        this.screen = screen;
+    }
+
+    private native void getNextDirectFBEvent(EventData data, long ebuf);
 
     @Override
     public EventData getNextEvent() throws InterruptedException {
-        EventData data = new EventData();
-        getNextDirectFBEvent(data);
-        return data;
+        EventData eventData = new EventData();
+        eventData.setX(x);
+        eventData.setY(y);
+        getNextDirectFBEvent(eventData, eventBuffer);
+        eventData.setSource(screen);
+        eventData.setTime(System.currentTimeMillis());
+        x = eventData.getX();
+        y = eventData.getY();
+        return eventData;
     }
 
 }

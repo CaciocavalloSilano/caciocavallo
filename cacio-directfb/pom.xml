@@ -82,6 +82,9 @@
               </lib>
             </libs>
           </linker>
+          <javah>
+            <extraClasses><extraClass>java.awt.event.MouseEvent</extraClass></extraClasses>
+          </javah>
         </configuration>
       </plugin>
       <plugin>
