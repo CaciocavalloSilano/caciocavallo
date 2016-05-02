@@ -44,7 +44,6 @@
   <modules>
     <module>cacio-shared</module>
     <module>cacio-tta</module>
-    <module>cacio-web</module>
   </modules>
 
   <distributionManagement>
