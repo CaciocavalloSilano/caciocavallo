@@ -94,11 +94,11 @@ public interface PlatformWindow {
      * The <code>op</code> parameter specifies the actual operation of this
      * methods, according to the various constants in {@link ComponentPeer}.
      *
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param op
+     * @param x the X coordinate of the upper left bound
+     * @param y the Y coordinate of the upper left bound
+     * @param width the width
+     * @param height the height
+     * @param op the operation of this method
      *
      * @see ComponentPeer#setBounds(int, int, int, int, int)
      */
@@ -196,7 +196,7 @@ public interface PlatformWindow {
     /**
      * Shows or hides this native window.
      *
-     * @param v <code>true</code> shows this native window
+     * @param b <code>true</code> shows this native window
      *        <code>false</code> hides it.
      */
     void setVisible(boolean b);

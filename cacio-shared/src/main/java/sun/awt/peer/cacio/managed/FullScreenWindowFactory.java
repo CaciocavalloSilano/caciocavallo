@@ -129,8 +129,8 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     /**
      * Creates a {@link PlatformWindow} instance.
      *
-     * @param cacioComponent the corresponding Cacio component
-     * @parent the parent window, or <code>null</code> for top level windows
+     * @param awtComponent the corresponding Cacio component
+     * @param parent the parent window, or <code>null</code> for top level windows
      *
      * @return the platform window instance
      */
@@ -163,7 +163,6 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
 
     /**
      * {@inheritDoc }
-     * <br /><br />
      * <strong>Note</strong>: owners are currently ignored in fully managed
      * windows.
      */

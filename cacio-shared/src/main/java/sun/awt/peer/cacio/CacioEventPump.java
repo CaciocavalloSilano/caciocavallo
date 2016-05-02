@@ -59,8 +59,6 @@ public abstract class CacioEventPump<ET> implements Runnable {
     /**
      * Creates and starts a CacioEventPump with the specified
      * event source.
-     *
-     * @param s the event source to get events from
      */
     protected CacioEventPump() {
         // Nothing to do here.
@@ -104,7 +102,7 @@ public abstract class CacioEventPump<ET> implements Runnable {
      * event.
      *
      * @return the native event
-     * @throws InterruptedException 
+     * @throws InterruptedException when interrupted while fetching event
      */
     protected abstract ET fetchNativeEvent() throws InterruptedException;
 
@@ -113,7 +111,7 @@ public abstract class CacioEventPump<ET> implements Runnable {
      * Autoshutdown busy block, that means, as long as the thread is in this
      * method, it prevents shutting down AWT.
      *
-     * @param nativeEvent
+     * @param nativeEvent the native event to dispatch
      */
     protected abstract void dispatchNativeEvent(ET nativeEvent);
 

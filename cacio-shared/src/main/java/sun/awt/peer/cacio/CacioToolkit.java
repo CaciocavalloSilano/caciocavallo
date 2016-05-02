@@ -370,7 +370,7 @@ public abstract class CacioToolkit extends SunToolkit {
      *
      * @param component The component to base the off-screen image on.
      * @param width The width of the image.
-     * @param hight The height of the image.
+     * @param height The height of the image.
      *
      * @return New off-screen image.
      */

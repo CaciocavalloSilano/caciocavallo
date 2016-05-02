@@ -35,8 +35,8 @@ public interface PlatformWindowFactory {
     /**
      * Creates a {@link PlatformWindow} instance.
      *
-     * @param cacioComponent the corresponding Cacio component
-     * @parent the parent window, or <code>null</code> for top level windows
+     * @param awtComponent the corresponding Cacio component
+     * @param parent the parent window, or <code>null</code> for top level windows
      *
      * @return the platform window instance
      */
@@ -46,7 +46,7 @@ public interface PlatformWindowFactory {
     /**
      * Creates and returns a toplevel window for the specified peer.
      *
-     * @param cacioWindowPeer the toplevel component
+     * @param component the toplevel component
      *
      * @return the created toplevel window
      */
@@ -64,8 +64,8 @@ public interface PlatformWindowFactory {
      * Creates and returns a toplevel window with the specified window as
      * owner.
      *
-     * @param cacioWindowPeer the toplevel component
-     *
+     * @param component the toplevel component
+     * @param owner the owner window
      * @return the created toplevel window
      */
     public PlatformWindow createPlatformToplevelWindow(CacioComponent component,

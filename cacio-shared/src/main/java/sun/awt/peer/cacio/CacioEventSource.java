@@ -61,7 +61,7 @@ public interface CacioEventSource {
      * blocks until the next event is available.
      *
      * @return the next event from the event queue
-     * @throws InterruptedException 
+     * @throws InterruptedException when interrupted while getting next event
      */
     EventData getNextEvent() throws InterruptedException;
 }

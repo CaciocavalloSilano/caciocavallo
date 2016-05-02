@@ -65,8 +65,6 @@ public interface ManagedWindowContainer {
      * Returns the location of the specified child window relative to
      * the screen (== outermost container).
      *
-     * @param child the child to find the screen location of
-     *
      * @return the location of the specified child on screen
      */
     Point getLocationOnScreen();
@@ -95,7 +93,9 @@ public interface ManagedWindowContainer {
      *
      * If {@code clipRects} is empty or {@code null}, no default clip is
      * to be set.
-     *
+     * @param fg the foreground color to use
+     * @param bg the background color to use
+     * @param font the font to use
      * @param clipRects the rectangles to be clipped 'away'
      *
      * @return a Graphics2D object with the specified default clips applied

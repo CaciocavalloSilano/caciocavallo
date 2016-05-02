@@ -55,13 +55,13 @@ public interface PlatformToplevelWindow extends PlatformWindow {
      *
      * @param state the new state of the window
      *
-     * @see Frame#setExtendedState()
+     * @see Frame#setExtendedState(int)
      * @see Frame#NORMAL
      * @see Frame#ICONIFIED
      * @see Frame#MAXIMIZED_HORIZ
      * @see Frame#MAXIMIZED_VERT
      * @see Frame#MAXIMIZED_BOTH
-     * @see #getState(int)
+     * @see #getState()
      */
     void setState(int state);
 
@@ -95,9 +95,6 @@ public interface PlatformToplevelWindow extends PlatformWindow {
      * This is only called for toplevel frames and dialogs.
      *
      * @param blocked true if set to blocked
-     *
-     * @see DialogPeer#blockWindows(List<Window>)
-     * @see WindowPeer#setModalBlocked(Dialog, boolean)
      */
     void setBlocked(boolean blocked);
 
