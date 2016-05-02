@@ -3,7 +3,7 @@
 
   <groupId>net.java.openjdk.cacio</groupId>
   <artifactId>cacio</artifactId>
-  <version>1.9-SNAPSHOT</version>
+  <version>1.9</version>
   <packaging>pom</packaging>
 
   <name>Caciocavallo Main Module</name>
@@ -23,7 +23,7 @@
     <connection>scm:hg:http://hg.openjdk.java.net/caciocavallo/ng/</connection>
     <developerConnection>scm:hg:ssh://hg.openjdk.java.net/caciocavallo/ng/</developerConnection>
     <url>http://hg.openjdk.java.net/caciocavallo/ng/</url>
-    <tag>HEAD</tag>
+    <tag>cacio-1.9</tag>
   </scm>
 
   <developers>
