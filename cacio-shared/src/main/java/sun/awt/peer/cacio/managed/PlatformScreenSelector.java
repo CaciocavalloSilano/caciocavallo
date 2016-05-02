@@ -30,7 +30,7 @@ import java.awt.GraphicsConfiguration;
 /**
  *
  *
- * @author Mario Torre <neugens.limasoftware@gmail.com>
+ * @author Mario Torre
  */
 public interface PlatformScreenSelector {
     

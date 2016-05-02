@@ -110,4 +110,19 @@
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <properties>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
 </project>

@@ -57,7 +57,6 @@ public interface CacioComponent {
      * to AWT itself.
      *
      * @param event the event to feed into AWT
-     * @param the priority for the event
      */
     void handlePeerEvent(AWTEvent event);
 
