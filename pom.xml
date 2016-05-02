@@ -6,12 +6,6 @@
   <version>1.6-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
-  
   <name>Caciocavallo Main Module</name>
   <description>Portable GUI backends for Java</description>
   <url>http://openjdk.java.net/projects/caciocavallo/</url>
