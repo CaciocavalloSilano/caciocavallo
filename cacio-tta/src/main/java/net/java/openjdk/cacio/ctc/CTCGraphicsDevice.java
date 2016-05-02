@@ -14,14 +14,14 @@ public class CTCGraphicsDevice extends GraphicsDevice {
 
     @Override
     public String getIDstring() {
-        // TODO Auto-generated method stub
-        return null;
+        return "CTCGraphicsDevice";
     }
 
     @Override
     public GraphicsConfiguration[] getConfigurations() {
-        // TODO Auto-generated method stub
-        return null;
+        GraphicsConfiguration[] configs = new GraphicsConfiguration[1];
+        configs[0] = getDefaultConfiguration();
+        return configs;
     }
 
     @Override
