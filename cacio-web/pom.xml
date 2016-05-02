@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.java.openjdk.cacio</groupId>
     <artifactId>cacio</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
   </parent>
   <artifactId>cacio-web</artifactId>
   <packaging>jar</packaging>
@@ -54,8 +53,7 @@
             <configuration>
               <target>
 
-                <get src="http://downloads.sourceforge.net/project/jskeylib/jskeylib-0.1/jskeylib-0.1.tar.gz"
-                     dest="${project.build.directory}" />
+                <get src="http://downloads.sourceforge.net/project/jskeylib/jskeylib-0.1/jskeylib-0.1.tar.gz" dest="${project.build.directory}" />
                 <untar src="${project.build.directory}/jskeylib-0.1.tar.gz" dest="${project.build.directory}" compression="gzip" />
                 <copy file="${project.build.directory}/jskeylib-0.1/jskeylib.js" tofile="${project.build.directory}/classes/keylib.js" />
               </target>
