@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2016 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -322,8 +322,14 @@ public class WindowClippedGraphics extends Graphics2D
 
     @Override
     public Graphics create(int x, int y, int w, int h) {
-        // The default implementation is perfectly suitable.
-        return super.create(x, y, w, h);
+        Graphics g =  super.create(x, y, w, h);
+        if (g instanceof Graphics2D && baseClip != null) {
+            AffineTransform t = AffineTransform.getTranslateInstance(-x, -y);
+            Shape s = transformShape(baseClip, t);
+            return new WindowClippedGraphics((Graphics2D)g, s);
+        } else {
+            return g;
+        }
     }
 
     @Override

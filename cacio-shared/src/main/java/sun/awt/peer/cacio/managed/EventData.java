@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2016 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -389,14 +389,30 @@ public class EventData {
     @Override
     public String toString() {
         switch (id) {
-        case MouseEvent.MOUSE_MOVED:
-            return "MOUSE_MOVED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
-        case MouseEvent.MOUSE_PRESSED:
-            return "MOUSE_PRESSED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
-        case MouseEvent.MOUSE_RELEASED:
-            return "MOUSE_RELEASED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
-        default:
-            return "UNKNOWN/UNIMPLEMENTED";
+            case MouseEvent.MOUSE_MOVED:
+                return "MOUSE_MOVED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+            case MouseEvent.MOUSE_PRESSED:
+                return "MOUSE_PRESSED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers + " button: " + button;
+            case MouseEvent.MOUSE_RELEASED:
+                return "MOUSE_RELEASED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers + " button: " + button;
+            case MouseEvent.MOUSE_ENTERED:
+                return "MOUSE_ENTERED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+            case MouseEvent.MOUSE_EXITED:
+                return "MOUSE_EXITED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+            case MouseEvent.MOUSE_CLICKED:
+                return "MOUSE_CLICKED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+            case MouseEvent.MOUSE_DRAGGED:
+                return "MOUSE_DRAGGED: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers;
+            case MouseEvent.MOUSE_WHEEL:
+                return "MOUSE_WHEEL: " + x + ", " + y + ", time: " + time + ", mods: " + modifiers + " button: " + button;
+            case KeyEvent.KEY_TYPED:
+                return "KEY_TYPED: " + this.getKeyChar() + " keycode = " + this.keyCode;
+            case KeyEvent.KEY_PRESSED:
+                return "KEY_PRESSED: " + this.getKeyChar() + " keycode = " + this.keyCode;
+            case KeyEvent.KEY_RELEASED:
+                return "KEY_RELEASED: " + this.getKeyChar() + " keycode = " + this.keyCode;
+            default:
+                return "UNKNOWN/UNIMPLEMENTED";
         }
     }
 }
