@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2016 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -110,7 +110,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      * @param screen the container to be used for toplevel windows
      * @param s the event source to use
      */
-    public FullScreenWindowFactory(PlatformScreen screen,
+    public  FullScreenWindowFactory(PlatformScreen screen,
                                    CacioEventSource s) {
 
         this(new DefaultScreenSelector(screen), s);
@@ -147,11 +147,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
     @Override
     public final
     PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent comp) {
-
-        GraphicsConfiguration gc =
-            comp.getAWTComponent().getGraphicsConfiguration();
-
-        PlatformScreen screen = selector.getPlatformScreen(gc);
+        PlatformScreen screen = selector.getPlatformScreen(comp);
         ScreenManagedWindowContainer smwc = screenMap.get(screen);
         if (smwc == null) {
             smwc = new ScreenManagedWindowContainer(screen);
@@ -201,6 +197,11 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         public PlatformScreen getPlatformScreen(GraphicsConfiguration config) {
 
             return this.screen;
+        }
+
+        @Override
+        public PlatformScreen getPlatformScreen(CacioComponent comp) {
+            return getPlatformScreen(comp.getAWTComponent().getGraphicsConfiguration());
         }
     }
     

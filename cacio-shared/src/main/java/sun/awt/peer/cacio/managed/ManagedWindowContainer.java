@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Sun Microsystems, Inc.  All Rights Reserved.
+ * Copyright 2008-2016 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -42,7 +42,7 @@ import java.util.List;
  * (windows can be nested), or a top level container, which is usually
  * implemented by client code.
  */
-public interface ManagedWindowContainer {
+interface ManagedWindowContainer {
 
     /**
      * Adds a child window to this container. This will be the topmost
