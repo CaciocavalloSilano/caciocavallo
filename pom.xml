@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>net.java.openjdk.cacio</groupId>
+  <groupId>com.github.caciocavallosilano</groupId>
   <artifactId>cacio</artifactId>
   <version>1.10-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Caciocavallo Main Module</name>
   <description>Portable GUI backends for Java</description>
-  <url>http://openjdk.java.net/projects/caciocavallo/</url>
+  <url>https://github.com/CaciocavalloSilano/caciocavallo</url>
 
   <licenses>
     <license>
@@ -20,24 +20,18 @@
   </licenses>
 
   <scm>
-    <connection>scm:hg:http://hg.openjdk.java.net/caciocavallo/ng/</connection>
-    <developerConnection>scm:hg:ssh://hg.openjdk.java.net/caciocavallo/ng/</developerConnection>
-    <url>http://hg.openjdk.java.net/caciocavallo/ng/</url>
+    <connection>scm:git:ssh://git@github.com/CaciocavalloSilano/caciocavallo.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/CaciocavalloSilano/caciocavallo.git</developerConnection>
+    <url>https://github.com/CaciocavalloSilano/caciocavallo</url>
     <tag>HEAD</tag>
   </scm>
 
   <developers>
     <developer>
-      <id>rkennke</id>
-      <name>Roman Kennke</name>
-      <email>roman@kennke.org</email>
-      <url>http://rkennke.wordpress.com</url>
-    </developer>
-    <developer>
-      <id>neugens</id>
-      <name>Mario Torre</name>
-      <email>neugens.limasoftware@gmail.com</email>
-      <url>http://jroller.com/neugens/</url>
+      <id>gschrader</id>
+      <name>Glen Schrader</name>
+      <email>gschrader@gmail.com</email>
+      <url>https://glenschrader.com</url>
     </developer>
   </developers>
 
@@ -115,8 +109,8 @@
 	    <runOrder>random</runOrder>
             <systemPropertyVariables>
               <java.awt.headless>false</java.awt.headless>
-              <awt.toolkit>net.java.openjdk.cacio.ctc.CTCToolkit</awt.toolkit>
-              <java.awt.graphicsenv>net.java.openjdk.cacio.ctc.CTCGraphicsEnvironment</java.awt.graphicsenv>
+              <awt.toolkit>CTCToolkit</awt.toolkit>
+              <java.awt.graphicsenv>CTCGraphicsEnvironment</java.awt.graphicsenv>
             </systemPropertyVariables>
           </configuration>
         </plugin>
