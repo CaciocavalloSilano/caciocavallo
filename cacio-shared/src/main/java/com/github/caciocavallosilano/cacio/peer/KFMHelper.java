@@ -26,9 +26,9 @@
 package com.github.caciocavallosilano.cacio.peer;
 
 import java.awt.Component;
+import java.awt.event.FocusEvent;
 
 import sun.awt.AWTAccessor;
-import sun.awt.CausedFocusEvent;
 
 class KFMHelper {
 
@@ -42,7 +42,7 @@ class KFMHelper {
 
     static int shouldNativelyFocusHeavyweight(Component heavyweight,
          Component descendant, boolean temporary,
-         boolean focusedWindowChangeAllowed, long time, CausedFocusEvent.Cause cause)
+         boolean focusedWindowChangeAllowed, long time, FocusEvent.Cause cause)
     {
         return AWTAccessor.getKeyboardFocusManagerAccessor().shouldNativelyFocusHeavyweight(heavyweight, descendant, temporary, focusedWindowChangeAllowed, time, cause);
     }

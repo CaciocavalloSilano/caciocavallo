@@ -399,7 +399,7 @@ public abstract class CacioToolkit extends SunToolkit {
         return clipboard;
     }
 
-    protected MouseInfoPeer getMouseInfoPeer() {
+    public MouseInfoPeer getMouseInfoPeer() {
         return CacioMouseInfoPeer.getInstance();
     }
 }

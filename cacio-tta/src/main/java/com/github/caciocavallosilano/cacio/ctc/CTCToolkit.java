@@ -115,12 +115,10 @@ public class CTCToolkit extends CacioToolkit {
         return new CTCRobotPeer();
     }
 
-    @Override
     protected int getScreenWidth() {
         return FullScreenWindowFactory.getScreenDimension().width;
     }
 
-    @Override
     protected int getScreenHeight() {
         return FullScreenWindowFactory.getScreenDimension().height;
     }
@@ -150,7 +148,7 @@ public class CTCToolkit extends CacioToolkit {
     }
 
     @Override
-    protected DesktopPeer createDesktopPeer(Desktop target)
+    public DesktopPeer createDesktopPeer(Desktop target)
             throws HeadlessException {
         // TODO Auto-generated method stub
         return null;
@@ -195,5 +193,10 @@ public class CTCToolkit extends CacioToolkit {
     @Override
     public DataTransferer getDataTransferer() {
         return null;
+    }
+
+    @Override
+    public boolean isTaskbarSupported() {
+        return true;
     }
 }

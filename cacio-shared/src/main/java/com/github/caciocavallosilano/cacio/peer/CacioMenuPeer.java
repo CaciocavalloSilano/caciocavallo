@@ -60,10 +60,10 @@ class CacioMenuPeer extends CacioMenuItemPeer
     }
 
     public void addItem(MenuItem item) {
-        MenuItemPeer mip = (MenuItemPeer) item.getPeer();
+        MenuItemPeer mip = (MenuItemPeer) CacioComponentPeer.getPeer(item);
         if (mip == null) {
             item.addNotify();
-            mip = (MenuItemPeer) item.getPeer();
+            mip = (MenuItemPeer) CacioComponentPeer.getPeer(item);
         }
         assert mip instanceof CacioMenuItemPeer;
         JMenuItem jmi = ((CacioMenuItemPeer) mip).getSwingMenu();

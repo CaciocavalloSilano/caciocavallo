@@ -61,10 +61,10 @@ class CacioFramePeer extends CacioWindowPeer implements FramePeer {
 
     public void setMenuBar(MenuBar mb) {
 
-        MenuBarPeer mbp = (MenuBarPeer) mb.getPeer();
+        MenuBarPeer mbp = (MenuBarPeer) CacioComponentPeer.getPeer(mb);
         if (mbp == null) {
             mb.addNotify();
-            mbp = (MenuBarPeer) mb.getPeer();
+            mbp = (MenuBarPeer) CacioComponentPeer.getPeer(mb);
         }
         assert mbp instanceof CacioMenuBarPeer;
         JMenuBar jmb = ((CacioMenuBarPeer) mbp).getSwingMenu();

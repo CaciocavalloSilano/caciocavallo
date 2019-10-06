@@ -25,8 +25,7 @@
 
 package com.github.caciocavallosilano.cacio.peer;
 
-import java.awt.Menu;
-import java.awt.MenuBar;
+import java.awt.*;
 import java.awt.peer.MenuBarPeer;
 import java.awt.peer.MenuPeer;
 import javax.swing.JMenu;
@@ -85,10 +84,10 @@ class CacioMenuBarPeer extends CacioMenuComponentPeer<MenuBar,JMenuBar>
     }
 
     private JMenu getSwingMenu(Menu m) {
-        MenuPeer mp = (MenuPeer) m.getPeer();
+        MenuPeer mp = (MenuPeer) CacioComponentPeer.getPeer(m);
         if (mp == null) {
             m.addNotify();
-            mp = (MenuPeer) m.getPeer();
+            mp = (MenuPeer) CacioComponentPeer.getPeer(m);
         }
         assert mp instanceof CacioMenuPeer;
         return (JMenu) ((CacioMenuPeer) mp).getSwingMenu();

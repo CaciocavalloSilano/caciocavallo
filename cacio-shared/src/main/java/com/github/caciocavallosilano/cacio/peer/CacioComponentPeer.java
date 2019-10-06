@@ -25,24 +25,7 @@
 
 package com.github.caciocavallosilano.cacio.peer;
 
-import java.awt.AWTEvent;
-import java.awt.AWTException;
-import java.awt.BufferCapabilities;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -56,11 +39,11 @@ import java.awt.image.VolatileImage;
 
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
+import java.awt.peer.MenuComponentPeer;
 
 import javax.swing.*;
 
 import sun.awt.SunToolkit;
-import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.*;
 
 import sun.awt.RepaintArea;
@@ -176,11 +159,19 @@ class CacioComponentPeer<AWTComponentType extends Component,
                 parentComp = parentComp.getParent();
             } else {
                 CacioComponentPeer parentPeer =
-                    (CacioComponentPeer) parentComp.getPeer();
+                    (CacioComponentPeer) getPeer(parentComp);
                 parent = parentPeer.platformWindow;
             }
         }
         platformWindow = pwf.createPlatformWindow(this, parent);
+    }
+
+    public static ComponentPeer getPeer(Component component) {
+        return AWTAccessor.getComponentAccessor().getPeer(component);
+    }
+
+    public static MenuComponentPeer getPeer(MenuComponent component) {
+        return AWTAccessor.getMenuComponentAccessor().getPeer(component);
     }
 
     private void initProxy() {
@@ -516,7 +507,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
     static final int SNFH_SUCCESS_PROCEED = 2;
 
     public boolean requestFocus(Component lightweightChild, boolean temporary,
-            boolean focusedWindowChangeAllowed, long time, Cause cause) {
+            boolean focusedWindowChangeAllowed, long time, FocusEvent.Cause cause) {
 
         if (KFMHelper.processSynchronousLightweightTransfer(getAWTComponent(),
                                                    lightweightChild,
@@ -640,7 +631,7 @@ class CacioComponentPeer<AWTComponentType extends Component,
         if (parentsEnabled) {
             Container parent = c.getParent();
             if (parent != null) {
-                ComponentPeer peer = parent.getPeer();
+                ComponentPeer peer = getPeer(parent);
                 if (peer instanceof CacioComponentPeer) {
                     parentsEnabled =
                             ((CacioComponentPeer) peer).isParentsEnabled();

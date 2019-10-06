@@ -41,6 +41,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
 import java.awt.event.PaintEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
@@ -50,7 +51,6 @@ import java.awt.image.VolatileImage;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 import java.awt.peer.WindowPeer;
-import sun.awt.CausedFocusEvent.Cause;
 import sun.java2d.pipe.Region;
 
 class ProxyWindowPeer implements WindowPeer {
@@ -240,10 +240,10 @@ class ProxyWindowPeer implements WindowPeer {
     @Override
     public boolean requestFocus(Component lightweightChild, boolean temporary,
                                 boolean focusedWindowChangeAllowed, long time,
-                                Cause cause) {
+                                FocusEvent.Cause cause) {
 
         return getTarget().requestFocus(lightweightChild, temporary,
-                                   focusedWindowChangeAllowed, time, cause);
+                focusedWindowChangeAllowed, time, cause);
     }
 
     @Override

@@ -31,8 +31,6 @@ import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.peer.KeyboardFocusManagerPeer;
 import sun.awt.AppContext;
-import sun.awt.CausedFocusEvent;
-import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.SunToolkit;
 
 class CacioKeyboardFocusManagerPeer implements KeyboardFocusManagerPeer {
@@ -106,19 +104,19 @@ class CacioKeyboardFocusManagerPeer implements KeyboardFocusManagerPeer {
     }
 
     boolean requestFocus(Component target, Component lightweightChild, boolean temporary,
-                         boolean focusedWindowChangeAllowed, long time, Cause cause) {
+                         boolean focusedWindowChangeAllowed, long time, FocusEvent.Cause cause) {
 
         if (lightweightChild == null) {
             lightweightChild = target;
         }
         Component currentOwner = getCurrentFocusOwner();
-        if (currentOwner != null && currentOwner.getPeer() == null) {
+        if (currentOwner != null && CacioComponentPeer.getPeer(currentOwner) == null) {
             currentOwner = null;
         }
-        FocusEvent fg = new CausedFocusEvent(lightweightChild, FocusEvent.FOCUS_GAINED, false, currentOwner, cause);
+        FocusEvent fg = new FocusEvent(lightweightChild, FocusEvent.FOCUS_GAINED, false, currentOwner, cause);
         FocusEvent fl = null;
         if (currentOwner != null) {
-            fl = new CausedFocusEvent(currentOwner, FocusEvent.FOCUS_LOST, false, lightweightChild, cause);
+            fl = new FocusEvent(currentOwner, FocusEvent.FOCUS_LOST, false, lightweightChild, cause);
         }
 
         if (fl != null) {

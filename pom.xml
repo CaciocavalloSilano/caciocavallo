@@ -55,7 +55,22 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>3.1.1</version>
+        <configuration>
+          <additionalOptions>
+            <additionalOption>-XDignore.symbol.file=true</additionalOption>
+            <additionalOption>--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.awt=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.awt.event=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.font=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.java2d.pipe=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.base/sun.security.action=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.java2d=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED</additionalOption>
+            <additionalOption>--add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED</additionalOption>
+          </additionalOptions>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -95,10 +110,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.2</version>
+          <version>3.8.1</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>11</source>
+            <target>11</target>
+            <compilerArgs>
+              <arg>-XDignore.symbol.file=true</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>

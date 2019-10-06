@@ -24,20 +24,19 @@
  */
 package com.github.caciocavallosilano.cacio.ctc;
 
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
+import com.github.caciocavallosilano.cacio.peer.managed.FullScreenWindowFactory;
+import sun.awt.image.BufferedImageGraphicsConfig;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 
-import com.github.caciocavallosilano.cacio.peer.managed.FullScreenWindowFactory;
-
-public class CTCGraphicsConfiguration extends GraphicsConfiguration {
+public class CTCGraphicsConfiguration extends BufferedImageGraphicsConfig {
 
     private CTCGraphicsDevice device;
 
     CTCGraphicsConfiguration(CTCGraphicsDevice dev) {
+        super(new BufferedImage(FullScreenWindowFactory.getScreenDimension().width, FullScreenWindowFactory.getScreenDimension().height, BufferedImage.TYPE_INT_ARGB), null);
         device = dev;
     }
 
@@ -54,18 +53,6 @@ public class CTCGraphicsConfiguration extends GraphicsConfiguration {
     @Override
     public ColorModel getColorModel(int transparency) {
         return ColorModel.getRGBdefault();
-    }
-
-    @Override
-    public AffineTransform getDefaultTransform() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public AffineTransform getNormalizingTransform() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
