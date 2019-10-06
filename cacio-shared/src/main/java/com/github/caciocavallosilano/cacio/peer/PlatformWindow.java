@@ -28,7 +28,6 @@ package com.github.caciocavallosilano.cacio.peer;
 import java.awt.AWTException;
 import java.awt.BufferCapabilities;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -41,7 +40,6 @@ import java.awt.image.ColorModel;
 import java.awt.peer.ComponentPeer;
 import java.awt.peer.ContainerPeer;
 
-import sun.awt.CausedFocusEvent.Cause;
 import sun.java2d.pipe.Region;
 
 public interface PlatformWindow {
@@ -200,27 +198,6 @@ public interface PlatformWindow {
      *        <code>false</code> hides it.
      */
     void setVisible(boolean b);
-
-    /**
-     * Requests a focus change to this window. If the focus change was
-     * successful it is necessary to send back the appropriate FocusEvent.
-     *
-     * @param lightweightChild the actual lightweight child that wants focus
-     * @param temporary <code>true</code> if the focus change should be
-     *        temporary, <code>false</code> otherwise
-     * @param focusedWindowChangeAllowed <code>true</code> when changing the
-     *        focus of the corresponding toplevel window is allowed,
-     *        <code>false</code> otherwise
-     * @param time the time of the focus change request
-     * @param cause the cause of the focus change request
-     *
-     * @return <code>true</code> when the focus transfer is guaranteed to be
-     *         successful, <code>false</code> otherwise
-     */
-    boolean requestFocus(Component lightweightChild, boolean temporary,
-                         boolean focusedWindowChangeAllowed, long time,
-                         Cause cause);
-
 
     /**
      * Creates back buffers for flipping. This method may throw an AWTException

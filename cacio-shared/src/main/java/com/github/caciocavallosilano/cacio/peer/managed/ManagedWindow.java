@@ -50,7 +50,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import sun.awt.CausedFocusEvent.Cause;
 import sun.awt.ConstrainableGraphics;
 import sun.java2d.pipe.Region;
 
@@ -413,15 +412,6 @@ class ManagedWindow
     @Override
     public void setBlocked(boolean blocked) {
         // TODO: Implement this.
-    }
-
-    @Override
-    public boolean requestFocus(Component lightweightChild, boolean temporary,
-                                boolean focusedWindowChangeAllowed, long time,
-                                Cause cause) {
-        FocusManager fm = FocusManager.getInstance();
-        fm.setFocusedWindow(this);
-        return true;
     }
 
     CacioComponent getCacioComponent() {

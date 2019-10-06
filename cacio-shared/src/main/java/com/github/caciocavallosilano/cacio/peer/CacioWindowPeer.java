@@ -101,7 +101,7 @@ class CacioWindowPeer extends CacioContainerPeer<Window, JRootPane>
 
             CacioComponentPeer parentPeer = null;
 
-            ComponentPeer parentComponentPeer = parentComp.getPeer();
+            ComponentPeer parentComponentPeer = getPeer(parentComp);
             if (parentComponentPeer instanceof CacioComponentPeer) {
                 parentPeer = (CacioComponentPeer) parentComponentPeer;
 
