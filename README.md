@@ -1,6 +1,6 @@
 # Caciocavallo headless Swing UI testing
 
-[![Actions Status](https://github.com/CaciocavalloSilano/caciocavallo/workflows/maven/badge.svg)](https://github.com/CaciocavalloSilano/caciocavallo/actions)
+[![Actions Status](https://github.com/CaciocavalloSilano/caciocavallo/workflows/Java%20CI/badge.svg)](https://github.com/CaciocavalloSilano/caciocavallo/actions)
 [![License](https://img.shields.io/github/license/CaciocavalloSilano/caciocavallo.svg)](https://raw.githubusercontent.com/CaciocavalloSilano/caciocavallo/master/LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.caciocavallosilano/cacio-tta/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.caciocavallosilano/cacio-tta)
 

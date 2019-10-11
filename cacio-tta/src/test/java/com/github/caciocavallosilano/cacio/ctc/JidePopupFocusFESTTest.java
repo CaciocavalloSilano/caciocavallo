@@ -24,6 +24,7 @@
  */
 package com.github.caciocavallosilano.cacio.ctc;
 
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
 import com.jidesoft.hints.AbstractIntelliHints;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;
@@ -39,8 +40,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-//@RunWith(CacioFESTRunner.class)
-@RunWith(GUITestRunner.class)
+@RunWith(CacioAssertJRunner.class)
+//@RunWith(GUITestRunner.class)
 public class JidePopupFocusFESTTest {
 
     private JFrame frame;
