@@ -80,8 +80,8 @@ In some cases, it may be necessary to run the whole test suite in Cacio-tta. In 
       <configuration>
         <systemPropertyVariables>
           <java.awt.headless>false</java.awt.headless>
-          <awt.toolkit>CTCToolkit</awt.toolkit>
-          <java.awt.graphicsenv>CTCGraphicsEnvironment</java.awt.graphicsenv>
+          <awt.toolkit>com.github.caciocavallosilano.cacio.ctc.CTCToolkit</awt.toolkit>
+          <java.awt.graphicsenv>com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment</java.awt.graphicsenv>
         </systemPropertyVariables>
       </configuration>
     </plugin>
@@ -91,8 +91,8 @@ Or to your `build.gradle`
 
 ```groovy
 test {
-    systemProperty "awt.toolkit", "CTCToolkit"
-    systemProperty "java.awt.graphicsenv", "CTCGraphicsEnvironment"
+    systemProperty "awt.toolkit", "com.github.caciocavallosilano.cacio.ctc.CTCToolkit"
+    systemProperty "java.awt.graphicsenv", "com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment"
 }
 ```
 This makes sure that Cacio is loaded instead of the default toolkit. This may be necessary, if any of your tests load any AWT, Java2d or Swing class, and are not annotated with the above annotation. 
