@@ -48,10 +48,13 @@ import org.assertj.swing.annotation.GUITest;
 import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
 
 import org.junit.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.runner.RunWith;
 
 @RunWith(CacioAssertJRunner.class)
 //@RunWith(GUITestRunner.class)
+@DisabledOnOs(OS.LINUX)
 public class MouseInfoTest {
 
     @Test
