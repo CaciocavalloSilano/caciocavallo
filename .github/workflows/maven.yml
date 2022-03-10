@@ -5,7 +5,11 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos, ubuntu, windows]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}-latest
 
     steps:
       - uses: actions/checkout@v1
@@ -14,4 +18,15 @@ jobs:
         with:
           java-version: 17
       - name: Build with Maven
-        run: mvn package --file pom.xml
+        run: mvn test --batch-mode --fail-at-end
+      - uses: actions/upload-artifact@v2
+        name: Publish ${{ matrix.os }} Test Output
+        if: ${{ always() }}
+        with:
+          name: surefire-reports-build-${{ matrix.os }}
+          path: '**/surefire-reports/*.txt'
+      - name: Publish ${{ matrix.os }} Test Report
+        if: ${{ always() }}
+        uses: scacap/action-surefire-report@v1
+        with:
+          check_name: Test Report (${{ matrix.os }})
