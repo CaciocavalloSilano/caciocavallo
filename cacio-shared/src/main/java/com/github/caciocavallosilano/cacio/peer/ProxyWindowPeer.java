@@ -252,11 +252,6 @@ class ProxyWindowPeer implements WindowPeer {
     }
 
     @Override
-    public Image createImage(ImageProducer producer) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public Image createImage(int width, int height) {
         return getTarget().createImage(width, height);
     }
@@ -264,16 +259,6 @@ class ProxyWindowPeer implements WindowPeer {
     @Override
     public VolatileImage createVolatileImage(int width, int height) {
         return getTarget().createVolatileImage(width, height);
-    }
-
-    @Override
-    public boolean prepareImage(Image img, int w, int h, ImageObserver o) {
-        return getTarget().prepareImage(img, w, h, o);
-    }
-
-    @Override
-    public int checkImage(Image img, int w, int h, ImageObserver o) {
-        return getTarget().checkImage(img, w, h, o);
     }
 
     @Override
