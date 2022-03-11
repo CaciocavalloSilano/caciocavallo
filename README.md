@@ -35,7 +35,7 @@ Version      | JDK
 ------------ | -------------
 1.10         | JDK8
 1.11         | JDK11
-1.12         | JDK17
+1.17         | JDK17
 
 <sub><sup>Earlier JDKs should use `net.java.openjdk.cacio` releases</sup></sub>
 
