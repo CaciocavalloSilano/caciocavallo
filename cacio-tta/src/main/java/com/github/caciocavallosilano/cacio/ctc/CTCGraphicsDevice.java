@@ -24,8 +24,7 @@
  */
 package com.github.caciocavallosilano.cacio.ctc;
 
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
+import java.awt.*;
 
 public class CTCGraphicsDevice extends GraphicsDevice {
 

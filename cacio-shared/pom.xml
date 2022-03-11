@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.github.caciocavallosilano</groupId>
     <artifactId>cacio</artifactId>
-    <version>1.12-SNAPSHOT</version>
+    <version>1.18-SNAPSHOT</version>
   </parent>
   <artifactId>cacio-shared</artifactId>
   <packaging>jar</packaging>
@@ -14,15 +14,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -30,8 +21,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>17</source>
+          <target>17</target>
           <compilerArgs>
             <arg>-XDignore.symbol.file=true</arg>
             <arg>--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED</arg>

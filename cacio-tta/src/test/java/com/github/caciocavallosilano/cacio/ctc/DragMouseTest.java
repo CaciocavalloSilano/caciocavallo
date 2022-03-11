@@ -42,6 +42,7 @@ import javax.swing.JFrame;
 
 import com.github.caciocavallosilano.cacio.ctc.junit.CacioTestRunner;
 
+import org.assertj.swing.timing.Pause;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -82,6 +83,7 @@ public class DragMouseTest {
                 // Only here for waiting for idle EQ.
             }
         });
+        Pause.pause(100);
         assertEquals(MouseEvent.MOUSE_MOVED, evts.get(0).getID());
         assertEquals(20, evts.get(0).getX());
         assertEquals(20, evts.get(0).getY());

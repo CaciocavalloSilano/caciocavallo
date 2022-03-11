@@ -32,17 +32,67 @@ import com.github.caciocavallosilano.cacio.ctc.CTCToolkit;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.awt.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+
 public class CacioTestRunner extends BlockJUnit4ClassRunner {
+    // https://stackoverflow.com/a/56043252/1050369
+    private static final VarHandle MODIFIERS;
 
     static {
-        System.setProperty("awt.toolkit", CTCToolkit.class.getName());
-        System.setProperty("java.awt.graphicsenv", CTCGraphicsEnvironment.class.getName());
+        try {
+            var lookup = MethodHandles.privateLookupIn(Field.class, MethodHandles.lookup());
+            MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
+        } catch (IllegalAccessException | NoSuchFieldException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    static {
+        try {
+            Field toolkit = Toolkit.class.getDeclaredField("toolkit");
+            toolkit.setAccessible(true);
+            toolkit.set(null, new CTCToolkit());
+
+            Field defaultHeadlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("defaultHeadless");
+            defaultHeadlessField.setAccessible(true);
+            defaultHeadlessField.set(null,Boolean.TRUE);
+            Field headlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("headless");
+            headlessField.setAccessible(true);
+            headlessField.set(null,Boolean.TRUE);
+
+            Class<?> geCls = Class.forName("java.awt.GraphicsEnvironment$LocalGE");
+            Field ge = geCls.getDeclaredField("INSTANCE");
+            ge.setAccessible(true);
+            defaultHeadlessField.set(null, Boolean.FALSE);
+            headlessField.set(null,Boolean.FALSE);
+
+            makeNonFinal(ge);
+
+            Class<?> smfCls = Class.forName("sun.java2d.SurfaceManagerFactory");
+            Field smf = smfCls.getDeclaredField("instance");
+            smf.setAccessible(true);
+            smf.set(null, null);
+
+            ge.set(null, new CTCGraphicsEnvironment());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         System.setProperty("swing.defaultlaf", MetalLookAndFeel.class.getName());
-        System.setProperty("java.awt.headless", "false");
     }
 
     public CacioTestRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
 
+    public static void makeNonFinal(Field field) {
+        int mods = field.getModifiers();
+        if (Modifier.isFinal(mods)) {
+            MODIFIERS.set(field, mods & ~Modifier.FINAL);
+        }
+    }
 }
