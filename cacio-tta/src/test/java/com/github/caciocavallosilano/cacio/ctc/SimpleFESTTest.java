@@ -24,44 +24,35 @@
  */
 package com.github.caciocavallosilano.cacio.ctc;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
 import junit.framework.Assert;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.KeyPressInfo;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.edt.GuiTask;
 import org.assertj.swing.fixture.*;
-import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
-@RunWith(CacioAssertJRunner.class)
-//@RunWith(GUITestRunner.class)
+@CacioTest
 public class SimpleFESTTest {
 
     private JFrame frame;
     private FrameFixture ff;
     private Set menuClicks = new HashSet();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         GuiActionRunner.execute(new GuiTask() {
 
@@ -126,7 +117,7 @@ public class SimpleFESTTest {
         ff = new FrameFixture(frame);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ff.cleanUp();
         GuiActionRunner.execute(new GuiTask() {

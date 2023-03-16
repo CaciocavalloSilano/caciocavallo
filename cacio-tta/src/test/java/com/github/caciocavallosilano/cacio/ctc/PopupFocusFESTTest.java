@@ -25,6 +25,7 @@
 
 package com.github.caciocavallosilano.cacio.ctc;
 
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.edt.GuiTask;
@@ -32,23 +33,20 @@ import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.timing.Pause;
-import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.awt.*;
 
-@RunWith(CacioAssertJRunner.class)
-//@RunWith(GUITestRunner.class)
+@CacioTest
 public class PopupFocusFESTTest {
 
     private JFrame frame;
     private FrameFixture ff;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         GuiActionRunner.execute(new GuiTask() {
             @Override
@@ -74,7 +72,7 @@ public class PopupFocusFESTTest {
         ff = new FrameFixture(frame);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ff.cleanUp();
         GuiActionRunner.execute(new GuiTask() {

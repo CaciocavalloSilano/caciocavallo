@@ -21,9 +21,9 @@ This has several disadvantages:
  First of all, on Windows you need a real screen/graphics card to be present (bad on servers). 
  Even worse, on many Windows servers, you need a user to be logged in, and stay logged in, and the CI server running in that session to be able to access the screen. 
  On other servers, multiple concurrent logons are possible, but not sharing a screen, e.g. when some guy logs into the CI server to do some admin work, 
- it would grab the screen from the CI user, etc. All very complicated and time consuming to setup. Even popups for Windows security updates will disrupt tests.
+ it would grab the screen from the CI user, etc. All very complicated and time-consuming to set up. Even popups for Windows security updates will disrupt tests.
 
-This is where Cacio-tta comes into play. It provides a graphics stack for the Java VM, that is completely independent from the environment. 
+This is where Cacio-tta comes into play. It provides a graphics stack for the Java VM, that is completely independent of the environment. 
 It renders everything into a virtual screen, which is simply a BufferedImage, and is driven solely by java.awt.Robot events. 
 This makes it a perfect fit for GUI testing environments.
 
@@ -31,11 +31,11 @@ This makes it a perfect fit for GUI testing environments.
 
 The goal is to support all LTS OpenJDK releases.
 
-Version      | JDK
------------- | -------------
-1.10         | JDK8
-1.11         | JDK11
-1.17         | JDK17
+| Version | JDK   |
+|---------|-------|
+| 1.10    | JDK8  |
+| 1.11    | JDK11 |
+| 1.17    | JDK17 |
 
 <sub><sup>Earlier JDKs should use `net.java.openjdk.cacio` releases</sup></sub>
 
@@ -57,14 +57,14 @@ Or to your `build.gradle`
 testCompile 'com.github.caciocavallosilano:cacio-tta:1.+'
 ```
 
-2. Run your test with CacioTestRunner
+2. Run your test
 Add the following annotation to your test class:
 
-`@RunWith(CacioTestRunner.class)`
+`@CacioTest`
 
-If you are using AssertJ Swing and want to take advantage of its additional capabilities (create screenshots on failure, run tests in EDT, etc), use this instead:
+If you don't want to take a screenshot on failure using AssertJ Swing, use this:
 
-`@RunWith(CacioAssertJRunner.class)`
+`@ExtendWith(CacioExtension.class)`
 
 These annotations will make your test run in a Cacio-tta virtual screen environment
 

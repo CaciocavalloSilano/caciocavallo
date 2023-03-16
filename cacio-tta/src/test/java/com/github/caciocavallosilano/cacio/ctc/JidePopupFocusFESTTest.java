@@ -24,30 +24,27 @@
  */
 package com.github.caciocavallosilano.cacio.ctc;
 
-import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
 import com.jidesoft.hints.AbstractIntelliHints;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.edt.GuiTask;
 import org.assertj.swing.fixture.FrameFixture;
-import org.assertj.swing.junit.runner.GUITestRunner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-@RunWith(CacioAssertJRunner.class)
-//@RunWith(GUITestRunner.class)
+@CacioTest
 public class JidePopupFocusFESTTest {
 
     private JFrame frame;
     private FrameFixture ff;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         GuiActionRunner.execute(new GuiTask() {
             @Override
@@ -105,7 +102,7 @@ public class JidePopupFocusFESTTest {
         ff = new FrameFixture(frame);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ff.cleanUp();
         GuiActionRunner.execute(new GuiTask() {

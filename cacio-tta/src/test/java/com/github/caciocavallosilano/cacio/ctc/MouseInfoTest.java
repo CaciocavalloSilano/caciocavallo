@@ -36,24 +36,18 @@
 
 package com.github.caciocavallosilano.cacio.ctc;
 
-import static org.junit.Assert.assertEquals;
-
-import java.awt.AWTException;
-import java.awt.Point;
-import java.awt.Robot;
-
-import javax.swing.JFrame;
-
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
 import org.assertj.swing.annotation.GUITest;
-import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.junit.runner.RunWith;
 
-@RunWith(CacioAssertJRunner.class)
-//@RunWith(GUITestRunner.class)
+import javax.swing.*;
+import java.awt.*;
+
+import static org.junit.Assert.assertEquals;
+
+@CacioTest
 @DisabledOnOs(OS.LINUX)
 public class MouseInfoTest {
 
