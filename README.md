@@ -84,6 +84,21 @@ In some cases, it may be necessary to run the whole test suite in Cacio-tta. In 
           <awt.toolkit>com.github.caciocavallosilano.cacio.ctc.CTCToolkit</awt.toolkit>
           <java.awt.graphicsenv>com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment</java.awt.graphicsenv>
         </systemPropertyVariables>
+        <argLine>
+         --add-exports=java.desktop/java.awt=ALL-UNNAMED
+         --add-exports=java.desktop/java.awt.peer=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED
+         --add-exports=java.desktop/sun.java2d=ALL-UNNAMED
+         --add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt.event=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED
+         --add-exports=java.base/sun.security.action=ALL-UNNAMED
+         --add-opens=java.base/java.util=ALL-UNNAMED
+         --add-opens=java.desktop/java.awt=ALL-UNNAMED
+         --add-opens=java.desktop/sun.java2d=ALL-UNNAMED
+         --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+        </argLine>
       </configuration>
     </plugin>
 ```
@@ -94,10 +109,28 @@ Or to your `build.gradle`
 test {
     systemProperty "awt.toolkit", "com.github.caciocavallosilano.cacio.ctc.CTCToolkit"
     systemProperty "java.awt.graphicsenv", "com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment"
+
+    jvmArgs([
+            "--add-exports=java.desktop/java.awt=ALL-UNNAMED",
+            "--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.java2d=ALL-UNNAMED",
+            "--add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt.event=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED",
+            "--add-exports=java.base/sun.security.action=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED",
+            "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
+            "--add-opens=java.desktop/sun.java2d=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED"
+    ])
 }
 ```
 This makes sure that Cacio is loaded instead of the default toolkit. This may be necessary, if any of your tests load any AWT, Java2d or Swing class, and are not annotated with the above annotation. 
 This is because Java only allows to set the toolkit once, and it cannot be unloaded or unset. When you load any GUI class before loading the CacioTestRunner, the default toolkit will be loaded, and tests will not run in Cacio.
+
+The `add-exports` and `add-opens` jvm args are required with Java 17, since these are internal packages that aren't exported, these can't be added to a `module-info.java` file.
 
 You can change the resolution of the virtual screen by setting the `cacio.managed.screensize` system property.
 
@@ -105,6 +138,13 @@ For example:
 ```java
 System.setProperty("cacio.managed.screensize", "1920x1080");
 ```
+
+## Java 17 and later
+The system properties are no longer supported or needed in `pom.xml` or `build.gradle`. 
+
+If you have a mix of GUI and non-GUI tests you may have to ensure that the toolkit is initialized with the Cacio version before any other test might initialize the JDK toolkit otherwise a segmentation fault will occur and crash the JCM.
+
+You can work around this by ordering your tests or split them out with JUnit Categories.
 
 ## Checkout the code
 
