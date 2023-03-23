@@ -25,12 +25,12 @@
 
 package com.github.caciocavallosilano.cacio.ctc;
 
-import static org.junit.Assert.assertEquals;
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
+import org.assertj.swing.timing.Pause;
+import org.junit.jupiter.api.Test;
 
-import java.awt.AWTException;
-import java.awt.EventQueue;
-import java.awt.Point;
-import java.awt.Robot;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,15 +38,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
+import static org.junit.Assert.assertEquals;
 
-import com.github.caciocavallosilano.cacio.ctc.junit.CacioTestRunner;
-
-import org.assertj.swing.timing.Pause;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-@RunWith(value = CacioTestRunner.class)
+@CacioTest
 public class DragMouseTest {
 
     @Test

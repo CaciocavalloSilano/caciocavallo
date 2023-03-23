@@ -25,35 +25,31 @@
 
 package com.github.caciocavallosilano.cacio.ctc;
 
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.swing.JLabel;
-
+import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.MouseButton;
 import org.assertj.swing.fixture.Containers;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.fixture.JLabelFixture;
-import com.github.caciocavallosilano.cacio.ctc.junit.CacioAssertJRunner;
-
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@RunWith(CacioAssertJRunner.class)
-//@RunWith(GUITestRunner.class)
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.List;
+
+@CacioTest
 public class ClickEventTestFESTTest {
 
     private FrameFixture ff;
     private List<MouseEvent> events;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events = new LinkedList<MouseEvent>();
         final JLabel label = new JLabel("label");
@@ -77,7 +73,7 @@ public class ClickEventTestFESTTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ff.cleanUp();
         ff = null;

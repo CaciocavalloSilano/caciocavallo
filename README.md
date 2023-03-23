@@ -21,9 +21,9 @@ This has several disadvantages:
  First of all, on Windows you need a real screen/graphics card to be present (bad on servers). 
  Even worse, on many Windows servers, you need a user to be logged in, and stay logged in, and the CI server running in that session to be able to access the screen. 
  On other servers, multiple concurrent logons are possible, but not sharing a screen, e.g. when some guy logs into the CI server to do some admin work, 
- it would grab the screen from the CI user, etc. All very complicated and time consuming to setup. Even popups for Windows security updates will disrupt tests.
+ it would grab the screen from the CI user, etc. All very complicated and time-consuming to set up. Even popups for Windows security updates will disrupt tests.
 
-This is where Cacio-tta comes into play. It provides a graphics stack for the Java VM, that is completely independent from the environment. 
+This is where Cacio-tta comes into play. It provides a graphics stack for the Java VM, that is completely independent of the environment. 
 It renders everything into a virtual screen, which is simply a BufferedImage, and is driven solely by java.awt.Robot events. 
 This makes it a perfect fit for GUI testing environments.
 
@@ -31,11 +31,11 @@ This makes it a perfect fit for GUI testing environments.
 
 The goal is to support all LTS OpenJDK releases.
 
-Version      | JDK
------------- | -------------
-1.10         | JDK8
-1.11         | JDK11
-1.17         | JDK17
+| Version | JDK   |
+|---------|-------|
+| 1.10    | JDK8  |
+| 1.11    | JDK11 |
+| 1.17    | JDK17 |
 
 <sub><sup>Earlier JDKs should use `net.java.openjdk.cacio` releases</sup></sub>
 
@@ -57,14 +57,14 @@ Or to your `build.gradle`
 testCompile 'com.github.caciocavallosilano:cacio-tta:1.+'
 ```
 
-2. Run your test with CacioTestRunner
+2. Run your test
 Add the following annotation to your test class:
 
-`@RunWith(CacioTestRunner.class)`
+`@CacioTest`
 
-If you are using AssertJ Swing and want to take advantage of its additional capabilities (create screenshots on failure, run tests in EDT, etc), use this instead:
+If you don't want to take a screenshot on failure using AssertJ Swing, use this:
 
-`@RunWith(CacioAssertJRunner.class)`
+`@ExtendWith(CacioExtension.class)`
 
 These annotations will make your test run in a Cacio-tta virtual screen environment
 
@@ -84,6 +84,21 @@ In some cases, it may be necessary to run the whole test suite in Cacio-tta. In 
           <awt.toolkit>com.github.caciocavallosilano.cacio.ctc.CTCToolkit</awt.toolkit>
           <java.awt.graphicsenv>com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment</java.awt.graphicsenv>
         </systemPropertyVariables>
+        <argLine>
+         --add-exports=java.desktop/java.awt=ALL-UNNAMED
+         --add-exports=java.desktop/java.awt.peer=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED
+         --add-exports=java.desktop/sun.java2d=ALL-UNNAMED
+         --add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt.event=ALL-UNNAMED
+         --add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED
+         --add-exports=java.base/sun.security.action=ALL-UNNAMED
+         --add-opens=java.base/java.util=ALL-UNNAMED
+         --add-opens=java.desktop/java.awt=ALL-UNNAMED
+         --add-opens=java.desktop/sun.java2d=ALL-UNNAMED
+         --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+        </argLine>
       </configuration>
     </plugin>
 ```
@@ -94,10 +109,28 @@ Or to your `build.gradle`
 test {
     systemProperty "awt.toolkit", "com.github.caciocavallosilano.cacio.ctc.CTCToolkit"
     systemProperty "java.awt.graphicsenv", "com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment"
+
+    jvmArgs([
+            "--add-exports=java.desktop/java.awt=ALL-UNNAMED",
+            "--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.java2d=ALL-UNNAMED",
+            "--add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt.event=ALL-UNNAMED",
+            "--add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED",
+            "--add-exports=java.base/sun.security.action=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED",
+            "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
+            "--add-opens=java.desktop/sun.java2d=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED"
+    ])
 }
 ```
 This makes sure that Cacio is loaded instead of the default toolkit. This may be necessary, if any of your tests load any AWT, Java2d or Swing class, and are not annotated with the above annotation. 
 This is because Java only allows to set the toolkit once, and it cannot be unloaded or unset. When you load any GUI class before loading the CacioTestRunner, the default toolkit will be loaded, and tests will not run in Cacio.
+
+The `add-exports` and `add-opens` jvm args are required with Java 17, since these are internal packages that aren't exported, these can't be added to a `module-info.java` file.
 
 You can change the resolution of the virtual screen by setting the `cacio.managed.screensize` system property.
 
@@ -105,6 +138,13 @@ For example:
 ```java
 System.setProperty("cacio.managed.screensize", "1920x1080");
 ```
+
+## Java 17 and later
+The system properties are no longer supported or needed in `pom.xml` or `build.gradle`. 
+
+If you have a mix of GUI and non-GUI tests you may have to ensure that the toolkit is initialized with the Cacio version before any other test might initialize the JDK toolkit otherwise a segmentation fault will occur and crash the JCM.
+
+You can work around this by ordering your tests or split them out with JUnit Categories.
 
 ## Checkout the code
 

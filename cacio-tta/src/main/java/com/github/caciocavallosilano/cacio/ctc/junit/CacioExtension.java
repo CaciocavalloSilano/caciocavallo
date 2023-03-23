@@ -24,21 +24,22 @@
  */
 package com.github.caciocavallosilano.cacio.ctc.junit;
 
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
 import com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment;
 import com.github.caciocavallosilano.cacio.ctc.CTCToolkit;
+import org.junit.jupiter.api.extension.ConditionEvaluationResult;
+import org.junit.jupiter.api.extension.ExecutionCondition;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.InitializationError;
-
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
-public class CacioTestRunner extends BlockJUnit4ClassRunner {
+public class CacioExtension implements ExecutionCondition {
     // https://stackoverflow.com/a/56043252/1050369
     private static final VarHandle MODIFIERS;
 
@@ -59,16 +60,16 @@ public class CacioTestRunner extends BlockJUnit4ClassRunner {
 
             Field defaultHeadlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("defaultHeadless");
             defaultHeadlessField.setAccessible(true);
-            defaultHeadlessField.set(null,Boolean.TRUE);
+            defaultHeadlessField.set(null, Boolean.TRUE);
             Field headlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("headless");
             headlessField.setAccessible(true);
-            headlessField.set(null,Boolean.TRUE);
+            headlessField.set(null, Boolean.TRUE);
 
             Class<?> geCls = Class.forName("java.awt.GraphicsEnvironment$LocalGE");
             Field ge = geCls.getDeclaredField("INSTANCE");
             ge.setAccessible(true);
             defaultHeadlessField.set(null, Boolean.FALSE);
-            headlessField.set(null,Boolean.FALSE);
+            headlessField.set(null, Boolean.FALSE);
 
             makeNonFinal(ge);
 
@@ -85,14 +86,18 @@ public class CacioTestRunner extends BlockJUnit4ClassRunner {
         System.setProperty("swing.defaultlaf", MetalLookAndFeel.class.getName());
     }
 
-    public CacioTestRunner(Class<?> klass) throws InitializationError {
-        super(klass);
-    }
-
     public static void makeNonFinal(Field field) {
         int mods = field.getModifiers();
         if (Modifier.isFinal(mods)) {
             MODIFIERS.set(field, mods & ~Modifier.FINAL);
         }
+    }
+
+    @Override
+    public final ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
+        AnnotatedElement element = context.getElement().orElse(null);
+        return AnnotationUtils.findAnnotation(element, CacioTest.class)
+                .map(annotation -> ConditionEvaluationResult.enabled("@GUITest is present"))
+                .orElse(ConditionEvaluationResult.enabled("@GUITest is not present"));
     }
 }
