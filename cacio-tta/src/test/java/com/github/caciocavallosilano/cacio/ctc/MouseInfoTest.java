@@ -39,28 +39,30 @@ package com.github.caciocavallosilano.cacio.ctc;
 import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
 import org.assertj.swing.annotation.GUITest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @CacioTest
-@DisabledOnOs(OS.LINUX)
 public class MouseInfoTest {
 
     @Test
     @GUITest
-    public void testSimpleMousePosition() throws AWTException {
+    public void testSimpleMousePosition() throws Exception {
         JFrame f = new JFrame();
         f.setSize(100, 100);
         f.setLocation(100, 100);
         f.setVisible(true);
-        Robot r = new Robot();
+        Robot r = new Robot(f.getGraphicsConfiguration().getDevice());
         r.mouseMove(150, 150);
+        r.waitForIdle();
+
         Point p = f.getMousePosition();
+
+        assertNotNull(p);
         assertEquals(50, p.x);
         assertEquals(50, p.y);
     }

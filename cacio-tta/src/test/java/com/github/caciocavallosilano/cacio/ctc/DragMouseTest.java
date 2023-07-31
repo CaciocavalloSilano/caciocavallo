@@ -26,7 +26,6 @@
 package com.github.caciocavallosilano.cacio.ctc;
 
 import com.github.caciocavallosilano.cacio.ctc.junit.CacioTest;
-import org.assertj.swing.timing.Pause;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -70,14 +69,7 @@ public class DragMouseTest {
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
         robot.mouseMove(loc.x + 30, loc.y + 30);
         robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-        EventQueue.invokeAndWait(new Runnable() {
-            
-            @Override
-            public void run() {
-                // Only here for waiting for idle EQ.
-            }
-        });
-        Pause.pause(100);
+        robot.waitForIdle();
         assertEquals(MouseEvent.MOUSE_MOVED, evts.get(0).getID());
         assertEquals(20, evts.get(0).getX());
         assertEquals(20, evts.get(0).getY());
