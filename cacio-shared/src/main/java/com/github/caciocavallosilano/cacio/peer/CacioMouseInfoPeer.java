@@ -76,7 +76,7 @@ public class CacioMouseInfoPeer implements MouseInfoPeer {
         Window[] windows = Window.getWindows();
         Window found = null;
         for (Window window : windows) {
-            if (window.isVisible() && isMouseInWindowRegion(w)) {
+            if (window.isVisible() && isMouseInWindowRegion(w) && window.isActive()) {
                 found = window;
                 break;
             }
