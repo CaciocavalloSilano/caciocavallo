@@ -37,6 +37,7 @@ public class ScreenshotFailureExtension implements TestExecutionExceptionHandler
     private final FailureScreenshotTaker screenshotTaker;
 
     public ScreenshotFailureExtension() {
+        System.setProperty("org.assertj.swing.preserve_screenshots", "true");
         this.screenshotTaker = new FailureScreenshotTaker(new ImageFolderCreator().createImageFolder());
     }
 
