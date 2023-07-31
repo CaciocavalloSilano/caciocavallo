@@ -3,7 +3,7 @@
 
   <groupId>com.github.caciocavallosilano</groupId>
   <artifactId>cacio</artifactId>
-  <version>1.17.2-SNAPSHOT</version>
+  <version>1.17.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Caciocavallo Main Module</name>
