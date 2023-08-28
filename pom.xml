@@ -3,7 +3,7 @@
 
   <groupId>com.github.caciocavallosilano</groupId>
   <artifactId>cacio</artifactId>
-  <version>1.17.3</version>
+  <version>1.17.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Caciocavallo Main Module</name>
@@ -23,7 +23,7 @@
     <connection>scm:git:ssh://git@github.com/CaciocavalloSilano/caciocavallo.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/CaciocavalloSilano/caciocavallo.git</developerConnection>
     <url>https://github.com/CaciocavalloSilano/caciocavallo</url>
-    <tag>cacio-1.17.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
