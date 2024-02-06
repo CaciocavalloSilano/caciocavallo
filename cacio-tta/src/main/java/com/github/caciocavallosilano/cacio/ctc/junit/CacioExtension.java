@@ -26,6 +26,9 @@ package com.github.caciocavallosilano.cacio.ctc.junit;
 
 import com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment;
 import com.github.caciocavallosilano.cacio.ctc.CTCToolkit;
+import org.assertj.core.internal.bytebuddy.ByteBuddy;
+import org.assertj.core.internal.bytebuddy.implementation.FixedValue;
+import org.assertj.core.internal.bytebuddy.matcher.ElementMatchers;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -65,20 +68,16 @@ public class CacioExtension implements ExecutionCondition {
             headlessField.setAccessible(true);
             headlessField.set(null, Boolean.TRUE);
 
-            Class<?> geCls = Class.forName("java.awt.GraphicsEnvironment$LocalGE");
-            Field ge = geCls.getDeclaredField("INSTANCE");
-            ge.setAccessible(true);
+            injectCTCGraphicsEnvironment();
+
             defaultHeadlessField.set(null, Boolean.FALSE);
             headlessField.set(null, Boolean.FALSE);
-
-            makeNonFinal(ge);
 
             Class<?> smfCls = Class.forName("sun.java2d.SurfaceManagerFactory");
             Field smf = smfCls.getDeclaredField("instance");
             smf.setAccessible(true);
             smf.set(null, null);
 
-            ge.set(null, new CTCGraphicsEnvironment());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,11 +85,14 @@ public class CacioExtension implements ExecutionCondition {
         System.setProperty("swing.defaultlaf", MetalLookAndFeel.class.getName());
     }
 
-    public static void makeNonFinal(Field field) {
-        int mods = field.getModifiers();
-        if (Modifier.isFinal(mods)) {
-            MODIFIERS.set(field, mods & ~Modifier.FINAL);
-        }
+    public static void injectCTCGraphicsEnvironment() throws ClassNotFoundException {
+        new ByteBuddy()
+                .subclass(Class.forName("sun.awt.PlatformGraphicsInfo"))
+                .method(ElementMatchers.named("createGE"))
+                .intercept(FixedValue.value(new CTCGraphicsEnvironment()))
+                .make()
+                .load(CacioExtension.class.getClassLoader())
+                .getLoaded();
     }
 
     @Override
