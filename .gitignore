@@ -17,3 +17,12 @@ target/
 
 # OS X
 .DS_Store
+
+# jenv
+
+
+# jenv
+.java-version
+
+# log files
+*.log
