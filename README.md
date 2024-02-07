@@ -5,8 +5,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.caciocavallosilano/cacio-tta/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.caciocavallosilano/cacio-tta)
 
 ## Please note
-<span style="color:blue">This is a fork of the Caciocavallo project. It's purpose is to enable using a fixed version in the OHDSI Rebbit tools (for Java 18+) until this fix is available in the
-parent project.</span>
+<span style="color:blue">This is a fork of the Caciocavallo project. It's purpose is to enable using a fixed version in the OHDSI Rabbit tools (for Java 18+) until this fix is available in the
+parent project. An issue for this has been created in the parent project, with an offer to create a PR. (Jan Blom)</span>
 
 ## Introduction
 
