@@ -28,7 +28,7 @@ package com.github.caciocavallosilano.cacio.peer;
 /**
  * Creates {@link PlatformWindow} instances for use by the component peers.
  */
-public interface PlatformWindowFactory {
+public class PlatformWindowFactory {
 
     /**
      * Creates a {@link PlatformWindow} instance.
@@ -38,8 +38,10 @@ public interface PlatformWindowFactory {
      *
      * @return the platform window instance
      */
-    PlatformWindow createPlatformWindow(CacioComponent awtComponent,
-                                        PlatformWindow parent);
+    protected PlatformWindow createPlatformWindow(CacioComponent awtComponent,
+                                                           PlatformWindow parent) {
+        return null;
+    }
 
     /**
      * Creates and returns a toplevel window for the specified peer.
@@ -48,7 +50,9 @@ public interface PlatformWindowFactory {
      *
      * @return the created toplevel window
      */
-    PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent component);
+    public PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent component) {
+        return null;
+    }
 
     /**
      * Creates and returns the event pump to be used for getting the platform
@@ -56,7 +60,9 @@ public interface PlatformWindowFactory {
      *
      * @return the event source for the toolkit
      */
-    CacioEventPump<?> createEventPump();
+    public CacioEventPump<?> createEventPump() {
+        return null;
+    }
 
     /**
      * Creates and returns a toplevel window with the specified window as
@@ -67,6 +73,12 @@ public interface PlatformWindowFactory {
      * @return the created toplevel window
      */
     public PlatformWindow createPlatformToplevelWindow(CacioComponent component,
-                                                       PlatformWindow owner);
+                                                       PlatformWindow owner) {
+        return null;
+    }
 
-}
+//    public PlatformWindow createPlatformToplevelWindow(CacioComponent component,
+//                                                       PlatformWindow notUsed) {
+
+
+    }

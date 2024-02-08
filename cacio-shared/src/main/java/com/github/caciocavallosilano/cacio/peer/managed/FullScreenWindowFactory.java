@@ -40,7 +40,7 @@ import com.github.caciocavallosilano.cacio.peer.PlatformWindow;
 import com.github.caciocavallosilano.cacio.peer.PlatformWindowFactory;
 import sun.security.action.GetPropertyAction;
 
-public class FullScreenWindowFactory implements PlatformWindowFactory {
+public class FullScreenWindowFactory extends PlatformWindowFactory {
 
     private static final Dimension screenSize;
     static {
@@ -133,7 +133,7 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      *
      * @return the platform window instance
      */
-    public final PlatformWindow createPlatformWindow(CacioComponent awtComponent,
+    public PlatformWindow createPlatformWindow(CacioComponent awtComponent,
                                                      PlatformWindow parent) {
         if (parent == null) {
             throw new IllegalArgumentException("parent cannot be null");
@@ -143,17 +143,16 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
         return new ManagedWindow(p, awtComponent);
     }
 
-    @Override
-    public final
-    PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent comp) {
-        PlatformScreen screen = selector.getPlatformScreen(comp);
+    //@Override abstract PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent component)
+    public PlatformToplevelWindow createPlatformToplevelWindow(CacioComponent component) {
+        PlatformScreen screen = selector.getPlatformScreen(component);
         ScreenManagedWindowContainer smwc = screenMap.get(screen);
         if (smwc == null) {
             smwc = new ScreenManagedWindowContainer(screen);
             screenMap.put(screen, smwc);
         }
 
-        return new ManagedWindow(smwc, comp);
+        return new ManagedWindow(smwc, component);
     }
 
     /**
@@ -161,14 +160,14 @@ public class FullScreenWindowFactory implements PlatformWindowFactory {
      * <strong>Note</strong>: owners are currently ignored in fully managed
      * windows.
      */
-    @Override
+    //@Override
     public PlatformWindow createPlatformToplevelWindow(CacioComponent component,
                                                        PlatformWindow notUsed) {
 
         return createPlatformToplevelWindow(component);
     }
 
-    @Override
+    //@Override
     public CacioEventPump<?> createEventPump() {
         FullScreenEventSource s = new FullScreenEventSource();
         return new FullScreenEventPump(s);
