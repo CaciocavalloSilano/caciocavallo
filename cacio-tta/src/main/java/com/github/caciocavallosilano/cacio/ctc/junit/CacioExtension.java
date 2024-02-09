@@ -150,10 +150,9 @@ public class CacioExtension implements ExecutionCondition {
     }
 
     public static class GraphicsEnvironmentInterceptor {
-        private static CTCGraphicsEnvironment ctcGraphicsEnvironment = CTCGraphicsEnvironment.getInstance();
         @RuntimeType
         public static Object intercept(@Origin Method method, @AllArguments final Object[] args) throws Exception {
-            return ctcGraphicsEnvironment;
+            return CTCGraphicsEnvironment.getInstance();
         }
     }
 

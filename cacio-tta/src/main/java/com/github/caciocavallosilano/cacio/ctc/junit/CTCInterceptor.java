@@ -12,18 +12,8 @@ import java.lang.reflect.Method;
 
 
 public class CTCInterceptor {
-    private static CTCGraphicsEnvironment ctcGraphicsEnvironment = CTCGraphicsEnvironment.getInstance();
-
     @RuntimeType
-    public static GraphicsEnvironment intercept1(@This Object self,
-                                                 @Origin Method method,
-                                                 @AllArguments Object[] args,
-                                                 @SuperMethod Method superMethod) {
-        return ctcGraphicsEnvironment;
-    }
-
-    @RuntimeType
-    public static GraphicsEnvironment intercept2() {
-        return ctcGraphicsEnvironment;
+    public static GraphicsEnvironment intercept() {
+        return CTCGraphicsEnvironment.getInstance();
     }
 }
