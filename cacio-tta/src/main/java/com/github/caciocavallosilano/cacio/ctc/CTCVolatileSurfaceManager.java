@@ -28,7 +28,7 @@ import sun.awt.image.SunVolatileImage;
 import sun.awt.image.VolatileSurfaceManager;
 import sun.java2d.SurfaceData;
 
-class CTCVolatileSurfaceManager extends VolatileSurfaceManager {
+public class CTCVolatileSurfaceManager extends VolatileSurfaceManager {
 
     protected CTCVolatileSurfaceManager(SunVolatileImage vImg, Object context) {
         super(vImg, context);
