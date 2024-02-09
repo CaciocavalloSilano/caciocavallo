@@ -31,10 +31,14 @@ import sun.java2d.SurfaceManagerFactory;
 
 public class CTCGraphicsEnvironment extends SunGraphicsEnvironment {
 
-    public CTCGraphicsEnvironment() {
+    private static final CTCGraphicsEnvironment INSTANCE = new CTCGraphicsEnvironment();
+    private CTCGraphicsEnvironment() {
         SurfaceManagerFactory.setInstance(new CTCSurfaceManagerFactory());
     }
 
+    public static CTCGraphicsEnvironment getInstance() {
+        return INSTANCE;
+    }
     @Override
     protected int getNumScreens() {
         return 1;

@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 
 
 public class CTCInterceptor {
-    private static CTCGraphicsEnvironment ctcGraphicsEnvironment = new CTCGraphicsEnvironment();
+    private static CTCGraphicsEnvironment ctcGraphicsEnvironment = CTCGraphicsEnvironment.getInstance();
 
     @RuntimeType
     public static GraphicsEnvironment intercept1(@This Object self,
