@@ -89,7 +89,10 @@ public class CacioExtension implements ExecutionCondition {
             defaultHeadlessField.set(null, Boolean.FALSE);
             headlessField.set(null, Boolean.FALSE);
 
-
+            Class<?> smfCls = Class.forName("sun.java2d.SurfaceManagerFactory");
+            Field smf = smfCls.getDeclaredField("instance");
+            smf.setAccessible(true);
+            smf.set(null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
