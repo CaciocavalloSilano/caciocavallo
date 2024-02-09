@@ -89,6 +89,7 @@ public class CacioExtension implements ExecutionCondition {
             defaultHeadlessField.set(null, Boolean.FALSE);
             headlessField.set(null, Boolean.FALSE);
 
+
         } catch (Exception e) {
             e.printStackTrace();
         }
