@@ -81,12 +81,9 @@ public class CacioExtension implements ExecutionCondition {
 
             Field defaultHeadlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("defaultHeadless");
             defaultHeadlessField.setAccessible(true);
-            defaultHeadlessField.set(null, Boolean.TRUE);
+            defaultHeadlessField.set(null, Boolean.FALSE);
             Field headlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("headless");
             headlessField.setAccessible(true);
-            headlessField.set(null, Boolean.TRUE);
-
-            defaultHeadlessField.set(null, Boolean.FALSE);
             headlessField.set(null, Boolean.FALSE);
 
             Class<?> smfCls = Class.forName("sun.java2d.SurfaceManagerFactory");
