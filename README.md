@@ -4,10 +4,6 @@
 [![License](https://img.shields.io/github/license/CaciocavalloSilano/caciocavallo.svg)](https://raw.githubusercontent.com/CaciocavalloSilano/caciocavallo/master/LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.caciocavallosilano/cacio-tta/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.caciocavallosilano/cacio-tta)
 
-## Please note
-<span style="color:blue">This is a fork of the Caciocavallo project. It's purpose is to enable using a fixed version in the OHDSI Rabbit tools (for Java 18+) until this fix is available in the
-parent project. An issue for this has been created in the parent project, with an offer to create a PR. (Jan Blom)</span>
-
 ## Introduction
 
 One problem with running GUI tests is that they need to create windows, grab keyboard focus, and do all sorts of interaction with the screen. 
@@ -135,6 +131,8 @@ This makes sure that Cacio is loaded instead of the default toolkit. This may be
 This is because Java only allows to set the toolkit once, and it cannot be unloaded or unset. When you load any GUI class before loading the CacioTestRunner, the default toolkit will be loaded, and tests will not run in Cacio.
 
 The `add-exports` and `add-opens` jvm args are required with Java 17, since these are internal packages that aren't exported, these can't be added to a `module-info.java` file.
+
+With Java 18+, you may also want to add a argument to suppress warnings about an agent (ByteBuddyAgent) being loaded: `-XX:+EnableDynamicAgentLoading` .
 
 You can change the resolution of the virtual screen by setting the `cacio.managed.screensize` system property.
 
