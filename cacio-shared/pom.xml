@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.github.caciocavallosilano</groupId>
     <artifactId>cacio</artifactId>
-    <version>1.18</version>
+    <version>1.19-SNAPSHOT</version>
   </parent>
   <artifactId>cacio-shared</artifactId>
   <packaging>jar</packaging>
