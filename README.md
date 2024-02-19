@@ -31,11 +31,13 @@ This makes it a perfect fit for GUI testing environments.
 
 The goal is to support all LTS OpenJDK releases.
 
-| Version | JDK   |
-|---------|-------|
-| 1.10    | JDK8  |
-| 1.11    | JDK11 |
-| 1.17    | JDK17 |
+| Version | JDK         |
+|---------|-------------|
+| 1.10    | JDK8        |
+| 1.11    | JDK11       |
+| 1.17    | JDK17       |
+| 1.18    | JDK17-JDK21 |
+
 
 <sub><sup>Earlier JDKs should use `net.java.openjdk.cacio` releases</sup></sub>
 
