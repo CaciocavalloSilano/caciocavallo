@@ -132,6 +132,8 @@ This is because Java only allows to set the toolkit once, and it cannot be unloa
 
 The `add-exports` and `add-opens` jvm args are required with Java 17, since these are internal packages that aren't exported, these can't be added to a `module-info.java` file.
 
+With Java 18+, you may also want to add a argument to suppress warnings about an agent (ByteBuddyAgent) being loaded: `-XX:+EnableDynamicAgentLoading` .
+
 You can change the resolution of the virtual screen by setting the `cacio.managed.screensize` system property.
 
 For example:
