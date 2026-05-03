@@ -3,7 +3,7 @@
 
   <groupId>com.github.caciocavallosilano</groupId>
   <artifactId>cacio</artifactId>
-  <version>1.19-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Caciocavallo Main Module</name>
@@ -36,13 +36,27 @@
   </developers>
 
   <modules>
-    <module>cacio-shared</module>
-    <module>cacio-tta</module>
+    <module>cacio-shared-jdk21</module>
+    <module>cacio-shared-jdk25</module>
+    <module>cacio-tta-jdk21</module>
+    <module>cacio-tta-jdk25</module>
   </modules>
 
   <properties>
-    <cacio.java.version>25</cacio.java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.8.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>
@@ -110,7 +124,41 @@
             <target>${cacio.java.version}</target>
             <compilerArgs>
               <arg>-XDignore.symbol.file=true</arg>
+              <arg>--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.awt=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.awt.event=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.font=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.java2d.pipe=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.base/sun.security.action=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.java2d=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED</arg>
             </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.6.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-toolchains-plugin</artifactId>
+          <version>3.2.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>toolchain</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <toolchains>
+              <jdk>
+                <version>${cacio.java.version}</version>
+              </jdk>
+            </toolchains>
           </configuration>
         </plugin>
         <plugin>

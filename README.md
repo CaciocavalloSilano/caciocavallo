@@ -29,26 +29,27 @@ This makes it a perfect fit for GUI testing environments.
 
 ## Versions
 
-The goal is to support all LTS OpenJDK releases.
+The goal is to support all LTS OpenJDK releases. Starting with 2.0, the JDK target is encoded in the artifactId rather than the version, so a single release publishes one artifact per supported JDK.
 
-| Version | JDK         |
-|---------|-------------|
-| 1.10    | JDK8        |
-| 1.11    | JDK11       |
-| 1.17    | JDK17       |
-| 1.18    | JDK17-JDK21 |
+| Version | Artifact                | JDK         |
+|---------|-------------------------|-------------|
+| 1.10    | cacio-tta               | JDK8        |
+| 1.11    | cacio-tta               | JDK11       |
+| 1.17    | cacio-tta               | JDK17       |
+| 1.18    | cacio-tta               | JDK17-JDK21 |
+| 2.0+    | cacio-tta-jdk21         | JDK21       |
+| 2.0+    | cacio-tta-jdk25         | JDK25       |
 
 
 <sub><sup>Earlier JDKs should use `net.java.openjdk.cacio` releases</sup></sub>
 
 ## Usage
 
-1. Include Cacio in your Maven dependencies
-Simply add the following in your `pom.xml`:
+1. Include Cacio in your Maven dependencies. Pick the artifact matching your JDK:
 ```xml
 <dependency>
   <groupId>com.github.caciocavallosilano</groupId>
-  <artifactId>cacio-tta</artifactId>
+  <artifactId>cacio-tta-jdk25</artifactId>
   <scope>test</scope>
 </dependency>
 ```
@@ -56,7 +57,7 @@ Simply add the following in your `pom.xml`:
 Or to your `build.gradle`
 
 ```groovy
-testCompile 'com.github.caciocavallosilano:cacio-tta:1.+'
+testCompile 'com.github.caciocavallosilano:cacio-tta-jdk25:2.+'
 ```
 
 2. Run your test
@@ -162,14 +163,39 @@ https://github.com/CaciocavalloSilano/caciocavallo
 
 ## Build
 
-Building Cacio requires OpenJDK.
+Building Cacio 2.x requires both JDK 21 and JDK 25 installed locally. The build uses `maven-toolchains-plugin` to compile each per-JDK module against the matching JDK, so Maven needs a `~/.m2/toolchains.xml` listing both:
 
-Caciocavallo utilizes Maven for the main modules. In the toplevel Cacio
-directory simply type:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<toolchains>
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>21</version>
+      <vendor>temurin</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>/path/to/jdk-21</jdkHome>
+    </configuration>
+  </toolchain>
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>25</version>
+      <vendor>temurin</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>/path/to/jdk-25</jdkHome>
+    </configuration>
+  </toolchain>
+</toolchains>
+```
+
+Then from the toplevel Cacio directory:
 
 `mvn clean install`
 
-This should compile Caciocavallo.
+This compiles all four modules (`cacio-shared-jdk21`, `cacio-shared-jdk25`, `cacio-tta-jdk21`, `cacio-tta-jdk25`) and runs the test suite under each JDK.
 
 ## History
 
