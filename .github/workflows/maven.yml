@@ -4,30 +4,44 @@ on: [push, pull_request]
 
 jobs:
   build:
-
     strategy:
       matrix:
         os: [macos, ubuntu, windows]
+        jdk: ['21', '25']
       fail-fast: false
     runs-on: ${{ matrix.os }}-latest
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 25
+          java-version: ${{ matrix.jdk }}
       - name: Build with Maven
-        run: mvn test --batch-mode --fail-at-end
+        run: mvn -B --fail-at-end -pl cacio-shared-jdk${{ matrix.jdk }},cacio-tta-jdk${{ matrix.jdk }} -am test
       - uses: actions/upload-artifact@v4
-        name: Publish ${{ matrix.os }} Test Output
         if: ${{ always() }}
         with:
-          name: surefire-reports-build-${{ matrix.os }}
-          path: '**/surefire-reports/*.txt'
-      - name: Publish ${{ matrix.os }} Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
+          name: surefire-reports-${{ matrix.os }}-jdk${{ matrix.jdk }}
+          path: '**/surefire-reports/*.xml'
+
+  report:
+    needs: build
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
         with:
-          check_name: Test Report (${{ matrix.os }})
+          path: artifacts
+          pattern: surefire-reports-*
+      - uses: EnricoMi/publish-unit-test-result-action@v2
+        if: ${{ always() }}
+        with:
+          files: 'artifacts/**/TEST-*.xml'
+          check_name: Test Report
+          comment_mode: always
+          report_individual_runs: true
