@@ -70,7 +70,10 @@ public class ClickEventTestFESTTest {
         label.setName("label");
         ff = Containers.showInFrame(label);
         ff.target().setSize(400, 400);
-
+        // Without this, AssertJ-Swing's inter-event delay can stretch past
+        // awt.multiClickInterval on loaded CI runners, making doubleClickEvent
+        // see clickCount=1 on the second press instead of 2.
+        ff.robot().settings().delayBetweenEvents(10);
     }
 
     @AfterEach
