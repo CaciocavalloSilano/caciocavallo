@@ -145,7 +145,9 @@ System.setProperty("cacio.managed.screensize", "1920x1080");
 ```
 
 ## Java 17 and later
-The system properties are no longer supported or needed in `pom.xml` or `build.gradle`. 
+The `awt.toolkit` and `java.awt.graphicsenv` system properties are no longer needed in `pom.xml` or `build.gradle`, `@CacioTest` / `CacioExtension` sets them automatically.
+
+You may still need `java.awt.headless=false` in environments where `DISPLAY` isn't set (headless Linux CI, etc.). Without it the JDK skips loading native AWT and you'll see `UnsatisfiedLinkError: Component.initIDs()`.
 
 If you have a mix of GUI and non-GUI tests you may have to ensure that the toolkit is initialized with the Cacio version before any other test might initialize the JDK toolkit otherwise a segmentation fault will occur and crash the JVM.
 
