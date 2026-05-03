@@ -24,8 +24,6 @@
  */
 package com.github.caciocavallosilano.cacio.ctc;
 
-import com.github.caciocavallosilano.cacio.peer.managed.FullScreenWindowFactory;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -35,12 +33,24 @@ import java.awt.image.WritableRaster;
 
 public class CTCGraphicsConfiguration extends GraphicsConfiguration {
 
+    // Screen-size parsing is duplicated from FullScreenWindowFactory because
+    // this class is loaded into the bootstrap classloader by CacioExtension,
+    // where FullScreenWindowFactory is no longer injected.
+    private static final Dimension screenSize;
+    static {
+        String size = System.getProperty("cacio.managed.screensize", "1024x768");
+        int x = size.indexOf('x');
+        int width = Integer.parseInt(size.substring(0, x));
+        int height = Integer.parseInt(size.substring(x + 1));
+        screenSize = new Dimension(width, height);
+    }
+
     private final ColorModel model;
     private final Raster raster;
     private CTCGraphicsDevice device;
 
     CTCGraphicsConfiguration(CTCGraphicsDevice dev) {
-        BufferedImage bufferedImage = new BufferedImage(FullScreenWindowFactory.getScreenDimension().width, FullScreenWindowFactory.getScreenDimension().height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufferedImage = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
         device = dev;
         model = bufferedImage.getColorModel();
         raster = bufferedImage.getRaster().createCompatibleWritableRaster(1, 1);
@@ -63,8 +73,7 @@ public class CTCGraphicsConfiguration extends GraphicsConfiguration {
 
     @Override
     public Rectangle getBounds() {
-        Dimension d = FullScreenWindowFactory.getScreenDimension();
-        return new Rectangle(0, 0, d.width, d.height);
+        return new Rectangle(0, 0, screenSize.width, screenSize.height);
     }
 
     @Override

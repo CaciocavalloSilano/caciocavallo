@@ -27,13 +27,11 @@ package com.github.caciocavallosilano.cacio.peer.managed;
 
 import java.awt.Component;
 import java.awt.event.FocusEvent;
-import java.security.AccessController;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.github.caciocavallosilano.cacio.peer.CacioComponent;
-import sun.security.action.GetPropertyAction;
 
 public class FocusManager {
 
@@ -47,7 +45,7 @@ public class FocusManager {
      * FocusManager in case the property "cacio.focusmgr" has not been set.
      */
     static {
-	String focusMgrClsName = AccessController.doPrivileged(new GetPropertyAction("cacio.focusmgr"));
+	String focusMgrClsName = System.getProperty("cacio.focusmgr");
 	Class cls = FocusManager.class;
 	try {
 	    if (focusMgrClsName != null) {

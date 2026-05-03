@@ -25,8 +25,6 @@
 package com.github.caciocavallosilano.cacio.ctc.junit;
 
 import com.github.caciocavallosilano.cacio.ctc.*;
-import com.github.caciocavallosilano.cacio.peer.PlatformWindowFactory;
-import com.github.caciocavallosilano.cacio.peer.managed.FullScreenWindowFactory;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.ClassFileLocator;
@@ -85,11 +83,6 @@ public class CacioExtension implements ExecutionCondition {
             Field headlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("headless");
             headlessField.setAccessible(true);
             headlessField.set(null, Boolean.FALSE);
-
-            Class<?> smfCls = Class.forName("sun.java2d.SurfaceManagerFactory");
-            Field smf = smfCls.getDeclaredField("instance");
-            smf.setAccessible(true);
-            smf.set(null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,12 +103,8 @@ public class CacioExtension implements ExecutionCondition {
         injectClassIntoBootstrapClassLoader(
                 CTCInterceptor.class,
                 CTCGraphicsEnvironment.class,
-                CTCSurfaceManagerFactory.class,
                 CTCGraphicsConfiguration.class,
-                PlatformWindowFactory.class,
-                FullScreenWindowFactory.class,
-                CTCGraphicsDevice.class,
-                CTCVolatileSurfaceManager.class);
+                CTCGraphicsDevice.class);
 
         ByteBuddy byteBuddy = new ByteBuddy();
 

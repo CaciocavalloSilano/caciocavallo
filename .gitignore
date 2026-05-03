@@ -26,3 +26,6 @@ target/
 
 # log files
 *.log
+
+# cacio-tta failed GUI test screenshots
+cacio-tta/failed-gui-tests/
