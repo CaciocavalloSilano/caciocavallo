@@ -25,7 +25,7 @@
 
 package com.github.caciocavallosilano.cacio.peer;
 
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.Event;
 import java.awt.PopupMenu;
 import java.awt.peer.PopupMenuPeer;
@@ -41,12 +41,11 @@ class CacioPopupMenuPeer extends CacioMenuPeer implements PopupMenuPeer {
     public void show(Event e) {
         JMenu m = (JMenu) getSwingMenu();
         JPopupMenu pm = m.getPopupMenu();
-        Dimension d = pm.getPreferredSize();
-        // TODO: Fix location relative to target.
-        pm.setLocation(e.x, e.y);
-        pm.setSize(d.width, d.height);
-        pm.setVisible(true);
-        // TODO: Add listener for closing the popup menu.
+        // Delegating to JPopupMenu.show registers the popup with
+        // MenuSelectionManager, which dismisses it on outside clicks.
+        // Calling setVisible(true) directly skips that and leaves the
+        // popup pinned open (issue #17).
+        pm.show((Component) e.target, e.x, e.y);
     }
 
 }
