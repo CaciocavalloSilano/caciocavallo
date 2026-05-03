@@ -41,7 +41,7 @@
   </modules>
 
   <properties>
-    <cacio.java.version>17</cacio.java.version>
+    <cacio.java.version>25</cacio.java.version>
   </properties>
 
   <distributionManagement>
@@ -116,8 +116,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
           <configuration>
-	    <source>${cacio.java.version}</source>
-	    <target>${cacio.java.version}</target>
+            <source>${cacio.java.version}</source>
+            <target>${cacio.java.version}</target>
             <compilerArgs>
               <arg>-XDignore.symbol.file=true</arg>
             </compilerArgs>
