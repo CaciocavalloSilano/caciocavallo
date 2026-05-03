@@ -37,6 +37,7 @@ The goal is to support all LTS OpenJDK releases.
 | 1.11    | JDK11       |
 | 1.17    | JDK17       |
 | 1.18    | JDK17-JDK21 |
+| 1.19    | JDK25       |
 
 
 <sub><sup>Earlier JDKs should use `net.java.openjdk.cacio` releases</sup></sub>
