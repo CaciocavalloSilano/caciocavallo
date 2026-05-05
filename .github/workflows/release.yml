@@ -25,19 +25,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Debug GPG state
-        run: |
-          echo "Secret keys:"
-          gpg --list-secret-keys || echo "  (none)"
-          echo "Public keys:"
-          gpg --list-keys || echo "  (none)"
-          echo "GPG_PRIVATE_KEY length:"
-          echo -n "${GPG_PRIVATE_KEY}" | wc -c
-          echo "GPG_PRIVATE_KEY first line:"
-          echo "${GPG_PRIVATE_KEY}" | head -1
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-
       - name: Publish
         run: mvn -B -DskipTests -DperformRelease=true deploy
         env:
