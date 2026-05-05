@@ -28,4 +28,4 @@ target/
 *.log
 
 # cacio-tta failed GUI test screenshots
-cacio-tta/failed-gui-tests/
+failed-gui-tests/
